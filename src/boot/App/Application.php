@@ -417,7 +417,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function bootstrapPath($path = '')
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'boot' . DIRECTORY_SEPARATOR . 'App' . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->basePath . DIRECTORY_SEPARATOR . 'tmp' .  ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
     }
 
     /**
@@ -1051,7 +1051,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getCachedServicesPath()
     {
-        return $this->normalizeCachePath('APP_SERVICES_CACHE', ROOT.'tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'services.php');
+        return $this->normalizeCachePath('APP_SERVICES_CACHE', 'cache/services.php');
     }
 
     /**
@@ -1061,7 +1061,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getCachedPackagesPath()
     {
-        return $this->normalizeCachePath('APP_PACKAGES_CACHE', ROOT.'tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'packages.php');
+        return $this->normalizeCachePath('APP_PACKAGES_CACHE', 'cache/packages.php');
     }
 
     /**
@@ -1081,7 +1081,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getCachedConfigPath()
     {
-        return $this->normalizeCachePath('APP_CONFIG_CACHE', ROOT.'tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'config.php');
+        return $this->normalizeCachePath('APP_CONFIG_CACHE', 'cache/config.php');
     }
 
     /**
@@ -1101,7 +1101,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getCachedRoutesPath()
     {
-        return $this->normalizeCachePath('APP_ROUTES_CACHE', ROOT.'tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'routes-v7.php');
+        return $this->normalizeCachePath('APP_ROUTES_CACHE', 'cache/routes-v7.php');
     }
 
     /**
@@ -1121,7 +1121,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function getCachedEventsPath()
     {
-        return $this->normalizeCachePath('APP_EVENTS_CACHE', ROOT.'tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'events.php');
+        return $this->normalizeCachePath('APP_EVENTS_CACHE', 'cache/events.php');
     }
 
     /**
