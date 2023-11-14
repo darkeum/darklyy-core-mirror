@@ -23,11 +23,11 @@ class AutoloaderFramework {
 		$classArray = explode("/", $className);
 		$classNameClear = array(array_pop($classArray).'.class.php');
 		switch($type) {
-			default:				
+			default:
 				$correctPatch = implode('/', array_merge($patchArray, $classArray, $classNameClear));
 			break;
 			case "noFirst":
-				array_shift($classArray);				
+				array_shift($classArray);
 				$correctPatch = implode('/', array_merge($patchArray, $classArray, $classNameClear));
 			break;
 			case "module":
@@ -40,15 +40,15 @@ class AutoloaderFramework {
 			break;
 		}
 		if(!in_array($correctPatch, $this->ignorePathArray())) {
-			$correctPatch = ROOT.$correctPatch;			
+			$correctPatch = __DIR__.'/../../../'.$correctPatch;
 			if (file_exists($correctPatch)){
 				require_once($correctPatch);
-				return true;			
+				return true;
 			} elseif (file_exists(mb_strtolower($correctPatch))) {
 				require_once(mb_strtolower($correctPatch));
 				return true;
 			}
-		}		
+		}
 		return false;
 	}
 
@@ -69,8 +69,8 @@ class AutoloaderFramework {
 	//черный список
 	public function ignorePathArray() {
 		$ignorePathArray = array(
-			'db' => 'boot/DB.class.php',			
-			'Autoloader' => 'boot/Autoloader.class.php',			
+			'db' => 'boot/DB.class.php',
+			'Autoloader' => 'boot/Autoloader.class.php',
 		);
 		return $ignorePathArray;
 	}
@@ -85,8 +85,8 @@ class AutoloaderFramework {
 			}
 			if($loaded) {
 				return true;
-			}			
-		}		
+			}
+		}
 		return false;
 	}
 }
