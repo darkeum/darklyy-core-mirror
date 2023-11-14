@@ -11,7 +11,7 @@
 */
 
 // подключение всех вспомогательных функций
-foreach (glob(__DIR__ . '/*.helpers.php') as $listed) {
+foreach (glob(__DIR__ . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR . '*.helpers.php') as $listed) {
     if (file_exists($listed) && is_file($listed)) {
         require_once($listed);
     }
