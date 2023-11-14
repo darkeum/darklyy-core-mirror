@@ -40,7 +40,7 @@ class AutoloaderFramework {
 			break;
 		}
 		if(!in_array($correctPatch, $this->ignorePathArray())) {
-			$correctPatch = __DIR__.'/../../../'.$correctPatch;
+			$correctPatch = __DIR__.'/../../../../../'.$correctPatch;
 			if (file_exists($correctPatch)){
 				require_once($correctPatch);
 				return true;
