@@ -145,6 +145,9 @@
         "workerman/workerman": "^4.0"
     },
     "autoload": {
+        "files": [
+            "src/boot/Support/helpers.php"
+        ],
         "psr-4": {
             "Boot\\": "boot/",
             "Module\\Vendor\\": "usr/modules/vendor",
