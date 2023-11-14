@@ -1,0 +1,24 @@
+<script type="application/json" id="bank-accounts-source">{{organization.banks|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+{% for bank in organization.banks %}
+	<tr>
+		<td>
+			<button 
+				type="button" data-id="{{bank.id}}" 
+				data-value="{% if organization.organizations_bank_default == bank.id %}{% else %}{{bank.id}}{% endif %}"
+				class="btn btn-sm bank-accounts-button-default {% if organization.organizations_bank_default == bank.id %}btn-warning{% else %}btn-outline-warning{% endif %}"
+			>Выбрать</button>
+		</td>
+		<td>{{bank.id}}</td>
+		<td>{{bank.name_short|default(bank.name)}}</td>
+		<td>{{bank.address}}</td>
+		<td>{{bank.bik}}</td>
+		<td>{{bank.kschet}}</td>
+		<td>{{bank.rschet}}</td>
+		<td>
+			<div class="btn-group">
+				<button type="button" class="btn btn-sm btn-info bank-accounts-button-edit" data-id="{{bank.id}}">Редактировать</button>
+				<button type="button" class="btn btn-sm btn-danger bank-accounts-button-delete" data-id="{{bank.id}}">Удалить</button>
+			</div>
+		</td>
+	</tr>
+{% endfor %}

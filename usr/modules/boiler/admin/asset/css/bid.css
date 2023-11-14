@@ -1,0 +1,229 @@
+.panelInfo_elem, .panelInfo_elem-no_border{
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.panelInfo_elem{
+    border-bottom: 2px #f2f2f2 solid;
+}
+.panelInfo_elem-title, .text-grey{
+    color: #858c96;
+}
+.panelInfo_elem-main{
+    display: flex;
+    justify-content: space-between;
+}
+#panelHeader{
+   padding: 15px 35px;
+}
+.df{
+    display: flex;
+}
+.col_b{
+    color: black;
+}
+.fwb{
+    font-weight: bold;
+}
+.cp{
+    cursor: pointer;
+}
+.ch{
+    cursor: help;
+}
+.avatar{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+.file-elem{
+    display: flex;
+    justify-content: space-between;
+}
+.panel-btn{
+    margin-top: 10px;
+}
+.custom_checkbox input[type="checkbox"] {
+    opacity: 0;
+    display: none;
+}
+
+.custom_checkbox label {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    display: inline-block;
+    
+    /*16px width of fake checkbox + 6px distance between fake checkbox and text*/
+
+    cursor: pointer;
+}
+
+.custom_checkbox label::before,
+.custom_checkbox label::after {
+    position: absolute;
+    content: "";
+    
+    /*Needed for the line-height to take effect*/
+    display: inline-block;
+}
+
+/*Outer box of the fake checkbox*/
+.custom_checkbox label::before{
+    height: 50px;
+    width: 50px;
+    
+    border: 5px solid;
+    left: 0px;
+    
+    /*(24px line-height - 16px height of fake checkbox) / 2 - 1px for the border
+     *to vertically center it.
+     */
+    top: 3px;
+}
+
+/*Checkmark of the fake checkbox*/
+.custom_checkbox label::after {
+    height: 18px;
+    width: 33px;
+    border-left: 5px solid;
+    border-bottom: 5px solid;
+    
+    transform: rotate(-45deg);
+    
+    left: 8px;
+    top: 14px;
+}
+
+/*Hide the checkmark by default*/
+.custom_checkbox input[type="checkbox"] + label::after {
+    content: none;
+}
+
+/*Unhide on the checked state*/
+.custom_checkbox input[type="checkbox"]:checked + label::after {
+    content: "";
+}
+
+.missing{
+    cursor: not-allowed!important;
+}
+
+.panel-text{
+    color: black;
+    font-size: 22px;
+}
+
+.panel-text-user, .panel-comment{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.data_uid{
+    border-bottom: 2px dashed brown;
+}
+
+.comment_data, .type_comment, #main_comment, .folder_name, .fix_xeditable{
+    white-space: normal!important;
+}
+
+.element-type{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: center;
+}
+.element-type_text{
+    display: flex;
+}
+#panelMain_head{
+    display: flex!important;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.panel_type{
+    margin-right: 20px;
+}
+.type_name{
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.type_active{
+    box-shadow: 0 0 0px 3px red;
+}
+#main_comment{
+    display: inline;
+}
+.file-elem{
+    transition: .3s;
+}
+.file-elem:hover{
+    border: 1px grey solid;
+    padding: 5px;
+    border-radius: 5px;
+}
+.slide_active_panel, .toggle_folder{
+    display: flex;
+    justify-content: center;
+}
+.status_confirm{
+    color: #0dcc00!important;
+}
+
+.folder{
+    display: block;
+    width: 100%;
+}
+
+.folder_con{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px 20px;
+}
+
+.type_name_folder{
+    margin-left: 20px;
+}
+
+#panel_info_con{
+    display: flex;
+    flex-direction: column;
+}
+
+#panelProgress{
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+}
+
+.progress_step{
+    flex: 1 0;
+    transition: 300ms all linear;
+    overflow: hidden;
+    display: flex;
+    cursor: pointer;
+}
+
+.progress_step_item{
+    padding: 0 1px 0 2px;
+    height: 32px;
+    color: black;
+    width: 100%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+
+.progress_step_item_triangle{
+    border-top: 16px solid transparent;
+    border-bottom: 16px solid transparent;
+    border-radius: 5px;
+    left: -2px;
+    position: relative;
+}
+

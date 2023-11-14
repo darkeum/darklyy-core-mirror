@@ -1,0 +1,1 @@
+<a class="download {%EXT%}" id="{%EXT%}" href="/download/{%ID%}" target="_blank">{%NAME%} <span class="size">({%EXT%}, документ) {%SIZE%}, загрузок: {%NUMB%}</span></a>

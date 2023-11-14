@@ -1,0 +1,36 @@
+.holder-style.holder-active {
+    outline-color: #02c385;
+    color: #02c385;
+}
+.holder-style .holder-icon {
+    font-size: 30px;
+}
+.holder-style {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    padding: 9px 16px;
+    color: #aaa;
+    outline: 2px dashed #d9d9d9;
+    border: 0;
+    transition: all .15s ease;
+    cursor: pointer;
+    width: 125px;
+    height: 104px;
+    text-align: center;
+}
+
+.fw-bold span {
+    color: #fa381d;
+    cursor: pointer;
+}
+
+.table > :not(:first-child) {
+    border-top: none;
+}
+
+.date-max-width {
+    max-width: 8rem;
+}

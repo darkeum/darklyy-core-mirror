@@ -1,0 +1,29 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Notifications;
+
+use Boot\Abstracts\Notifications\Notification;
+
+class {{class-name}} extends Notification
+{
+    public function __construct()
+    {
+        // ..
+    }
+
+    public function toArray($notifiable)
+    {
+        return [
+            // ...
+        ];
+    }
+}

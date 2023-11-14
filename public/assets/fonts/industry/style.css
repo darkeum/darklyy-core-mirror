@@ -1,0 +1,60 @@
+@font-face {
+  font-family: 'IndustryIcon';
+  src:  url('fonts/IndustryIcon.eot?12mayi');
+  src:  url('fonts/IndustryIcon.eot?12mayi#iefix') format('embedded-opentype'),
+    url('fonts/IndustryIcon.ttf?12mayi') format('truetype'),
+    url('fonts/IndustryIcon.woff?12mayi') format('woff'),
+    url('fonts/IndustryIcon.svg?12mayi#IndustryIcon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="in-"], [class*=" in-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'IndustryIcon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.in-pump-station:before {
+  content: "\e908";
+}
+.in-automation-cabinet:before {
+  content: "\e909";
+}
+.in-block-itp:before {
+  content: "\e90a";
+}
+.in-well-pump:before {
+  content: "\e901";
+}
+.in-pump-station-pro:before {
+  content: "\e906";
+}
+.in-pump-console:before {
+  content: "\e907";
+}
+.in-pressure-sensor:before {
+  content: "\e900";
+}
+.in-safety-valve:before {
+  content: "\e902";
+}
+.in-check-valve:before {
+  content: "\e903";
+}
+.in-shut-off-valves:before {
+  content: "\e904";
+}
+.in-filter-fittings:before {
+  content: "\e905";
+}

@@ -1,0 +1,37 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Tasks;
+
+use {{container-name}}\Data\Repositories\{{model}}Repository;
+use Boot\Exceptions\DeleteResourceFailedException;
+use Boot\Abstracts\Tasks\Task;
+use Exception;
+
+class Delete{{model}}Task extends Task
+{
+    protected {{model}}Repository $repository;
+
+    public function __construct({{model}}Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function run($id): ?int
+    {
+        try {
+            return $this->repository->delete($id);
+        }
+        catch (Exception $exception) {
+            throw new DeleteResourceFailedException();
+        }
+    }
+}

@@ -1,0 +1,113 @@
+<?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
+namespace Boot\System\Grid\Traits;
+
+use Boot\Support\Str;
+use Boot\System\Grid\Utils\Utils;
+
+trait RenderTrait
+{
+    protected $render_data = array();
+    protected $render_extend = 'opts';
+    protected $render_suffix_col = null;
+    protected $render_filter_toolbar = false;
+    protected $nav;
+
+    public function render()
+    {
+        $data = [];
+        $data['extend'] = $this->render_extend;
+        $data['id'] = Str::replace($this->grid_id, '::', '_');
+
+        $index = 0;
+        foreach ($this->cols as $k => $c) {
+            if (isset($c['unset']) && $c['unset']) continue;
+            $colModel[] = $this->renderColumn($c);
+            $colIndex[$k] = $index;
+            $index++;
+        }
+
+        $options = array(
+            'colModel' => $colModel,
+        );
+
+        $options['url'] = $this->renderGridUrl();
+
+        $data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
+
+        // Сортировка по умолчанию
+        if (isset($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
+            $data['short']['index'] = $colIndex[$data['options']['sort']['name']];
+            $data['short']['order'] = in_array(Str::lower(($data['options']['sort']['order'] ?? 'asc')), array('asc', 'desc')) ? Str::lower(($data['options']['sort']['order'] ?? 'asc')) : 'asc';
+        }
+
+        // Структура элементов DOM
+        if (!isset($data['options']['dom'])) {
+            $data['dom'] = '<"dt-action-buttons"f B>t<"d-flex justify-content-between mx-0 p-50 row dt-footer"<"text-start"i><"d-none"p>>';
+        } else {
+            $data['dom'] = $data['options']['dom'];
+        }
+
+        return view('grid::layout', [
+            'title' => $this->title ?? 'Список компонента Grid',
+            'data' => $data,
+            'url' => $this->renderGridUrl(),
+            'options' => $options = Utils::jsonEncode($data['options']),
+            'cols' => $data['options']['colModel'],
+            'render_filter_toolbar' => $this->render_filter_toolbar,
+            'nav' => $this->renderNav(),
+
+            'language' => $this->getLanguage(),
+
+            'mouse' => isset($this->mouse) ? $this->mouse + $this->default['mouse'] : $this->default['mouse'],
+        ]);
+    }
+
+    protected function renderColumn($c)
+    {
+        return $c;
+    }
+
+    protected function renderPostData()
+    {
+        return array();
+    }
+
+    protected function renderOptions($opts)
+    {
+        return $opts;
+    }
+
+    protected function renderNav()
+    {
+        if (is_array($this->nav)) {
+            $nav = array_merge($this->default['nav'], $this->nav);
+        } else {
+            $nav = $this->default['nav'];
+        }
+        return $nav;
+    }
+
+    protected function renderGridUrl()
+    {
+        return route('grid.index', $this->grid_id);
+    }
+
+    // Языковой файл для Grid
+    protected function getLanguage() {
+        $language = trans('grid::lang');
+        // $language['infoPostFix'] = " © " . trans('app.name_' . check_company(true));
+        $language['infoPostFix'] = "";
+        $language['loadingRecords'] = str_replace(["\r\n", "\r", "\n", "\t", '  '], '', view("elements.preloader", ['bg' => false]));
+        return $language;
+    }
+}

@@ -1,0 +1,165 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  title %}Создать заказ{% endblock title %}
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@sales2/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script>
+		{{ oid.js|raw }}
+{{ object.js|raw }}
+	</script>
+	{{oid_create.script|raw}}
+	{{object_create.script|raw}}
+	<script>
+	// 	document.getElementById("org").addEventListener('change', function () {
+	// 		const checkbox = document.getElementById("clone_active");
+	// 		if (this.value == 1) {
+	// 			checkbox.disabled = true;
+	// 			checkbox.checked = false;
+	// 		} else {
+	// 			checkbox.disabled = false;
+	// 			checkbox.checked = true;
+	// 		}
+	// 	});
+	</script>
+	{{ assets({files: [], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+	<div id="content">
+		<div class="card">
+			<div class="card-body">
+				<form id="tab-main-form" action="{{route('admin.sales.store')}}" method="POST">
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Организация
+						</label>
+						<div class="col-8">
+							<select name="org" id="org" class="form-select" required>
+								{% for item in org %}
+									<option value="{{item.id}}">{{item.organization.name}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Тип заказа
+						</label>
+						<div class="col-8">
+							<select name="sales_type" class="form-select" required>
+								{% for value, item in sales_type %}
+									{% if value != 0 %}
+										<option value="{{value}}">{{item}}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Контрагент
+						</label>
+						<div class="col-8">
+							<div class="btn-group w-100">
+								{{oid.select|raw}}
+								<button type="button" class="btn btn-outline-secondary" {{oid_create.button_open|raw}}>
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Категория заказа
+						</label>
+						<div class="col-8">
+							<select name="sales_cat" class="form-select" required>
+								{% for value, item in sales_cat %}
+									{% if value != 0 %}
+										<option value="{{value}}">{{item}}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Дата
+						</label>
+						<div class="col-8">
+							<input type="date" class="form-control" name="date" value="{{date}}" required>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Объект
+						</label>
+						<div class="col-8">
+							<div class="btn-group w-100">
+								{{object.select|raw}}
+								<button type="button" class="btn btn-outline-secondary" {{object_create.button_open|raw}}>
+									<i class="fa fa-plus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Источник обращения
+						</label>
+						<div class="col-8">
+							<select name="source_appeal" class="form-select">
+								<option value="" disabled selected>Не указано</option>
+								{% for value, item in source_appeal %}
+									<option value="{{value}}">{{item}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Сегмент рынка
+						</label>
+						<div class="col-8">
+							<select name="market_segment" class="form-select">
+								<option value="" disabled selected>Не указано</option>
+								{% for value, item in market_segment %}
+									<option value="{{value}}">{{item}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">По сфере деятельности
+						</label>
+						<div class="col-8">
+							<select name="by_field_activity" class="form-select">
+								<option value="" disabled selected>Не указано</option>
+								{% for value, item in by_field_activity %}
+									<option value="{{value}}">{{item}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					{# <div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Заказ с Атри-энерго
+						</label>
+						<div class="col-8">
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" id="clone_active" name="clone_active" value="1" disabled>
+							</div>
+						</div>
+					</div> #}
+					<div class="mb-3 btn-group">
+						<button type="submit" class="btn btn-success">Создать заказ</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	{{oid_create.modal|raw}}
+	{{object_create.modal|raw}}
+{% endblock content %}

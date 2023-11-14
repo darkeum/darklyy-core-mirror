@@ -1,0 +1,23 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %} {{ __('reviews.manager') }} {% endblock header_title %}
+
+{% block  header_nav %}
+	{% include '@reviews/manager/header_nav.html.twig' %}
+{% endblock header_nav %}
+
+{% block  content %}
+<div id="content" class=""><div class="panel panel-success panel-border top">
+	<div class="panel-heading"><span class="panel-title">{{ __('reviews.info') }}</span>	
+		<div class="widget-menu pull-right">
+		<div class="btn-group">
+			<button onclick="location.href = '{{ router('admin.reviews.index') }}'" type="button" class="btn btn-xs btn-primary btn-block">{{ __('reviews.list') }}</button>
+		</div>
+		</div>		
+	</div> 
+	<div class="panel-body">
+		<p class="p2">{{ info }} <a href="{{ router('admin.reviews.index') }}">{{ __('reviews.info.list') }}</a></p>
+	</div>
+	</div>   
+</div>
+{% endblock content %}

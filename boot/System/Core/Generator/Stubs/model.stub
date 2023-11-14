@@ -1,0 +1,45 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Models;
+
+use Boot\Models\Model;
+
+class {{class-name}} extends Model
+{
+    protected $fillable = [
+
+    ];
+
+    protected $attributes = [
+
+    ];
+
+    protected $hidden = [
+
+    ];
+
+    protected $casts = [
+
+    ];
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /**
+     * Ключ ресурса, который будет использоваться в сериализованных ответах.
+     *
+     * @var string
+     */
+    protected string $resourceKey = '{{resource-key}}';
+}

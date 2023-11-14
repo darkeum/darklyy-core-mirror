@@ -1,0 +1,70 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\UI\{{user-interface}}\Controllers;
+
+use {{container-name}}\UI\{{user-interface}}\Requests\Create{{model}}Request;
+use {{container-name}}\UI\{{user-interface}}\Requests\Delete{{model}}Request;
+use {{container-name}}\UI\{{user-interface}}\Requests\GetAll{{models}}Request;
+use {{container-name}}\UI\{{user-interface}}\Requests\Find{{model}}ByIdRequest;
+use {{container-name}}\UI\{{user-interface}}\Requests\Update{{model}}Request;
+use {{container-name}}\UI\{{user-interface}}\Requests\Store{{model}}Request;
+use {{container-name}}\UI\{{user-interface}}\Requests\Edit{{model}}Request;
+use {{container-name}}\Actions\Create{{model}}Action;
+use {{container-name}}\Actions\Find{{model}}ByIdAction;
+use {{container-name}}\Actions\GetAll{{models}}Action;
+use {{container-name}}\Actions\Update{{model}}Action;
+use {{container-name}}\Actions\Delete{{model}}Action;
+use Boot\Abstracts\Controllers\WebController;
+
+class {{class-name}} extends WebController
+{
+    public function index(GetAll{{models}}Request $request)
+    {
+        ${{entities}} = app(GetAll{{models}}Action::class)->run($request);
+        // ..
+    }
+
+    public function show(Find{{model}}ByIdRequest $request)
+    {
+        ${{entity}} = app(Find{{model}}ByIdAction::class)->run($request);
+        // ..
+    }
+
+    public function create(Create{{model}}Request $request)
+    {
+        // ..
+    }
+
+    public function store(Store{{model}}Request $request)
+    {
+        ${{entity}} = app(Create{{model}}Action::class)->run($request);
+        // ..
+    }
+
+    public function edit(Edit{{model}}Request $request)
+    {
+        ${{entity}} = app(Find{{model}}ByIdAction::class)->run($request);
+        // ..
+    }
+
+    public function update(Update{{model}}Request $request)
+    {
+        ${{entity}} = app(Update{{model}}Action::class)->run($request);
+        // ..
+    }
+
+    public function destroy(Delete{{model}}Request $request)
+    {
+         $result = app(Delete{{model}}Action::class)->run($request);
+         // ..
+    }
+}

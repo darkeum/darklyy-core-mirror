@@ -1,0 +1,25 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Actions;
+
+use {{container-name}}\Models\{{model}};
+use {{container-name}}\Tasks\Find{{model}}ByIdTask;
+use Boot\Abstracts\Actions\Action;
+use Boot\Abstracts\Requests\Request;
+
+class Find{{model}}ByIdAction extends Action
+{
+    public function run(Request $request): {{model}}
+    {
+        return app(Find{{model}}ByIdTask::class)->run($request->id);
+    }
+}

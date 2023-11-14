@@ -1,0 +1,439 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@catalog/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script>{{ catalog_groups_select.js|raw }}</script>
+
+	{{ assets({files: [
+        "@catalog_/resources/js/catalog.js"
+    ], name: 'script.js'}) }}
+
+	{{ assets({files: [
+        "@catalog_/resources/js/ozon.js"
+    ], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+	<div id="content">
+		{% if session('status') %}
+			<div class="alert alert-success">
+				{{ session('status') }}
+			</div>
+		{% endif %}
+		<form id="tab-main-form" action="{% if catalog.id is empty %}{{route('admin.catalog.store')}}{% else %}{{route('admin.catalog.update', catalog.id)}}{% endif %}" method="POST" enctype="multipart/form-data">
+			{% if catalog.id is not empty %}
+				<input type="hidden" name="_method" value="PUT">
+			{% endif %}
+			<input type="hidden" name="id" value="{{catalog.id}}">
+			<div class="card">
+				<div class="card-header d-flex justify-content-between">
+					<button type="submit" class="btn btn-success">Записать</button>
+					{% if catalog.id %}
+						<a onclick="createOzon({{catalog.id}})" class="btn btn-info">Импортировать на OZON</a>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<nav>
+						<div class="nav nav-tabs" id="nav-tab" role="tablist">
+							<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-main" type="button" role="tab" aria-selected="true">Основное</button>
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-specifications" type="button" role="tab">Спецификации</button>
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-other-settings" type="button" role="tab">Другие настройки</button>
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-attributes" type="button" role="tab">Атрибуты</button>
+							<button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-files" type="button" role="tab">Файлы</button>
+						</div>
+					</nav>
+					<div
+						class="tab-content" id="nav-tabContent">
+						{# Основное #}
+						<div class="tab-pane fade show active p-3" id="tab-main" role="tabpanel">
+							<div class="row">
+								<div class="col-9">
+									<div class="row">
+										<div class="col">
+											<div class="form-floating mb-3">
+												<input type="text" name="title" class="form-control" id="title" value="{{catalog.title}}" required>
+												<label for="title">Наименование</label>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col">
+											<div class="form-floating input-group mb-3">
+												<input type="text" class="form-control" name="sku" id="sku" value="{{catalog.sku}}" required>
+												<button class="btn btn-outline-secondary" type="button" id="skuGenerate">
+													<i class="fa fa-refresh"></i>
+												</button>
+												<label for="sku">Артикул</label>
+											</div>
+										</div>
+										<div class="col">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control" name="sku2" id="sku2" value="{{catalog.sku2}}">
+												<label for="sku2">Артикул 2</label>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control" name="sku3" id="sku3" value="{{catalog.sku3}}">
+												<label for="sku3">Артикул 3</label>
+											</div>
+										</div>
+										<div class="col">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control" name="sku_ozon" id="sku_ozon" value="{{catalog.sku_ozon}}">
+												<label for="sku_ozon">Артикул Озон</label>
+											</div>
+										</div>
+										<div class="col">
+											<div class="form-floating mb-3">
+												<input type="text" class="form-control" name="sku_UdmurtSnab" id="sku_UdmurtSnab" value="{{catalog.sku_UdmurtSnab}}">
+												<label for="sku_UdmurtSnab">Артикул УдмуртСнаб</label>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col">
+											<label for="category">Категория</label>
+											<select class="form-select" name="category" id="category">
+												{% for category_id, category_value in categories %}
+													<option value=",{{category_id}}," {% if category_id == catalog.category|replace({",":""} ) %}selected {% endif %}>{{category_value}}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col">
+											<label for="catalog_groups_id">Группа товаров</label>
+											{{catalog_groups_select.select|raw}}
+										</div>
+									</div>
+									<div class="row mt-2">
+										<div class="col">
+											<label for="unit">Единица измерения</label>
+											<select class="form-select" name="unit" id="unit" required>
+												{% for u in units %}
+													<option value="{{u.unit}}" {% if u.unit == catalog.unit %} selected {% endif %}>{{u.name}}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col">
+											<label for="man">Производитель</label>
+											<select class="form-select" name="man" id="man" required>
+												{% for m in manufactures %}
+													<option value="{{m.id}}" {% if m.id == catalog.man %} selected {% endif %}>{{m.name}}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col">
+											<label for="man">Вид номенклатуры</label>
+											<select class="form-select" name="types" id="types" required>
+												{% for t in types %}
+													<option value="{{t.id}}" {% if t.id == catalog.types %} selected {% endif %}>{{t.title}}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="row mt-3">
+										<div class="form-floating">
+											<textarea class="form-control" name="short" id="short" style="height: 200px">{{catalog.short}}</textarea>
+											<label for="short">Описание</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-3">
+									<div>
+										<label for="preview">
+											<div data-provides="fileupload" class="fileupload admin-form">
+												<div class="fileupload-preview thumbnail mb15">
+													<img src="{% if catalog.preview is empty %}data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzY3IiBoZWlnaHQ9IjE0NyIgdmlld0JveD0iMCAwIDM2NyAxNDciIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPjxkZWZzLz48cmVjdCB3aWR0aD0iMzY3IiBoZWlnaHQ9IjE0NyIgZmlsbD0iIzMwYjVlMSIvPjxnPjx0ZXh0IHg9IjExOS4zOTg0ODMyNzYzNjcxOSIgeT0iNzMuNSIgc3R5bGU9ImZpbGw6Izg0Y2RlYTtmb250LXdlaWdodDpib2xkO2ZvbnQtZmFtaWx5OkFyaWFsLCBIZWx2ZXRpY2EsIE9wZW4gU2Fucywgc2Fucy1zZXJpZiwgbW9ub3NwYWNlO2ZvbnQtc2l6ZToxN3B0O2RvbWluYW50LWJhc2VsaW5lOmNlbnRyYWwiPtC80LjQvdC40LDRgtGO0YDQsDwvdGV4dD48L2c+PC9zdmc+{% else %}{{catalog.preview}}{% endif %}" alt="holder">
+												</div>
+											</div>
+											<div>
+												<input type="file" name="preview" id="preview" class="form-control">
+											</div>
+										</label>
+										<div class="checkbox-custom checkbox-warning mb5 mt15">
+											<input id="preview_del" name="preview_del" type="checkbox">
+											<label for="preview_del">Удалить миниатюру</label>
+										</div>
+									</div>
+									<div class="mt-3">
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="active" value="0">
+													<input id="active" type="checkbox" name="active" value="1" {% if catalog.active == 1 %} checked {% endif %}>
+													<label for="active">Активировать товар</label>
+												</div>
+											</label>
+										</div>
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="allow_index" value="0">
+													<input id="allow_index" type="checkbox" name="allow_index" value="1" {% if catalog.allow_index == 1 %} checked {% endif %}>
+													<label for="allow_index">Рекомендуемые</label>
+												</div>
+											</label>
+										</div>
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="active_guest" value="0">
+													<input id="active_guest" type="checkbox" name="active_guest" value="1" {% if catalog.active_guest == 1 %} checked {% endif %}>
+													<label for="active_guest">Активная номенклатура для гостей</label>
+												</div>
+											</label>
+										</div>
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="active_user" value="0">
+													<input id="active_user" type="checkbox" name="active_user" value="1" {% if catalog.active_user == 1 %} checked {% endif %}>
+													<label for="active_user">Активная номенклатура для пользователей</label>
+												</div>
+											</label>
+										</div>
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="use_integration" value="0">
+													<input id="use_integration" type="checkbox" name="use_integration" value="1" {% if catalog.use_integration == 1 %} checked {% endif %}>
+													<label for="use_integration">Использовать в интеграции</label>
+												</div>
+											</label>
+										</div>
+										<div class="col">
+											<label class="field option">
+												<div class="checkbox-custom">
+													<input type="hidden" name="hidden" value="0">
+													<input id="hidden" type="checkbox" name="hidden" value="1" {% if catalog.hidden == 1 %} checked {% endif %}>
+													<label for="hidden">Скрытие номенклатуры</label>
+												</div>
+											</label>
+										</div>
+									</div>
+									{% if catalog.id %}
+										<div class="mt-3">
+											<a href="/administration/module/price/settings/edit/{{catalog.id}}" target="_blank">Перейти в настройку цены</a>
+										</div>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+						{# Спецификации #}
+						<div class="tab-pane fade p-3" id="tab-specifications" role="tabpanel">
+							<div class="row">
+								<div class="col-12 mb-1"><strong>Обозначение</strong></div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="spec[1]" class="form-control" id="spec_1" value="{{catalog.spec[1]}}">
+										<label for="spec_1">Наименование</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="spec[2]" class="form-control" id="spec_2" value="{{catalog.spec[2]}}">
+										<label for="spec_2">Марка обозначения</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="spec[3]" class="form-control" id="spec_3" value="{{catalog.spec[3]}}">
+										<label for="spec_3">Доп. производитель</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12 mb-1"><strong>Вес</strong></div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[1]" class="form-control" id="weight_1" value="{{catalog.weight[1]}}">
+										<label for="weight_1">Вес НЕТТО, кг</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[4]" class="form-control" id="weight_4" value="{{catalog.weight[4]}}">
+										<label for="weight_4">Вес брутто, кг</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12 mb-1"><strong>Габариты</strong></div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[2]" class="form-control" id="weight_2" value="{{catalog.weight[2]}}">
+										<label for="weight_2">Длина (глубина), мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[6]" class="form-control" id="weight_6" value="{{catalog.weight[6]}}">
+										<label for="weight_6">Ширина, мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[7]" class="form-control" id="weight_7" value="{{catalog.weight[7]}}">
+										<label for="weight_7">Высота, мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input disabled type="text" name="weight[3]" class="form-control" id="weight_3" value="{{catalog.weight[3]}}">
+										<label for="weight_3">Объем</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-12 mb-1"><strong>Упаковка</strong></div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[8]" class="form-control" id="weight_8" value="{{catalog.weight[8]}}">
+										<label for="weight_8">Длина (глубина) упаковки, мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[9]" class="form-control" id="weight_9" value="{{catalog.weight[9]}}">
+										<label for="weight_9">Ширина упаковки, мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[10]" class="form-control" id="weight_10" value="{{catalog.weight[10]}}">
+										<label for="weight_10">Высота упаковки, мм</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input disabled type="text" name="weight[11]" class="form-control" id="weight_11" value="{{catalog.weight[11]}}">
+										<label for="weight_11">Объем упаковки</label>
+									</div>
+								</div>
+								<div class="col-3">
+									<div class="form-floating mb-3">
+										<input type="text" name="weight[5]" class="form-control" id="weight_5" value="{{catalog.weight[5]}}">
+										<label for="weight_5">Количество в упаковке</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						{# Другие настройки #}
+						<div class="tab-pane fade p-3" id="tab-other-settings" role="tabpanel">
+							<div class="row">
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="fulltitle" class="form-control" id="fulltitle" value="{{catalog.fulltitle}}">
+										<label for="fulltitle">Расширенный заголовок</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="keywords" class="form-control" id="keywords" value="{{catalog.keywords}}">
+										<label for="keywords">Ключевые слова</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="description" class="form-control" id="description" value="{{catalog.description}}">
+										<label for="description">Описание</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="view_360" class="form-control" id="view_360" value="{{catalog.view_360}}">
+										<label for="view_360">Ссылка на обзор 360</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="qmin" class="form-control" id="qmin" value="{{catalog.qmin}}">
+										<label for="qmin">Минимальное количество</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" name="qnorm" class="form-control" id="qnorm" value="{{catalog.qnorm}}">
+										<label for="qnorm">Допустимое количество</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" id="altname" value="{{catalog.altname}}" disabled>
+										<label for="altname">Ссылка</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" id="uid" value="{{catalog.user.full_user_name}}" disabled>
+										<label for="uid">Автор</label>
+									</div>
+								</div>
+								<div class="col">
+									<div class="form-floating mb-3">
+										<input type="text" class="form-control" id="date" value="{{catalog.created_at|date('d.m.Y H:i:s')}}" disabled>
+										<label for="date">Дата создания</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-3">
+									<label for="section">Область применения</label>
+									<select class="form-select" name="section[]" id="section" multiple="multiple">
+										{% for cs in catalog_sections %}
+											<option value="{{cs.id}}" {% if cs.id == catalog.section|split(',') %} selected {% endif %}>{{cs.title}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+						{# Атрибуты #}
+						<div class="tab-pane fade p-3" id="tab-attributes" role="tabpanel">
+							<div id="attribute"></div>
+						</div>
+						{# Файлы #}
+						<div class="tab-pane fade p-3" id="tab-files" role="tabpanel">
+							<div class="col">
+								<div>
+									<i class="">Переместите файлы чтобы поменять порядок использования</i>
+								</div>
+								<div>
+									<i class="text-danger">
+										<b>Не забудьте сохранить товар для сохранения изменений файлов</b>
+									</i>
+								</div>
+							</div>
+							<div class="col-3 mt-3"><input type="file" name="attach_id" class="form-control"></div>
+							<div id="files" class="mt-3">
+								{% if files|length > 0 %}
+									{% for file in files %}
+										<div class="file-item">
+											<a href="/download/{{file.id}}">{{file.name}}</a>
+											<i class="fas fa-times text-danger cp ml20 file-item__delete" title="Удалить"></i>
+											<input type="hidden" name="attach_id[]" value="{{file.id}}">
+										</div>
+									{% endfor %}
+								{% else %}
+									<div>Файлы не приложены</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>{% endblock content %}

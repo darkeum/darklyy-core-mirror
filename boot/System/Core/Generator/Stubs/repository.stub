@@ -1,0 +1,25 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Data\Repositories;
+
+use Boot\Abstracts\Repositories\Repository;
+
+class {{class-name}} extends Repository
+{
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [
+        'id' => '=',
+        // ...
+    ];
+}

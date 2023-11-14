@@ -1,0 +1,10 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'catalog'										=> 'Каталог',
+	'catalog_empty'								=> 'По данному запросу ни одного товара не найдено!',
+
+));
+
+?>

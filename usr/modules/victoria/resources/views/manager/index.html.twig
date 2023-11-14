@@ -1,0 +1,19 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+    {{ include('@/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	{{ assets({files: [], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+   {{ grid|raw }}
+{% endblock content %}

@@ -1,0 +1,41 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Events\Events;
+
+use Boot\Abstracts\Events\Event;
+use {{container-name}}\Models\{{model}};
+use Illuminate\Queue\SerializesModels;
+
+class {{class-name}} extends Event
+{
+    use SerializesModels;
+
+    public {{model}} $entity;
+
+    /**
+     * Конструктор {{class-name}}.
+     *
+     * @param $entity
+     */
+    public function __construct($entity)
+    {
+        $this->entity = $entity;
+    }
+
+    /**
+     * Получите каналы, на которых должно транслироваться событие.
+     */
+    public function broadcastOn(): array
+    {
+        return [];
+    }
+}

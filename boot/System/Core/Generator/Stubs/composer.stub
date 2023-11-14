@@ -1,0 +1,6 @@
+{
+  "name": "core/{{_container-name}}",
+  "description": "{{container-name}} модуль дял DarkFrame.",
+  "require": {
+  }
+}

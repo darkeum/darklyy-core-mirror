@@ -1,0 +1,20 @@
+#ajaxContent{
+    margin-bottom: 20px;
+}
+.listElem{
+    cursor: pointer;
+    padding: 10px;
+}
+.listElem:hover{
+    background-color: #c2c2c2;
+    font-weight: bold;
+}
+.action{
+    text-align: center;
+}
+.favorite{
+    color: white;
+}
+.favoriteActive>i{
+    color: #e8443b;
+}

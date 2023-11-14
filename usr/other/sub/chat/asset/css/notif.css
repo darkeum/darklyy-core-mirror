@@ -1,0 +1,21 @@
+.notifyjs-foo-base {
+    opacity: 0.95;
+    width: 300px;
+    background: #F5F5F5;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .notifyjs-foo-base .title {
+    width: 100%;
+  }
+  
+  .notifyjs-foo-base .buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .notifyjs-foo-base .no {
+    font-size: 20px;
+    cursor: pointer;
+  }

@@ -1,0 +1,14 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'hi_morning'										=> 'Доброе утро',
+	'hi_day'											=> 'Добрый день',
+	'hi_evning'											=> 'Добрый вечер',
+	'hi_night'											=> 'Доброй ночи',
+
+
+
+));
+
+?>

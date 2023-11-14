@@ -1,0 +1,142 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@catalog/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	{{ assets({files: [
+        "@catalog_/resources/js/excel.js"
+    ], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+	<input type="hidden" id="fields" value="{{fields|json_encode}}">
+	<div id="content">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-6" id="unload">
+						<form @submit.prevent="unload">
+							<h4>Выгрузка</h4>
+							<div class="row align-items-center">
+								<div class="col-2">
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="1" v-model="category" name="category" id="category" @change="changeCategory">
+										<label class="form-check-label" for="category">
+											Категория
+										</label>
+									</div>
+								</div>
+								<div class="col-10">
+									<select class="form-select" id="categories" name="categories">
+										{% for id, category in categories %}
+											<option value="{{id}}">{{category}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<div class="col-2">
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="1" id="man" name="man" v-model="man">
+										<label class="form-check-label" for="man">
+											Производитель
+										</label>
+									</div>
+								</div>
+								<div class="col-10">
+									<select class="form-select" id="manufactures" name="manufactures">
+										{% for manufacture in manufactures %}
+											<option value="{{manufacture.id}}">{{manufacture.name}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="row align-items-center mt-3">
+								<div class="col">
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" value="1" id="hidden" name="hidden" v-model="hidden">
+										<label class="form-check-label" for="hidden">
+											Загружать скрытые товары
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="accordion" id="accordionExample">
+									<div class="accordion-item">
+										<h2 class="accordion-header" id="headingTwo">
+											<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+												Поля
+											</button>
+										</h2>
+										<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+											<div class="accordion-body">
+												<input type="hidden" name="fields[]" value="id">
+												<div class="mb-2"> 
+										            <label class="form-check-label">
+                                                        <input class="form-check-input" type="checkbox" v-model="checkbox_all" @change="changeCheckbox">
+										            	Все
+										            </label>
+                                                </div>
+												<div class="mb-2" v-for="(field, index) in fields" :key="index"> 
+										            <label class="form-check-label">
+                                                        <input class="form-check-input checkbox_fields" type="checkbox" name="fields[]" 
+															:value="index" 
+															:disabled="field.disabled"
+															:checked="field.checked"
+															v-model="field.checked"
+                                                        >
+														${field.rus}
+														<sup title="Доп. нагрузка" v-if="field.load">*</sup>
+										            </label>
+                                                </div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="mt-3">
+								<button type="submit" class="btn btn-success">Скачать</button>
+							</div>
+							<div class="d-flex justify-content-between align-items-center">
+								<h4 class="mt-3">Файлы выгрузки</h4>
+								<i class="fas fa-redo fa-2xl cp text-primary" @click="refresh"></i>
+							</div>
+							<hr>
+							{% include "@catalog/manager/excel/batch" %}
+							{% include "@catalog/manager/excel/files" %}
+						</form>
+						{% include "@catalog/manager/excel/progressModal" with {'type': 'unload'} only %}
+					</div>
+					<div class="col-6" id="download">
+						<form @submit.prevent="download" ref="form_download">
+							<h4>Загрузка</h4>
+							<div class="btn-group">
+								<input type="file" name="file" class="form-control" @change="changeFile" ref="file_download">
+								<button type="submit" class="btn btn-success" :disabled="button_disabled">Загрузить</button>
+								<button type="button" class="btn btn-primary" :disabled="button_disabled" @click="clearFile">Очистить</button>
+							</div>
+							<div v-if="count" class="mt-3">Количество позиций: ${count}</div>
+							<div class="d-flex justify-content-between align-items-center">
+								<h4 class="mt-3">Файлы загрузки</h4>
+								<i class="fas fa-redo fa-2xl cp text-primary" @click="refresh"></i>
+							</div>
+							<hr>
+							{% include "@catalog/manager/excel/batch" %}
+							{% include "@catalog/manager/excel/files" %}
+						</form>
+						{% include "@catalog/manager/excel/progressModal" with {'type': 'download'} only %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

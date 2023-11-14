@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @apiGroup           {{container-name}}
+ * @apiName            {{operation}}
+ *
+ * @api                {{{doc-http-verb}}} {{doc-endpoint-url}} Название конечной точки.
+ * @apiDescription     Описание конечной точки.
+ *
+ * @apiVersion         {{endpoint-version}}.0.0
+ * @apiPermission      none
+ *
+ * @apiParam           {String}  параметры..
+ *
+ * @apiSuccessExample  {json}  Success-Response:
+ * HTTP/1.1 200 OK
+{
+  // Вставьте сюда ответ на запрос...
+}
+ */
+
+use {{container-name}}\UI\API\Controllers\Controller;
+use Boot\Support\Facades\Route;
+
+Route::{{http-verb}}('{{endpoint-url}}', [Controller::class, '{{operation}}'])
+    ->name('{{route-name}}')
+    ->middleware(['auth:{{auth-middleware}}']);
+

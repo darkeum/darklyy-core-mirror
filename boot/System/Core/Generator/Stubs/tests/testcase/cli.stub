@@ -1,0 +1,25 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Tests;
+
+use {{container-name}}\Tests\TestCase as BaseTestCase;
+
+
+/**
+ * Class {{class-name}}.
+ *
+ * Это класс консольного TestCase контейнера. Используйте этот класс, чтобы добавить вспомогательные функции консоли, связанные с вашим модулем.
+ */
+class {{class-name}} extends BaseTestCase
+{
+    // ..
+}

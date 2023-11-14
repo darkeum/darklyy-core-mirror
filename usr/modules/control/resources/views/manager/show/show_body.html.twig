@@ -1,0 +1,36 @@
+{% from "@control/manager/show/nf" import nf %}
+
+{% for item in control.control_detail %}
+    <tr>
+        <td>{{loop.index}}</td>
+        <td>{{item.s_sku}}</td>
+        <td>{{item.s_name}}</td>
+        <td>{{item.count}}</td>
+        <td>{{item.ndr|raw}}</td>
+        <td>{{nf(item.supply_order_detail.price_now)}}</td>
+        <td>
+            {% if item.sales_detail.s_price is null %}
+                -
+            {% else %}
+                {{nf(item.sales_detail.s_price)}}
+            {% endif %}
+        </td>
+        <td>{{nf(item.supply_order_detail.total)}}</td>
+        <td>
+            {% if item.sales_detail.total is null %}
+                -
+            {% else %}
+                {{nf(item.sales_detail.total)}}
+            {% endif %}
+        </td>
+        {% if item.sales_detail.total is null %}
+            <td>-</td>
+        {% else %}
+            {% set item_total = item.sales_detail.total - item.supply_order_detail.total %}
+            <td>
+                <div class="{% if item_total > 0 %}text-success{% else %}text-danger fw-bold{% endif %}">{{nf(item_total)}}</div>
+            </td>
+        {% endif %}
+        <td><button type="button" class="btn btn-danger btn-sm delete-item" data-id="{{item.id}}">Удалить</button></td>
+    </tr>
+{% endfor %}

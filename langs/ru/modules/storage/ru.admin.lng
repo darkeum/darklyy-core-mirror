@@ -1,0 +1,24 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'storage_main'										=> 'Менеджер склада',
+	'storage_count_order'								=> 'Заявки на остаток',
+	'storage_count_order_ok'							=> 'Подтвержден',
+	'storage_count_order_wait'							=> 'Ожидает подтверждения',
+	'storage_count_order_sos'							=> 'SOS',
+	'storage_count_order_supply'						=> 'Закупка',
+	'storage_transfer_active_on'						=> 'Поступление проведено',
+	'storage_transfer_active_off'						=> 'Поступление не проведено',
+	'storage_transfer_active_on_title'					=> 'Провести документ #[transfer]?',
+	'storage_transfer_active_on_text'					=> 'В действительно хотите провести документ поступления #[transfer]?',
+	'storage_transfer_active_off_title'					=> 'Отменить проведение у #[transfer]?',
+	'storage_transfer_active_off_text'					=> 'В действительно хотите отменить проведение у документа поступления #[transfer]?',
+	'storage_transfer_document'							=> 'Оригиналы документов',
+	'storage_transfer_document_empty'					=> 'Оригиналы документов отсутствуют',
+		
+	
+));
+
+
+?>

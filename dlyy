@@ -1,0 +1,83 @@
+#!/usr/bin/env php
+<?php
+
+use \Boot\App\Application;
+use \Boot\Contracts\Http\Kernel;
+use \Boot\Contracts\Debug\ExceptionHandler;
+use \Boot\Contracts\Console\Kernel as ConsoleKernel;
+
+define('DARKLYY_START', microtime(true));
+
+/*
+|------------------------------------------------- ------------------------
+| Регистрация автозагрузки
+|------------------------------------------------- ------------------------
+|
+| Composer предоставляет удобный автоматически сгенерированный загрузчик классов.
+| для нашего приложения. Нам просто нужно это использовать! Нам это потребуется
+| в сценарий здесь, так что нам не нужно беспокоиться о
+| загрузка любого из наших классов вручную. Это здорово расслабиться.
+|
+*/
+require dirname(__FILE__) . '/define.php';
+
+require __DIR__ . '/vendor/autoload.php';
+
+require_once ROOT . 'lib/php_funcs.php';
+require_once ROOT . 'lib/global.php';
+if (file_exists(ROOT . 'usr/other/other.functions.php')) {
+    require_once ROOT . 'usr/other/other.functions.php';
+}
+require_once ROOT . 'etc/' . ROUTE_LINK . 'global.config.php';
+
+$app = new Application(
+    ROOT ?? dirname(__DIR__)
+);
+
+$app->singleton(
+    Kernel::class,
+    Boot\App\Http\Kernel::class
+);
+
+$app->singleton(
+    ConsoleKernel::class,
+    Boot\App\Console\Kernel::class
+);
+
+$app->singleton(
+    ExceptionHandler::class,
+    Boot\App\Exceptions\Handler::class
+);
+
+/*
+|------------------------------------------------- -------------------------
+| Запустите приложение Darksander
+|------------------------------------------------- -------------------------
+|
+| Когда мы запускаем консольное приложение, текущая команда CLI будет
+| выполняется в этой консоли, и ответ отправляется обратно на терминал
+| или другое устройство вывода для разработчиков. Тут ничего не происходит!
+|
+*/
+
+$kernel = $app->make(ConsoleKernel::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
+
+/*
+|------------------------------------------------- -------------------------
+| Завершите работу приложения
+|------------------------------------------------- -------------------------
+|
+| Как только Darksander завершит работу, мы запустим события выключения.
+| так что любая окончательная работа может быть выполнена приложением, прежде чем мы закроем
+| вниз по процессу. Это последнее, что происходит с запросом.
+|
+*/
+
+$kernel->terminate($input, $status);
+
+exit($status);

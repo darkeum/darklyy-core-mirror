@@ -1,0 +1,40 @@
+<div class="modal fade" id="attribute{{typeModal}}Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form id="attributeForm{{typeModal}}Modal" action="{{formAction}}">
+				<div class="modal-header">
+					<h5 class="modal-title">{{titleValue}}</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-floating">
+						<input type="text" class="form-control" name="name" id="nameAttribute{{typeModal}}" autocomplete="off" required>
+						<label for="nameAttribute{{typeModal}}">Наименование атрибута</label>
+					</div>
+					<div>
+						<label for="categoryAttribute{{typeModal}}">Выберите категорию</label>
+						<select name="category[]" id="categoryAttribute{{typeModal}}" class="form-select" multiple>
+							{% for category_id, category_value in categories %}
+								<option value="{{category_id}}">{{category_value}}</option>
+							{% endfor %}
+						</select>
+					</div>
+              
+					<div class="mt-3">
+						<label>Тип значений:</label>
+						{% for type, type_rus in types %}
+							<label for="type_{{typeModal|lower}}_{{type}}" class="ms-2">
+								<input type="radio" class="me-2" name="type" value="{{type}}" id="type_{{typeModal|lower}}_{{type}}" {% if loop.first %} checked {% endif %}>
+                                {{type_rus}}
+							</label>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">{{submitValue}}</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

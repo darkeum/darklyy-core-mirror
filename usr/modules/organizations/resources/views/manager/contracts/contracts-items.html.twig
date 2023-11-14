@@ -1,0 +1,11 @@
+{% from '@organizations/manager/macro/nf.html.twig' import nf %}
+{% for item in data.content %}
+	<div class="card">
+		<div class="card-body">
+            <strong>{{item.name}}</strong>
+            <div class="d-flex mt-2" style="gap: 5px;"><strong>{{item.stats.RUB.count}}</strong> контрактов на сумму <strong class="d-flex" style="gap: 5px;">{{nf(item.stats.RUB.sum, 2)}} ₽</strong></div>
+        </div>
+	</div>
+{% else %}
+	<div class="text-secondary">Госконтракты отсутствуют</div>
+{% endfor %}

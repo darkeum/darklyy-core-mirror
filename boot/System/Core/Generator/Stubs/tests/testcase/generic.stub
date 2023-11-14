@@ -1,0 +1,24 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Tests;
+
+use Boot\Abstracts\Tests\PhpUnit\TestCase as ShipTestCase;
+
+/**
+ * Class {{class-name}}.
+ *
+ * Это класс главного контейнера TestCase. Используйте этот класс, чтобы добавить специальные вспомогательные функции вашего контейнера.
+ */
+class {{class-name}} extends ShipTestCase
+{
+    // ..
+}

@@ -1,0 +1,449 @@
+// Блокирование event мыши через css на элементах
+.tooltip, .grid-container div.dataTables_wrapper div.dataTables_processing {
+  pointer-events: none;
+}
+
+// Свое контекстное меню
+.context-menu-list {
+  padding: 0 !important;
+  border-radius: 0.357rem;
+
+  li:first-child {
+    border-top-right-radius: 0.357rem;
+    border-top-left-radius: 0.357rem;
+  }
+
+  li:last-child {
+    border-bottom-right-radius: 0.357rem;
+    border-bottom-left-radius: 0.357rem;
+  }
+}
+
+.d-table-select-sm {
+  min-height: 2.142rem;
+}
+
+.datatables-basic {
+  > :not(:first-child) {
+    border-top: 0 solid #ebe9f1;
+  }
+
+  > :not(caption) > * {
+    border-width: 0 0;
+  }
+}
+
+.dataTables_scrollHeadInner {
+  /*width: auto !important;*/
+  /*padding-right: 0 !important;*/
+  display: initial;
+}
+
+/* searchBuilder Css */
+.search-builder-custom {
+
+}
+
+.select2-container {
+  touch-action: none
+}
+
+.grid-popover {
+  pointer-events: none;
+}
+
+.grid-pack {
+  //pointer-events: none;
+  touch-action: none
+}
+
+// popover
+.qq-view {
+  width: 50%;
+  max-width: 500px;
+  pointer-events: none;
+
+  .popover-arrow {
+  }
+
+  .popover-body {
+    .qq-view-item {
+
+      display: grid;
+
+      div:first-child {
+        margin-top: 0 !important;
+      }
+
+      .more-info {
+        display: grid;
+      }
+    }
+  }
+}
+
+// Главный контейнер Grid
+.grid-container {
+  margin-bottom: 0;
+  padding: 0;
+
+  // Рамка индикатор блокировки
+  &.blocked {
+    -webkit-box-shadow: 0 0 5px 0 rgb(255 0 0);
+    -moz-box-shadow: 0 0 5px 0 rgb(255 0 0);
+    box-shadow: 0 0 5px 0 rgb(255 0 0);
+  }
+
+  &.modifier {
+    #g-modifier i {
+      color: var(--a-primary-color);
+    }
+
+    //#g-modifier:after {
+    //  content: "";
+    //  position: absolute;
+    //  right: 0;
+    //  top: 0;
+    //  width: 6px;
+    //  height: 6px;
+    //  border-radius: 50%;
+    //  background: var(--a-primary-color);
+    //}
+
+    tbody {
+      tr {
+        td {
+          //&:last-child:after {
+          //  position: absolute;
+          //  top: 45%;
+          //  left: 2px;
+          //  width: 6px;
+          //  height: 6px;
+          //  content: "";
+          //  border-radius: 50%;
+          //  background: var(--a-primary-color);
+          //}
+        }
+      }
+    }
+
+  }
+
+  // Нумерация столбцов
+  .dataTables_scrollHeadInner {
+    .grid-titles {
+
+      th {
+        position: relative;
+
+        .col-number {
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%);
+          top: -6px;
+          color: var(--a-primary-color);
+          border: 1px solid var(--a-primary-color);
+          background: white;
+          padding: 0 3px;
+          font-size: 0.6rem;
+          border-radius: 3px;
+          line-height: normal;
+        }
+
+      }
+
+    }
+  }
+
+  // Перенос заголовков таблицы
+  .grid-titles {
+    //white-space: nowrap;
+  }
+
+  .btn-toolbar {
+    gap: 8px;
+  }
+
+  table.dt-behavior {
+    overscroll-behavior: contain;
+  }
+
+  // Фон Grid - "Шахматный фон"
+  div.dts div.dataTables_scrollBody {
+    background: repeating-conic-gradient(#fff1 0% 25%, #0001 0% 50%) 0/30px 30px !important;
+  }
+
+  div.dts div.dataTables_scrollBody,
+  div.dataTables_scrollFootInner table.table-bordered tr th:first-child,
+  div.dataTables_scrollHeadInner table.table-bordered tr th:first-child {
+    border-left: none !important;
+  }
+
+  // Работа с Grid
+  table.dataTable {
+
+    &.collapsed {
+      tbody {
+        tr {
+
+          //&:hover {
+          //  .dtr-control:before {
+          //    color: $a-color;
+          //    background-color: white!important;
+          //
+          //    -webkit-box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+          //    -moz-box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+          //    box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+          //
+          //    .pris & {
+          //      color: $p-color;
+          //
+          //      -webkit-box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+          //      -moz-box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+          //      box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+          //    }
+          //  }
+          //}
+
+          &.parent {
+
+            .dtr-control:before {
+              content: "\e935" !important; // Шеврон up
+            }
+          }
+
+          td, th {
+            // Флаг вниз стрелка слева таблицы
+            &.dtr-control:before {
+              top: 0;
+              left: 0;
+              height: 100%;
+              //width: 1em!important;
+              margin-top: 0;
+              display: grid;
+              position: absolute;
+              //color: white!important;
+              border: 0;
+              border-right: 1px solid transparent;
+              border-radius: 0;
+              box-shadow: none !important;
+              box-sizing: content-box !important;
+              text-align: center !important;
+              text-indent: 0 !important;
+              font-family: 'feather' !important;
+              speak: none;
+              font-style: normal;
+              font-weight: normal;
+              font-variant: normal;
+              text-transform: none;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              content: "\e932" !important; // Шеврон down
+              align-items: center;
+              background-color: $a-color !important;
+
+              .pris & {
+                background-color: $p-color;
+              }
+
+            }
+          }
+        }
+      }
+    }
+
+    // Если таблица пуста то растягивать ее
+    &:has(tbody > tr > td.dataTables_empty) {
+      height: 100%;
+    }
+
+    // Работа с Thead Grid
+    thead {
+      .sorting:before, .sorting_asc:before, .sorting_desc:before, .sorting:after, .sorting_asc:after, .sorting_desc:after {
+        content: '' !important;
+      }
+
+      tr th {
+        // white-space: nowrap;
+      }
+    }
+
+    // Работа с TR Grid - Строки таблицы
+    tbody {
+      tr {
+
+        cursor: pointer;
+
+        // Наведение на строку
+        &:hover {
+          background-color: rgba($a-color-rgb, 0.1);
+
+          .pris & {
+            background-color: rgba($p-color-rgb, 0.1);
+          }
+
+          .dark-layout & {
+            background-color: #343d55;
+          }
+        }
+
+        // Выделение строки
+        &.selected {
+          background-color: $a-color !important;
+          color: var(--white);
+
+          .pris & {
+            background-color: $p-color !important;
+          }
+
+          // Смена цветов badge и btn
+          * {
+            box-shadow: none !important;
+          }
+
+          .btn {
+            border-color: var(--white) !important;
+            color: var(--white);
+          }
+
+          .badge {
+            //border: 1px solid;
+            //background-color: transparent!important;
+            //color: var(--white)!important;
+            background-color: var(--white) !important;
+            color: var(--a-primary-color);
+          }
+
+          .render {
+            a:link:not(.badge) {
+              color: var(--white);
+            }
+          }
+
+        }
+
+        //&.odd {
+        //  background-color: #ffffff;
+        //}
+
+        //&.even {
+        //  background-color: #fafafc;
+        //}
+
+        &.child {
+          .child:after {
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 1em;
+            margin-top: 0;
+            display: grid;
+            position: absolute;
+            font-family: "feather", sans-serif;
+            speak: none;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            content: "\e935";
+            align-items: center;
+            color: $a-color;
+
+            .pris & {
+              color: $p-color;
+            }
+          }
+        }
+
+        .child span.dtr-title {
+          min-width: auto;
+        }
+
+        .badge {
+          border: 1px solid transparent;
+        }
+
+        &:last-child td:last-child {
+          border-radius: 0;
+        }
+      }
+    }
+
+  }
+
+  div.dataTables_wrapper div.dataTables_processing {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    //display: flex;
+    margin-left: inherit;
+    margin-top: inherit;
+    text-align: center;
+    padding: inherit;
+    pointer-events: none;
+  }
+
+}
+
+.dark-layout {
+  .grid-container {
+    table {
+
+      tbody {
+      }
+
+      tr {
+        background: #283046;
+
+        &.selected {
+          td {
+            color: #ffffff;
+          }
+        }
+
+        td {
+
+        }
+      }
+
+    }
+  }
+}
+
+@keyframes row_after {
+  from {
+    top: 0;
+  }
+
+  75% {
+    top: 10px
+  }
+
+  to {
+    top: -10px
+  }
+}
+
+.menu-pulse {
+  box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+  animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}

@@ -1,0 +1,6 @@
+<select class="form-select select_attribute" name="attribute_data[selection][{{attribute.id}}]" id="attribute_{{attribute.id}}">
+	<option value="">Пусто</option>
+	{% for av in attribute.values %}
+		<option value="{{av.id}}" {% if av.id == attribute.relation.attribute_value_id %} selected {% endif %}>{{av.value}}</option>
+	{% endfor %}
+</select>

@@ -1,0 +1,2359 @@
+<?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
+namespace Boot\System\Grid;
+
+use Boot\System\Database\DB;
+use Boot\System\Grid\Data\Raw;
+use Boot\System\Grid\Data\Value;
+use Boot\System\Grid\Utils\Utils;
+use Boot\Support\Facades\Request;
+use Boot\System\Grid\Export\Export;
+use Boot\System\Grid\Exception\ExceptionDB;
+use Boot\System\Grid\Exception\ExceptionGrid;
+use Boot\System\Grid\Exception\ExceptionRender;
+
+abstract class Grid
+{
+    protected $grid_id;
+    protected $base_url;
+
+    protected $open_url_id = "@id";
+    protected $opts_type;
+
+    protected $input;
+
+    protected $page;
+    protected $title;
+    protected $limit;
+    protected $sidx;
+    protected $sord;
+    protected $out = 'json';
+    protected $json_mode;
+
+    protected $offset;
+    protected $count;
+    protected $total;
+
+    protected $where = array();
+    protected $where_glue = ' AND ';
+    protected $where_empty = 'true';
+
+    protected $table;
+    protected $query;
+    protected $query_agg;
+
+    protected $primary_key = array();
+    protected $primary_key_glue = '_';
+    protected $primary_key_auto_increment = null;
+
+    protected $do_agg = true;
+    protected $do_search = true;
+    protected $do_search_advanced = true;
+    protected $do_sort = true;
+    protected $do_limit = true;
+
+    protected $treegrid = false; //'adjacency' or 'nested'
+
+    protected $options = array();
+    protected $nav = array();
+
+    protected $cols = array();
+    protected $rows = array();
+    protected $agg = array();
+    protected $userdata = array();
+    protected $debug = array();
+
+    protected $response = array();
+
+    protected $db_type = null;
+
+    #Local column default
+    protected $cols_default = array();
+
+    #Base defaults
+    protected $default = array(
+
+        'cols' => array(
+            'label' => '',
+            'db' => '',
+            'db_agg' => '',
+            'unset' => false,
+            'replace' => null,
+            'formatter' => null,
+            'format_date' => null,
+            'manual' => false,
+            'hidden' => false,
+            'editable' => false,
+            'search' => true,
+            'search_op' => 'auto',
+            'classes' => '',
+            'align' => 'left',
+            'null' => null,
+            'encode' => true,
+            'excel_hidden' => false,
+            'excel_only' => false,
+        ),
+
+        'nav' => array(
+            'add' => false,
+            'edit' => false,
+            'del' => false,
+            'refresh' => true,
+            'search' => false,
+            'view' => false,
+        ),
+
+        'options' => array(
+            'datatype' => 'json',
+            'create' => 'function(){this.loadState({ refresh: false });}',
+            'mtype' => 'POST',
+            'loadui' => 'block',
+            'prmNames' => array(
+                'id' => '_id',
+            ),
+        ),
+
+        'reserved_col_names' => array('page', 'sidx', 'sord', 'nd', 'oper', 'filters', 'rd'),
+    );
+
+    protected $reserved_col_names;
+    protected $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op');
+    protected $query_placeholders = array('fields' => '{fields}', 'where' => '{where}');
+
+    protected $render_data = array();
+    protected $render_extend = 'opts';
+    protected $render_suffix_col = null;
+    protected $render_filter_toolbar = false;
+
+    protected $settings = array(
+        'grid_path' => 'tytj',
+        'encoding' => 'utf-8',
+
+        'db_driver' => 'Pdo',
+        'clear' => false,
+        'client' => PLUGINS . '/phpgrid/client/vendor',
+
+        'pdo_dsn' => null,
+        'pdo_user' => 'root',
+        'pdo_pass' => '',
+        'pdo_options' => null,
+
+        'debug_output' => true,
+
+        'input_grid' => 'grid',
+        'input_patch' => 'tytj',
+        'input_url' => '',
+        'input_module' => '',
+        'input_oper' => 'oper',
+    );
+
+    public function __construct()
+    {
+        //Установка базовых параметров
+        $this->setBaseParam();
+        //Инициализация
+        $this->beforeInit();
+        $this->init();
+        $this->afterInit();
+        //Установка Primary key      
+        reset($this->cols);
+        $this->primary_key = $this->primary_key ? (array)$this->primary_key : array(key($this->cols));
+        if (is_null($this->primary_key_auto_increment)) {
+            $this->primary_key_auto_increment = count($this->primary_key) == 1;
+        }
+        //Подготовка колонок
+        $this->reserved_col_names = $this->getReservedColNames();
+        foreach ($this->cols as $k => &$c) {
+            $c = $this->initColumn($k, $c);
+        }
+    }
+
+    /**
+     * Получение основных данных по имени класса
+     *     
+     * @return void
+     */
+    protected function setBaseParam()
+    {
+        $reflect = new \ReflectionClass($this);
+        $this->grid_id = $reflect->getShortName();
+        $this->patch = $reflect->getName();
+        $this->input = $this->getInput();
+        $this->base_url = '/' . \Boot\Support\Facades\Request::path() . '/grid';
+    }
+
+    /**
+     * Метод автоматического запуска который при наличии запроса на выполнение операции выполняет ее,
+     * а при отсутствии выводит данные для формирования таблицы, 
+     * если не указан input_grid (grid_id) прекращает выполнение
+     *     
+     * @return void
+     */
+    public function autorun()
+    {
+        // dd('fff');
+        $name = Request::has($this->getSetting('input_grid')) ? Request::get($this->getSetting('input_grid')) : '';
+        if ($name) {
+            if (Request::has($this->getSetting('input_oper'))) {
+                $this->oper($name, Request::get($this->getSetting('input_oper')));
+            } else {
+                $this->output($name);
+            }
+        }
+        exit;
+    }
+
+    /**
+     * Абстрактная функция для установки параметров
+     *
+     * @abstract
+     * @return void
+     */
+    abstract protected function init();
+
+    /**
+     * Метод вывода данных
+     *
+     * @throws ExceptionGrid
+     * @return void
+     */
+    public function output()
+    {
+        //Получение и валидация параметров требующихся для вывода данных
+        $this->getOutputParams();
+        //выполнение стандартной фильтрации       
+        if ($this->do_search) {
+            $this->search();
+        }
+        //выполнение расширенной фильтрации       
+        if ($this->do_search_advanced) {
+            $this->searchAdvanced();
+        }
+        //При отсутствии объекта базы данных ил шаблона запроса пытается подставить стандартный
+        if ($this->db_type == 'db') {
+            if (!$this->db) {
+                $this->db = $this->getDefaultDB();
+            }
+        } elseif ($this->db_type == 'query') {
+            if (!$this->query) {
+                $this->query = $this->getDefaultQuery();
+            }
+        }
+
+        //----------------
+        // Get agg data
+        //----------------
+
+        if ($this->do_agg) {
+            $this->getDataAgg();
+        }
+
+        //----------------
+        // Get rows data
+        //----------------
+
+        $this->getDataRows();
+
+        //----------------
+        // Build userdata
+        //----------------
+
+        $this->userdata = $this->getDataUser($this->userdata);
+
+        //----------------
+        // Set count automatically
+        //----------------
+
+        if (is_null($this->count)) {
+            $this->setRowCount();
+        }
+
+        // 
+        //----------------
+        // Do output
+        //----------------
+
+        $callback = array($this,  Utils::uscore2camel('out', $this->out));
+
+        if (!is_callable($callback)) {
+            throw new ExceptionGrid("Output type '{$this->out}' is not defined");
+        }
+        // dd($callback);
+        call_user_func($callback);
+    }
+
+    /**
+     * MAIN ACTION (2): Perform operation to change data is any way
+     *
+     * @param $oper - operation name
+     * @return void
+     */
+    public function oper($oper)
+    {
+        dd($oper);
+        $id = $this->input('_id');
+        $oper = strval($oper);
+
+        switch ($oper) {
+            case 'add':
+                $data = array_intersect_key($this->input, $this->cols);
+                $data = $this->operData($data);
+
+                $id = $this->opAdd($data);
+
+                #Not auto increment -> build new_id from data
+                if (empty($this->primary_key_auto_increment)) {
+                    $id = $this->implodePrimaryKey($data);
+                }
+
+                $this->response['new_id'] = $id;
+
+                $this->operAfterAddEdit($id);
+                break;
+
+            case 'edit':
+                $data = array_intersect_key($this->input, $this->cols);
+                $data = $this->operData($data);
+                //var_dump($data);
+
+                $this->opEdit($id, $data);
+
+                $this->operAfterAddEdit($id);
+                break;
+
+            case 'del':
+                $this->opDel($id);
+                break;
+
+            default:
+                $callback = array($this, Utils::uscore2camel('op', $oper));
+
+                if (is_callable($callback)) {
+                    call_user_func($callback);
+                } else {
+                    throw new ExceptionGrid("Oper $oper is not defined");
+                }
+                break;
+        }
+
+        $this->response = array_merge(array('success' => 1), $this->response);
+
+        $this->operComplete($oper);
+
+        //----------------
+        // Output result
+        //----------------
+
+        $this->json($this->response);
+    }
+
+    /**
+     * MAIN ACTION (3): Render grid
+     *
+     * $jq_loader->render('jq_example');
+     *
+     * @param array $render_data
+     * @return string
+     */
+    public function render($render_data = array(), $type = 'html')
+    {
+        if (!is_array($render_data)) {
+            throw new ExceptionRender('Render data must be an array');
+        }
+
+        $this->render_data = $render_data;
+
+        //------------------
+        // Basic data
+        //------------------
+
+        $data = array();
+
+        $data['extend'] = $this->render_extend;
+        $data['suffix'] = $this->renderGridSuffix($render_data);
+
+        //------------------
+        // Render ids
+        //------------------
+
+        $data['id'] = $this->grid_id . $data['suffix'];
+        $data['pager_id'] = $this->grid_id . $data['suffix'] . '_p';
+
+        //-----------------
+        // Render colModel
+        //-----------------
+
+        foreach ($this->cols as $k => $c) {
+            if (isset($c['unset']) and $c['unset']) continue;
+
+            #Remove internal column properties
+            $c = array_diff_key($c, array_flip($this->internal_col_prop));
+
+            $colModel[] = $this->renderColumn($c);
+        }
+
+        //-----------------
+        // Render options
+        //-----------------
+
+        $options = array(
+            'colModel' => $colModel,
+            'pager' => '#' . $data['pager_id'],
+        );
+
+        #URL's
+        $options['url'] = $options['editurl'] = $options['cellurl'] = $this->renderGridUrl();
+
+        #Any postData?
+        if ($post_data = $this->renderPostData()) {
+            $options['postData'] = $post_data;
+        }
+
+        $data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
+
+        //-----------------
+        // Render navigator
+        //-----------------
+
+        if (is_array($this->nav)) {
+            $data['nav'] = $this->renderNav(array_merge($this->default['nav'], $this->nav));
+        }
+
+        //------------------
+        // Render base html
+        //------------------
+        if ($this->getSetting('clear')) {
+            $data['html'] = $this->renderHtmlClear($data);
+        } else {
+            $data['html'] = $this->renderHtml($data, $type);
+        }
+        $data['js'] = $this->renderJs($data);
+        $data['clear'] = $this->getSetting('clear');
+
+        //-----------------
+        // Compile the final string
+        //-----------------
+   
+        return $this->renderComplete($data, $type);
+    }
+
+    /**
+     * All exceptions comes here
+     * Override this method for custom exception handling
+     *
+     * @param ExceptionGrid $e
+     * @return mixed
+     */
+    public function catchException(ExceptionGrid $e)
+    {
+        #More output types will be added
+        switch ($e->getOutputType()) {
+            case 'json':
+                $r = array(
+                    'error' => 1,
+                    'error_msg' => $e->getMessage(),
+                    'error_code' => $e->getCode(),
+                    'error_data' => $e->getData(),
+                    'error_type' => $e->getExceptionType(),
+                );
+
+                if ($this->Loader->get('debug_output')) {
+                    $r['error_string'] = (string)$e;
+                } else {
+                    if ($e instanceof ExceptionDB) {
+                        unset($r['error_data']['query']);
+                    }
+                }
+
+                $this->json($r);
+                break;
+
+            case 'trigger_error':
+                trigger_error($e->getMessage(), E_USER_ERROR);
+                break;
+        }
+
+        return $e;
+    }
+
+    /**
+     * (Output) Add new row to result set
+     * And also do related stuff
+     *
+     * @param array $row - raw data from database
+     * @return void
+     */
+    protected function addRow($row)
+    {
+        #Allow modification of result row without annoying overloading of 'addRow'
+        $row = $this->parseRow($row);
+
+        $id = $this->implodePrimaryKey($row);
+        $cell = array();
+
+        //----------------
+        // Fill cells
+        //----------------
+
+        foreach ($this->cols as $k => $c) {
+            #Discard this column in output?
+            if ($c['unset']) continue;
+            if (!empty($c['format_date'])) {
+                $row[$k] = empty($row[$k]) ? ($row["null"] ?? $row[$k]) : date($c['format_date'], strtotime($row[$k]));
+            }
+            #Parse each cell
+            $cell[] = $this->addRowCell($c, $row);
+        }
+        // dd($row);
+        #Prase whole row
+        $cell = $this->addRowComplete($id, $cell, $row);
+
+        $this->rows[] = array('id' => $id, 'cell' => $cell);
+    }
+
+    /**
+     * (Output) Populate cell
+     *
+     * @param array $c - column options
+     * @param array $row - data row
+     * @return mixed - final cell value
+     */
+    protected function addRowCell($c, $row)
+    {
+        $val = isset($row[$c['name']]) ? $row[$c['name']] : null;
+
+        #Handle nulls
+        if ($val === null and $c['null'] !== null) $val = $c['null'];
+
+        #Easy replace values
+        if ($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+
+        #Encode before output
+        if ($c['encode']) $val = $this->outputEncodeValue($c, $val);
+
+        return $val;
+    }
+
+    /**
+     * (Output) Per-row result modification
+     *
+     * @param integer $id row_id
+     * @param array $cell - parsed cells
+     * @param array $row - data row
+     * @return array - modified $cell
+     */
+    protected function addRowComplete($id, $cell, $row)
+    {
+        //----------------
+        // TreeGrid handling
+        //----------------
+
+        if ($this->treegrid == 'adjacency') {
+            $cell[] = $row['level'];
+            $cell[] = $row['parent'];
+            $cell[] = $row['isLeaf'];
+            $cell[] = $row['expanded'];
+            $cell[] = isset($row['loaded']) ? $row['loaded'] : false;
+        }
+
+        if ($this->treegrid == 'nested') {
+            $cell[] = $row['level'];
+            $cell[] = $row['lft'];
+            $cell[] = $row['rgt'];
+            $cell[] = $row['isLeaf'];
+            $cell[] = $row['expanded'];
+            $cell[] = isset($row['loaded']) ? $row['loaded'] : false;
+        }
+
+        //----------------
+        // Send all the vars beginning with '_' to userdata!
+        //----------------
+        $data = $this->nav;
+        //echo $_COOKIE[$this->grid_id.'Trash'];
+        if (isset($data['trash']) && $data['trash']) {
+            if (isset($_COOKIE[$this->grid_id . 'Trash']) && !empty($_COOKIE[$this->grid_id . 'Trash']) && $_COOKIE[$this->grid_id . 'Trash'] == '1') {
+                $trash_field = explode(".", $data["trashfield"]);
+                $trash_field = $trash_field[1] ?? $trash_field[0];
+                if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
+                    if (!empty($row[$trash_field])) {
+                        $cols_class = 'text-danger';
+                        $row['_class'] = $cols_class;
+                    }
+                } else {
+                    if ($row[$trash_field] == 1) {
+                        $cols_class = 'text-danger';
+                        $row['_class'] = $cols_class;
+                    }
+                }
+            }
+        }
+
+
+        foreach ($row as $k => $v) {
+            if (strpos($k, '_') === 0) {
+                $this->userdata[$k][$id] = $v;
+            }
+        }
+
+        return $cell;
+    }
+
+    protected function afterInit()
+    {
+        $data = $this->nav;
+        //echo $_COOKIE[$this->grid_id.'Trash'];
+        if (isset($data['trash']) && $data['trash']) {
+
+            if (isset($_COOKIE[$this->grid_id . 'Trash']) && !empty($_COOKIE[$this->grid_id . 'Trash']) && $_COOKIE[$this->grid_id . 'Trash'] == '1') {
+                if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
+                    if ($this->db_type == 'db') {
+                        $this->where['trash'] = [
+                            'operator' => 'not_null',
+                            'column' => $data['trashfield'],
+                        ];
+                    } else {
+                        $this->where['trash'] = $data['trashfield'] . " IS NOT NULL";
+                    }
+                } else {
+                    $this->where['trash'] = $data['trashfield'] . " != '0'";
+                }
+            } else {
+                if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
+                    if ($this->db_type == 'db') {
+                        $this->where['trash'] = [
+                            'operator' => 'null',
+                            'column' => $data['trashfield'],
+                        ];
+                    } else {
+                        $this->where['trash'] = $data['trashfield'] . " IS NULL";
+                    }
+                } else {
+                    $this->where['trash'] = $data['trashfield'] . " != '1'";
+                }
+            }
+            $this->cols[$data['trashfield']] = array('label' => 'Корзина', 'db' => $data['trashfield'], 'hidden' => 'true', 'excel_hidden' => true, 'name' => $data['trashfield'], 'index' => $data['trashfield']);
+            //print_r($this->cols);
+        }
+    }
+
+    /**
+     * Custom actions before 'init'
+     * Place your singletons init here
+     */
+    protected function beforeInit()
+    {
+        //empty
+
+    }
+
+    //-----------------
+    // Query builder
+    //-----------------
+
+    /**
+     * (Output) Build complete AGG-query
+     *
+     * @param  string $q - base query
+     * @return string - final query
+     */
+    protected function buildQueryAgg($q)
+    {
+
+        //-----------------
+        // Placeholders
+        //-----------------		
+        $replace = array(
+            $this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'agg'),
+            $this->query_placeholders['fields'] => $this->buildFieldsAgg($this->cols),
+        );
+
+        $q = strtr($q, $replace);
+
+        return $q;
+    }
+
+    /**
+     * (Output) Build complete ROWS-query
+     *
+     * @param  string $q - base query
+     * @return string - final query
+     */
+    protected function buildQueryRows($q)
+    {
+        //-----------------
+        // Placeholders
+        //-----------------
+        // dd($this->where);
+        $replace = array(
+            $this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'rows'),
+            $this->query_placeholders['fields'] => $this->buildFields($this->cols),
+        );
+
+        $q = strtr($q, $replace);
+
+        //-----------------
+        // ORDER BY, LIMIT, OFFSET
+        //-----------------
+
+        if ($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
+        if ($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
+
+        return $q;
+    }
+
+    /**
+     * (Output) Implode {fields} for ROWS-query using 'db' property
+     *
+     * @param  array $cols - grid columns
+     * @return string - imploded list
+     */
+    protected function buildFields($cols)
+    {
+        $fields = array();
+
+        foreach ($cols as $k => &$c) {
+            if ($c['manual']) continue;
+
+            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+        }
+
+        return implode(', ', $fields);
+    }
+
+    /**
+     * (Output) Implode {fields} for AGG-query using 'db_agg' property
+     *
+     * @param  array $cols - grid columns
+     * @return string - imploded list
+     */
+    protected function buildFieldsAgg($cols)
+    {
+        #Count should always be here!
+        $fields = array('count(*) AS _count');
+
+        foreach ($cols as $k => $c) {
+            if (!$c['db_agg']) continue;
+
+            switch ($c['db_agg']) {
+                    #Common
+                case 'sum':
+                case 'avg':
+                case 'count':
+                case 'min':
+                case 'max':
+                    $fields[] = $c['db_agg'] . '(' . $c['db'] . ') AS ' . $k;
+                    break;
+
+                    #Custom
+                default:
+                    $fields[] = $c['db_agg'] . ' AS ' . $k;
+                    break;
+            }
+        }
+
+        return implode(', ', $fields);
+    }
+
+    /**
+     * (Output) Builds paging for ROWS-query
+     * LIMIT x OFFSET y
+     *
+     * Alter this if your database requires other syntax
+     *
+     * @param  integer $limit
+     * @param  integer $page
+     * @return string
+     */
+    protected function buildLimitOffset($limit, $page)
+    {
+        $limit = intval($limit);
+        $page = intval($page);
+
+        if ($limit > 0 and $page > 0) {
+            $offset = ($page * $limit) - $limit;
+            return "LIMIT $limit OFFSET $offset";
+        }
+
+        return '';
+    }
+
+    /**
+     * (Output) Builds sorting for ROWS-query
+     * Overload it to introduce more complex
+     *
+     * Input is checked in 'getOutputParams', so we trust it
+     *
+     * @param  string $sidx - field name
+     * @param  string $sord - order (asc, desc)
+     * @return string
+     */
+    protected function buildOrderBy($sidx, $sord)
+    {
+        if ($sidx and $sord) {
+            return "ORDER BY $sidx $sord";
+        }
+
+        return '';
+    }
+
+    /**
+     * (Output) Builds {where} both for ROWS and AGG queries
+     *
+     * @param array $where - array with conditions
+     * @param string $glue - glue string (' AND ', ' OR ')
+     * @param string $type - query type ('agg', 'rows')
+     * @return string - imploded condition string
+     */
+    protected function buildWhere($where, $glue, $type)
+    {
+        //print_r($where ? $where: '');
+        return $where ? implode($glue, $where) : $this->where_empty;
+    }
+
+    /**
+     * (Output) Generate default query if only $this->table was set
+     *
+     * @return string
+     */
+    protected function getDefaultDB()
+    {
+        if (empty($this->table)) {
+            return '';
+        }
+
+        return DB::table($this->table);
+    }
+
+    protected function getDefaultQuery()
+    {
+        if (empty($this->table)) {
+            return '';
+        }
+
+        return "
+			SELECT {fields}
+			FROM {$this->table}
+			WHERE {where}
+		";
+    }
+
+    /**
+     * Получение и валидация параметров требующихся для вывода данных
+     */
+    protected function getOutputParams()
+    {
+        $this->page = max(1, intval($this->input('page', 1)));
+        $this->limit = max(-1, intval($this->input['rows']));
+        // $this->sidx = $this->input('sidx') ? (Str::isAlphanumeric($this->input('sidx')) ? $this->input('sidx') : $this->primary_key[0]) : $this->primary_key[0];
+        $this->sidx = $this->input('sidx') ?: $this->primary_key[0];
+        $this->sord = in_array($this->input('sord'), array('asc', 'desc')) ? $this->input('sord') : 'asc';
+        $this->out = $this->input('_out', 'json');
+    }
+
+    public function setSetting($key, $value)
+    {
+        $settings[$key] = $value;
+    }
+    /**
+     * (Output) Get AGG data - over the whole result set
+     * Save it to $this->agg
+     */
+    protected function getDataAgg()
+    {
+        if ($this->db_type == 'db') {
+            $db = $this->buildDBWhere($this->db);
+            $result = ['_count' =>  $db->count()];
+        } elseif ($this->db_type == 'model') {
+        } else {
+            $query = $this->buildQueryAgg($this->query_agg ? $this->query_agg : $this->query);
+            // dd($query);
+            $result = DB::select($query);
+            if (count($result) == 1) {
+                $result = (array)  $result[0];
+            }
+            $this->debug['query_agg'] = $query;
+        }
+        $this->agg = $result;
+    }
+
+    /**
+     * (Output) Get ROWS data - the current page
+     * Save it to $this->rows via 'addRow'
+     */
+
+    protected function buildDBRows($db)
+    {
+        $db = $this->buildDBWhere($db);
+        $limit = intval($this->limit);
+        $page = intval($this->page);
+        //Установка сортировки 
+        if ($this->sidx && $this->sord) {
+            $db->orderBy($this->sidx, $this->sord);
+        }
+        //установка limit и offset для постраничного вывода
+        if ($limit > 0 and $page > 0) {
+            $offset = ($page * $limit) - $limit;
+            $db->offset($offset);
+            $db->limit($limit);
+        }
+        // dd($db);
+        return $db;
+    }
+
+    protected function buildDBWhere($db)
+    {
+        //выборка полей для вывода
+        $fields = array();
+        foreach ($this->cols as $k => &$c) {
+            if ($c['manual']) continue;
+            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+        }
+        $db->select($fields);
+
+        //установка фильтров
+        if (!empty($this->where)) {
+            // dd($this->where);
+            foreach ($this->where as $k => $v) {
+                //    $w = explode(' ', $v);
+                switch (mb_strtolower($v["operator"])) {
+                    default:
+                        $db->where($v['column'], $v['operator'], $v['value']);
+                        break;
+                    case "between":
+                        $db->whereBetween($v['column'], $v['value']);
+                        break;
+                    case "null":
+                        $db->whereNull($v['column']);
+                        break;
+                    case "not_null":
+                        $db->whereNotNull($v['column']);
+                        break;
+                }
+            }
+        }
+        return $db;
+    }
+
+
+    protected function getDataRows()
+    {
+        if ($this->db_type == 'db') {
+            $db = $this->buildDBRows($this->db);
+            // DB::enableQueryLog();
+            foreach ($db->get() as $r) {
+                $this->addRow((array) $r);
+            }
+            // dd(DB::getQueryLog());
+        } elseif ($this->db_type == 'model') {
+        } else {
+            $query = $this->buildQueryRows($this->query);
+            $result = DB::select($query);
+            foreach ($result as $r) {
+                $this->addRow((array) $r);
+            }
+            $this->debug['query_rows'] = $query;
+        }
+    }
+
+    /**
+     * (Output) Build 'userdata'
+     *
+     * @param array $userdata - orignal value
+     * @return array - final value
+     */
+    protected function getDataUser($userdata)
+    {
+        if ($this->agg) {
+            $userdata['agg'] = $this->agg;
+        }
+
+        return $userdata;
+    }
+
+
+    /**
+     * It is the ONLY entry-point for external data
+     *
+     * @return array
+     */
+    protected function getInput()
+    {
+        $req = array_merge($_GET, $_POST);
+
+        #Ajax input is always utf-8 -> convert it
+        if ($this->getSetting('encoding') != 'utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            $req = Utils::arrayIconv($req, 'utf-8', $this->getSetting('encoding'));
+        }
+
+        return $req;
+    }
+
+    protected function getSetting($key)
+    {
+        return isset($this->settings[$key]) ? $this->settings[$key] : null;
+    }
+
+    /**
+     * Get reserved column names specific to this grid
+     *
+     * @return array - array of names
+     */
+    protected function getReservedColNames()
+    {
+        $names = $this->default['reserved_col_names'];
+
+        if ($this->treegrid == 'adjacency') {
+            $names = array_merge($names, array('parent', 'level', 'isLeaf', 'expanded', 'loaded'));
+        }
+
+        if ($this->treegrid == 'nested') {
+            $names = array_merge($names, array('level', 'lft', 'rgt', 'isLeaf', 'expanded', 'loaded'));
+        }
+
+        return $names;
+    }
+
+    /**
+     * Get row from DB
+     *
+     * @param $primary_key
+     * @return array
+     */
+    protected function getRowByPrimaryKey($primary_key)
+    {
+        $where = array();
+
+        foreach ($this->explodePrimaryKey($primary_key) as $k => $v) {
+            $where[] = "$k = " . $this->DB->quote($v);
+        }
+
+        $result = $this->DB->query("SELECT * FROM {$this->table} WHERE " . implode(' AND ', $where));
+        return $this->DB->fetch($result);
+    }
+
+    /**
+     * Init one column
+     * Apply defaults, check name etc.
+     *
+     * @param string $k - column name
+     * @param array $c - non-default column params
+     * @return array - complete column
+     */
+    protected function initColumn($k, $c)
+    {
+        #Check reserved keys
+        if (in_array($k, $this->reserved_col_names)) {
+            throw new ExceptionGrid("Column name '$k' reserved for internal usage!");
+        }
+
+        if (strpos($k, '_') === 0) {
+            throw new ExceptionGrid("Column name '$k' must NOT begin with underscore!");
+        }
+
+        #Name and index always match the array key
+        $c['name'] = $k;
+        $c['index'] = $k;
+
+        #Label = column key if not set
+        if (!isset($c['label'])) $c['label'] = $k;
+
+        #Merge with defaults
+        $c = array_merge($this->default['cols'], $this->cols_default, $c);
+
+        #DB = column key if not set
+        $c['db'] = $c['db'] ? $c['db'] : $k;
+
+        return $c;
+    }
+
+    //----------------
+    // OPERATIONS PART
+    //----------------
+
+    /**
+     * (Oper) Insert
+     *
+     * Please note: this is the only "Oper" function, which must return new row id
+     *
+     * @param  array $ins - form data
+     * @return integer - new_id
+     */
+    protected function opAdd($ins)
+    {
+        if (empty($this->table)) {
+            throw new ExceptionGrid('Table is not defined');
+        }
+
+        return $this->DB->insert($this->table, $ins, true);
+    }
+
+    /**
+     * (Oper) Update
+     *
+     * @param  integer $id - id to update
+     * @param  array $upd - form data
+     * @return void
+     */
+    protected function opEdit($id, $upd)
+    {
+        if (empty($this->table)) {
+            throw new ExceptionGrid('Table is not defined');
+        }
+
+        $this->DB->update($this->table, $upd, $this->explodePrimaryKey($id));
+    }
+
+    /**
+     * (Oper) Delete
+     *
+     * @param  integer|string $id - one or multiple id's to delete
+     * @return void
+     */
+    protected function opDel($id)
+    {
+        if (empty($this->table)) {
+            throw new ExceptionGrid('Table is not defined');
+        }
+
+        $where = array();
+
+        foreach (explode(',', $id) as $pk) {
+            $wh = array();
+
+            foreach ($this->explodePrimaryKey($pk) as $kk => $vv) {
+                $wh[] = "$kk = " . $this->DB->quote($vv);
+            }
+
+            $where[] = '(' . implode(' AND ', $wh) . ')';
+        }
+
+        $this->DB->delete($this->table, implode(' OR ', $where));
+    }
+
+    //----------------
+    // OPER HOOKS PART
+    //----------------
+
+    /**
+     * (Oper) Modify form data for opAdd and opEdit only
+     * These operations usually need the same modifications, so i made a stand-alone hook for them
+     *
+     * @param  array $r - form data
+     * @return array - modified form data
+     */
+    protected function operData($r)
+    {
+        return $r;
+    }
+
+    /**
+     * (Oper) Hook after opAdd and opEdit
+     * Useful for uploading images after processing other data etc.
+     *
+     * @param $id - id of updated or inserted row
+     * @return void
+     */
+    protected function operAfterAddEdit($id)
+    {
+        return;
+    }
+
+    /**
+     * (Oper) Hook after ALL oper's
+     * Useful for cleanup and dropping caches
+     *
+     * @param  $oper - operation name
+     * @return void
+     */
+    protected function operComplete($oper)
+    {
+        return;
+    }
+
+    //----------------
+    // OUTPUT PART
+    //----------------
+
+    /**
+     * Output json
+     */
+    protected function outJson()
+    {
+        $data = array(
+            'page' => $this->page,
+            'total' => $this->total,
+            'records' => $this->count,
+            'rows' => $this->rows,
+            'userdata' => $this->userdata,
+        );
+
+        if ($this->getSetting('debug_output')) {
+            $data['debug'] = $this->debug;
+        }
+
+        $this->json($data);
+    }
+
+    /**
+     * Output XML ... not supported
+     */
+    protected function outXml()
+    {
+        //unsupported
+    }
+
+    /**
+     * Export data using plugin
+     */
+    protected function outExport()
+    {
+        $type = Utils::checkAlphanum($this->input('export'));
+
+        $class = '\Boot\System\Grid\Export\\' . ucfirst($type);
+
+        if (!class_exists($class)) {
+            throw new ExceptionGrid("Export type $type does not exist");
+        }
+
+        #Weird >__<
+        $lib = new $class();
+        $this->setExportData($lib);
+        $lib->doExport();
+    }
+
+    /**
+     * (Output) Encode each row value before output
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return string - encoded value
+     */
+    protected function outputEncodeValue($c, $val)
+    {
+        return htmlspecialchars($val, ENT_QUOTES);
+    }
+
+    /**
+     * (Output) Modify row data before output
+     *
+     * @param  array $r - row data
+     * @return array - modified row data
+     */
+    protected function parseRow($r)
+    {
+        //$cols_class = 'text-danger';
+        //$r['_class'] = $cols_class;
+        return $r;
+    }
+
+    //----------------
+    // RENDER PART
+    //----------------
+
+    /**
+     * (Render) Render single column
+     *
+     * @param array $c - col properties
+     * @return array - modified col properties
+     */
+    protected function renderColumn($c)
+    {
+        return $c;
+    }
+
+    /**
+     * Get grid_id suffix when multiple instances are used on one page
+     *
+     * @param $render_data
+     * @return string
+     */
+    protected function renderGridSuffix($render_data)
+    {
+        if (isset($this->render_suffix_col) and isset($render_data[$this->render_suffix_col])) {
+            return Utils::checkAlphanum($render_data[$this->render_suffix_col]);
+        }
+
+        return '';
+    }
+
+    /**
+     * (Render) Base url is used into 'url', 'editurl', 'cellurl' options
+     *
+     * @return string
+     */
+    protected function renderGridUrl()
+    {
+        $params[$this->getSetting('input_grid')] = $this->grid_id;
+        // if($this->getSetting('clear'))
+        // {
+        $params['patch'] = $this->patch;
+        $params['module'] = $this->getSetting('input_module');
+        // }
+        foreach ($this->render_data as $k => $v) {
+            $params[$k] = $v;
+        }
+
+
+        return $this->base_url . '?'  . http_build_query($params);
+    }
+
+    protected function getOpenUrl()
+    {
+    }
+
+    /**
+     * (Render) There are few ways to create basic html markup for jqGrid
+     * You may alter this if you want yours
+     *
+     * @param $data - render data
+     * @return string - string to be added before .jqGrid call
+     */
+    protected function renderHtml($data, $type)
+    {
+        return $type == 'html' ? '<div id="content" class="animated fadeIn"><div id="' . $data['pager_id'] . '"></div><div class="row"><form id="table_form_' . $data['id'] . '"><table id="' . $data['id'] . '"  class="table ' . ($atribut['table_class'] ?? 'table-striped table-hover') . '" style="min-width: 800px;"></table></form></div></div>' : '<form id="table_form_' . $data['id'] . '"><table id="' . $data['id'] . '"  class="table table-striped table-hover" style="min-width: 800px;"></table></form>';
+    }
+
+    protected function renderHtmlClear($data)
+    {
+        return '';
+    }
+
+    protected function renderJs($data)
+    {
+        $grid_name = $data['id'];
+        $opts = [];
+        if ($this->opts_type == "open") {
+            $opts[] = 'ondblClickRow: id => {
+                const url = `' . $this->getOpenUrl() . '`.replace(`' . $this->open_url_id . '`, id);
+                window.open(url)
+            },';
+        }
+        $opts = implode("", $opts);
+        return ' <script type="text/javascript">	
+		var loadFirst = 0;
+		$(window).on("unload", function () {	
+			saveGrid();
+        });	
+        $("#' . $grid_name . '").on("destroy", function () {
+           saveGrid();
+        })
+		
+		
+        function initGrid() {
+            $(this).contextMenu(\'contextMenu\', {
+				menuStyle :{
+					width : "150px"
+				},
+                bindings: {
+                    \'edit\': function (t) {
+                        alert("Edit Row Command Selected");
+                    },
+                    \'add\': function (t) {
+                        alert("Add Row Command Selected");
+                    },
+                    \'del\': function (t) {
+                       
+					   
+					   
+					 removeModal(1);
+					   
+					   
+                    }
+                },
+                onContextMenu: function (event, menu) {
+                    var rowId = $(event.target).parent("tr").attr("id")
+                    
+                   $("#' . $grid_name . '").setSelection(rowId);
+
+                    return true;
+                }
+            });
+			
+        }
+   var lastSelection;
+		  function editRow(id) {
+                if (id && id !== lastSelection) {
+                    var grid = $("#' . $grid_name . '");
+                    grid.jqGrid(\'restoreRow\',lastSelection);
+                    grid.jqGrid(\'editRow\',id, {keys: true} );
+                    lastSelection = id;
+                }
+            }
+		function loadGrid()
+		{						
+			if(loadFirst == 0)
+			{
+				loadFirst++;
+				if( $.jgrid.isGridInStorage("' . $grid_name . '", {storageType:\'localStorage\'}) ) 
+				{
+					const options = {
+						useStorage : true,
+						storageType : "localStorage",
+						clearAfterLoad: false,  
+						beforeSetGrid : null,
+						afterSetGrid : null,
+						decompression: false,
+						decompressionModule :  "LZString",
+						decompressionMethod : "decompressFromUTF16",
+						restoreData : false
+					};
+					setTimeout(function () {
+					//$.jgrid.loadState("' . $grid_name . '", "", options);
+					//$("#idGrid").clearGridData();
+					//$("#' . $grid_name . '").trigger("reloadGrid");
+					//initGrid();
+					 $("#' . $grid_name . '").jqGrid("bindKeys");
+					
+					
+					
+					
+					}, 300);
+				} 
+				else 
+				{
+				  console.log(\'grid is not in session storage\');
+				}
+				
+			}
+			
+		};
+		
+		
+		function saveGrid()
+		{						
+			if(loadFirst != 0)
+			{
+				var	options = {
+				  useStorage : true,
+				  storageType : "localStorage",
+				  beforeSetItem : null,
+				  compression: false,
+				  compressionModule :  \'LZString\',
+				  compressionMethod : \'compressToUTF16\',
+				  debug : false,
+				  saveData : false
+				}
+				$.jgrid.saveState("' . $grid_name . '", options);
+			}
+			else
+			{
+				if( $.jgrid.isGridInStorage("' . $grid_name . '", {storageType:\'localStorage\'}) ) 
+				{
+					var options = {
+						useStorage : true,
+						storageType : "localStorage",
+						clearAfterLoad: false,  
+						beforeSetGrid : null,
+						afterSetGrid : null,
+						decompression: false,
+						decompressionModule :  \'LZString\',
+						decompressionMethod : \'decompressFromUTF16\',
+						restoreData : true
+					}
+					$.jgrid.loadState("' . $grid_name . '", false, options);
+					//$("#idGrid").clearGridData();
+					$("#' . $grid_name . '").trigger("reloadGrid");
+				} 
+				else 
+				{
+				  alert(\'grid is not in session storage\');
+				}
+				
+			}
+			loadFirst++;
+			console.log(loadFirst);
+		};
+		let myRow = 30;
+		if(Cookies.get("rowNum")){
+		myRow = Cookies.get("rowNum");
+		}
+		$.extend($.jgrid.defaults,
+		{
+			caption: ``,
+			hidegrid: false,
+			hoverrows:true,
+			colMenu : true,
+			viewrecords:true,
+			scrollOffset:21,          
+			autowidth: true,
+			rowNum: myRow,
+			rowList:[30,50,100],
+			height:490,
+			responsive: true,
+			treeGrid_bigData: true,
+			styleUI: "Bootstrap",
+			hidegrid: false,
+			cellEdit : false,
+			editurl: \'clientArray\',
+			scrollPopUp:true,
+			scrollLeftOffset: "83%",
+			viewrecords: true,
+			scroll: 1, // set the scroll property to 1 to enable paging with scrollbar - virtual loading of records
+			emptyrecords: "Scroll to bottom to retrieve new page", // the message will be displayed at the bottom 
+			storeNavOptions : true,
+			pager: "#jqGridPager",
+			multipleSearch: true 
+		});		
+
+        var opts = {
+            ' . $opts . '
+        };
+				
+	</script>';
+    }
+
+
+    /**
+     * (Render) Alter 'nav'
+     *
+     * @param  $nav original nav
+     * @return array modified nav
+     */
+    protected function renderNav($nav)
+    {
+        return $nav;
+    }
+
+    /**
+     * (Render) Alter 'options'
+     *
+     * @param  array $opts original options
+     * @return array modified options
+     */
+    protected function renderOptions($opts)
+    {
+        return $opts;
+    }
+
+    /**
+     * (Render) Special hook for setting option 'postData'
+     * Oftenly used to set explicit invisible filters
+     *
+     * @return array postData
+     */
+    protected function renderPostData()
+    {
+        return array();
+    }
+
+    protected function setValue($data,  $first = null)
+    {
+        return  new Value($data, $first);
+    }
+
+    protected function setRaw($data,  $first = null)
+    {
+        return  new Raw($data);
+    }
+
+    /**
+     * (Render) Takes all previously generated parts and combine them into general output string
+     * You can completely override the rendering strategy here
+     *
+     * @param array $data
+     * @return string
+     */
+    protected function renderComplete($data, $type)
+    {
+        $data['extend'] = $data['extend'] ? $data['extend'] : '{}'; //prevent errors on empty 'extend'
+        $options = Utils::jsonEncode($data['options']);
+        $client = $this->getSetting('client');        
+        #Плагин Multiselect для jQuery UI необходим для выбора колонок
+        $return['javascript']['multiselect'] = '<script src="' . $client . '/js/ui.multiselect.js"></script>';
+        #Плагин DateRangePicker для выбора даты
+        $return['javascript']['daterangepicker'] = '<script src="' . $client . '/js/daterangepicker.js"></script>';
+        #Библиотека jqGrid
+        $return['javascript']['jqGrid'] = '<script src="' . $client . '/js/trirand/jquery.jqGrid.min.js"></script>';
+        #Язык для  библиотеки jqGrid
+        $return['javascript']['jqGridLocale'] = '<script src="' . $client . '/js/trirand/i18n/grid.locale-ru.js"></script>';
+        #Расширение библиотеки jqGrid для работы с phpGrid
+        $return['javascript']['jqGridExt'] = '<script src="' . $client . '/js/jquery.jqGrid.ext.js"></script>';
+        $return['javascript']['context'] = '<script src="' . $client . '/js/context-menu.js"></script>';
+        #Стиль для плагина multiselect
+        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="' . $client . '/css/ui.multiselect.css" />';
+        #Стиль для jqGrid
+        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="' . $client . '/css/trirand/ui.jqgrid-bootstrap.css" />';
+        $return['css'][] = '<link href="/usr/tpl/corp/assets/css/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
+        $return['css'][] = '<link href="/usr/plugins/phpgrid/client/jqgrid-ext.css" rel="stylesheet" type="text/css"/>';
+
+
+        $code = '';
+
+
+        $code .=  '
+
+       <script type="text/javascript">	
+        function dateRangePicker_onChange() {
+           var $input = $(\'#gs_date_view\');
+           var old_val = $input.val();
+       
+               setTimeout(function () {
+               if ($input.val() == old_val) {
+               $grid[0].triggerToolbar();
+       
+               }
+               }, 50);
+   
+           }
+           </script>
+
+        
+        <script type="text/javascript">
+var pager = "#' . $data['pager_id'] . '";
+
+var $grid = $("#' . $data['id'] . '");
+var $' . $data['id'] . ' = $grid;
+
+$grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "undefined" ? {} : ' . $data['extend'] . "));\n";
+
+
+
+        #Event binder
+        $code .= "\$grid.jqGrid('extBindEvents');\n";
+
+        #NavGrid
+        if (isset($data['nav'])) {
+            $nav_special = array('prmEdit', 'prmAdd', 'prmDel', 'prmSearch', 'prmView');
+            $code .= "\$grid.jqGrid('navGrid', pager, " . Utils::jsonEncode(array_diff_key($data['nav'], array_flip($nav_special)));
+
+            #Respect the argument order
+            foreach ($nav_special as $k) {
+                if (isset($data['nav'][$k])) {
+                    $code .= ', ' . Utils::jsonEncode($data['nav'][$k]);
+                } else {
+                    $code .= ', null';
+                }
+            }
+
+            $code .= ");\n";
+            #Fast edit button
+            if (isset($data['nav']['fastedit']) and $data['nav']['fastedit']) {
+                $code .= "\$grid.inlineNav(pager, {edit: true, add: false, del: false, cancel: true, editParams: {keys: true,},  addParams: {keys: true}});\n";
+            }
+            #Excel button
+            if (isset($data['nav']['excel']) and $data['nav']['excel']) {
+                if ($data['clear']) {
+                    $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '', title: '{$data['nav']['exceltext']}', buttonicon: 'glyphicon-floppy-disk', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
+                } else {
+                    $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '', title: '{$data['nav']['exceltext']}', buttonicon: 'glyphicon-floppy-disk', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
+                }
+            }
+
+            #Trash button
+            if (isset($data['nav']['trash']) and $data['nav']['trash']) {
+                if (isset($_COOKIE[$data['id'] . 'Trash']) && !empty($_COOKIE[$data['id'] . 'Trash']) && $_COOKIE[$data['id'] . 'Trash'] == '1') {
+
+                    $trashColor = 'text-danger';
+                } else {
+                    $trashColor = '';
+                }
+                $code .= "				
+				\$grid.jqGrid('navButtonAdd', pager, {caption: '', title: '{$data['nav']['trashtext']}', buttonicon: 'glyphicon-trash " . $trashColor . " cookTrash', onClickButton: function(){
+					if(\$.cookie('" . $data['id'] . "Trash') == '1')
+					{
+						\$.cookie('" . $data['id'] . "Trash', '0', {expires: 7, path: '/'}); 
+						
+					}
+					else
+					{
+						\$.cookie('" . $data['id'] . "Trash', '1', {expires: 7, path: '/'}); 
+						
+					}
+					\$('.cookTrash').toggleClass('text-danger');
+					\$grid.trigger('reloadGrid');
+				}})
+				
+				
+				\n";
+            }
+
+
+
+            #Action button
+            if (isset($data['nav']['action']) and $data['nav']['action']) {
+                $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['actiontext']}', title: '{$data['nav']['actiontext']}', icon: 'ui-extlink', onClickButton: function()
+				{ 
+				
+				
+ $('.ui-jqgrid-pager').eq(0).after(`<ul id='menuAction'>";
+                foreach ($data['nav']['actions'] as $key => $value) {
+                    $icon = '';
+                    $onclick = '';
+                    if (isset($value['onclick']) && !empty($value['onclick'])) {
+                        $onclick = "onclick='" . $value['onclick'] . "'";
+                    }
+                    if (isset($value['icon']) && !empty($value['icon'])) {
+                        $icon = "<span class='" . $value['icon'] . "'></span>";
+                    }
+                    $code .= "  <li id='" . $value['id'] . "' " . $onclick . "><div>" . $icon . " " . $value['title'] . "</div></li>";
+                }
+                $code .= "</ul>`);
+ $( \"#menuAction\" ).menu();
+				
+				
+				}});\n";
+            }
+
+            if (isset($data['nav']['del']) and $data['nav']['del']) {
+                $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['deltext']}', title: '{$data['nav']['deltext']}', icon: 'ui-extlink', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
+            }
+        }
+
+        #Filter toolbar
+        if ($this->render_filter_toolbar) {
+            $code .= "\$grid.jqGrid('filterToolbar');\n";
+        }
+        $code .=  '</script>';
+        if($type == 'html'){
+            return implode(' ', $return['css']) . ' ' . implode(' ', $return['javascript']) . $data['html'] .   $data['js'] . $code;
+        } else {
+            
+            return [
+                'html' =>  $data['html'],
+                'styles' => implode(' ', $return['css']),
+                'js' =>  implode(' ', $return['javascript']) .$data['js'] . $code
+            ];
+        }
+       
+    }
+
+
+    protected function getUid($table = null, $column = 'uid')
+    {
+        $rows = array();
+        $rows["0"] = "Гость";
+        if (!empty($table)) {
+            $users = DB::table($table)->leftJoin('users', 'users.id', '=', $table . '.' . $column)->distinct()->orderBy("users.surname")->select($table . '.' . $column)->get();
+            foreach ($users as $k => $v) {
+                $rows[$v->$column] = shortUserName($v->$column);
+            }
+        } else {
+            $users = DB::table('users')->orderBy("surname")->select('id')->get();
+            foreach ($users as $k => $v) {
+                $rows[$v->id] = shortUserName($v->id);
+            }
+        }
+        return $rows;
+    }
+
+    protected function getOrg($table, $column = 'org')
+    {
+        $rows = [];
+        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table . '.' . $column)->leftJoin('organizations', 'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
+        foreach ($org as $k => $v) {
+            $rows[$v->org_id] = $v->name;
+        }
+        return $rows;
+    }
+
+    protected function getManufacture($table, $column)
+    {
+        $rows = [];
+        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=', $table . '.' . $column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
+        foreach ($org as $k => $v) {
+            $rows[$v->id] = $v->name;
+        }
+        return $rows;
+    }
+
+    protected function getCategories($func_id = null)
+    {
+        $rows = [];
+        $cats_arr = \Boot\Support\Facades\Categories::getFullTree('catalog_v2');
+        $rows[''] = 'Без категории';
+
+        foreach ($cats_arr as $cid => $name) {
+            $id = $cid;
+            if (!empty($func_id) && is_callable($func_id)) {
+                $id = $func_id($cid);
+            }
+            $rows[$id] = $name;
+        }
+
+        return $rows;
+    }
+
+
+    //----------------
+    // SEARCH OPERATORS PART
+    //----------------
+
+    /**
+     * (Output) Perform searching based on input
+     * Populates $this->where with SQL-expressions
+     *
+     * @return void
+     */
+    protected function search()
+    {
+        foreach ($this->cols as $k => $c) {
+            if (!isset($this->input[$k]) or $this->input[$k] === '') {
+                continue;
+            }
+
+            #Preserve original input value
+            $val = $this->input[$k];
+            // dd($val);
+            if (is_array($val)) {
+                foreach ($val as $kk => $vv) {
+                    // dump($kk);
+                    Utils::checkAlphanum($kk);
+                    $val[$kk] = $this->searchCleanVal($vv);
+                }
+            } else {
+                $val = $this->searchCleanVal($val);
+            }
+
+            //------------------
+            // Apply search operator
+            //------------------
+
+            $callback = array($this, Utils::uscore2camel('searchOp', $c['search_op']));
+
+            // dd( $c['search_op']);
+            if (!is_callable($callback)) {
+                throw new ExceptionGrid('Search operation ' . $c['search_op'] . ' is not defined');
+            }
+
+            $wh = call_user_func($callback, $c, $val);
+            if ($wh) $this->where[] = $wh;
+        }
+    }
+
+    /**
+     * (Output) Perform searching based on input json-encoded variable 'filters'
+     * Populates $this->where with SQL-expressions
+     *
+     * @return void
+     */
+    protected function searchAdvanced()
+    {
+        $filters = $this->input('filters');
+
+        if (empty($filters)) {
+            return;
+        }
+
+        $filters = json_decode($filters, true);
+
+        if (empty($filters)) {
+            return;
+        }
+
+        $this->where[] = $this->searchAdvancedGroup($filters);
+    }
+
+    /**
+     * (Output) Recursive processor for each search group
+     *
+     * @param $row
+     * @return string
+     */
+    protected function searchAdvancedGroup($row)
+    {
+        static $base = array(
+            'groupOp' => 'AND',
+            'rules' => array(),
+            'groups' => array(),
+        );
+
+        static $basic_ops = array(
+            'eq' => '=',
+            'ne' => '!=',
+            'lt' => '<',
+            'le' => '<=',
+            'gt' => '>',
+            'ge' => '>=',
+        );
+
+        static $like_ops = array(
+            'bw' => "LIKE '{data}%'",
+            'bn' => "NOT LIKE '{data}%'",
+            'ew' => "LIKE '%{data}'",
+            'en' => "NOT LIKE '%{data}'",
+            'cn' => "LIKE '%{data}%'",
+            'nc' => "NOT LIKE '%{data}%'",
+        );
+
+        $row = array_merge($base, $row);
+        $row['groupOp'] = in_array($row['groupOp'], array('AND', 'OR')) ? $row['groupOp'] : 'AND';
+
+        $wh = array();
+
+        //------------
+        // Process rules
+        //------------
+
+        foreach ($row['rules'] as $r) {
+
+            if (!array_key_exists($r['field'], $this->cols)) {
+                continue;
+            }
+
+            $op = $r['op'];
+
+            $c = $this->cols[$r['field']];
+            $data = $this->searchCleanVal($r['data']);
+
+            //-------------
+            // Empty data? Skip this rule!
+            //-------------
+
+            if (empty($data) and !in_array($op, array('nu', 'nn'))) {
+                continue;
+            }
+
+            //-------------
+            // Customer search op
+            //-------------
+            /*
+            if($c['search_op'] and $c['search_op'] != 'auto')
+            {
+                $callback = array($this, Utils::uscore2camel('searchOp', $c['search_op']));
+
+                if(!is_callable($callback))
+                {
+                    throw new ExceptionGrid('Search operation ' . $c['search_op'] . ' is not defined');
+                }
+
+                $wh[] = call_user_func($callback, $c, $data);
+
+                continue;
+            }
+*/
+            //-------------
+            // Common search op's
+            //-------------
+
+            if (array_key_exists($op, $basic_ops)) {
+                $wh[] = $c['db'] . ' ' . $basic_ops[$op] . " '$data'";
+            } elseif (array_key_exists($op, $like_ops)) {
+                $wh[] = $c['db'] . ' ' . str_replace('{data}', addcslashes($data, '%_'), $like_ops[$op]);
+            } else {
+                switch ($op) {
+                    case 'nu':
+                        $wh[] = $c['db'] . ' IS NULL';
+                        break;
+
+                    case 'nn':
+                        $wh[] = $c['db'] . ' IS NOT NULL';
+                        break;
+
+                    case 'in':
+                        $wh[] = $c['db'] . " IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        break;
+
+                    case 'ni':
+                        $wh[] = $c['db'] . " NOT IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        break;
+
+                    case 'ne':
+                        $wh[] = $c['db'] . " NOT IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        break;
+                }
+            }
+        }
+
+        //------------
+        // Process sub-groups recursively
+        //------------
+
+        foreach ($row['groups'] as $g) {
+            $wh[] = $this->searchAdvancedGroup($g);
+        }
+
+        //------------
+        // Implode rules
+        //------------
+
+        $wh = array_filter($wh);
+        return $wh ? ('(' . implode(' ' . $row['groupOp'] . ' ', $wh) . ')') : $this->where_empty;
+    }
+
+    /**
+     * (Output) Clean each search value before sending it to other functions
+     * Returns clean, but UNQUOTED value!!
+     *
+     * @param $val - value
+     * @return string - clean value
+     */
+    protected function searchCleanVal($val)
+    {
+        $val = trim($val);
+        $val = "'" . $val . "'";
+        // $val = $this->DB->quote($val);
+
+        #Strip quotes for easier values handling
+        $start = (mb_strpos($val, "E'") === 0) ? 2 : 1;
+        $val = mb_substr($val, $start, -1);
+        // dd( $val);
+        return $val;
+    }
+
+    /**
+     * (Output) Auto detect of searchOp
+     *
+     * @param  $c - column settings
+     * @param  $val - "clean" value. If you need original value - use $this->input
+     * @return string - SQL-expression -> goes directly to WHERE. Set false to skip search.
+     */
+    protected function searchOpAuto($c, $val)
+    {
+        #Search type - select?
+        if (isset($c['stype']) and $c['stype'] == 'select') {
+            return self::searchOpEqual($c, $val);
+        }
+
+        #Numeric by formatter?
+        if (isset($c['formatter']) and in_array($c['formatter'], array('integer', 'numeric', 'currency'))) {
+            return self::searchOpNumeric($c, $val);
+        }
+
+        #Numeric by value?
+        if (preg_match('#^([<>=!]{1,2})?\d+$#', $val)) {
+            return self::searchOpNumeric($c, $val);
+        }
+
+        #Seems to be 'like'
+        return self::searchOpLike($c, $val);
+    }
+
+    /**
+     * (Output) Disable search
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return bool
+     */
+    protected function searchOpIgnore($c, $val)
+    {
+        return false;
+    }
+
+    /**
+     * (Output) Look for EXACT match
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return string
+     */
+    protected function searchOpEqual($c, $val)
+    {
+        return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
+    }
+
+    /**
+     * (Output) Look for similar text
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return string
+     */
+    protected function searchOpLike($c, $val)
+    {
+        #Escape wildcards
+        $val = addcslashes($val, '%_');
+        $op = 'LIKE';
+        return ['column' => $c['db'], 'operator' => $op, 'value' => '%' . $val . '%'];
+    }
+
+    /**
+     * (Output) Look for list of values
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return string
+     */
+    protected function searchOpIn($c, $val)
+    {
+        $hash = array_map('trim', explode(',', $val));
+        return ['column' => $c['db'], 'operator' => 'IN', 'value' => $hash];
+    }
+
+    /**
+     * (Output) Look for numeric value
+     * Supports prefixes to search for range of numeric values
+     *
+     * @param $c - column
+     * @param $val - value
+     * @return string
+     */
+    protected function searchOpNumeric($c, $val)
+    {
+        static $prefix = array('<=', '>=', '<>', '!=', '<', '>', '=');
+
+        foreach ($prefix as $p) {
+            if (strpos($val, $p) === 0) {
+                $op = $p;
+                $val = substr($val, strlen($p));
+                break;
+            }
+        }
+
+        $op = isset($op) ? $op : '=';
+        $val = floatval(trim($val));
+        return ['column' => $c['db'], 'operator' => $op, 'value' => $val];
+    }
+
+    /**
+     * (Output) Send data to export library
+     *
+     * @param jqGrid_Export $lib
+     * @return void
+     */
+    protected function setExportData(Export $lib)
+    {
+        $lib->grid_id = $this->grid_id;
+        $lib->input = $this->input;
+        $lib->db = $this->db;
+        $lib->settings = $this->settings;
+        $lib->title = $this->title;
+
+        $lib->cols = $this->cols;
+        $lib->rows = $this->rows;
+        $lib->userdata = $this->userdata;
+
+        $lib->page = $this->page;
+        $lib->total = $this->total;
+    }
+
+    /**
+     * (Output) Set total row count and calc related vars
+     *
+     * @throws ExceptionGrid
+     * @param integer $count - set this argument to override auto-detection
+     * @return void
+     */
+    protected function setRowCount($count = null)
+    {
+        if (is_null($count)) {
+            #Retrieve count from agg data
+            if (isset($this->agg['_count'])) {
+                $count = $this->agg['_count'];
+            }
+            #Simply count 'rows'
+            else {
+                $count = count($this->rows);
+            }
+        }
+
+        $count = intval($count);
+
+        if ($count < 0) {
+            throw new ExceptionGrid('Invalid count value');
+        }
+
+        if (!$count) {
+            $this->count = 0;
+            $this->page = 0;
+            $this->total = 0;
+            $this->offset = 0;
+
+            return;
+        }
+
+        $this->count = $count;
+
+        if ($this->limit == -1) {
+            $this->total = 1;
+            $this->page = 1;
+            $this->offset = 0;
+        } elseif ($this->limit) {
+            $this->total = ($this->count > 0) ? ceil($this->count / $this->limit) : 0;
+
+            $this->page = ($this->page <= $this->total) ? $this->page : $this->total;
+            $this->offset = $this->limit * $this->page - $this->limit;
+        }
+    }
+
+    //----------------
+    // HELPER PART
+    //----------------
+
+    /**
+     * Get input var(s) by key(s)
+     * Nice shortcut against repeating "isset" everywhere
+     *
+     * @param string|array $key - single key or set of keys
+     * @param mixed $default - default value in case key does not exist
+     * @return mixed
+     */
+    protected function input($key, $default = null)
+    {
+        if (is_array($key)) {
+            $ret = array();
+
+            foreach ($key as $k) {
+                $ret[$k] = $this->input($k, $default);
+            }
+
+            return $ret;
+        }
+
+        return isset($this->input[$key]) ? $this->input[$key] : $default;
+    }
+
+    /**
+     * Send JSON to browser
+     * Please set $this->json_mode for special output
+     *
+     * TODO: add jsonp support
+     *
+     * @param  $obj object to send
+     * @return void
+     */
+    protected function json($obj)
+    {
+        #Mode preset
+        if ($this->json_mode) {
+            $mode = $this->json_mode;
+        }
+        #Common jQuery request
+        elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+            $mode = 'json';
+        }
+        #Probably ajaxForm iframe
+        else {
+            $mode = 'ajaxForm';
+        }
+
+        switch ($mode) {
+            case 'ajaxForm':
+                header("Content-type: text/html; charset={$this->getSetting('encoding')};");
+                //echo '<textarea>' . Utils::jsonEncode($obj) . '</textarea>';
+                echo Utils::jsonEncode($obj);
+                break;
+
+            default:
+                header("Content-type: application/json; charset={$this->getSetting('encoding')};");
+                echo Utils::jsonEncode($obj);
+                break;
+        }
+    }
+
+    /**
+     * Extract primary key from string
+     *
+     * @param string $primary_key
+     * @return array
+     * @throws ExceptionGrid
+     */
+    protected function explodePrimaryKey($primary_key)
+    {
+        $pk_parts = explode($this->primary_key_glue, $primary_key);
+
+        if (count($this->primary_key) != count($pk_parts)) {
+            throw new ExceptionGrid('Incorrect format of primary key');
+        }
+
+        return array_combine($this->primary_key, $pk_parts);
+    }
+
+    /**
+     * Build primary key string
+     *
+     * @param array $row
+     * @return string
+     */
+    protected function implodePrimaryKey($row)
+    {
+        foreach ($this->primary_key as $k) {
+            $pk_parts[] = $row[$k];
+        }
+
+        return implode($this->primary_key_glue, $pk_parts);
+    }
+
+    protected function searchOpDateRange($c, $val)
+    {
+        //--------------
+        // Date range
+        //--------------
+        if (strpos($val, ' - ') !== false) {
+            list($start, $end) = explode(' - ', $val, 2);
+
+            $start = strtotime(trim($start));
+            $end = strtotime(trim($end));
+
+            if (!$start or !$end) {
+                throw new ExceptionGrid('Invalid date format');
+            }
+
+            #Stap dates if start is bigger than end
+            if ($start > $end) {
+                list($start, $end) = array($end, $start);
+            }
+
+            $start = date('Y-m-d', $start);
+            $end = date('Y-m-d', $end);
+
+            // return $c['db'] . " BETWEEN '$start' AND '$end'";
+            return ['column' => $c['db'], 'operator' => 'between', 'value' => [$start, $end]];
+        }
+        if (strpos($val, '-') !== false) {
+            $date = explode("-", $val);
+            if (!empty($date[0])) {
+                return ['column' => $c['db'], 'operator' => '>=', 'value' => date('Y-m-d', strtotime(trim($date[0])))];
+            }
+            if (!empty($date[1])) {
+                return ['column' => $c['db'], 'operator' => '<=', 'value' => date('Y-m-d', strtotime(trim($date[1])))];
+            }
+        }
+
+        //------------
+        // Single date
+        //------------
+
+        $val = strtotime(trim($val));
+
+        if (!$val) {
+            throw new ExceptionGrid('Invalid date format');
+        }
+
+        $val = date('Y-m-d', $val);
+        // return "DATE({$c['db']}) = '$val'";
+        return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
+    }
+
+    protected function initDatepicker($options = null)
+    {
+        $options = is_array($options) ? $options : array();
+        return new Raw('function(el){$(el).datepicker(' . Utils::jsonEncode($options) . ');}');
+    }
+
+    protected function initDateRangePicker($options = null)
+    {
+        $options = is_array($options) ? $options : array();
+        return new Raw('function(el){$(el).daterangepicker(' . Utils::jsonEncode($options) . ');}');
+    }
+
+    public function dateRangeSearch()
+    {
+        return array('dataInit' => $this->initDateRangePicker(array(
+            'dateFormat' => 'dd.mm.yy',
+            'onChange' => new Raw('dateRangePicker_onChange'),
+            'presetRanges' => array(
+                array('text' => 'За 2016 год', 'dateStart' => '2016-01-01', 'dateEnd' => '2016-12-31'),
+                array('text' => 'За 2017 год', 'dateStart' => '2017-01-01', 'dateEnd' => '2017-12-31'),
+                array('text' => 'За 2018 год', 'dateStart' => '2018-01-01', 'dateEnd' => '2018-12-31'),
+                array('text' => 'За 2019 год', 'dateStart' => '2019-01-01', 'dateEnd' => '2019-12-31'),
+                array('text' => 'За 2020 год', 'dateStart' => '2020-01-01', 'dateEnd' => '2020-12-31'),
+                array('text' => 'За 2021 год', 'dateStart' => '2021-01-01', 'dateEnd' => '2021-12-31'),
+            ),
+            'datepickerOptions' => array(
+                'changeMonth' => true,
+                'changeYear' => true,
+                'dateFormat' => 'dd.mm.yy',
+            ),
+        )));
+    }
+}

@@ -1,0 +1,24 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Actions;
+
+use {{container-name}}\Tasks\Delete{{model}}Task;
+use Boot\Abstracts\Actions\Action;
+use Boot\Abstracts\Requests\Request;
+
+class Delete{{model}}Action extends Action
+{
+    public function run(Request $request)
+    {
+        return app(Delete{{model}}Task::class)->run($request->id);
+    }
+}

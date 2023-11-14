@@ -1,0 +1,78 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block header_title %}Финансы и контроль
+{% endblock header_title %}
+
+{% block header_nav %}
+	{{ include('@control/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% from "@control/manager/show/nf" import nf %}
+
+{% block scripts %}
+	{{ assets({files: [
+		"@control_/resources/js/function.js",
+		"@control_/resources/js/show.js",
+	], name: 'script.js'}) }}
+{% endblock %}
+
+{% block content %}
+	<input type="hidden" id="mainId" value="{{id}}">
+	<input type="hidden" id="router-delete-item" value="{{route('admin.control_detail.destroy', '@id')}}">
+	<input type="hidden" id="router-update" value="{{route('admin.control.update', '@id')}}">
+	<input type="hidden" id="router-show" value="{{route('admin.control.show', id)}}">
+	<div id="content">
+		<h3 class="text-center">Заявка на согласование №{{control.id}}</h3>
+		<div class="card">
+			<div class="card-body">
+				<div id="control-head">{% include "@control/manager/show/show_head" %}</div>
+			</div>
+		</div>
+		<div class="card mt-3">
+			<div class="card-body">
+				<div id="control-body">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<td>№</td>
+								<td>Артикул</td>
+								<td>Наименование</td>
+								<td>Кол-во</td>
+								<td>Н/Д/Р</td>
+								<td>Цена закупки</td>
+								<td>Цена продажи</td>
+								<td>Итого закупки</td>
+								<td>Итого продажи</td>
+								<td>Итого разница</td>
+								<td>Действия</td>
+							</tr>
+						</thead>
+						<tfoot>
+							<tr>
+								<td colspan="7" class="text-end fw-bold">Итого:</td>
+								<td class="fw-bold">{{nf(supply_order_total)}}</td>
+								<td class="fw-bold">
+									{% if sales_total is null %}
+										-
+									{% else %}
+										{{nf(sales_total)}}
+									{% endif %}
+								</td>
+								{% if sales_total is null %}
+									<td class="fw-bold">-</td>
+								{% else %}
+									{% set total_diff = sales_total - supply_order_total %}
+									<td>
+										<div class="fw-bold {% if total_diff > 0 %}text-success{% else %}text-danger{% endif %}">{{nf(total_diff)}}</div>
+									</td>
+								{% endif %}
+								<td></td>
+							</tr>
+						</tfoot>
+						<tbody id="control-tbody">{% include "@control/manager/show/show_body" %}</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

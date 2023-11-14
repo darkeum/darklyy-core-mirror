@@ -1,0 +1,23 @@
+Workerman[chat.php] start in DEBUG mode
+Workerman[chat.php] already running
+Workerman[chat.php] start in DEBUG mode
+Workerman[chat.php] already running
+Usage: php yourfile <command> [mode]
+Commands: 
+start		Start worker in DEBUG mode.
+		Use mode -d to start in DAEMON mode.
+stop		Stop worker.
+		Use mode -g to stop gracefully.
+restart		Restart workers.
+		Use mode -d to start in DAEMON mode.
+		Use mode -g to stop gracefully.
+reload		Reload codes.
+		Use mode -g to reload gracefully.
+status		Get worker status.
+		Use mode -d to show live status.
+connections	Get worker connections.
+Workerman[chat.php] start in DEBUG mode
+Workerman[chat.php] already running
+Could not open input file: www/atri-energo.ru/usr/modules/task/admin/websocket/chat.php
+sh: test.sh: No such file or directory
+sh: test.sh: No such file or directory

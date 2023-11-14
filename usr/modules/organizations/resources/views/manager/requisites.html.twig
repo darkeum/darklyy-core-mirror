@@ -1,0 +1,79 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Организация
+	{{organization.name}}
+{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@organizations/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}{% endblock %}
+
+{% block links %}
+	{{ assets({files: [
+        '@organizations_/resources/css/components/point-item.css',
+        '@organizations_/resources/css/requisites.css',
+    ], name: 'style.css'}) }}
+{% endblock %}
+
+{% block  content %}
+	<div id="content">
+		<div class="card">
+            <div class="card-header"><div class="btn-group">{% include "@organizations/manager/components/button-back.html.twig" with {id} %}</div></div>
+			<div class="card-body">
+				<h2 class="mb-3">Все реквизиты</h2>
+				<div class="mb-3 text-grey">Основные реквизиты организации по данным ФНС и Росстат</div>
+				<h3 class="mb-3 text-blue fw-bold">{{organization.name}}</h3>
+				{% set link = '@organizations/manager/components/point-item.html.twig' %}
+				<div class="requisites">
+					<div class="requisites-items">
+						<div class="requisites-items__item">
+							<h5>Основные</h5>
+							{% include link with {title: "Дата создания", value: data.detail.regDate|date('d.m.Y')} only %}
+							{% include link with {title: "ОГРН", value: data.detail.ogrn} only %}
+							{% include link with {title: "ИНН", value: data.detail.inn} only %}
+							{% include link with {title: "КПП", value: data.detail.kpp} only %}
+						</div>
+						<div class="requisites-items__item">
+							<h5>Сведения Росстата</h5>
+							{% include link with {title: "ОКПО", value: data.detail.okpo} only %}
+							{% include link with {title: "ОКОГУ", value: data.detail.okogu} only %}
+							{% include link with {title: "ОКФС", value: data.detail.okfs} only %}
+							{% include link with {title: "ОКТМО", value: data.detail.oktmo} only %}
+							{% include link with {title: "ОКАТО", value: data.detail.okato} only %}
+						</div>
+					</div>
+					<div class="requisites-items">
+						<div class="requisites-items__item">
+							<h5>Сведения о регистрации в ФНС</h5>
+							{% include link with {title: "ДАТА ПРИСВОЕНИЯ ОГРН", value: data.detail.taxRegInfo.regDate|date('d.m.Y')} only %}
+							<div>РЕГИСТРАТОР:
+								{{data.detail.taxRegInfo.authority}}</div>
+						</div>
+						<div class="requisites-items__item">
+							<h5>Сведения об учете в ФНС</h5>
+							{% include link with {title: "ДАТА ПОСТАНОВКИ НА УЧЕТ", value: data.detail.taxCurrInfo.regDate|date('d.m.Y')} only %}
+							<div>НАЛОГОВЫЙ ОРГАН:
+								{{data.detail.taxCurrInfo.authority}}</div>
+						</div>
+					</div>
+					<div class="requisites-items">
+						<div class="requisites-items__item">
+							<h5>Сведения о регистрации в ПФР</h5>
+							{% include link with {title: "РЕГИСТРАЦИОННЫЙ НОМЕР", value: data.detail.fssNumber} only %}
+							{% include link with {title: "ДАТА РЕГИСТРАЦИИ", value: data.detail.pfrDate|date('d.m.Y')} only %}
+							<div>НАИМЕНОВАНИЕ ТЕРРИТОРИАЛЬНОГО ОРГАНА:
+								{{data.detail.pfrAuthority}}</div>
+						</div>
+						<div class="requisites-items__item">
+							<h5>Сведения из реестра МСП</h5>
+							{% include link with {title: "ДАТА ВКЛЮЧЕНИЯ", value: data.detail.rsmpRegDate|date('d.m.Y')} only %}
+							{% include link with {title: "КАТЕГОРИЯ СУБЪЕКТА", value: data.rsmp[ data.detail.rsmpCategory ]} only %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

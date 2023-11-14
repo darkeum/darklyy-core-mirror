@@ -1,0 +1,83 @@
+{% extends "_layout/content_with_sidebar_left.html.twig" %} 
+
+{% block sidebar %}
+    {% include 'project/calculation/sidebar.html.twig' %} 
+{% endblock sidebar %}
+
+{% block breadcrumbs %}
+    {% include 'breadcrumbs.html.twig' %} 
+{% endblock breadcrumbs %}
+
+{% block title %}
+<h1 class="mt-3 h1-page-title">{{ title }}</h1>
+{% endblock title %}
+
+{% block content %}
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <div class="grid-mn-proect">
+
+            <a href="{{ router('project.calculation.heat') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Подбор теплообменного оборудования</h4>
+                        <p>В результате выполнения вы получите расчетный лист, а также КП на подобранное оборудование.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b4"></div>
+                </div>
+            </a>
+
+            <a href="{{ router('project.calculation.metering_station') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Подбор <br>узла учета</h4>
+                        <p>Сервис позволяет подобрать оборудование, а так же подготовить проектную документацию для согласования с ТСО.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b6"></div>
+                </div>
+            </a>
+                                          
+            <a href="{{ router('project.calculation.block') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Расчет блочного теплового пункта</h4>
+                        <p>Сервис произвести подбор оборудования для БИТП, получить КП и чертежи для проектирования и составления сметы.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b2"></div>
+                </div>
+            </a>
+
+            <a href="{{ router('project.calculation.pump') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Подбор насосного оборудования</h4>
+                        <p>Удобный сервис по подбору насосов, позволяющий выбрать самое оптимальное решение.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b1"></div>
+                </div>
+            </a>
+                                         
+            <a href="{{ router('project.calculation.pump_station') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Подбор насосной станции</h4>
+                        <p>Программный продукт для удобного подбора по заданным параметрам готовой насосной станции.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b3"></div>
+                </div>
+            </a>            
+            
+            <a href="{{ router('project.calculation.valve') }}" class="grid-mn-proect-a">
+                <div class="grid-mn-proect-intem">
+                    <div class="grid-mn-proect-intem-text">
+                        <h4>Подбор регулирующего клапана</h4>
+                        <p>Быстрый и удобный способ подбора, учитывая авторитет клапана и возможность кавитации.</p>
+                    </div>
+                    <div class="grid-mn-proect-intem-img grid-mn-proect-intem-img-b5"></div>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

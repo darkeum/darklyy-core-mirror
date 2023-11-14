@@ -1,0 +1,29 @@
+#value_list,
+#search_list{
+    max-height: 200px;
+    overflow-y: auto;
+}
+.attribute_item{
+    cursor: pointer;
+}
+#attribute_categories{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.category_item{
+    border: 1px grey solid;
+    padding: 5px;
+    border-radius: 8px;
+}
+.attribute_item_value:hover,
+.attributeCategoryItem:hover{
+    background-color: rgb(224, 224, 224);
+}
+.attributeCategoryItemMove,
+.attribute_item_value-move{
+    cursor: move;
+}
+.attributeCategoryItem{
+    padding: 10px;
+}

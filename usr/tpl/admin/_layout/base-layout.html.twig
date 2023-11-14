@@ -1,0 +1,15 @@
+{% extends "index.html.twig" %}
+{% block body %}
+    {% block header %}
+        <header id="topbar" class="text-center bg-white alt ph10 br-b-ddd br-l-n">
+
+            <div>
+                <p class="lead">{% block  header_title %}{% endblock header_title %}</p>
+                {% block header_nav %}{% endblock header_nav %}
+            </div>
+
+        </header>
+    {% endblock header %}
+    {% block content %}
+    {% endblock content %}
+{% endblock body %}

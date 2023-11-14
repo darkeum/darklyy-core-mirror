@@ -1,0 +1,17 @@
+<?php
+
+namespace Boot\System\WebSockets\Server\Exceptions;
+
+class OriginNotAllowed extends WebSocketException
+{
+    /**
+     * Initalize the exception.
+     *
+     * @param  string  $appKey
+     * @return void
+     */
+    public function __construct($appKey)
+    {
+        $this->trigger("The origin is not allowed for `{$appKey}`.", 4009);
+    }
+}

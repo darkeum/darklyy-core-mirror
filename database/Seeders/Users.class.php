@@ -1,0 +1,141 @@
+<?php
+
+namespace Database\Seeders;
+
+use \Boot\System\Database\Seeder;
+use \Boot\System\Database\DB;
+use \Boot\Models\Users;
+
+class UsersSeeder extends Seeder
+{
+    /**
+     * Запуск заполнения таблиц
+     *
+     * @return void
+     */
+    public function run()
+    {
+        Users::firstOrCreate(["id" => 1], [
+            'nick' => 'admin',
+            'password' => '51cd41372769c127f7a440655257ba00', 
+            'tail' => 'q4xj6drxr', 
+            'hash' => NULL, 
+            'email' => 'vaneka97@ya.ru', 
+            'provider' => '', 
+            'social_id' => '',
+            'status' => NULL, 
+            'oid' => NULL, 
+            'icq' => '', 
+            'phone' => '+79634815699', 
+            'phone2' => '', 
+            'skype' => '', 
+            'surname' => 'Комаров', 
+            'name' => 'Иван', 
+            'ochestvo' => 'Сергеевич', 
+            'place' => 'Ижевск',
+            'birthday' => NULL, 
+            'age' => 0, 
+            'sex' => 1, 
+            'hobby' => '', 
+            'signature' => 'Руководитель отдела информационных технологий', 
+            'points' => 230, 
+            'carma' => 0, 
+            'user_comments' => 4, 
+            'user_news' => 19, 
+            'group' => 1, 
+            'exgroup' => '8', 
+            'last_visit' => NULL, 
+            'regdate' => time(), 
+            'active' => 1, 
+            'ip' => null, 
+            'hidden' => 0, 
+            'fields' => '', 
+            'regId' => NULL, 
+            'section' => NULL, 
+            'utm_source' => NULL, 
+            'inn' => NULL,
+        ]);
+
+        Users::firstOrCreate(["id" => 33], [
+            'nick' => 'gdarksandr@gmail.com',
+            'password' => '9c77d4ffe374058d01b7d1c67de4cbf6', 
+            'tail' => 'bfmqnfde', 
+            'hash' => NULL, 
+            'email' => 'gdarksandr@gmail.com', 
+            'provider' => '', 
+            'social_id' => '',
+            'status' => NULL, 
+            'oid' => NULL, 
+            'icq' => '', 
+            'phone' => '+79991897244', 
+            'phone2' => '1234543', 
+            'skype' => '', 
+            'surname' => 'Волков', 
+            'name' => 'Александр', 
+            'ochestvo' => 'Константинович', 
+            'place' => 'Ижевск',
+            'birthday' => '1998-01-14', 
+            'age' => 0, 
+            'sex' => 1, 
+            'hobby' => '', 
+            'signature' => '', 
+            'points' => 0, 
+            'carma' => 0, 
+            'user_comments' => 4, 
+            'user_news' => 19, 
+            'group' => 1, 
+            'exgroup' => '8', 
+            'last_visit' => NULL, 
+            'regdate' => time(), 
+            'active' => 1, 
+            'ip' => null, 
+            'hidden' => 0, 
+            'fields' => '', 
+            'regId' => NULL, 
+            'section' => NULL, 
+            'utm_source' => NULL, 
+            'inn' => NULL,
+        ]);
+
+        Users::firstOrCreate(["id" => 119], [
+            'nick' => 'ess1928@yandex.ru',
+            'password' => 'c66e828a95067dfd85ecf3a179003f63', 
+            'tail' => 'tcrwq7jv', 
+            'hash' => NULL, 
+            'email' => 'ess1928@yandex.ru', 
+            'provider' => '', 
+            'social_id' => '',
+            'status' => NULL, 
+            'oid' => NULL, 
+            'icq' => '', 
+            'phone' => '+7912454545', 
+            'phone2' => '1234543', 
+            'skype' => '', 
+            'surname' => 'Сулыга', 
+            'name' => 'Юрий', 
+            'ochestvo' => 'Николаевич', 
+            'place' => 'г Ижевск, ул Удмуртская',
+            'birthday' => '1987-06-06', 
+            'age' => 0, 
+            'sex' => 1, 
+            'hobby' => '', 
+            'signature' => '', 
+            'points' => 0, 
+            'carma' => 0, 
+            'user_comments' => 4, 
+            'user_news' => 19, 
+            'group' => 1, 
+            'exgroup' => '8', 
+            'last_visit' => NULL, 
+            'regdate' => time(), 
+            'active' => 1, 
+            'ip' => null, 
+            'hidden' => 0, 
+            'fields' => '', 
+            'regId' => NULL, 
+            'section' => NULL, 
+            'utm_source' => NULL, 
+            'inn' => NULL,
+        ]);
+    }
+}

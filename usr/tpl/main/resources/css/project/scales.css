@@ -1,0 +1,413 @@
+div.tovar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 930px;
+}
+
+.tovar label {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.tovar input, select {
+    margin: 5px 0;
+    width:100%;
+    cursor: pointer;
+    line-height: 1.5;
+    height: 30px;
+    padding: 5px 5px;
+    font-size: 12px;
+    margin-right: 10px;
+    border-radius: 0;
+    border: 1px solid #979797;
+}
+.tovar input[type="text"] {
+    cursor:text;
+}
+:focus, :hover, :active {
+    outline: none;
+}
+.tovar option {
+    font-size: 12px;
+    padding: 5px!important;
+}
+
+.mtype {
+    width: 105px;
+}
+
+.standard {
+    width: 125px;
+}
+
+.diametr {
+    width: 60px;
+}
+
+.dlina {
+    width: 50px;
+}
+
+.material {
+    width: 70px;
+}
+
+.pokritie {
+    width: 70px;
+}
+
+.klassp {
+    width: 50px;
+}
+
+.tovar .colvo {
+    width: 60px;
+}
+
+.tovar .allmass {
+    width: 55px;
+}
+
+.idtov , .massa {
+    display:none;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.allcntt,.allmasst {
+    background-color:rgb(67, 160, 71);
+    margin:10px;
+    padding: 5px 20px;
+    color:#FFF;
+}
+
+.resall {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding:10px 20px 10px 40px;
+    color:#000;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+.resall:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    background-image: url(../../images/project/scales/icon-reload.svg);
+    background-size: 20px;
+}
+
+.butt {
+    display:inline-block;
+    background-color:rgb(67, 160, 71);
+    width: 25px;
+    height: 25px;
+    text-align:center;
+    border-radius: 25px;
+    font-weight:normal;
+    font-size:20px;
+    color:#FFF;
+    line-height: 25px;
+    cursor: pointer;
+    /*! margin-top: 1em; */
+}
+
+.butrem {
+    background-color:#a10f2b;
+    display:inline-block;
+    width: 25px;
+    height: 25px;
+    text-align:center;
+    border-radius: 25px;
+    font-weight:normal;
+    font-size:20px;
+    color:#FFF;
+    line-height: 25px;
+    cursor: pointer;
+    margin-right: 10px;
+    /*! margin-top: 1em; */
+}
+
+.downl {
+    margin:10px;
+    padding:10px 20px 10px 40px;
+    color:#000;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+}
+
+.downl:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 11px;
+    left: 10px;
+    width: 20px;
+    height: 27px;
+    background-image: url(../../images/project/scales/icon-download.svg);
+    background-size: 20px;
+    background-repeat: no-repeat
+}
+
+.copyl {
+    margin:10px;
+    padding:10px 20px 10px 40px;
+    color:#000;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: inline-block;
+    position: relative
+}
+
+.copyl:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    width: 20px;
+    height: 27px;
+    background-image: url(../../images/project/scales/icon-share.svg);
+    background-size: 20px;
+    background-repeat: no-repeat
+}
+
+
+.sendl {
+    margin:10px;
+    padding:10px 20px 10px 40px;
+    color:#000;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: inline-block;
+    position: relative
+}
+
+.sendl:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    width: 20px;
+    height: 27px;
+    background-image: url(../../images/project/scales/mail.svg);
+    background-size: 20px;
+    background-repeat: no-repeat
+}
+
+
+.printl {
+    margin:10px;
+    padding:10px 20px 10px 40px;
+    color:#000;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    display: inline-block;
+    position: relative
+}
+
+.printl:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 13px;
+    left: 10px;
+    width: 20px;
+    height: 27px;
+    background-image: url(../../images/project/scales/print.svg);
+    background-size: 20px;
+    background-repeat: no-repeat
+}
+
+
+
+
+#myInput {
+    display:none;
+}
+
+.tovar .tovinfo {
+    margin: 5px 10px 5px 0;
+    background-color:#fff;
+    display:block;
+    font-weight: bold;
+    padding: 10px 10px;
+    /* flex-basis: 100%; */
+    width: 725px;
+    border: 1px solid #979797;
+}
+
+.tovar .tovinfo span {
+    /* vertical-align:middle; */
+    /* font-weight:bold; */
+    /* padding:0 20px; */
+}
+
+.tovar .tovinfo img {
+    vertical-align:middle;
+    max-height:50px;
+    margin-left: 15px;
+}
+.full {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.full div {
+    height: 50px;
+    margin-bottom: 10px;
+    line-height: 50px;
+    margin-right: 30px;
+}
+
+@media only screen and (max-width:540px) {
+    div.tovar{
+        margin: 15px 10px;
+        border-bottom: 1px solid #BFBFBF;
+    }
+    .resall, .downl, .copyl, .printl, .sendl {
+        padding: 10px 10px 10px 30px;
+        margin: 0 0 10px 5px;
+    }
+    .resall:before, .downl:before, .copyl:before, .printl:before, .sendl:before {
+        left: 5px;
+    }
+    div.tovar input.standard {
+        width: 260px;
+    }
+    .tovar .pokritie, .tovar .colvo {
+        width: 140px;
+    }
+    .tovar .klassp, .tovar .allmass {
+        width: 100px;
+    }
+    .butt, .butrem {
+        margin-top: 10px;
+        margin-bottom: 20px
+    }
+    .tovar .tovinfo img {
+        display: block;
+        margin: 10px 0 0;
+    }
+    .full {
+        margin-left: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+}
+
+/* =============================== */
+
+/* The Modal (background) */
+.modalc {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-contentc {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.closec {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.closec:hover,
+.closec:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+#myModalc .modal-contentc {
+    width: 90%;
+    padding: 0 10px;
+}
+#myModalc table {
+    width: 100%;
+}
+#myModalc .popaptable {
+    margin: 50px 30px;
+}
+#myModalc .popaptable th {
+    border: 1px solid #EEEEEE;
+    background-color: #EEEEEE;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 5px 15px;
+}
+#myModalc .popaptable td {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #c6c6c6;
+    color: #000;
+    font-size: 14px;
+    padding: 5px 15px;
+}
+#myModalc .popaptable td span {
+    display: none;
+}
+.calcformdata {
+    font-size: 14px;
+    margin: 30px;
+    text-align: right;
+    font-weight: bold;
+}
+.calcformdata input {
+    margin-left: 15px;
+    border: 1px solid #c6c6c6;
+    padding: 5px 10px;
+    max-width: 100%;
+}
+.calcformdata .btn {
+    margin-top: 20px
+}
+@media only screen and (max-width:540px) {
+    #myModalc .popaptable tr {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 2px solid #000;
+    }
+    .calcformdata {
+        text-align: left;
+    }
+    .calcformdata input {
+        margin-left: 0;
+    }
+    #myModalc .popaptable tr:first-child {
+        display: none;
+    }
+    #myModalc .popaptable td span {
+        display: inline-block;
+        font-weight: bold;
+        margin-right: 5px;
+    }
+}

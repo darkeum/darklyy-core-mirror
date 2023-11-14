@@ -1,0 +1,110 @@
+.complaints {
+    padding: 30px 20px;
+    border: 2px solid #04AA6D;
+    border-radius: 3px;
+}
+
+.complaints input {
+    padding: 10px;
+    width: 100%;
+    font-size: 17px;
+    border: 1px solid #aaaaaa;
+}
+
+/* Mark input boxes that gets an error on validation: */
+/* Используем bootstrap validation */
+
+/* Hide all steps by default: */
+.complaints .tab {
+    display: none;
+}
+
+.complaints .tab .form-group label {
+    font-size: 1.3rem;
+}
+
+.complaints .tab .form-group label a {
+    color: var(--a-red);
+    font-size: 1.4rem;
+}
+
+.buttons-actions span span, .complaints .tab li span {
+    font-size: 1.6rem;
+    vertical-align: text-top;
+    line-height: normal;
+    color: var(--a-red);
+}
+
+.complaints .tab .form-group small {
+    display: none;
+}
+
+.complaints .tab li {
+    list-style-type: none; /* Убираем маркеры */
+}
+
+.complaints .tab .custom-file {
+    height: inherit!important;
+}
+
+.complaints select, .complaints input[type=file] {
+    cursor: pointer;
+}
+
+.complaints button {
+    background-color: #04AA6D;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.complaints input:focus, .complaints .custom-file .custom-file-label, .complaints button:focus {
+    outline: none;
+    box-shadow: none;
+    transition: none!important;
+}
+
+.complaints button:hover {
+    opacity: 0.8;
+}
+
+.complaints .buttons-actions {
+    margin-top: 10px;
+}
+
+.complaints .prevBtn,
+.complaints .nextBtn {
+    border-radius: 3px;
+}
+
+.complaints .prevBtn {
+    background-color: #bbbbbb;
+}
+
+/* Make circles that indicate the steps of the form: */
+.complaints .step {
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbbbbb;
+    border: none;
+    border-radius: 50%;
+    display: inline-block;
+    opacity: 0.5;
+}
+
+.complaints .step.active {
+    opacity: 1;
+}
+
+/* Mark the steps that are finished and valid: */
+.complaints .step.finish {
+    background-color: #04AA6D;
+}
+
+
+.custom-file-label::after {
+    content: 'Обзор'!important;
+}

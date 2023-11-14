@@ -1,0 +1,18 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Финансы и контроль{% endblock header_title %}
+
+{% block  header_nav %}
+    {{ include('@control/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	{{ assets({files: [
+        "@control_/resources/js/index.js",
+        "@control_/resources/js/function.js",
+    ], name: 'script.js'}) }}
+{% endblock %}
+
+{% block  content %}
+    {{ grid|raw }}
+{% endblock content %}

@@ -1,0 +1,30 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Providers;
+
+use Boot\Support\ServiceProvider;
+
+/**
+ * Пользовательский поставщик услуг — не забудьте зарегистрировать его в MainServiceProvider этого контейнера.
+ */
+class {{class-name}} extends ServiceProvider
+{
+    /**
+     * Зарегистрируйте что-нибудь в контейнере.
+     */
+    public function register(): void
+    {
+        parent::register();
+
+        // ...
+    }
+}

@@ -1,0 +1,116 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Редактирование банковской выписки
+{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@bank/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script>
+		{{payer_select.js|raw}}
+		{{recipient_select.js|raw}}
+
+		function select_sales_init(){
+			{{select_sales.js|raw}}
+		}
+
+		function select_supply_order_init(){
+			{{select_supply_order.js|raw}}
+		}
+	</script>
+	{{reestr_module.script|raw}}
+    {{ assets({files: ['@bank_/resources/js/edit.js']}) }}
+{% endblock %}
+
+{% block  content %}
+    <input type="hidden" id="mainId" value="{{id}}">
+	<div id="content">
+		<div class="card">
+			<div class="card-body">
+				<nav>
+					<div class="nav nav-tabs" id="nav-tab" role="tablist">
+						<button class="nav-link active" data-bs-toggle="tab" data-bs-target="#nav-main" type="button" role="tab" aria-controls="nav-main" aria-selected="true">Главная</button>
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#nav-details" type="button" role="tab" aria-controls="nav-details" aria-selected="false">Детали</button>
+						<button class="nav-link" data-bs-toggle="tab" data-bs-target="#nav-reestr" type="button" role="tab" aria-controls="nav-reestr" aria-selected="false">Договор</button>
+					</div>
+				</nav>
+				<div class="tab-content" id="nav-tabContent">
+					<div class="tab-pane fade show active p-3" id="nav-main" role="tabpanel" aria-labelledby="nav-home-tab">
+						<form id="main-form">
+                            <div class="mb-3 btn-group">
+								<button type="submit" class="btn btn-success">Записать</button>
+							</div>
+							<div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Банковский номер</label>
+								<div class="col-8">
+									<input type="text" class="form-control" value="{{bank_detail.numb}}" name="numb" id="numb" required>
+								</div>
+							</div>
+							<div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Тип</label>
+								<div class="col-8">
+									<select class="form-control" name="pay_in" id="pay_in" required>
+                                        {% for key,item in pay_in_list %}
+                                            <option value="{{key}}" {% if key == bank_detail.pay_in %}selected{% endif %}
+                                            >{{item}}</option>
+                                        {% endfor %}
+                                    </select>
+								</div>
+							</div>
+							<div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Категория</label>
+								<div class="col-8">
+									<select class="form-control" name="type" id="type" required>
+                                        {% for item in type_list %}
+                                            <option value="{{item}}" {% if item == bank_detail.type %}selected{% endif %}
+                                            >{{item}}</option>
+                                        {% endfor %}
+                                    </select>
+								</div>
+							</div>
+							<div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Плательщик</label>
+								<div class="col-8">
+									{{payer_select.select|raw}}
+								</div>
+							</div>
+							<div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Получатель</label>
+								<div class="col-8">
+									{{recipient_select.select|raw}}
+								</div>
+							</div>
+                            <div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Дата</label>
+								<div class="col-8">
+									<input type="date" class="form-control" value="{{bank_detail.date}}" name="date" id="date" required>
+								</div>
+							</div>
+                            <div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Сумма</label>
+								<div class="col-8">
+									<input type="number" class="form-control" value="{{bank_detail.sum}}" name="sum" id="sum" required>
+								</div>
+							</div>
+                            <div class="mb-3 row">
+								<label class="col-2 col-form-label text-end">Комментарий</label>
+								<div class="col-8">
+									<textarea class="form-control" name="comment" id="comment" rows="3" required>{{bank_detail.comment}}</textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="tab-pane fade p-3" id="nav-details" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        {% include "@bank/manager/edit_details" %}
+                    </div>
+					<div class="tab-pane fade p-3" id="nav-reestr" role="tabpanel" aria-labelledby="nav-profile-tab">
+						{% include "@bank/manager/edit_reestr" %}
+                    </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{reestr_module.modal|raw}}
+{% endblock content %}

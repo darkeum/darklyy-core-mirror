@@ -1,0 +1,30 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'sales'										=> 'Менеджер заказов',
+	'sales_list'								=> 'Список заказов',
+	'sales_order'								=> 'Просмотр заказа',
+	'sales_order_numb'							=> 'Заказ №',
+	'sales_nav_info'							=> 'Информация о заказе',
+	'sales_nav_task'							=> 'Задачи по заказу',
+	'sales_nav_relations'						=> 'Все связи по заказу',
+	'sales_responsible_title'					=> 'Вы хотите стать ответственным?',
+	'sales_responsible_text'					=> 'У данной продажи нет ответственного, вы хотите стать им?',
+	'sales_confirm_ok'							=> 'Подтвердить',
+	'sales_add'									=> 'Создать заказ',
+	'sales_adding'								=> 'Создание нового заказа',
+	'sales_type'								=> 'Тип заказа',
+	'sales_type_sales'							=> 'Заказ',
+	'sales_type_man'							=> 'Заявка на производство',
+	'sales_cat'									=> 'Категория заказа',
+	'sales_cat_std'								=> 'Действующий контрагент',
+	'sales_cat_new'								=> 'Новый контрагент',
+	'sales_cat_spr'								=> 'Сделка сопровождения',
+	'sales_yt'									=> 'Номер заявки УТ',
+	'sales_yt_desc'								=> 'Введите номер заявки УТ в формате 00УТ-XXXXXX',
+	'sales_open'								=> 'Открыть заявку после сохранения?',
+));
+
+
+?>

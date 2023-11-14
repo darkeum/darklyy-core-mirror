@@ -1,0 +1,53 @@
+<?php
+
+$lang = array_merge($lang, array (
+	
+	'lang_russian'								=> 'Русский',
+	'lang_english'								=> 'English',
+	'menu'										=> 'Menu',
+	'simple_page'								=> 'Простая страница',
+	'main'										=> 'Home',
+	'catalog'									=> 'Catalog',
+	'about'										=> 'About',
+	'news'										=> 'News',
+	'project'									=> 'Project',
+	'mounting'									=> 'Mounting',
+	'service'									=> 'Service',
+	'handling'									=> 'Handling',
+	'favorite'									=> 'Favorite',
+	'profile'									=> 'Profile',
+	'login'										=> 'Login',
+	'register'									=> 'Register',
+	'corp'										=> 'Corporate portal',
+	'my_profile'								=> 'My profile',
+	'my_cart'									=> 'My cart',
+	'my_order'									=> 'My order',
+	'logout'									=> 'Logout',
+	'all_category'								=> 'All category',
+	'category'									=> 'Category',
+	'contact'									=> 'Contact',
+	'search'									=> 'Search',
+	'search_placeholder'						=> 'Search product',
+	'shopping_cart'								=> 'Shopping cart',
+	'register_user'								=> 'User registration',
+	'profile_legal'								=> 'Entity',
+	'profile_individual'						=> 'Individual',
+	'your_name'									=> 'Your name',
+	'your_last_name'							=> 'Your last name',
+	'your_patronymic'							=> 'Your middle name',
+	'org_name'									=> 'Name of company',
+	'org_inn'									=> 'INN organization',
+	'your_phone'								=> 'Your phone',
+	'your_email'								=> 'Your E-mail address',
+	'your_message'								=> 'Your message',
+	'short_about'								=> 'The company «ATRI-ENERGO» - provides COMPLEX DESIGN, which includes the whole range of works on the design of ITP, central heating station, pumping, heating systems, water supply and sanitation.',
+	'contact_address'							=> 'Address: Izhevsk, Salyutovskaya street, 5a',
+	'contact_email'								=> 'E-mail: info@atri-energo.ru',
+	'contact_phone'								=> 'Phone: +7 (3412) 908-123',
+	'send'										=> 'Send',
+	
+	
+
+));
+
+?>

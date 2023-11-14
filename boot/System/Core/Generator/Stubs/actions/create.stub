@@ -1,0 +1,29 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Actions;
+
+use {{container-name}}\Models\{{model}};
+use {{container-name}}\Tasks\Create{{model}}Task;
+use Boot\Abstracts\Actions\Action;
+use Boot\Abstracts\Requests\Request;
+
+class Create{{model}}Action extends Action
+{
+    public function run(Request $request): {{model}}
+    {
+        $data = $request->sanitizeInput([
+            // добавьте данне запроса
+        ]);
+
+        return app(Create{{model}}Task::class)->run($data);
+    }
+}

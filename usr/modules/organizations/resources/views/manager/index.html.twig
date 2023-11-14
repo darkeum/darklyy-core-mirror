@@ -1,0 +1,11 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Организации{% endblock header_title %}
+
+{% block  header_nav %}
+    {{ include('@organizations/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block  content %}
+   {{ grid|raw }}
+{% endblock content %}

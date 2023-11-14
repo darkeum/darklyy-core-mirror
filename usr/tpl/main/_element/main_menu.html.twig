@@ -1,0 +1,326 @@
+{% set menu_portfolio = ['portfolio.index', 'portfolio.show', 'portfolio.categories'] %}
+
+{% set menu_project = ['project.index', 'project.calculation.heat', 'project.calculation'] %}
+
+{% set menu_service = ['service.index'] %}
+{% set menu_job = ['job.index'] %}
+{% set menu_partner = ['partner.index'] %}
+{% set menu_reviews = ['reviews.index', 'reviews.tags', 'reviews.show', 'reviews.categories'] %}
+{% set menu_news = ['news.index', 'news.tags', 'news.show', 'news.categories'] %}
+{% set menu_certificates = ['certificates.index', 'certificates.tags', 'certificates.show', 'certificates.categories'] %}
+{% set menu_about = menu_portfolio|merge(menu_job)|merge(menu_partner)|merge(menu_reviews)|merge(menu_news)|merge(menu_certificates) %}
+<div class="primary-menu-right primary-menu-home1 pull-left">
+    <div id="main-menu" class="main-menu">
+        <nav id="primary-menu" class="primary-menu">
+            <div class="container container-block">
+                <div class="mid-header clearfix">
+                    <div class="navbar-inner navbar-inverse">
+                        <div class="resmenu-container">
+                            <div id="ResMenuprimary_menu" class="collapse menu-responsive-wrapper">
+                                <ul id="menu-primary-menu" class="flytheme_resmenu"></ul>
+                            </div>
+                        </div>
+                        <ul id="menu-primary-menu-1" class="nav menu-slinky nav-pills nav-mega flytheme-mega flytheme-menures">
+                            <li class="home-fix menu-home flytheme-mega-menu level1 flytheme-menu-icon {{ currentRouter('index', 'active') }}">
+                                <a href="/" class="item-link">
+                                    <span class="have-icon have-title">
+                                        <span class="fa fa fa-home"></span>
+                                        <span class="menu-title">
+                                            {{ lang('main') }}
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="  menu-shop flytheme-mega-menu level1 menu-top-cat">
+                                <a href="/catalog_v2" class="item-link">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('catalog') }}
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="  menu-blog flytheme-mega-menu level1 drop-about drop-about-company {{ currentRouter(menu_about, 'active') }}">
+                                <a href="/page/about" class="item-link">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('about') }}
+                                        </span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu nav-level1 column-1">
+                                    <li class="  menu-left-sidebar-grid {{ currentRouter(menu_news, 'active') }}">
+                                        <a href="/news">
+                                            <span class="have-title">
+                                                <i class="fad fa-newspaper"></i>
+                                                <span class="menu-title">
+                                                    {{ lang('news_and_stories') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class=" menu-right-sidebar-grid {{ currentRouter(menu_reviews, 'active') }}">
+                                        <a href="/reviews">
+                                            <span class="have-title">
+                                                <i class="fad fa-comments"></i>
+                                                <span class="menu-title">
+                                                    {{ lang('guestbook') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="menu-full-width-grid menu-doc">
+                                        <a href="/content/documents.html">
+                                            <i class="fad fa-file-alt"></i>
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    {{ lang('documents') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class=" menu-left-sidebar-list {{ currentRouter(menu_certificates, 'active') }}">
+                                        <a href="/certificates">
+                                            <i class="fad fa-address-card"></i>
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    {{ lang('certificates') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class=" menu-right-sidebar-list menu-object {{ currentRouter(menu_portfolio, 'active') }}">
+                                        <a href="{{ router('portfolio.index') }}">
+                                            <span class="have-title">
+                                                <i class="fad fa-building"></i>
+                                                <span class="menu-title">
+                                                    {{ lang('objects') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class=" menu-right-sidebar-list menu-partner">
+                                        <a href="/partner">
+                                            <span class="have-title">
+                                                <i class="fad fa-handshake"></i>
+                                                <span class="menu-title">
+                                                    {{ lang('partners') }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="  menu-blog flytheme-mega-menu level1 drop-about {{ currentRouter(menu_project, 'active') }}">
+                                <a href="{{ router('project.index') }}" class="item-link">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('project') }}
+                                        </span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu nav-level1 column-4">
+                                    <li class="dropdown-submenu menu-blog-layouts-1">
+                                        <a href="javascript:void(0);" class="have-title-proekt">
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    Проектирование
+                                                </span>
+                                            </span>
+                                        </a>
+                                        <ul class="dropdown-sub nav-level2">
+                                            <li class="menu-left-sidebar-grid {{ currentRouter('project.index', 'active') }}">
+                                                <a href="{{ router('project.index') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Общая информация
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-right-sidebar-grid {{ currentRouter('project.order', 'active') }}">
+                                                <a href="{{ router('project.order') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Подать заявку
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>                                          
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-submenu menu-blog-layouts-2">
+                                        <a href="javascript:void(0);" class="have-title-proekt">
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    Расчеты
+                                                </span>
+                                            </span>
+                                        </a>
+                                        <ul class="dropdown-sub nav-level2">
+                                            <li class="menu-2-columns-grid {{ currentRouter('project.calculation.pump', 'active') }}">
+                                                <a href="{{ router('project.calculation.pump') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Подбор насосного оборудования
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-3-columns-grid {{ currentRouter('project.calculation.block', 'active') }}">
+                                                <a href="{{ router('project.calculation.block') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Расчёт блочного теплового пункта
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-4-columns-grid {{ currentRouter('project.calculation.heat', 'active') }}">
+                                                <a href="{{ router('project.calculation.heat') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Подбор теплообменного оборудования
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-5-columns-grid {{ currentRouter('project.calculation.index', 'active') }}">
+                                                <a href="{{ router('project.calculation.index') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Все расчеты и подборы
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-submenu menu-post-format">
+                                        <a href="javascript:void(0);" class="have-title-proekt">
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    Инструменты
+                                                </span>
+                                            </span>
+                                        </a>
+                                        <ul class="dropdown-sub nav-level2">                                            
+                                            <li class="menu-post-format-video {{ currentRouter('project.tool.pipes', 'active') }}">
+                                                <a href="{{ router('project.tool.pipes') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Таблица Шевелева
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-post-format-audio {{ currentRouter('project.tool.power', 'active') }}">
+                                                <a href="{{ router('project.tool.power') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Перевод единиц мощности
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-post-format-image {{ currentRouter('project.tool.scales', 'active') }}">
+                                                <a href="{{ router('project.tool.scales') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Перевод массы в количество
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class="menu-post-format-quote {{ currentRouter('project.tool.index', 'active') }}">
+                                                <a href="{{ router('project.tool.index') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Все инструменты
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-submenu menu-post-layouts">
+                                        <a href="javascript:void(0);" class="have-title-proekt">
+                                            <span class="have-title">
+                                                <span class="menu-title">
+                                                    Документация
+                                                </span>
+                                            </span>
+                                        </a>
+                                        <ul class="dropdown-sub nav-level2">
+                                            <li class="menu-full-width">
+                                                <a href="{{ router('project.documents.gost') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            ГОСТЫ
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class=" menu-left-sidebar">
+                                                <a href="{{ router('project.documents.snip') }}">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            СНИПЫ
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li class=" menu-right-sidebar">
+                                                <a href="/certificates/other_cert">
+                                                    <span class="have-title">
+                                                        <span class="menu-title">
+                                                            Лицензии
+                                                        </span>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="  menu-accessories flytheme-mega-menu level1">
+                                <a href="/page/mounting" class="item-link ">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('mounting') }}
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="   menu-accessories flytheme-mega-menu level1">
+                                <a href="/page/servicing" class="item-link ">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('handling') }}
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                            <li class=" menu-accessories flytheme-mega-menu level1 {{ currentRouter(menu_service, 'active') }}" >
+                                <a href="/service" class="item-link">
+                                    <span class="have-title">
+                                        <span class="menu-title">
+                                            {{ lang('service') }}
+                                        </span>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="header-hotdeal pull-right d-none d-xl-block ">
+        <div id="sidebar-top-3" class="hotdeal-right">
+            <a class="{{ currentRouter('feedback.index', 'active') }}" href="/feedback">
+                {{ lang('contact') }}
+            </a>
+        </div>
+    </div>
+</div>

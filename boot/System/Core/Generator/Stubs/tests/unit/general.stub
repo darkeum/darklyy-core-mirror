@@ -1,0 +1,44 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Tests\Unit;
+
+use {{container-name}}\Tests\TestCase;
+
+/**
+ * Class {{class-name}}.
+ *
+ * @group {{_container-name}}
+ * @group unit
+ */
+class {{class-name}} extends TestCase
+{
+    public function test(): void
+    {
+        // создание объекта с данными
+        $data = [
+            // 'key' => 'value',
+        ];
+
+        /**
+         * Пример создания Unit теста:
+         *
+         * 1) Создание нового запроса с данными
+         * 2) Создать конкретное действие или задачу
+         * 3) Передать запрос в действие или задачу
+         * 4) Сделать вывод об удачности выполнения теста!
+         *
+         */
+
+        // результат теста
+        self::assertEquals(true, true);
+    }
+}

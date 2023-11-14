@@ -1,0 +1,19 @@
+:root{
+    --main-gap: 50px;
+}
+.requisites{
+    display: grid;
+    grid-row-gap: var(--main-gap);
+}
+
+.requisites-items{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: var(--main-gap);
+}
+
+.requisites-items__item{
+    display: grid;
+    grid-row-gap: 20px;
+    height: min-content;
+}

@@ -1,0 +1,73 @@
+.items_container{
+    display: grid;
+    grid-template: 
+    "searchItems sort templateBtn" 30px
+    "searchItems sort template" 300px / 1fr 2fr 1fr;
+    grid-gap: 10px;
+}
+#extendedSortModalSearchItems, #extendedSortModalSort, #extendedSortModalTemplate{
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+#extendedSortModalSearch{grid-area: search;}
+#extendedSortModalSearchItems{grid-area: searchItems;}
+#extendedSortModalSort{grid-area: sort;}
+#extendedSortModalTemplate{grid-area: template;}
+#extendedSortModalTemplateBtn{grid-area: templateBtn;}
+.items_list{
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px #eee solid;
+    border-radius: 5px;
+    list-style-type: none;
+    padding: 0;
+    height: 100%;
+    position: relative;
+}
+.items_list li{
+    padding: 10px;
+    border-bottom: 1px #eee solid;
+    background-color: white;
+}
+
+.extendedSortItem__order{
+    cursor: move;
+    margin-right: 20px;
+}
+.extendedSortItem__main{
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.items_list_more{
+    overflow-x: hidden;
+    overflow-y: auto;
+    list-style-type: none;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    background-color: white;
+    left: 0;
+    top: 0;
+}
+
+.move_sort{
+    flex: 1; 
+    text-align: end;
+}
+
+li.common{
+    font-weight: bold;
+    font-style: italic;
+}
+
+@media only screen and (max-width: 992px){
+    .items_container{
+        grid-template: 
+        "searchItems" 300px
+        "sort" 300px
+        "templateBtn" auto
+        "template" 300px;
+    }
+}

@@ -1,0 +1,24 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  title %}Поиск по номенклатуре{% endblock title %}
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@sales2/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script src="/usr/modules/sales/admin/assets/js/FastTask.js"></script>
+	<script src="/usr/modules/sales/admin/assets/js/FastTask5.js"></script>
+	{{ assets({files: [
+        "@sales2_/resources/js/main.js",
+    ], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+	{{ template|raw }}
+{% endblock content %}

@@ -1,0 +1,60 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\UI\{{user-interface}}\Requests;
+
+use Boot\Abstracts\Requests\Request;
+
+class {{class-name}} extends Request
+{
+    /**
+     * Определите, какие роли и/или разрешения имеют доступ к этому запросу.
+     */
+    protected array $access = [
+        'permissions' => '',
+        'roles'       => '',
+    ];
+
+    /**
+     * Идентификатор, который необходимо расшифровать перед применением правил проверки.
+     */
+    protected array $decode = [
+        'id',
+    ];
+
+    /**
+     * Определение параметров URL (например, `/user/{id}`) позволяет применить
+     * правила проверки на них и позволяет получить к ним доступ, как данные запроса.
+     */
+    protected array $urlParameters = [
+        'id',
+    ];
+
+    /**
+     * Получите правила проверки, применимые к запросу.
+     */
+    public function rules(): array
+    {
+        return [
+            'id' => 'required'
+        ];
+    }
+
+    /**
+     * Определите, авторизован ли пользователь для выполнения этого запроса.
+     */
+    public function authorize(): bool
+    {
+        return $this->check([
+            'hasAccess',
+        ]);
+    }
+}

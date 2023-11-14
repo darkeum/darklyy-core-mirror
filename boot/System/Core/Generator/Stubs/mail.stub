@@ -1,0 +1,43 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace{{container-name}}\Mails;
+
+use Boot\Models\Users;
+use Boot\Abstracts\Mails\Mail;
+use Illuminate\Bus\Queueable;
+
+class {{class-name}} extends Mail
+{
+    use Queueable;
+
+    protected $recipient;
+
+    /**
+     * Конструктор класса {{class-name}}.
+     *
+     * @param $recipient
+     */
+    public function __construct(User $recipient)
+    {
+        $this->recipient = $recipient;
+    }
+
+    public function build()
+    {
+        return $this->view('{{_container-name}}::{{view}}')
+            ->to($this->recipient->email, $this->recipient->name)
+            ->with([
+                // поместите сюда переменные для замены...
+                //'name' => $this->recipient->name,
+            ]);
+    }
+}

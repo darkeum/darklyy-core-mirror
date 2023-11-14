@@ -1,0 +1,187 @@
+body #main{
+    overflow: unset;
+}
+#panel_main{
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-column-gap: 20px;
+    padding: 10px;
+}
+#panel_info>form{
+    position: sticky;
+    position: -webkit-sticky;
+    top: 80px;
+}
+
+.info_item{
+    border-bottom: 1px #eee solid;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.info_item__title{
+    font-weight: bold;
+    color: #858c96;
+    margin-right: 20px;;
+}
+.no_line{
+    border-bottom: none;
+}
+.btn_plus{
+    color: #02c385;
+    cursor: pointer;
+}
+.info_item__avatar{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+.person{
+    display: flex;
+    align-items: center;
+    color: black;
+}
+.info_item__line{
+    display: flex;
+    align-items: center;
+}
+.items-empty{
+    font-size: 5rem;
+    color: #696565;
+}
+.item{
+    border-bottom: 1px #eee solid;
+    margin-bottom: 10px;
+}
+.items__head, .items__footer{
+    font-weight: bold!important;
+}
+.items__grid-center,
+.item__count,
+.item__count-body, 
+.item__unit, 
+.item__weight, 
+.item__date_ship, 
+.item__date_end{
+    justify-self: center;
+}
+.count_footer__text{
+    justify-self: center;
+}
+.items__grid-end{
+    justify-self: end;
+}
+.item__count-bold{
+    font-style: italic;
+}
+.items__grid{
+    display: grid;
+    align-items: center;
+    padding: 5px;
+    word-break: break-all;
+}
+.color_block{
+    width: 20px;
+    height: 20px;
+}
+.legend_item{
+    margin-bottom: 10px!important;
+    cursor: pointer;
+}
+.legend_item>*{
+    margin-right: 10px;
+}
+.min_view{
+    display: none;
+}
+
+.bg-danger{
+    color: white!important;
+}
+
+.bg_ri{
+    box-shadow: 0 0 6px 6px rgb(0 117 255);
+}
+
+.view_type{
+    display: none;
+}
+
+.legend_item_all{
+    font-size: 20px;
+}
+
+.btn-flex{
+    flex: 1;
+}
+
+.total_weight_footer__text{
+    text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+    #panel_main{
+        grid-template-columns: none;
+    }
+    #panel_info{
+        order: 1;
+    }
+    #list{
+        order: 2;
+    }
+    .item{
+        grid-row-gap: 5px;
+    }
+    .items__head{
+        display: none;
+    }
+    .items__grid{
+        grid-template-columns: none;
+    }
+    .item__sku::before,
+    .item__name::before,
+    .item__count::before,
+    .item__total::before,
+    .item__unit::before,
+    .item__weight::before,
+    .item__date_ship::before,
+    .item__date_end::before,
+    .item__transport_companies::before,
+    .count_footer__text::before,
+    .total_footer__text::before,
+    .item__action::before
+    {
+        font-weight: bold;
+        margin-right: 20px;
+    }
+    .item__sku::before{content: "Артикул:";}
+    .item__name::before{content: "Наименование:";}
+    .item__count::before{content: "Кол-во:";}
+    .item__total::before{content: "Итого:";}
+    .item__unit::before{content: "Ед.изм.:";}
+    .item__weight::before{content: "Вес:";}
+    .item__transport_companies::before{content: "Доставка:";}
+    .item__date_ship::before{content: "Дата отгрузки:";}
+    .item__date_end::before{content: "Дата поставки:";}
+
+    .count_footer__text::before{content: "Общее количество:";}
+    .total_footer__text::before{content: "Итого:";}
+
+    .item__count, 
+    .item__count-body, 
+    .item__unit, 
+    .item__weight, 
+    .item__date_ship, 
+    .item__date_end,
+    .count_footer__text,
+    .total_footer__text
+    {
+        justify-self: unset;
+    }
+
+    /* .items__footer{
+        display: flex;
+    } */
+}

@@ -1,0 +1,15 @@
+<?php
+
+$lang = array (
+
+	'feedback'									=> 'Contact',
+	'contact_us'								=> 'Contact us',
+	'contact_send'								=> 'Send your comments',
+	'contact_name'								=> 'Send your comments',
+	'contact_send'								=> 'Send your comments',
+	'contact_send'								=> 'Send your comments',
+	'feedback_desc'								=> 'Обратная связь - незаменимая вещь, так как с ее помощью Ваши посетители всегда могут связаться с Вами.',
+
+);
+
+?>

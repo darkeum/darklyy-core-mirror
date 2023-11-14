@@ -1,0 +1,10 @@
+<div class="check-item">
+	<strong>{{title}}</strong>
+	<div class="check-item_value">
+        {% if value == 0 or value is empty %}
+            -
+        {% else %}
+            {{value}}
+        {% endif %}
+    </div>
+</div>

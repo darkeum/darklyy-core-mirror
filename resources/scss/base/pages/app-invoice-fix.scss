@@ -1,0 +1,16 @@
+.invoice-preview,
+.invoice-edit,
+.invoice-add {
+  .invoice-total-wrapper {
+    width: 100%;
+    max-width: max-content;
+
+    .invoice-total-item {
+
+      .invoice-total-title {
+        margin-right: 1rem;
+      }
+      .invoice-total-amount {}
+    }
+  }
+}

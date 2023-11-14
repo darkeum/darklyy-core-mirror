@@ -1,0 +1,40 @@
+AddDefaultCharset UTF-8
+
+
+ErrorDocument 404 /err404.html
+RewriteEngine on
+
+RewriteRule ^captcha$ ajax.php?do=captcha [L]
+RewriteRule ^ajax/(.*)$ ajax.php?$1 [L]
+RewriteRule ^index(.html|.htm)$ index.php [L]
+RewriteRule ^sitemap.xml$ files/sitemap.xml [L]
+RewriteRule ^admin$ administration [L]
+RewriteRule ^administrator$ administration [L]
+
+
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ api.php [QSA,L]
+
+
+RewriteCond %{HTTP_HOST} ^www\.(.*)$
+RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
+RewriteCond %{REQUEST_URI} ^/catalog/(.*)$
+RewriteRule ^.*$ https://atri-energo.ru/catalog_v2/%1? [R=301,L]
+
+RewriteCond %{REQUEST_URI} ^/news [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . main.php [L]
+
+
+
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.(css|js|jpe?g|gif|png|bmp|ico|woff2)$
+RewriteRule ^(.*)$ index.php?url=$1 [L]
+
+
+
+

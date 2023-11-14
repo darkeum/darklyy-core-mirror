@@ -1,0 +1,508 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Организация
+	{{organization.name}}
+{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@organizations/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% from '@organizations/manager/macro/priceView.html.twig' import priceView %}
+{% from '@organizations/manager/macro/nf.html.twig' import nf %}
+
+{% block scripts %}
+	{{ assets({files: [
+        '@organizations_/resources/js/show.js',
+    ], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+    {{ assets({files: [
+        '@organizations_/resources/css/components/point-item.css',
+        '@organizations_/resources/css/show.css',
+    ], name: 'style.css'}) }}
+{% endblock %}
+
+{% block  content %}
+    <input type="hidden" id="mainId" value="{{id}}">
+    <script type="application/json" id="organization_detail">{{data.detail|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+	<div id="content">
+		<div class="organization-head">
+            <div class="organization-head-block-1">
+                <div class="organization-head__name">{{organization.name}}</div>
+                <div>
+                    <div class="organization-head__status {%if data.detail.partnerStatus == "ACTIVE" %}text-green{%else%}text-red{%endif%}">{{data.detail.status_view}}</div>
+			        <div class="organization-head__client-type text-blue">{{organization.client_type_view}}</div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <a href="{{router('admin.organizations.edit', id)}}" role="button" class="btn btn-primary organization-head__button"><i class="fas fa-pencil-alt mr10"></i>Редактировать</button>
+                <a href="{{router('admin.organizations.clear_cache', id)}}" role="button" class="btn btn-warning btn-xs text-dark" title="Обновить данные">
+                    <i class="fas fa-sync-alt mr10"></i>Актуально на {{data.parse_date|date("d.m.Y H:i")}}
+                </a>
+            </div>
+		</div>
+		<div class="organization-full-name">{{data.detail.fullName}}</div>
+		<div class="organization-panel organization-info">
+			<div>
+				<div class="statistic-name">Надежность компании</div>
+                {% set reliabilityRating = data.detail.reliabilityRating %}
+				<div class="organization-info__number">
+					<i class="fas fa-shield-alt {%if reliabilityRating < 50 %}text-danger{%elseif reliabilityRating >= 50 and reliabilityRating < 75 %}text-warning{%else%}text-success{%endif%}"></i>
+					{{reliabilityRating}}</div>
+			</div>
+			<div>
+				<div class="statistic-name">Количество продаж</div>
+				<div class="organization-info__number"><i class="fas fa-shopping-basket"></i>{{sales.count}}</div>
+			</div>
+			<div>
+				<div class="statistic-name">Количество реализаций</div>
+				<div class="organization-info__number"><i class="fas fa-donate"></i>{{realization.count}}</div>
+			</div>
+			<div>
+				<div class="statistic-name">Сумма реализаций</div>
+				<div class="organization-info__number"><i class="fas fa-ruble-sign"></i>{{nf(realization.total)}}</div>
+			</div>
+			<div>
+				<div class="statistic-name">Задолженность</div>
+				<div class="organization-info__number"><i class="fas fa-hand-holding-usd"></i>???</div>
+			</div>
+			<div class="organization-info__recommended-limit">
+				<div class="statistic-name">Оптимальный лимит сделки</div>
+				<div class="organization-info__number">
+					{{ source('@organizations_/resources/picture/money.svg') }}
+					{{nf(data.detail.recommendedDealLimit)}}
+				</div>
+			</div>
+		</div>
+        {% if data.detail.type != "SELF_EMPLOYED" %}
+        <div class="organization-finreport">
+			{% set link = '@organizations/manager/show/finreport' %}
+			{% include link with {rus_name: "Уставной капитал", total: data.detail.capital} only %}
+			{% include link with finreport.balance ?? {} only %}
+			{% include link with finreport.profit ?? {} only %}
+			{% include link with finreport.revenue ?? {} only %}
+			{% include link with finreport.tax ?? {} only %}
+			{% include link with finreport.payment ?? {} only %}
+		</div>
+        {% endif %}
+        <div class="organization-details">
+            <div class="organization-data-blocks">
+                <div class="organization-panel organization-data">
+                    <div class="organization-data__info">
+                        <div class="organization-requisites">
+                            <div class="text_title">Реквизиты {{organization.name}}</div>
+                            <div class="organization-data-item">
+                                {% set link = '@organizations/manager/components/point-item.html.twig' %}
+                                {% include link with {title: "Дата создания", value: data.detail.creationDate|date('d.m.Y')} only %}
+                                {% include link with {title: "ИНН", value: organization.inn} only %}
+                                {% include link with {title: "КПП", value: organization.kpp} only %}
+                                {% include link with {title: "ОГРНИП", value: organization.ogrn} only %}
+                            </div>
+                            <div><a href="{{router("admin.organizations.requisites", id)}}">Все реквизиты</a></div>
+                            <div>
+                                <strong>Основной вид деятельности {{organization.name}}</strong>
+                                <div>{{data.detail.mainActivityType.name}} ({{data.detail.mainActivityType.code}})</div>
+                            </div>
+                            <div><a href="#">Показать еще ({{data.kind_activity.totalElements - 1}})</a></div>
+                            <div>
+                                <strong>Реестр МСП</strong>
+                                {% if data.detail.rsmpCategory is empty %}
+                                    <div>Информация отсутствует</div>
+                                {% else %}
+                                    <div>{{data.rsmp[ data.detail.rsmpCategory ]}}</div>
+                                    <div>с {{data.detail.rsmpRegDate|date("d.m.Y")}}</div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <strong>Юридический адрес</strong>
+                                <div>{{data.detail.address}}</div>
+                            </div>
+                            <div>
+                                <strong>Налоговый орган</strong>
+                                <div>{{data.detail.taxCurrInfo.authority}}</div>
+                                <div>с {{data.detail.taxCurrInfo.regDate|date("d.m.Y")}}</div>
+                            </div>
+                            <div class="organization-detail-info">
+                                <div>
+                                    <strong>Количество сотрудников</strong>
+                                    <div>
+                                        {% for item in data.detail.employeeCountByYears|reverse %}
+                                            <div>{{item.count}} сотрудников <span class="text-grey">({{item.year}})</span></div>
+                                        {% else %}
+                                            <div class="text-grey">Информация отсутствует</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong>Средняя зарплата</strong>
+                                    <div>
+                                        {% for item in data.detail.employeeInfoByYears|reverse %}
+                                            {% if item.salary is not empty %}
+                                                <div>{{nf(item.salary)}} ₽ <span class="text-grey">({{item.year}})</span></div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="text-grey">Информация отсутствует</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="break"></div>
+                                <div>
+                                    <strong>Руководитель</strong>
+                                    <div>Директор {{organization.name}}</div>
+                                    {% set director = data.detail.directors|first %}
+                                    <div>{{director.surname}} {{director.name}} {{director.patronymic}}</div>
+                                    <div>{{director.date|date("d.m.Y")}} ИНН {{director.inn}}</div>
+                                </div>
+                                <div>
+                                    <strong>Контакты</strong>
+                                    <div class="contacts-items contacts-items__short">
+                                        {% set link = '@organizations/manager/show/contacts.html.twig' %}
+                                        {% include link with {name: "phones", items: data.contacts} %}
+                                        {% include link with {name: "emails", items: data.contacts} %}
+                                    </div>
+                                    <a href="javascript:void(0);" class="contacts-buttons" data-next="Свернуть">Посмотреть еще</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="organization-reliability">
+                            <div class="organization-reliability__title text_title">Индекс финансового доверия</div>
+                            <div class="organization-reliability__name">Оцените лимит аванса с {{organization.name}}</div>
+                            <div class="organization-reliability__body">
+                                <div>
+                                    <div class="organization-reliability_grey">Вероятность риска</div>
+                                    <div class="organization-reliability__procent mb20"></div>
+                                    <div class="organization-reliability_grey">Сумма аванса</div>
+                                    <div class="organization-reliability__sum"></div>
+                                </div>
+                                <div class="organization-reliability__image"></div>
+                            </div>
+                            <div class="organization-reliability__footer">
+                                <div class="organization-reliability__text"></div>
+                                <div><input type="range" step="1" min="0" max="10" value="3" id="finance-trust-range" {% if data.detail.reliability|length == 0 %}disabled{% endif %}></div>
+                                <div class="organization-reliability__range-value">
+                                    <div class="organization-reliability__first-value">{{nf((data.detail.reliability|first).dealSum)}} ₽</div>
+                                    <div class="organization-reliability__last-value">{{priceView((data.detail.reliability|last).dealSum)}} ₽</div>
+                                </div>
+                            </div>
+                            <script type="application/json" id="reliability">{{data.detail.reliability|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="organization-data__description">{{data.detail.description}}</div>
+                </div>
+
+                <div class="organization-data-info">
+                    <div class="organization-data-info_left">
+                        <div class="organization-panel">
+                            <div class="text_title">Договоры</div>
+                            <div class="mt-3">
+                                {% for item in organization.registers %}
+                                    <div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Уникальный идентификатор:</div>
+                                            <div>{{item.id}}</div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Номер:</div>
+                                            <div>{{item.numb}}</div>
+                                        </div>
+                                        {% if item.other_numb is not empty %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Особый номер:</div>
+                                            <div>{{item.other_numb}}</div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Тип договора:</div>
+                                            <div>{{item.reestr_type.name}}</div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Вид договора:</div>
+                                            <div>{{item.type_doc_view}}</div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Дата:</div>
+                                            <div>{{item.date_view|date("d.m.Y")}}</div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <a href="/administration/module/reestr/view/{{item.id}}" target="_blank">
+                                                <i class="fas fa-external-link-alt"></i>Перейти
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% if not loop.last %}<hr>{% endif %}
+                                    {% else %}
+                                        <div class="text-grey">Договоры отсутствуют</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="organization-panel organization-contract">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text_title">Госконтракты</div>
+                                {% if not data.contracts_customer.empty or not data.contracts_supplier.empty %}
+                                    <div><a href="{{router('admin.organizations.contracts', id)}}">Смотреть все</a></div>
+                                {% endif %}
+                            </div>
+                            {% if data.contracts_customer.empty and data.contracts_supplier.empty %}
+                                <div class="text-grey mt20">Сведения об участии {{organization.name}} в госзакупках в качестве поставщика или заказчика по 44-ФЗ, и 223-ФЗ отсутствуют.</div>
+                            {% else %}
+                                <div class="organization-contract_text text-grey mt20"></div>
+                                <div class="btn-group mb20" role="group">
+                                    {% set supplier_count = data.contracts_total.supplier.RUB.count ?? 0 %}
+                                    <input type="radio" class="btn-check organization-contract_buttons" name="btnradio" id="organization-contract_button-supplier" data-type="supplier" autocomplete="off"
+                                    {% if supplier_count != 0 %}checked{% endif %}
+                                    {% if supplier_count == 0 %}disabled{% endif %}>
+                                    <label class="btn btn-outline-primary" for="organization-contract_button-supplier">Поставщик ({{supplier_count}})</label>
+                                
+                                    {% set customer_count = data.contracts_total.customer.RUB.count ?? 0 %}
+                                    <input type="radio" class="btn-check organization-contract_buttons" name="btnradio" id="organization-contract_button-customer" data-type="customer" autocomplete="off" 
+                                    {% if supplier_count == 0 %}checked{% endif %}
+                                    {% if customer_count == 0 %}disabled{% endif %}>
+                                    <label class="btn btn-outline-primary" for="organization-contract_button-customer">Заказчик ({{customer_count}})</label>
+                                </div>
+                                <div id="organization-contract_items"></div>
+                                <div class="eruz-block mt20">
+                                    <i class="fal fa-info-circle fa-lg"></i>
+                                    <div>
+                                        Компания зарегистрирована в едином реестре участников закупок под номером №{{data.detail.eruzRegNumber}} от {{data.detail.eruzStartDate|date("d.m.Y")}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <script type="application/json" id="contracts_customer_data">{{data.contracts_customer|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+                            <script type="application/json" id="contracts_supplier_data">{{data.contracts_supplier|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+                            <script type="application/json" id="contracts_total_data">{{data.contracts_total|json_encode(constant('JSON_UNESCAPED_UNICODE'))|raw}}</script>
+                        </div>
+                    </div>
+                    <div class="organization-data-info_right">
+                        <div class="organization-panel">
+                            <div class="text_title">Ответственные лица</div>
+                            <div>
+                                {% for userOrg in organization.users %}
+                                    {% set user = userOrg.user %}
+                                    <div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">ФИО:</div>
+                                            <div>{{user.surname}} {{user.name}} {{user.ochestvo}}</div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">E-mail:</div>
+                                            <div>{{user.email}}</div>
+                                        </div>
+                                        {% if user.phone is not empty %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Телефон:</div>
+                                            <div>{{user.phone}}</div>
+                                        </div>
+                                        {% endif %}
+                                        {% if user.phone2 is not empty %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Доп телефон:</div>
+                                            <div>{{user.phone2}}</div>
+                                        </div>
+                                        {% endif %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Назначение:</div>
+                                            <div>{{userOrg.type_view}}</div>
+                                        </div>
+                                        {% if userOrg.post is not empty %}
+                                        <div class="d-flex">
+                                            <div class="text-grey me-2">Должность:</div>
+                                            <div>{{userOrg.post}}</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    {% if not loop.last %} <hr> {% endif %}
+                                    {% else %}
+                                        <div class="text-grey">Ответственные лица отсутствуют</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="organization-panel">
+                            <div class="organization-data-info__head">
+                                <div class="text_title">Арбитражные дела</div>
+                                {% if data.arbitrage.content|length > 0 %}
+                                    <div><a href="{{router('admin.organizations.arbitrages', id)}}">Смотреть все</a></div>
+                                {% endif %}
+                            </div>
+                            <div>
+                                {% if data.arbitrage.content|length > 0 %}
+                                    <div class="text-grey mt20 mb20">
+                                        Сведения об участии в судебных процессах: <strong>{{data.arbitrage_count.openCases}}</strong> открытых и <strong>{{data.arbitrage_count.closedCases}}</strong> закрытых дела
+                                    </div>
+                                    <div>
+                                        {% for i in 0..1 %}
+                                            {% set arbitrage = data.arbitrage.content[i] %}
+                                            <div class="arbitrage-item">
+                                                <div class="arbitrage_title">
+                                                    <strong>№{{arbitrage.caseNumber}}</strong>
+                                                    <div class="text-grey">от {{arbitrage.regDate|date("d.m.Y")}}</div>
+                                                    <div class="arbitrage_status">
+                                                        {% if arbitrage.closeDate %}Закрыто{% else %}Открыто{% endif %}
+                                                    </div>
+                                                </div>
+                                                <div>{{arbitrage.caseCategory}}</div>
+                                                <div><span class="text-grey">Сумма:</span> {{nf(arbitrage.caseSum)}} ₽</div>
+                                                {% if arbitrage.closeDate %}
+                                                    <div><span class="text-grey">Дата завершения:</span> {{arbitrage.closeDate}}</div>
+                                                {% endif %}
+                                                {% for participantsList in arbitrage.participantsList %}
+                                                    <div><span class="text-grey">{{participantsList.sideType}}:</span> {{participantsList.participantName}}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% if not loop.last %}<hr>{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-grey mt20">
+                                        Данные об арбитражных делах отсутствуют
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="organization-panel">
+                            <div class="text_title">Проверки</div>
+                            <div>
+                                {% if data.analysis.inspection.past > 0 %}
+                                    {% set link = '@organizations/manager/show/check-item.html.twig' %}
+                                    <div class="text-grey mt20 mb20">За весь период в отношении {{organization.name}} проведено <strong>{{data.analysis.inspection.past}}</strong> проверки</div>
+                                    <div class="check-items_line">
+                                        {% include link with {title: "Плановые", value: data.analysis.inspection.scheduled} only %}
+                                        {% include link with {title: "Внеплановые", value: data.analysis.inspection.unscheduled} only %}
+                                    </div>
+                                    <hr>
+                                    <div class="check-items_line">
+                                        {% include link with {title: "Нарушений", value: data.analysis.inspection.violations} only %}
+                                        {% include link with {title: "Предстоит проверок", value: data.analysis.inspection.future} only %}
+                                    </div>
+                                {% else %}
+                                    <div class="text-grey mt20">Данных о проведении в отношении {{organization.name}} плановых и внеплановых проверок нет.</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="organization-panel">
+                            <div class="d-flex justify-content-between align-items-center mb20">
+                                <div class="text_title">Исполнительные производства</div>
+                                <a href="{{router('admin.organizations.fssp', id)}}">Смотреть все</a>
+                            </div>
+                            {% if data.analysis.fsspCategories|length > 0 %}
+                                <div class="text-grey mb20">В отношении организации выявлено {{data.analysis.fsspCount}} открытых производства</div>
+                                <div>
+                                    <div class="d-flex flex-wrap">
+                                        <div class="flex-grow-1">
+                                            <strong>Открытых производств</strong>
+                                            <div class="font-number-bold">{{data.analysis.fsspCount}}</div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <strong>На сумму, ₽</strong>
+                                            <div class="font-number-bold">{{nf(data.analysis.fsspSum)}}</div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex flex-wrap">
+                                        {% for item in data.analysis.fsspCategories %}
+                                            <div class="flex-grow-1">
+                                                <strong>{{item.category}}</strong>
+                                                <div class="font-number-bold">{{item.count}}</div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-grey">Информация об исполнительных производствах в отношении организации не найдена.</div>
+                            {% endif %}
+                        </div>
+                        <div class="organization-panel">
+                            <div class="mb20 d-flex justify-content-between align-items-center">
+                                <div class="text_title">Связи</div>
+                                {% if data.stat.total > 0 %}
+                                    <a href="{{router('admin.organizations.relations', id)}}">Смотреть все</a>
+                                {% endif %}
+                            </div>
+                            {% if data.stat.total > 0 %}
+                                <div class="text-grey mb20">Выявлено <strong>{{data.stat.total}}</strong> связей с организациями и предпринимателями</div>
+                                <div class="organization-stat-items">
+                                    {% for item in data.stat_type %}
+                                        {% if item.withUl %}
+                                            <div class="flex-grow-1">
+                                                <strong>{{item.name}}</strong>
+                                                <div class="font-number-bold">
+                                                    {% set amount = false %}
+                                                    {% for rs in data.stat.relationsStats %}
+                                                        {% if rs.id == item.id %}
+                                                            {% set amount = rs.amount %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% if amount %}{{amount}}{% else %}-{% endif %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-grey">Сведения о связях с организациями и предпринимателями отсутствуют</div>
+                            {% endif %}
+                        </div>
+                        <div class="organization-panel">
+                            <div class="text_title">Жалобы ФАС</div>
+                            {% if data.analysis.complaint.inReview != 0 or data.analysis.complaint.reviewed != 0 %}
+                                <div class="text-grey mt20">По данным ФАС на организацию имеется {{data.analysis.complaint.reviewed}} рассмотренных жалоб</div>
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <strong>Рассматривается жалоб</strong>
+                                        <div class="font-number-bold">{{data.analysis.complaint.inReview}}</div>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <strong>Рассмотренные жалобы</strong>
+                                        <div class="font-number-bold">{{data.analysis.complaint.reviewed}}</div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-grey mt20">Данные о жалобах в отношении организации в ФАС отсутствуют.</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="organization-panel organization-event">
+                <div class="organization-event__head">
+                    <div class="text_title">События</div>
+                    <div><a href="{{ router('admin.organizations.events', id) }}">Смотреть все</a></div>
+                </div>
+                <div class="organization-event-items">
+                    {% for event in data.events.content %}
+                        <div class="organization-event-items__item">
+                            <div class="organization-event-items__type">
+                                <div>{{event.date|date('d.m.Y')}}</div>
+                                <div>|</div>
+                                <div>
+                                    {% for et in data.events_type %}
+                                        {% if et.id == event.categoryId %}
+                                            {{et.name}}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="organization-event-items__title">
+                                <div>{{event.title}}</div>
+                                {% if event.payload is not null %}
+                                    <div>|</div>
+                                    <div>{{nf(event.payload.price, 2)}} &#8381</div>
+                                {% endif %}
+                            </div>
+                            {% if event.payload is not null %}
+                                <div>№{{event.payload.purchaseNumber}}</div>
+                            {% endif %}
+                            <div>{{event.text}}</div>
+                        </div>
+                        {% if not loop.last %}<hr>{% endif %}
+                        {% else %}
+                            <div class="text-grey">Сведения об изменениях в истории организации, на основе анализа доступных источников, отсутствуют.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+	</div>
+{% endblock content %}

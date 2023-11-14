@@ -1,0 +1,14 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}Менеджер новостей{% endblock header_title %}
+
+{% block  header_nav %}
+    <ul class="nav nav-list nav-list-topbar"> 
+        <li class="active"><a href="{{ manager }}/module/news/">Список новостей </a> </li>
+        <li class=""><a href="{{ manager }}/module/news/create">Добавить новость </a> </li> 
+    </ul>
+{% endblock header_nav %}
+
+{% block  content %}
+   {{ grid|raw }}
+{% endblock content %}

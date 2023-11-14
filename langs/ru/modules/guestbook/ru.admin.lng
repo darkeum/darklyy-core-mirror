@@ -1,0 +1,45 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'guestbook'									=> 'Гостевая книга',
+	'guestbook_desc'							=> 'Позволяет посетителям оставлять пожелания, адресованные владельцу или будущим посетителям.',
+	'guestbook_list'							=> 'Список отзывов',
+	'guestbook_company'							=> 'Компания',
+	'guestbook_comment'							=> 'Отзыв',
+	'guestbook_reply'							=> 'Ответ',
+	'guestbook_edit_reply'						=> 'Изменить ответ',
+	'guestbook_status_ok'						=> 'Опубликован',
+	'guestbook_status_wait'						=> 'Ожидает проверки',
+	'guestbook_publ'							=> 'Опубликовать',
+	'guestbook_publ_text'						=> 'Вы действительно хотите опубликовать данный отзыв на сайте',
+	'guestbook_nopubl'							=> 'Снять публикацию',
+	'guestbook_nopubl_text'						=> 'Вы действительно хотите снять публикацию данного отзыва на сайте',
+	'guestbook_delete'							=> 'Удалить отзыв?',
+	'guestbook_delete_text'						=> 'Вы действительно хотите удалить данный отзыв?',
+	'guestbook_approve'							=> 'Подтвердить',
+	'guestbook_add'								=> 'Добавить отзыв',
+	'guestbook_edit'							=> 'Редактировать отзыв',
+	'guestbook_user_type'						=> 'Тип пользователя',
+	'guestbook_type_guest'						=> 'Гость',
+	'guestbook_type_user'						=> 'Пользователь',
+	'guestbook_choose_user'						=> 'Выберите пользователя',
+	'guestbook_gender'							=> 'Пол',
+	'guestbook_gender_male'						=> 'Мужской',
+	'guestbook_gender_famale'					=> 'Женский',
+	'guestbook_name_plaseholder'				=> 'Введите имя',
+	'guestbook_email_plaseholder'				=> 'Введите E-mail',
+	'guestbook_phone_plaseholder'				=> 'Введите телефон',
+	'guestbook_website'							=> 'Веб-сайт',
+	'guestbook_website_plaseholder'				=> 'Укажите адрес веб-сайта',
+	'guestbook_avatar_plaseholder'				=> 'Укажите ссылку на аватар',
+	'guestbook_company_plaseholder'				=> 'Укажите компанию',
+	'guestbook_post'							=> 'Должность',
+	'guestbook_post_plaseholder'				=> 'Укажите должность в компании',
+	'guestbook_date_plaseholder'				=> 'Укажите дату публикации',
+	'guestbook_publicaion'						=> 'Отзыв опубликован?',
+	'guestbook_reply_edit'						=> 'Редактирование ответа',
+
+));
+
+?>

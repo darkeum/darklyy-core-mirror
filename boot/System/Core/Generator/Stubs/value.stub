@@ -1,0 +1,22 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Values;
+
+use Boot\Abstracts\Values\Value;
+
+class {{class-name}} extends Value
+{
+    /**
+     * Ключ ресурса, который будет использоваться ответами сериализатора JSON API.
+     */
+    protected string $resourceKey = '{{resource-key}}';
+}

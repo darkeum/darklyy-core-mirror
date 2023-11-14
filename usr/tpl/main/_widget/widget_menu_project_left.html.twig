@@ -1,0 +1,18 @@
+{% set wgt_calculation = ['project.calculation.index', 'project.calculation.heat', 'project.calculation.pump', 'project.calculation.pump_station', 'project.calculation.metering_station', 'project.calculation.block', 'project.calculation.value'] %}
+<ul>
+    <li class="article {{ currentRouter('project.index', 'active') }}">
+        <a href="{{ router('project.index') }}">Проектирование</a>
+    </li>
+    <li class="article {{ currentRouter(wgt_calculation, 'active') }}">
+        <a href="{{ router('project.calculation.index') }}">Расчеты и подборы</a>
+    </li>
+    <li class="article {{ currentRouter('project.tool.index', 'active') }}">
+        <a href="{{ router('project.tool.index') }}">Инструменты</a>
+    </li>
+    <li class="article {{ currentRouter('project.order', 'active') }}">
+        <a href="{{ router('project.order') }}">Подать заявку</a>
+    </li>
+    <li class="article ">
+        <a href="/certificates/other_cert">Сертификаты</a>
+    </li>    
+</ul>

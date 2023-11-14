@@ -1,0 +1,311 @@
+{% extends "_layout/content_with_sidebar_left.html.twig" %}
+
+{% block sidebar %}
+    {% include 'project/tool/sidebar.html.twig' %}
+{% endblock sidebar %}
+
+{% block breadcrumbs %}
+    {% include 'breadcrumbs.html.twig' %}
+{% endblock breadcrumbs %}
+
+{% block title %}
+    <h1 class="mt-3 h1-page-title">
+        {{ title }}
+    </h1>
+{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="/usr/tpl/main/resources/css/project/scales.css">
+<script src="/usr/tpl/main/resources/js/project/scales.js"></script>
+{# /public/assets/js/project/scales.js - лежит тут не забыть #}
+
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="section-title">
+                            <div class="title-header">
+                                <h5>
+                                    Калькулятор метизов, крепежа и металлопроката
+
+                                </h5>
+                                <h2 class="title">
+                                    Перевод массы в количество
+                                </h2>
+                                <p style="line-height: 1.5;">
+                                    Наверняка вы сталкивались с необходимостью рассчитать или перевести вес того или
+                                    иного крепежа в штуки и наоборот. Раньше для решения подобных задач использовали
+                                    техническую литературу и это занимало очень много времени. Сейчас же всё стало
+                                    гораздо удобнее — онлайн калькулятор крепежа и метизов помогает получить желаемую
+                                    таблицу данных в считанные минуты! Наш калькулятор объединяет данные различной
+                                    технической литературы и постоянно расширяется!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12" style="line-height: 1.5;">
+                        <div id="block2493" class="block-mcalc">
+                            <div style="display:block; margin-top:30px; max-width: 930px; margin: 0 auto;">
+
+                                <input id="myInput" type="text" value="">
+                                <div>
+                                    <div class="tovar">
+                                        <label>
+                                            Тип
+
+
+                                            </br>
+                                            <select class="mtype" name="typem">
+                                                <option>
+                                                    Анкеры
+
+
+                                                </option>
+                                                <option>
+                                                    Болт
+
+
+                                                </option>
+                                                <option>
+                                                    Винт
+
+
+                                                </option>
+                                                <option>
+                                                    Гайка
+
+
+                                                </option>
+                                                <option>
+                                                    Гвоздь
+
+
+                                                </option>
+                                                <option>
+                                                    Гровер
+
+
+                                                </option>
+                                                <option>
+                                                    Заклепка
+
+
+                                                </option>
+                                                <option>
+                                                    Круг отрезной
+
+
+                                                </option>
+                                                <option>
+                                                    Ось мебельная
+
+
+                                                </option>
+                                                <option>
+                                                    Проволока
+
+
+                                                </option>
+                                                <option>
+                                                    Рым-крепеж
+
+
+                                                </option>
+                                                <option>
+                                                    Саморез
+
+
+                                                </option>
+                                                <option>
+                                                    Такелаж
+
+
+                                                </option>
+                                                <option>
+                                                    Шайба
+
+
+                                                </option>
+                                                <option>
+                                                    Шпилька
+
+
+                                                </option>
+                                                <option>
+                                                    Шплинт
+
+
+                                                </option>
+                                                <option>
+                                                    Шуруп
+
+
+                                                </option>
+                                            </select>
+                                        </label>
+                                        <label>
+                                            Стандарт
+
+
+                                            </br>
+                                            <select class="standard"></select>
+                                        </label>
+                                        <label>
+                                            Диаметр
+
+
+                                            </br>
+                                            <select class="diametr" name="diametr"></select>
+                                        </label>
+                                        <label>
+                                            Длина
+
+
+                                            </br>
+                                            <select class="dlina" name="dlina"></select>
+                                        </label>
+                                        <label>
+                                            Материал
+
+
+                                            </br>
+                                            <select class="material" name="material"></select>
+                                        </label>
+                                        <label>
+                                            Покрытие
+
+
+                                            </br>
+                                            <select class="pokritie" name="pokritie"></select>
+                                        </label>
+                                        <label>
+                                            Прочность
+
+
+                                            </br>
+                                            <select class="klassp" name="klassp"></select>
+                                        </label>
+                                        <label>
+                                            <input type="text" class="idtov"></td>
+                                            <td>
+                                                <input type="text" class="massa">
+                                        </label>
+                                        <label>
+                                            Кол-во, шт.
+
+
+                                            </br>
+                                            <input type="text" class="colvo" value="1"></label>
+                                        <label>
+                                            Вес, кг.
+
+
+                                            </br>
+                                            <input type="text" class="allmass"></label>
+                                        <p class="tovinfo"></p>
+                                        <div class="bta">
+                                            <img class="butrem"
+                                                 src="/usr/tpl/main/resources/images/project/scales/icon-close.svg"
+                                                 alt="Удалить"><img class="butt"
+                                                                    src="/usr/tpl/main/resources/images/project/scales/icon-plus.svg"
+                                                                    alt="Добавить">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="full">
+                                    Кол. всего:
+
+
+                                    <span class="allcntt">
+                                            0
+                                                                                                        
+                                                                                    
+                                        </span>
+                                    Масса всего:
+
+
+                                    <span class="allmasst">
+                                            0
+                                                                                                        
+                                                                                    
+                                        </span>
+                                </div>
+                                <div class="resall">
+                                    СБРОС
+
+
+                                </div>
+                                <div class="downl">
+                                    СКАЧАТЬ
+
+
+                                </div>
+                                <div class="copyl">
+                                    КОПИРОВАТЬ
+
+
+                                </div>
+                                <div class="printl">
+                                    ПЕЧАТЬ
+
+
+                                </div>
+                                <div class="sendl">
+                                    ОТПРАВИТЬ
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <style>
+
+                            th {
+                                background: #C9E3FE
+                            }
+
+                            th {
+                                font-size: 18px;
+                                font-weight: bold;
+                                background: #e1e6f5;
+                                border-top: 4px solid #ee4136;
+                                border-bottom: 1px solid #fff;
+                                color: #545455;
+                                padding: 8px;
+                            }
+
+                            td {
+                                font-size: 15px;
+                                background-image: url(https://cdn.bitrix24.site/bitrix/images/landing/patterns/pattern1.png);
+                                border-bottom: 1px solid #fff;
+                                color: #669;
+                                border-top: 1px solid transparent;
+                                padding: 8px;
+
+                            .wrapper {
+                                text-align: right;
+                            }
+
+                            }
+                            tr:hover td {
+                                background: #ccddff;
+                            }
+
+                            .wrapper {
+                                text-align: center;
+                            }
+
+                            .box {
+                                display: inline-block;
+                                margin-right: -0.25em;
+                            }
+                        </style>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock content %}
+        

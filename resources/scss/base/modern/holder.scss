@@ -1,0 +1,50 @@
+:root {
+    --holder-style-width: 100px
+}
+
+.holder-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, var(--holder-style-width));
+    grid-gap: 15px;
+}
+
+.holder-style {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    padding: 9px 16px;
+    color: #aaa;
+    outline: 1.5px dashed #d9d9d9;
+    border: 0;
+    transition: all .15s ease;
+    cursor: pointer;
+    width: var(--holder-style-width);
+    height: 90px;
+    border-radius: 8px;
+    text-align: center
+}
+
+.holder-style.holder-active {
+    outline-color: map-get($success-color, 'base');
+    color: map-get($success-color, 'base')
+}
+
+.holder-style.holder-danger {
+    outline-color: map-get($danger-color, 'base');
+    color: map-get($danger-color, 'base')
+}
+
+.holder-style .holder-icon {
+    color: #aaa;
+    font-size: 30px
+}
+
+.holder-style.holder-active .holder-icon {
+    color: map-get($success-color, 'base')
+}
+
+.holder-style.holder-danger .holder-icon {
+    color: map-get($danger-color, 'base')
+}

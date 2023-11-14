@@ -1,0 +1,42 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "id": 0,
+            "geometry": { "type": "Point", "coordinates": [56.884829789325, 53.26144665144947] },
+            "options": {
+                "preset": "islands#darkBlueShoppingCircleIcon"
+            },
+            "properties": {
+                "iconContent": "Атри-Энерго",
+                "iconCaption": "Атри-Энерго - Пункт выдачи",
+                "balloonContentHeader": "",
+                "balloonContentBody": "",
+                "balloonContentFooter": "",
+                "clusterCaption": "",
+                "hintContent": "<strong>Наш пункт выдачи</strong>"
+            }
+        },
+        {
+            "type": "Feature",
+            "id": 1,
+            "options": {"strokeWidth": 5, "strokeColor": "#467fcf"},
+            "properties": {"balloonContent": "Путь к пункту выдачи", "hintContent": "Путь к пункту выдачи"},
+            "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                    [56.884842768714634, 53.26158612631826],
+                    [56.88485892002844, 53.26176046990419],
+                    [56.88499621976572, 53.26166960757826],
+                    [56.88516507336755, 53.26156768363571],
+                    [56.885673097846045, 53.26125118297195],
+                    [56.88576559866675, 53.261197538791635],
+                    [56.885662819962896, 53.26074692767716],
+                    [56.88559234297336, 53.26038482946015],
+                    [56.88554682651337, 53.259952993808746],
+                    [56.885550681367135, 53.25884465146264]
+            ]}
+        }
+    ]
+}

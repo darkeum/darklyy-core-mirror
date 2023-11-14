@@ -1,0 +1,213 @@
+{% extends "_layout/content_with_sidebar_left.html.twig" %} 
+
+{% block sidebar %}
+    {% include 'project/tool/sidebar.html.twig' %} 
+{% endblock sidebar %}
+
+{% block breadcrumbs %}
+    {% include 'breadcrumbs.html.twig' %} 
+{% endblock breadcrumbs %}
+
+{% block title %}
+<h1 class="mt-3 h1-page-title">{{ title }}</h1>
+{% endblock title %}
+
+{% block content %}
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <div class="section-title">
+                            <div class="title-header">
+                                <h5>Перевод единиц мощности</h5>
+                                <h2 class="title">Конвертер мощности</h2>
+                                <div class="title-desc">В любой функционирующей системе необходимо учитывать показатели работоспособности приборов и машин.
+                                Существует несколько величин измерения мощности. Для удобства их конвертации предлагаем использовать калькулятор перевода.
+                                Все что вам понадобится это выбрать нужные единицы, ввести значение и увидеть результат.</div>
+                            </div>
+                        </div>                
+                    </div>
+                    <div class="col-4">
+                        <img src="/usr/tpl/main/resources/images/1/pressure.png" class="w-100 center-block img-responsive" style="margin: 0 auto; "/>
+                    </div>
+                    <div class="col-12">
+                        <div class="calc" id="power">
+                            <div class="">
+                                <div class="">
+                                    <label><strong>Выберите единицу мощности, из которой надо перевести</strong></label><br>
+                                    <select class="from form-control">
+                                        <option value="1">Вт</option>
+                                        <option value="1000">кВт</option>
+                                        <option value="1000000">МВт</option>
+                                        <option value="1000000000">Гвт</option>
+                                        <option value="1.163">ккал/ч</option>
+                                        <option value="1163">Мкал/ч</option>
+                                        <option value="1163000">Гкал/ч</option>
+                                    </select><br>
+                                    <label><strong>Выберите единицу мощности, в которую надо перевести</strong></label><br>
+                                    <select class="to form-control">
+                                        <option value="1">Вт</option>
+                                        <option value="1000">кВт</option>
+                                        <option value="1000000">МВт</option>
+                                        <option value="1000000000">Гвт</option>
+                                        <option value="1.163">ккал/ч</option>
+                                        <option value="1163">Мкал/ч</option>
+                                        <option value="1163000">Гкал/ч</option>
+                                    </select>
+                                
+                                    <label><strong>Введите количество</strong></label><br>
+                                    <input class="q form-control" type="text" style="width: 100% !important;"/>
+                                    
+                                    <div class="result convertResult">
+                                        <div class="item koef mb-3">
+                                            <div class="title"><b>Переводной коэффициент: </b><span class="number">0</span></div>
+                                        </div>
+                                        <div class="item otherpower">
+                                            <div class="title"><b>Результат: </b><span class="number">0</span></div>                                        
+                                        </div>                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+$(function(){
+
+    if ($('.calc#power').length>0) calcPower();
+    if ($('.calc#fuel').length>0) calcFuel();
+});
+
+function antiE(what) {
+
+    sep = 'e-';
+    what = what.toString();
+    if (what.indexOf(sep)>0) {
+        spl = what.split(sep);
+        what = spl[0] + '*10<sup>-' + spl[1] + '</sup>';
+
+    }
+    return what;
+}
+
+function calcPower() {
+    var form = $('.calc#power');
+
+    var selectFrom = $('select.from', form);
+    var selectTo = $('select.to', form);
+    var qInput = $('input.q', form);
+    var resultDisplay = $('.result .otherpower .number', form);
+    var koefDisplay = $('.result .koef .number', form);
+
+    $('button', form).click(calculate);
+
+    function calculate() {
+        var from = selectFrom.val();
+        var to = selectTo.val();
+        var q = qInput.val();
+        var koef = from/to;
+        var result = q* koef;
+
+        if (result == 0 || result == '') {
+            resultDisplay.html('&nbsp;');
+            koefDisplay.html('&nbsp;');
+            qInput.removeClass('error');
+        } else if (isNaN(result)) {
+            qInput.addClass('error');
+            resultDisplay.html('&nbsp;');
+            koefDisplay.html('&nbsp;');
+
+        } else {
+            qInput.removeClass('error');
+            resultDisplay.html(antiE(result));
+            koefDisplay.html(antiE(koef));
+
+
+        }
+    }
+
+    selectFrom.change(calculate);
+    selectTo.change(calculate);
+    qInput.keyup(calculate);
+}
+
+
+function calcFuel(){
+
+    var units = {
+        a: 'тонна',
+        b: 'тыс м3',
+        c: 'складской м3',
+        d: 'плотный м3'
+    };
+
+    var form = $('.calc#fuel');
+
+
+    var select = $('select.fuel', form);
+    var qInput = $('input.q', form);
+    var unitsDisplay = $('td>.units', form); //только спан рядом с селектом
+    $('.unifuel .units').text('тонна');
+    var koefDisplay = $('.result .koef .number', form);
+    var unifuelDisplay = $('.result .unifuel .number', form);
+
+    var measure;
+    var koef;
+    var q;
+
+    select.change(fuelSelect);
+    select.keyup(fuelSelect);
+    fuelSelect();
+
+    function fuelSelect(){
+        var v = select.val();
+        measure = units[v.split('-')[0]];
+        koef = parseFloat(v.split('-')[1]);
+        unitsDisplay.text(measure);
+        koefDisplay.html(koef);
+        calculate();
+
+    };
+
+
+    $('button', form).click(function(){
+        calculate();
+    });
+
+    qInput.keyup(calculate);
+
+    function calculate() {
+        q = qInput.val();
+        if (q == 0) {
+            unifuelDisplay.html('&nbsp;');
+        }
+
+        var result = q*koef;
+        if (result == 0) {
+            unifuelDisplay.html('&nbsp;');
+            qInput.removeClass('error');
+        } else if (isNaN(result)) {
+            unifuelDisplay.html('&nbsp;');
+            qInput.addClass('error');
+        } else {
+            qInput.removeClass('error');
+            koefDisplay.html(antiE(koef));
+            unifuelDisplay.html(antiE(result));
+
+        }
+    }
+}
+</script>
+
+
+
+{% endblock content %}

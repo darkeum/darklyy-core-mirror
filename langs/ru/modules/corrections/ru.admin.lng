@@ -1,0 +1,37 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'corrections'						=> 'Замечания и предложения',
+	'corrections_list'					=> 'Список заявок',
+	'corrections_add'					=> 'Добавить заявку',
+	'corrections_type'					=> 'Расположение',
+	'corrections_module'				=> 'Модуль',
+	'corrections_compl'					=> 'Завершения заявки',
+	'corrections_compl_type'			=> 'Тип завершения',
+	'corrections_compl_type_1'			=> 'Выполнено',
+	'corrections_compl_type_2'			=> 'Отклонено',
+	'corrections_del'					=> 'Удалить заявку?',
+	'corrections_del_text'				=> 'Вы действительно хотите удалить данную заявку?',
+	'corrections_type_1'				=> 'Корпоративный портал',
+	'corrections_type_2'				=> 'Сайт',
+	'corrections_type_3'				=> 'Администрирование компьютеров',
+	'corrections_type_4'				=> 'Администрирование оргтехники',
+	'corrections_url'					=> 'Ссылка на проблему',
+	'corrections_url_pre'				=> 'Укажите ссылка на проблему',
+	'corrections_text'					=> 'Описание проблемы',
+	'corrections_text_pre'				=> 'Укажите описание проблемы',
+	'corrections_mark'					=> 'Приоритет',
+	'corrections_mark_0'				=> 'Без приоритета',
+	'corrections_mark_1'				=> 'Обычный',
+	'corrections_mark_2'				=> 'Выше среднего',
+	'corrections_mark_3'				=> 'Важный',
+	'corrections_mark_4'				=> 'Критический',
+	
+	
+	
+
+));
+
+
+?>

@@ -1,0 +1,136 @@
+#tov_list > tr{
+    cursor: default;
+}
+.cp, .changeGoods{
+    cursor: pointer;
+}
+.cpx{
+    cursor: pointer;
+    border-bottom: 1px #0088cc dashed;
+}
+.elemList{
+    cursor: pointer;
+    padding-bottom: 10px;
+}
+.elemList:hover{
+    background-color: #dadada;
+}   
+.position{
+    cursor: move;
+}
+#counterparty{
+    cursor: pointer;
+}
+.salesAlertFont{
+    font-size: 12px;
+}
+.units{
+    display: none;
+}
+.reservNumber{
+    font-size: 30px;
+    font-weight: bold;
+}
+.font-weight-bold{
+    font-weight: bold;
+}
+.link-no-style:active,
+.link-no-style:hover,
+.link-no-style:visited,
+.link-no-style:link,
+.link-no-style {
+    text-decoration: none;
+    color: black;
+    cursor: default;
+    font-weight: normal;
+}
+.link-style{
+    font-weight: bold;
+    cursor: pointer;
+}
+.zero-sum{
+    color: red;
+    font-weight: bold;
+}
+.danger_block{
+    background-color: #fc5047;
+    border-radius: 5px;
+    padding: 15px;
+    color: white;
+    display: flex;
+    min-height: 130px;
+    overflow: hidden;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 3;
+}
+.danger_block-primary{
+    margin: auto;
+}
+.danger_block-title{
+    color: white;
+    font-size: 25px;
+}
+.danger_block-btn>*{
+    background-color: #ff000000;
+    border: 1px white solid;
+    border-radius: 5px;
+    font-size: 20px;
+    outline: none;
+    transition: .5s;
+}
+.danger_block-btn>*:hover{
+    background-color: white;
+    color: #fc5047;
+}
+.danger_block-img{
+    background-image: url(/usr/modules/sales/admin/assets/img/money.gif);
+    width: 60%;
+}
+.view_supply_order{
+    border: 3px red double;
+}
+.sales_block{
+    background-color: rgba(255, 255, 255, .15);
+    backdrop-filter: blur(.2px);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.sales_block>i{
+    font-size: 20rem;
+    color: rgb(204 203 203 / 66%);
+}
+.sales_block__text{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    top: 35%;
+}
+.sales_block__text>*{
+    color: rgb(204 203 203 / 66%);
+    font-size: 10rem;
+}
+.sales_block__lock{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sales_block__lock-disable{
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    cursor: none;
+}
+.status_item{
+    position: relative;
+    z-index: 3;
+    cursor: pointer;
+    font-size: 26px;
+}

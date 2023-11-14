@@ -1,0 +1,62 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@profile/roles/nav_list') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+    <script>
+        $(function(){
+            $("#permission").select2({
+                multiple: true,
+                data: [
+                    {% for value in permission %}
+                        {
+                            id: {{value.id}},
+                            text: '{{value.name}}',
+                            selected: {% if value.id in rolePermissions|keys %}true{% else %}false{% endif %}
+                        },
+                    {% endfor %}
+                ]
+            });
+        });
+    </script>
+	{{ assets({files: [], name: 'script.js'}) }}
+{% endblock %}
+
+{% block links %}
+	{{ assets({files: []}) }}
+{% endblock %}
+
+{% block  content %}
+	<div id="content">
+        {% if session('status') %}
+            <div class="alert alert-success">
+                {{ session('status') }}
+            </div>
+        {% endif %}
+		<div class="card">
+			<div class="card-body">
+				<form id="tab-main-form" action="{% if id %}{{route('admin.profile.role.update', id)}}{% else %}{{route('admin.profile.role.store')}}{% endif %}" method="POST">
+                    {% if id %}<input type="hidden" name="_method" value="PUT">{% endif %}
+					<div class="mb-3 btn-group">
+						<button type="submit" class="btn btn-success">Записать</button>
+					</div>
+					<div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Наименование</label>
+						<div class="col-8"><input type="text" class="form-control" value="{{role.name}}" name="name" required></div>
+					</div>
+                    {% include '@profile/roles/guard_name' with {'guard_name': role.guard_name} only %}
+                    <div class="mb-3 row">
+						<label class="col-2 col-form-label text-end">Разрешения</label>
+						<div class="col-8">
+                            <select name="permission[]" id="permission" multiple></select>
+                        </div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

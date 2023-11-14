@@ -1,0 +1,21 @@
+<?php
+
+$lang = array_merge($lang, array (
+
+	'fcontrol'									=> 'Финансы контроль',
+	'fcontrol_control'							=> 'Контроль закупок',
+	'fcontrol_supply_order'						=> 'Счет',
+	'fcontrol_control_status_1'					=> 'Ожидает проверки',
+	'fcontrol_control_status_2'					=> 'Отправлен на доработку',
+	'fcontrol_control_status_3'					=> 'Согласован',
+	'fcontrol_fast_agree'						=> 'Подтвердить не глядя',
+	'fcontrol_approve'							=> 'Согласовать',
+	'fcontrol_approve_title'					=> 'Согласовать счет #[order]?',
+	'fcontrol_approve_text'						=> 'Вы действительно хотите согласовать счет #[order]?',
+	'fcontrol_delete_title'						=> 'Удалить заявку #[control]?',
+	'fcontrol_delete_text'						=> 'Вы действительно хотите удалить заявку на согласования #[control]?',
+	'fcontrol_pay'								=> 'Заявки на оплату',
+));
+
+
+?>

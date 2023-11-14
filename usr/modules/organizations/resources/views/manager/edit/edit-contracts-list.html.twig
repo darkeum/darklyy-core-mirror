@@ -1,0 +1,23 @@
+{% for item in organization.registers %}
+	<tr>
+		<td>
+			{% if organization.reestr_id == item.id %}
+				<i class="fas fa-check text-success"></i>
+			{% endif %}
+		</td>
+		<td>{{item.id}}</td>
+		<td>{{item.numb}}</td>
+		<td>{{item.other_numb}}</td>
+		<td>{{item.reestr_type.name}}</td>
+		<td>{{item.type_doc_view}}</td>
+		<td>{{item.date_view|date("d.m.Y")}}</td>
+		<td>
+			<div class="btn-group">
+				<a href="/administration/module/reestr/view/{{item.id}}" target="_blank" role="button" class="btn btn-sm btn-info">Перейти</a>
+				<button type="button" class="btn btn-sm btn-success button-contract-default" title="Использовать как основной" data-id="{{item.id}}">
+					<i class="fas fa-file"></i>
+				</button>
+			</div>
+		</td>
+	</tr>
+{% endfor %}

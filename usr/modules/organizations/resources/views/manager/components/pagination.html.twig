@@ -1,0 +1,7 @@
+{% if data.totalPages > 1 %}
+	<div class="d-flex justify-content-center" style="gap: 15px;">
+		{% for page in 1..data.totalPages %}
+			<div><a href="?page={{page}}" class="btn {% if (data.number + 1) == page %}btn-primary{% else %}btn-outline-primary{% endif %}">{{page}}</a></div>
+		{% endfor %}
+	</div>
+{% endif %}

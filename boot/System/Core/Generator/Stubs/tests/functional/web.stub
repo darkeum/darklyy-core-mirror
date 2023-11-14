@@ -1,0 +1,47 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\UI\WEB\Tests\Functional;
+
+use {{container-name}}\Tests\WebTestCase;
+
+/**
+ * Class {{class-name}}.
+ *
+ * @group {{_container-name}}
+ * @group web
+ */
+class {{class-name}} extends WebTestCase
+{
+    // конечная точка, которая будет вызываться в рамках этого теста (например, get@v1/users)
+    protected string $endpoint = 'method@endpoint';
+
+     // указать некоторые права доступа
+    protected array $access = [
+        'permissions' => '',
+        'roles'       => '',
+    ];
+
+    public function test(): void
+    {
+        $data = [
+            // 'key' => 'value',
+        ];
+
+       // отправить HTTP запрос
+        $response = $this->makeCall($data);
+
+        // подтвердить статус ответа
+        $response->assertStatus(200);
+
+        // делать другие утверждения здесь
+    }
+}

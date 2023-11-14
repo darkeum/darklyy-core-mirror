@@ -1,0 +1,22 @@
+{% set is_attribute = true %}
+
+{% if catalog.category is empty %}
+	{% set is_attribute = false %}
+	<div>Категория не указана</div>
+{% endif %}
+
+{% if is_attribute and attributes|length == 0 %}
+	{% set is_attribute = false %}
+	<div>Атрибуты отсутствуют</div>
+{% endif %}
+
+{% if is_attribute %}
+	{% for attribute in attributes %}
+		<div class="row align-items-center mb-3">
+            <div class="col-3 text-end">{{attribute.name}}</div>
+            <div class="col-4">
+				{% include '@catalog/manager/attribute/type/' ~ attribute.type %}
+            </div>
+		</div>
+	{% endfor %}
+{% endif %}

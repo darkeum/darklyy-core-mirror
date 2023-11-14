@@ -1,0 +1,30 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+namespace {{container-name}}\Tasks;
+
+use {{container-name}}\Data\Repositories\{{model}}Repository;
+use Boot\Abstracts\Tasks\Task;
+
+class GetAll{{models}}Task extends Task
+{
+    protected {{model}}Repository $repository;
+
+    public function __construct({{model}}Repository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function run()
+    {
+        return $this->repository->paginate();
+    }
+}

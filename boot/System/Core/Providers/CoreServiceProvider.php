@@ -1,0 +1,58 @@
+<?php
+
+namespace Boot\System\Core\Providers;
+
+use Boot\System\Core\Abstracts\Events\Providers\EventServiceProvider;
+use Boot\System\Core\Abstracts\Providers\MainProvider;
+use Boot\System\Core\Foundation\Core;
+use Boot\System\Core\Loaders\AutoLoaderTrait;
+use Boot\System\Core\Traits\ValidationTrait;
+use Boot\Support\Facades\App;
+use Illuminate\Support\Facades\Schema;
+
+class CoreServiceProvider extends MainProvider
+{
+    use AutoLoaderTrait;
+    use ValidationTrait;
+
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        // Autoload most of the Containers and Ship Components
+        $this->runLoadersBoot();
+
+        // Solves the "specified key was too long" error, introduced in L5.4
+        Schema::defaultStringLength(191);
+
+        // Registering custom validation rules
+        $this->extendValidationRules();
+    }
+
+    public function register(): void
+    {
+        // NOTE: function order of this calls bellow are important. Do not change it.
+
+        $this->app->bind('Core', Core::class);
+        // Register Core Facade Classes, should not be registered in the $aliases property, since they are used
+        // by the auto-loading scripts, before the $aliases property is executed.
+        $this->app->alias(Core::class, 'Core');
+
+        // parent::register() should be called AFTER we bind 'Core'
+        parent::register();
+
+        $this->overrideLaravelBaseProviders();
+
+        $this->runLoaderRegister();
+    }
+
+    /**
+     * Register Overided Base providers
+     * @see \Illuminate\Foundation\Application::registerBaseServiceProviders
+     */
+    private function overrideLaravelBaseProviders(): void
+    {
+        // App::register(EventServiceProvider::class); //The custom core eventserviceprovider
+    }
+}

@@ -1,0 +1,29 @@
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE text/css
+  <IfModule mod_setenvif.c>
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+  </IfModule>
+</IfModule>
+ErrorDocument 400 /404.php
+ErrorDocument 401 /404.php
+ErrorDocument 403 /404.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /404.php
+
+RewriteEngine on
+RewriteBase / 
+RewriteCond %{HTTP_HOST} ^www.xn--b1agaykvq.xn--p1ai
+RewriteRule ^(.*)$ http://xn--b1agaykvq.xn--p1ai/$1 [R=permanent,L]
+#RewriteCond %{HTTP:X-Forwarded-Proto} !https
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^([a-zA-Z0-9]+)?/?([a-zA-Z0-9-_=.,:]+)?/?([a-zA-Z0-9-_,+:.=()]+)?/?([a-zA-Z0-9-_=.,:]+)?/?([0-9-]+)?/?$ index.php?modul=$1&cats=$2&page=$3&url=$4&dataid=$5 [L]
+
+RewriteCond %{REQUEST_URI} !(/index.php)
+RewriteRule ^(.php)$ / [R=301,L]

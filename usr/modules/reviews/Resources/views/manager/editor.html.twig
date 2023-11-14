@@ -1,0 +1,152 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %} {{ __('reviews.manager') }} {% endblock header_title %}
+
+{% block  header_nav %}
+	{% include '@reviews/manager/header_nav.html.twig' %}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script>{{oid.js|raw}}</script>
+{% endblock %}
+
+{% block content %}  
+	<style>
+		.fancybox-slide--iframe .fancybox-content {
+			width  : 800px;
+			height : 600px;
+			max-width  : 80%;
+			max-height : 80%;
+			margin: 0;
+		}
+	</style>
+	<div id="content" class="">
+		<form id="admin-form" action="{% if id is defined %} {{ router('admin.reviews.'~ type, id) }} {% else %} {{ router('admin.reviews.'~ type) }} {% endif %}" method="post">
+			{% if id is defined %}
+			<input name="_method" type="hidden" value="PUT">
+			{% endif %}
+			<div class="row">
+				<div class="col-md-12 mb-3">
+					<div class="card">
+						<div class="card-body">
+							<div class="row align-items-center">
+								<div class="col-md-6">
+									<h3 class="mb-0">{% if id is defined %}{{ __('reviews.editor.edited') }}{% else %}{{ __('reviews.editor.added') }}{% endif %}</h3>
+								</div>
+								<div class="col-md-6 text-end">
+									<input name="submit" type="submit" class="btn btn-primary btn-lg" value="{{ do }}">
+								</div>
+							</div>
+						</div>
+			  		</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-dark panel-border top">
+						<div class="panel-heading"><span class="panel-title">{{ __('reviews.editor.info') }}</span></div>
+						<div class="panel-body">	
+							<div class="mb-3">
+								<label for="title" class="form-label">{{ __('reviews.editor.title') }}</label>
+								<input type="text" class="form-control" name="title" id="title" aria-describedby="titleHelp" value="{{ data.title }}" placeholder="{{ __('reviews.editor.title.placeholder') }}" />
+								<div id="titleHelp" class="form-text">{{ __('reviews.editor.title.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="slug" class="form-label">{{ __('reviews.editor.slug') }}</label>
+								<input type="text" class="form-control" name="slug" id="slug" aria-describedby="slugHelp" value="{{ data.slug }}" placeholder="{{ __('reviews.editor.slug.placeholder') }}" />
+								<div id="slugHelp" class="form-text">{{ __('reviews.editor.slug.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="subtitle" class="form-label">{{ __('reviews.editor.subtitle') }}</label>
+								<input type="text" class="form-control" name="subtitle" id="subtitle" aria-describedby="subtitleHelp" value="{{ data.subtitle }}" placeholder="{{ __('reviews.editor.subtitle.placeholder') }}" />
+								<div id="subtitleHelp" class="form-text">{{ __('reviews.editor.subtitle.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="category" class="form-label">{{ __('reviews.editor.category') }}</label>
+									<select class="form-select" name="category" id="category" aria-describedby="categoryHelp">
+										{% for cat in categories %} 											
+											<option value="{{ cat.id }}" {% if data.category == cat.id  %} selected {% endif %}>{{ cat.name }}</option>
+										{% endfor %}  
+									</select>
+								<div id="categoryHelp" class="form-text">{{ __('reviews.editor.category.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="oid" class="form-label">{{ __('reviews.editor.oid') }}</label>
+								{{oid.select|raw}}
+								<div id="oidHelp" class="form-text">{{ __('reviews.editor.oid.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="type" class="form-label">{{ __('reviews.editor.type') }}</label>
+									<select class="form-select" name="type" id="type">
+										{% for key, type in types %} 											
+											<option value="{{ key }}" {% if data.type == key  %} selected {% endif %}>{{ type }}</option>
+										{% endfor %}  
+									</select>
+								<div id="typeHelp" class="form-text">{{ __('reviews.editor.type.description') }}</div>
+				  			</div>
+							<div class="mb-3">
+								<label for="city" class="form-label">{{ __('reviews.editor.city') }}</label>
+								<input type="text" class="form-control" name="city" id="city" aria-describedby="city" value="{{ data.city }}" placeholder="{{ __('reviews.editor.city.placeholder') }}" />
+								<div id="cityHelp" class="form-text">{{ __('reviews.editor.city.description') }}</div>
+						 	</div>
+							<div class="mb-3">
+								<label for="date_coop" class="form-label">{{ __('reviews.editor.date_coop') }}</label>
+								<input type="date" class="form-control" name="date_coop" id="date_coop" aria-describedby="date_coop" value="{{ data.date_coop|date('Y-m-d') }}" placeholder="{{ __('reviews.editor.date_coop.placeholder') }}" />
+								<div id="date_coopHelp" class="form-text">{{ __('reviews.editor.date_coop.description') }}</div>
+						 	</div>
+							<div class="mb-3">
+								<label for="tags" class="form-label">{{ __('reviews.editor.tags') }}</label>
+								<input type="text" class="form-control" name="tags" id="tags" aria-describedby="tags" value="{{ data.tags|join(', ') }}" placeholder="{{ __('reviews.editor.tags.placeholder') }}" />
+								<div id="tagsHelp" class="form-text">{{ __('reviews.editor.tags.description') }}</div>
+						 	</div>
+							<div class="mb-3">
+								<label for="preview" class="form-label">{{ __('reviews.editor.preview') }}</label>
+								<div class="input-group">									
+								 	<input type="text" id="preview" name="preview" class="form-control" placeholder="{{ __('reviews.editor.preview.placeholder') }}" value="{{ data.preview.source }}" />
+								 	<button class="btn btn-outline-secondary" type="button" id="button-preview" data-fancybox="" data-type="iframe" data-src="/filemanager/filemanager.php?type=1&amp;field_id=preview&amp;relative_url=0&amp;fldr=reviews/{% if id is defined %}{{ id }}{% else %}temp{% endif %}"><i class="fas fa-folder-open"></i></button>								
+						   		</div>
+								<div id="previewHelp" class="form-text">{{ __('reviews.editor.preview.description') }}</div>   
+							</div>				
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-dark panel-border top md-3">
+						<div class="panel-heading"><span class="panel-title">{{ __('reviews.editor.content') }}</span></div>
+						<div class="panel-body">	
+							<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.8.2/tinymce.min.js" referrerpolicy="origin"></script>
+							<script>
+								tinymce.init({
+									selector: 'textarea#content_text'
+								});
+							</script>	
+							<div class="mb-3">
+								<label for="content_text" class="form-label">{{ __('reviews.editor.content') }}</label>
+								<textarea name="content" id="content_text" placeholder="{{ __('reviews.editor.content.description') }}">{{ data.content }}</textarea>
+								<div id="" class="form-text">{{ __('reviews.editor.content.description') }}</div>
+							</div>								
+						</div>		
+					</div>
+					<div class="panel panel-dark panel-border top">
+						<div class="panel-heading"><span class="panel-title">{{ __('reviews.editor.seo') }}</span></div>
+						<div class="panel-body">	
+							<div class="mb-3">
+								<label for="fulltitle" class="form-label">{{ __('reviews.editor.fulltitle') }}</label>
+								<input type="text" class="form-control" name="fulltitle" id="fulltitle" aria-describedby="fulltitleHelp" value="{{ data.fulltitle }}" placeholder="{{ __('reviews.editor.fulltitle.placeholder') }}" />
+								<div id="fulltitleHelp" class="form-text">{{ __('reviews.editor.fulltitle.description') }}</div>
+							</div>
+							<div class="mb-3">
+								<label for="description" class="form-label">{{ __('reviews.editor.description') }}</label>
+								<input type="text" class="form-control" name="description" id="description" aria-describedby="descriptionHelp" value="{{ data.description }}" placeholder="{{ __('reviews.editor.description.placeholder') }}" />
+								<div id="descriptionHelp" class="form-text">{{ __('reviews.editor.description.description') }}</div>
+							</div>
+							<div class="mb-3">
+								<label for="keywords" class="form-label">{{ __('reviews.editor.keywords') }}</label>
+								<input type="text" class="form-control" name="keywords" id="keywords" aria-describedby="keywordsHelp" value="{{ data.keywords }}" placeholder="{{ __('reviews.editor.keywords.placeholder') }}" />
+								<div id="keywordsHelp" class="form-text">{{ __('reviews.editor.keywords.description') }}</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+    </div>
+{% endblock content %} 

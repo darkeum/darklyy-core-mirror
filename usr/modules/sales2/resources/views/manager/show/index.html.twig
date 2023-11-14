@@ -1,0 +1,237 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  title %}Заказ №{{sales.numb}}{% endblock title %}
+{% block  header_title %}{% endblock header_title %}
+
+{% block  header_nav %}
+	{{ include('@sales2/manager/nav_list.html.twig') }}
+{% endblock header_nav %}
+
+{% block scripts %}
+	<script src="/usr/tpl/admin/assets/js/Sortable.js"></script>
+	<script src="/usr/modules/sales/admin/assets/js/FastTask.js"></script>
+	<script src="/usr/modules/sales/admin/assets/js/FastTask5.js"></script>
+	<script>const stock_id_view_name = "stock_id_view";</script>
+	{{price_type_script|raw}}
+	<script>
+		$priceTypeSelect.link = `{{route('admin.sales.ajax.price_type_select')}}`;
+	</script>
+	{{fastBar.script|raw}}
+	{{extendedSort.script|raw}}
+	{{ndr.script|raw}}
+	{{ assets({files: [
+		"@sales2_/resources/js/modals.js",
+		"@sales2_/resources/js/goods.js",
+		"@sales2_/resources/js/show.js",
+		"@sales2_/resources/js/head.js",
+		"@sales2_/resources/js/extendedSort.js",
+		"@sales2_/resources/js/FastTaskScript.js",
+	], name: 'script.js'}) }}
+	<script>
+		function appendGoods(){
+			{{victoria_append|raw}}
+		}
+		function replaceGoods(index){
+			const link = `{{route('admin.sales.victoria_replace', '@index')}}`.replace(`@index`, index);
+			{{victoria_replace|raw}}
+		}
+		$(function(){
+			{{select_users_all.js|raw}}
+			{{oid_select.js|raw}}
+			{{uid_select.js|raw}}
+			{{object_select.js|raw}}
+		});
+	</script>
+	{{oid_create.script|raw}}
+	{{object_create.script|raw}}
+
+	<script>
+		vm.comments_count = {{comments_count}};
+	</script>
+{% endblock %}
+
+{% block links %}
+	{{fastBar.style|raw}}
+	{{extendedSort.style|raw}}
+	{{ndr.style|raw}}
+	{{ assets({files: [
+		"@sales2_/resources/css/show.css",
+	]}) }}
+{% endblock %}
+
+{% block  content %}
+	<script>
+		const router = {
+				show: `{{route('admin.sales.show', id)}}`,
+				show_: `{{route('admin.sales.show', '@id')}}`,
+				victoria_append_prepare: `{{route('admin.sales.victoria_append_prepare')}}`,
+				victoria_replace_prepare: `{{route('admin.sales.victoria_replace_prepare')}}`,
+				save: `{{route('admin.sales.save')}}`,
+				organizations: {
+					show: "{{route('admin.organizations.show', '@id')}}"
+				},
+				ajax: {
+					status_log: "{{route('admin.sales.ajax.status_log', '@id')}}",
+					reserve: {
+						"action": "{{route('admin.sales.ajax.reserve.action', '@id')}}",
+						"create": "{{route('admin.sales.ajax.reserve.create')}}",
+						"delete": "{{route('admin.sales.ajax.reserve.delete')}}",
+					},
+					discount_oid: "{{route('admin.sales.ajax.discount_oid')}}",
+					fast_change_sales: "{{route('admin.sales.ajax.fast_change_sales')}}",
+					change_sales_form: "{{route('admin.sales.ajax.change_sales_form', id)}}",
+					sales_check: "{{route('admin.sales.ajax.sales_check', id)}}",
+					actualize_create: "{{route('admin.sales.ajax.actualize_create')}}",
+					send_purchase: "{{route('admin.sales.ajax.send_purchase')}}",
+					check_can_delete: "{{route('admin.sales.ajax.check_can_delete')}}",
+					check_zero_sum: "{{route('admin.sales.ajax.check_zero_sum')}}",
+					realization_create: "{{route('admin.sales.ajax.realization_create')}}",
+					comments: {
+						get: "{{route('admin.sales.ajax.comments.get', id)}}",
+						create: "{{route('admin.sales.ajax.comments.create')}}",
+					},
+					messages: {
+						get: "{{route('admin.sales.ajax.messages.get', id)}}",
+						send: "{{route('admin.sales.ajax.messages.send', id)}}",
+					},
+					end_sales: {
+						middleware: "{{route('admin.sales.ajax.end_sales.middleware', id)}}",
+						end: "{{route('admin.sales.ajax.end_sales')}}",
+					},
+					check_all_realization_and_transfer: "{{route('admin.sales.ajax.check_all_realization_and_transfer', id)}}",
+					clipboard_prepare: "{{route('admin.sales.ajax.clipboard_prepare')}}",
+					extended_sort: "{{route('admin.sales.ajax.extended_sort', id)}}",
+					users_list: {
+						get: "{{route('admin.sales.ajax.users_list.get', id)}}",
+						create: "{{route('admin.sales.ajax.users_list.create')}}",
+						delete: "{{route('admin.sales.ajax.users_list.delete', '@id')}}",
+					},
+					assembly_count: "{{route('admin.sales.ajax.assembly_count')}}",
+					assembly_create: "{{route('admin.sales.ajax.assembly_create')}}",
+					contract: {
+						get: "{{route('admin.sales.ajax.contract.get')}}",
+						save: "{{route('admin.sales.ajax.contract.save')}}",
+						create: "{{route('admin.sales.ajax.contract.create')}}",
+						check: "{{route('admin.sales.ajax.contract.check')}}",
+					},
+					specification: {
+						create: "{{route('admin.sales.ajax.specification.create')}}",
+					},
+					transfer: {
+						create: "{{route('admin.sales.ajax.transfer.create')}}",
+					},
+					load_max_discount: "{{route('admin.sales.ajax.load_max_discount')}}",
+					confirm_supply_order: {
+						get: "{{route('admin.sales.ajax.confirm_supply_order.get')}}",
+						send: "{{route('admin.sales.ajax.confirm_supply_order.send')}}",
+					},	
+					status_client_block: {						
+						send: "{{route('admin.sales.ajax.status_client_block.send')}}",
+					},
+					pay: {
+						get: "{{route('admin.sales.ajax.pay.get', id)}}",
+					},
+					purchase_data: {
+						get: "{{route('admin.sales.ajax.purchase_data.get')}}",
+					},
+					files: {
+						get: "{{route('admin.sales.ajax.files.get')}}",
+					},
+					ndr: {
+						get: "{{route('admin.sales.ajax.ndr.get')}}",
+					},
+				},
+		};
+		const first_data_sales = `{{sales|e('js')|raw}}`;
+		const first_data_sales_detail = `{{sales_detail|e('js')|raw}}`;
+	</script>
+	<div id="content" v-cloak>
+		{% if sales.is_clone == 1 %}
+		<div id="sales_block" class="sales_block">
+			<div class="sales_block__text">
+				<h3>Продажа является клоном</h3>
+				<a href="{{route('admin.sales.redirect_original', id)}}" target="_blank">Оригинал</a>
+			</div>
+			<i class="fas fa-lock-alt sales_block__lock"><div class="sales_block__lock-disable"></div></i>
+		</div>
+		{% endif %}
+		<div class="text-center">
+			<h4>Заказ №${sales.numb}
+				(<span id="title" data-pk="{{id}}" data-value="{{sales.title}}">{{sales.title}}</span>)</h4>
+		</div>
+		<div class="card">
+			<div class="card-body" id="sales_head">
+				{% include "@sales2/manager/show/head" %}
+			</div>
+		</div>
+		{% if sales.status_client == 2 %}	
+			<div class="status_client_block p20 mb20 mt20" ref="status_client_block_key" style="border: 3px #3dbdcc solid; border-radius: 10px;">
+				<div class="status_client_block-title" style="font-weight: bold; font-size: 20px;">Согласуйте заявку клиента</div>
+				<div class="status_client_block-btn pt20">
+					<button type="button" class="btn btn-primary btn-xs" @click="status_client_block()">Согласовать</button>
+				</div>
+			</div>
+		{% endif %}
+
+		<div v-if="confirm_supply_order.length > 0" class="my-3">
+			<div class="danger_block" v-for="(item, index) in confirm_supply_order" :key="item.id">
+				<div class="danger_block-primary">
+					<h2 class="danger_block-title">
+						Подтвердите заявку на закупку №${item.numb}!
+					</h2>
+					<div class="danger_block-btn">
+						<input type="button" @click="supply_order_confirm_modal(item, index)" value="Подтвердить">
+						<input type="button" @click="supply_order_cancel_modal(item, index)" value="Отправить на доработку">
+						<input type="button" @click="view_supply_order_position(item)" value="Посмотреть позиции">
+					</div>
+				</div>
+				<div class="danger_block-img"></div>
+			</div>
+		</div>
+
+		<div id="fastTask" class="card card-body my-3 p-3">
+			<div id="fastTaskContent"><h4>Загрузка...</h4></div>
+			<div id="fastTaskButtons" class="btn-group w-25"></div>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<div class="d-flex justify-content-between align-items-center">
+					<div>Список товаров:</div>
+					{{btn|raw}}
+				</div>
+			</div>
+			<div class="card-body" id="sales_body">
+				<div class="table-responsive" id="sales_table_container">
+					{% include "@sales2/manager/show/body" %}
+				</div>
+			</div>
+			<div class="card-footer">
+				<div class="d-flex justify-content-between">
+					<div></div>
+					<div class="btn-group">
+						<select class="form-control" v-model="selectMassAction">
+							<option value="del">Удалить выбранное</option>
+							<option value="discount">Массовая скидка</option>
+							<option value="type_price">Массовый выбор цены</option>
+							<option value="update_checked_price">Обновить цены</option>
+							<option value="reserv">Массовый резерв</option>
+							<option value="reserv_del">Удалить резерв</option>
+							<option value="reserv_additional">Массовый резерв (доп)</option>
+							<option value="reserv_del_additional">Удалить резерв (доп)</option>
+							<option value="discount_oid">Проставить скидки по контрагенту</option>
+							<option value="assembly">Отправить на сборку</option>
+						</select>
+						<button type="button" class="btn btn-success" :disabled="!is_checked || !selectMassAction" @click="massAction">Выполнить</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		{{fastBar.template|raw}}
+		{% include "@sales2/manager/show/modal" %}
+	</div>
+	{{extendedSort.modal|raw}}
+	{{oid_create.modal|raw}}
+	{{object_create.modal|raw}}
+	{{ndr.modal|raw}}
+{% endblock content %}

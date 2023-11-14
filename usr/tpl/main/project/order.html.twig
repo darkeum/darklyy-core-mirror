@@ -1,0 +1,326 @@
+{% extends "_layout/content_with_sidebar_left.html.twig" %} 
+
+{% block sidebar %}
+    {% include 'project/sidebar.html.twig' %}
+{% endblock sidebar %}
+
+{% block breadcrumbs %}
+    {% include 'breadcrumbs.html.twig' %}
+{% endblock breadcrumbs %}
+
+{% block title %}
+    <h1 class="mt-3 h1-page-title">{{ title }}</h1>
+{% endblock title %}
+
+{% block content %}
+
+    <style>
+        .checkbox,
+        .radio {
+            display: none;
+        }
+
+        .checkbox-custom,
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .checkbox-custom,
+        .radio-custom,
+        .label {
+            display: inline-block;
+            vertical-align: middle;
+            color: #333;
+            font-size: 100%;
+            font-weight: normal;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox:checked + .checkbox-custom::before,
+        .radio:checked + .radio-custom::before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            bottom: 2px;
+            left: 2px;
+            background: #FA381D;
+            border-radius: 2px;
+        }
+
+        .radio-custom,
+        .radio:checked + .radio-custom::before {
+            border-radius: 50%;
+        }
+
+        input[type=file] {
+            cursor: pointer;
+        }
+
+        .input-text {
+            height: 40px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            color: #555;
+            padding: 0 20px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        textarea.input-text {
+            height: 105px;
+        }
+
+        label {
+            display: inline-block;
+            margin: 0;
+        }
+
+        .form-input-comment {
+            font-size: 13px;
+            line-height: 1.2;
+            margin: 5px 0 0;
+            color: #a1a1a1;
+        }
+
+        textarea:focus, input:focus, select:focus {
+            border-color: #ddd !important;
+        }
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('select[name="cat"]').change(function () {
+                var el = $(this).val();
+                if (el == "wilo") {
+                    $('#div1').css('display', 'block');
+                    $('#div2').css('display', 'block')
+                    $('#div3').css('display', 'block')
+                    $('#div4').css('display', 'block')
+
+                } else {
+                    $('#div1').css('display', 'none');
+                    $('#div2').css('display', 'none');
+                    $('#div3').css('display', 'none');
+                    $('#div4').css('display', 'none');
+                }
+            });
+        }); /*end ready*/
+    </script>
+
+    <div class="row">
+        <div class="col-12 mt-3 mb-3">
+            <div class="card">
+                <div class="card-body card-body-cert">
+                    <div class="section-title">
+                        <div class="title-header">
+                            <h5>отправить заявку</h5>
+                            <h2 class="title">заявка на <strong>проектирование</strong></h2>
+                        </div>
+                    </div>
+                    <div class="pb-15 pr-30 mb_30 res-991-pr-0 res-991-pt-30">
+                        <p>Заполните и отправьте заявку на проектирование, после чего ниши специалисты, свяжутся с вами
+                            и обсудят все необходимы вопросы</p>
+                        <form id="jobSend">
+                            <div class="row">
+                                <div class="col-3 mt-3">Наименование компании</div>
+                                <div class="col-9 mt-3">
+                                    <input type="text" name="org_name" id="org_name" class="input-text"
+                                           placeholder="Укажите наименование компании" required="required"/>
+                                    <link href="{{ theme }}/assest/vendor/suggestions/suggestions.css"
+                                          rel="stylesheet"/>
+                                    <script src="{{ theme }}/assest/vendor/suggestions/jquery.suggestions.min.js"></script>
+                                    <script>
+                                        $("#org_name").suggestions({
+                                            token: "ddeafb9ff43e79578243d8f031f6e9d8b047ca0e",
+                                            type: "PARTY",
+                                            /* Вызывается, когда пользователь выбирает одну из подсказок */
+                                            onSelect: function (suggestion) {
+                                                console.log(suggestion);
+                                                $("#org_inn").val(suggestion.data.inn);
+                                            }
+                                        });
+                                    </script>
+                                    <style>
+                                        .suggestions-wrapper {
+                                            top: -16px;
+                                        }
+
+                                        .suggestions-suggestions {
+                                            min-width: 101% !important;
+                                        }
+                                    </style>
+                                    <input type="hidden" id="org_inn" name="org_inn"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Наименование объекта</div>
+                                <div class="col-9 mt-3">
+                                    <input type="text" name="object_name" id="object_name" class="input-text"
+                                           placeholder="Укажите название объекта" required="required"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Адрес объекта</div>
+                                <div class="col-9 mt-3">
+                                    <input type="text" name="object_address" id="object_address" class="input-text"
+                                           placeholder="Укажите адрес объекта" required="required"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">ФИО</div>
+                                <div class="col-9 mt-3">
+                                    <input type="text" name="name" id="name" class="input-text"
+                                           placeholder="Укажите ваше ФИО" required="required"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Телефон</div>
+                                <div class="col-9 mt-3">
+                                    <input type="phone" name="phone" id="phone" class="input-text"
+                                           placeholder="Например: +7 (999) 123 32 32" required="required"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Электронная почта:</div>
+                                <div class="col-9 mt-3">
+                                    <input type="email" name="email" id="email" class="input-text"
+                                           placeholder="Укажите ваш E-mail адрес" required="required"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Разделы проектирования</label>
+                                <div class="col-sm-9 pl-20">
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">ИТП. Тепломеханические решения</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">ИТП. Автоматизация</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">ИТП. Узел учета ТЭ</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">Отопление</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">Водоснабжение</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-row">
+                                        <label>
+                                            <input class="checkbox" type="checkbox" name="section[]">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="label">Водоотведение</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Техническое задание:</div>
+                                <div class="col-9 mt-3">
+                                    <input type="file" name="work_file" id="work_file"/>
+                                    <div class="form-input-comment">Поддерживаются фалы zip, rar, pdf, jpg, png, docx,
+                                        xlsx
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Другие файлы:</div>
+                                <div class="col-9 mt-3">
+                                    <input type="file" name="other_file" id="other_file"/>
+                                    <div class="form-input-comment">Поддерживаются фалы zip, rar, pdf, jpg, png, docx,
+                                        xlsx
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 mt-3">Дополнительная информация:</div>
+                                <div class="col-9 mt-3">
+                                    <textarea style="padding-top: 10px;" name="message" class="input-text"
+                                              placeholder=""></textarea>
+                                </div>
+                            </div>
+                            <input type="hidden" name="recaptcha_response" id="recaptchaResponse"/>
+                            <script src="https://www.google.com/recaptcha/api.js?render=6LfddtUZAAAAAELCRiYyqMJSTIeYCNHvU7E5_xbP"></script>
+                            <script>
+                                $('#jobSend').on("submit", function (e) {
+                                    const form = this;
+                                    e.preventDefault();
+                                    $("#btnFetch").prop("disabled", true);
+                                    $("#btnFetch").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Отправка...');
+                                    grecaptcha.ready(function () {
+                                        grecaptcha.execute('6LfddtUZAAAAAELCRiYyqMJSTIeYCNHvU7E5_xbP', {action: 'contact'}).then(async function (token) {
+                                            var recaptchaResponse = document.getElementById('recaptchaResponse');
+                                            recaptchaResponse.value = token;
+                                            try {
+                                                const data = new FormData(form);
+                                                const _response = await (await fetch(`/job/send`, {
+                                                    method: "POST",
+                                                    body: data
+                                                })).json();
+                                                var type = _response.type;
+                                                var error = _response.error;
+                                                var success = _response.success;
+                                                if (type != "success") {
+                                                    Swal.fire('Ошибка', error, 'error');
+                                                    $("#btnFetch").prop("disabled", false);
+                                                    $("#btnFetch").html('Отправить');
+                                                } else {
+                                                    Swal.fire('Информация', success, 'success');
+                                                    $("#btnFetch").prop("disabled", false);
+                                                    $("#btnFetch").html('Отправить');
+                                                    //$('#btnFetch').remove();
+                                                }
+                                            } catch (e) {
+                                                const error = e.message;
+                                                $("#btnFetch").prop("disabled", false);
+                                                $("#btnFetch").html('Отправить');
+                                                Swal.fire('Ошибка', error, 'error');
+                                            }
+                                        });
+                                    });
+
+                                });
+                            </script>
+                            <div class="row">
+                                <div class="col-3 "></div>
+                                <div class="col-9  mb-3">
+                                    <button id="btnFetch"
+                                            class="cmt-btn cmt-btn-size-md cmt-btn-shape-round cmt-btn-style-border cmt-btn-color-skincolor"
+                                            type="submit">Отправить
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

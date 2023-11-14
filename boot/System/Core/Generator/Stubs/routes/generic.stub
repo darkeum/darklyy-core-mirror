@@ -1,0 +1,18 @@
+<?php
+
+/*
+* @name        JMY CORE
+* @link        https://jmy.su/
+* @copyright   Copyright (C) 2012-{{year}} JMY LTD
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan & Volkov Aleksandr
+*/
+
+use {{container-name}}\UI\API\Controllers\Controller;
+use Boot\Support\Facades\Route;
+
+Route::{{http-verb}}('{{endpoint-url}}', [Controller::class, '{{operation}}'])
+    ->name('{{route-name}}')
+    ->middleware(['auth:{{auth-middleware}}']);
+

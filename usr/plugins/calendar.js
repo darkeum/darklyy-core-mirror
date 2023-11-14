@@ -1,0 +1,146 @@
+function in_array_calendar(what, where) {
+    for(var i=0; i<where.length; i++)
+        if(what == where[i])
+            return true;
+    return false;
+}
+
+function in_array(arr, val)
+{
+   for (key in arr)
+   {
+      if (arr[key] == val)
+      {
+          return true;
+      }
+   }
+   return false;
+}
+
+function calendar(year, month, thisDay)
+{
+	var newsDays = [];
+    if(year === undefined)
+    {
+		year = new Date().getFullYear();
+	}
+	if(month === undefined)
+    {
+		month =  new Date().getMonth();
+		//month = month-2;
+
+	}
+
+	$.post('/ajax.php?do=calendar/' + year+','+(month), function(data){
+
+			if (data != '')
+			{
+				newsDays = JSON.parse(data);
+			//	console.log(newsDays);
+			}
+			//alert(newsDays);
+
+    //console
+	year = (year == null) ? new Date().getFullYear()	: year;
+	month = (month	== null) ? new Date().getMonth() : month;
+
+	var exmonth	= new Date().getMonth();
+	var thisDay = (thisDay	== null) ? new Date().getDate()	: thisDay;
+	var oldyear	= year -1;
+	var dayMonth = new Date(year, month+1, 0).getDate(); // Количество дней в месяце
+	var dayCount = 1;
+	var mark = new Array();
+	var weekDays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб']; // Недели. Для отладки
+	var rusDays	= [6, 0, 1, 2, 3, 4, 5]; // Для русской разметки календаря
+	var rusMonths =  ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+	var firstDay = new Date(year, month, 1).getDay(); // Первый день календаря
+	var lastDay	= new Date(year, month,  dayMonth).getDay(); // Последний день календаря
+	var mark = new Array();
+	var beforeMonth	= rusDays[firstDay];
+	var affterMonth	= (6- rusDays[lastDay]);
+	var lastMonth = (month != 0) ? month -1 : 11;
+	var nextMonth = (month != 11) ? month +1 : 0;
+	var sumMarks = beforeMonth + dayMonth + affterMonth;
+	var sumWeeks = parseInt(sumMarks / 7);
+	var lastWeek = (sumWeeks-1);
+	var mark = 1;
+	var dd = new Array();
+	var a = '';
+	var b = '';
+	var lastYear2 = null;
+	var nextYear2 = null;
+	var nowUnix = new Date().getTime();
+	var timeUnix = new Date(year, month, thisDay).getTime();
+
+	if (month == 0)
+	{
+		lastGenerate = (year-1) + ',' + '11';
+		nextGenerate = year+', '+nextMonth;
+	}
+	else if(month == 11)
+	{
+		lastGenerate = year+', '+lastMonth;
+		nextGenerate = (year+1)+','+'0';
+	}
+	else
+	{
+		lastGenerate = year+', '+lastMonth;
+		nextGenerate = year+', '+nextMonth;
+	}
+
+	var c = '';
+
+        if(timeUnix > nowUnix)
+            c += '<div class="news-calendar-info-mes-dv"><div class="news-calendar-info-mes">Далее ничего нового нет</div></div>';
+        else if(newsDays.length == 0 && (year!=new Date().getFullYear() || month!=new Date().getMonth() || thisDay!=new Date().getDate()))
+            c += '<div class="news-calendar-info-mes-dv"><div class="news-calendar-info-mes">Новостей не найдено</div></div>';
+
+	c += '<div class="calc-refresh"><i onclick="calendar();" class="fa fa-refresh" aria-hidden="true"></i></div><table width="100%" cellspacing="0" cellpadding="0" border="0" class="n_calendar">';
+	c += '<tr class="news-calendar-top"><td colspan="7" class="news-calendar-top-h"><div style="float:left"><a href="javascript:void(0);" onclick="calendar(' + lastGenerate + ');"><i class="fa fa-angle-left" aria-hidden="true"></i></a></div><center>' + rusMonths[month] + ', <a  href="javascript:void(0);" onclick="calendar('+(year -1)+', '+month+');">' + year + '</a></center><div style="float:right"><a href="javascript:void(0);" onclick="calendar('+nextGenerate+');"> <i class="fa fa-angle-right" aria-hidden="true"></i></a></div></td></tr>';
+	//console.log(newsDays);
+
+	c +='<tr class="news-calendar-head">';
+	c += '<th class="day">ПН</th><th class="day"><b>ВТ</b></th><th class="day">СР</th><th class="day"><b>ЧТ</b></th><th class="day">ПТ</th><th class="holiday"><b>СБ</b></th><th class="holiday">ВС</th></tr>';
+	c+='<tr  align="center" class="calendarTr">';
+	workWeeks = sumWeeks+1;
+
+	for (var i=1; i<workWeeks; i++)
+	{
+		c+='<tr  align="center" class="calendarTr">';
+			for(j=0; j<7; j++)
+			{
+				if ((j < rusDays[firstDay] && i == 1) || (mark > dayMonth && i == workWeeks-1))
+				{
+					a += '<td class="rowEmpty">&nbsp;</td>';
+				}
+				else
+				{
+					if(!in_array(newsDays, mark))
+					{
+						addition = (mark == thisDay) ? 'dayNow' : '';
+						kmark = (mark == thisDay && month == exmonth) ? ((j == 5 || j == 6) ? '<font color="red">'+mark+'</font>' : '<font color="blue">'+mark+'</font>') : mark;
+						kmark1 = (mark == thisDay && month == exmonth) ? 'id="today"' : '';
+						if (j == 5 || j == 6)	b+='<td '+kmark1+' class="isHolid calendarBorder ' + addition + '"><font color="red">'+kmark+'</font></td>';
+						else		a+='<td '+kmark1+' class="calendarBorder ' + addition + '">'+kmark+'</td>';
+					}
+					else
+					{
+						if (j == 5 || j == 6)	b+='<td '+kmark1+' class="isNewsH"><a href="/news/date/'+year+'-'+(month+1)+'-'+mark+'"><strong>'+mark+'</strong></a></td>';
+						else		a+='<td '+kmark1+' class="isNews"><a href="/news/date/'+year+'-'+(month+1)+'-'+mark+'"><strong>'+mark+'</strong></a></td>';
+					}
+					mark++;
+				}
+			}
+		c+=a+b+'</tr>';
+		a = '';
+		b = '';
+	}
+	 c+=a+b+'</table>';
+	 c+='<div style="display: none" align="center"><a href="javascript:void(0);" onclick="calendar();">Обнулить</a></div></div></div>';
+	//console.log(c);
+	//gid('_calendar').innerHTML = c;
+	document.getElementById('_calendar').innerHTML = c;
+	});
+
+
+}

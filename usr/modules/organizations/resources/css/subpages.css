@@ -1,0 +1,4 @@
+.sub-items{
+    display: grid;
+    grid-row-gap: 20px;
+}

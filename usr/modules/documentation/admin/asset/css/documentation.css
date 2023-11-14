@@ -1,0 +1,144 @@
+@media screen and (max-width: 980px){
+    .header_search-input{
+        width: 100%;
+    }
+}
+.tox-statusbar__branding{
+    display: none;
+}
+.header_search{
+    height: 70px;
+    border-bottom: 2px #3b3f4f solid;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+    width: 100%;
+}
+.header_search>*{
+    width: 50%;
+}
+.header_search-input{
+    outline: none;
+    border: 1px #3b3f4f solid;
+    border-radius: 5px;
+    padding: 10px;
+    position: relative;
+}
+#header_search-container{
+    width: calc(50% - 10px);
+    overflow-y: scroll;
+    height: 200px;
+    border: 1px #3b3f4f solid;
+    position: absolute;
+    background-color: white;
+    display: none;
+}
+.documentation_main{
+    display: flex;
+    font-size: 2em;
+    padding: 30px;
+    width: 100%;
+}
+.documentation_view{
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    width: 100%;
+}
+.documentation_view-panel-head, .documentation_view-panel-body, .comments{
+    width: 100%;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.documentation_view-btn{
+    align-self: flex-end;
+    margin-bottom: 20px;
+}
+.documentation_view-panel-body img{
+    max-width: 100%; 
+    height: auto;
+}
+.documentation_main>*{
+    width: 100%;
+}
+.documentation_main-elems{
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+.documentation_main-elem{
+    padding: 20px;
+    background-color: white;
+    height: 150px;
+    width: 300px;
+    margin: 3px;
+    word-wrap: break-word;
+}
+.moderation-false{
+    background-color: #e0e0e0;
+}
+.documentation_main-elem>h2>a{
+    text-decoration: none;
+    color: black;
+}
+.documentation_main-elem>h2>a:hover{
+    color: #43c7d7;
+}
+.append_documentation{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.append_documentation>h2{
+    color: grey;
+    font-size: 80px;
+    cursor: pointer;
+    padding: 20px;
+    border: 5px grey dashed;
+}
+.append_documentation>h2:hover{
+    color: #a1a1a1;
+    border: 5px #a1a1a1 dashed;
+}
+.creator{
+    align-self: flex-end;
+    color: grey;
+    font-size: 22px;
+    display: none;
+}
+.comments>*{
+    margin-bottom: 20px; 
+}
+.comment{
+    display: flex;
+    border-bottom: 1px #e2e2e2 solid;
+    padding: 10px;
+}
+.comment-avatar img{
+    width: 100px;
+    margin-right: 10px;
+}
+.comment-body>*{
+    margin-bottom: 5px;
+}
+.comment-uid{
+    font-size: 18px;
+    color: red;
+}
+.search_elems{
+    border-bottom: 1px #e2e2e2 solid;
+    padding: 10px;
+    font-size: 18px;
+    width: 100%;
+    display: block;
+}
+.search_elems:hover{
+    background-color: #c2c2c2;
+}

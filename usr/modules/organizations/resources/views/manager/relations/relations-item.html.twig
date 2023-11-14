@@ -1,0 +1,42 @@
+<div class="card">
+	<div class="card-body">
+		<div class="d-flex align-items-center">
+			<div class="h5 mb-0">{{item.fullName}}</div>
+			<div class="status_view ms-3">{{status[item.status]}}</div>
+		</div>
+		<div class="mb-3">
+			{% for director in item.directors %}
+				<div class="d-flex" style="gap: 5px">
+					<div class="text-secondary">{{director.positionName}}:</div>
+					<div>{{director.fullName}}</div>
+					<div class="text-secondary">ИНН:</div>
+					<div>{{item.inn}}</div>
+					<div class="text-secondary">ОГРН:</div>
+					<div>{{item.ogrn}}</div>
+				</div>
+			{% endfor %}
+		</div>
+        <div class="mb-3"><strong >Найденные связи ({{item.relationsTotal}})</strong></div>
+		<div>
+			{% for ir in item.relations %}
+                {% if category_type is not defined or category_type == ir.relationCategory %}
+				    <div class="d-flex" style="gap: 5px;">
+				    	<div>
+				    		{% for st in stat_type %}
+				    			{% if st.id == ir.relationCategory %}
+				    				{{st.name}}
+				    			{% endif %}
+				    		{% endfor %}
+				    		({{ir.relationsTotalByCategory}}):
+				    	</div>
+				    	<div>
+				    		{% for irr in ir.relationsByCategory %}
+				    			<div>{{irr.name}}</div>
+				    		{% endfor %}
+				    	</div>
+				    </div>
+                {% endif %}
+			{% endfor %}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,25 @@
+#minesweeper{
+    margin-left: 50px;
+}
+.cell{
+    background-color: #dcdcdc;
+    border-radius: 5px;
+    border: 1px black solid;
+    display: flex;
+    flex-direction: center;
+    font-size: 2rem;
+    justify-content: center;
+    font-weight: bold;
+}
+.cell:hover{
+    background-color: #929292;
+}
+.cellOpen{
+    background-color: white;
+}
+.mineDis{
+    background-color: rgb(0, 190, 0);
+}
+.mineDis:hover{
+    background-color: green;
+}

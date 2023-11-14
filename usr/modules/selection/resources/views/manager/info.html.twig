@@ -1,0 +1,23 @@
+{% extends "_layout/base-layout.html.twig" %}
+
+{% block  header_title %} {{ __('certificates.manager') }} {% endblock header_title %}
+
+{% block  header_nav %}
+	{% include '@certificates/manager/header_nav.html.twig' %}
+{% endblock header_nav %}
+
+{% block  content %}
+<div id="content" class=""><div class="panel panel-success panel-border top">
+	<div class="panel-heading"><span class="panel-title">{{ __('certificates.info') }}</span>	
+		<div class="widget-menu pull-right">
+		<div class="btn-group">
+			<button onclick="location.href = '{{ router('admin.certificates.index') }}'" type="button" class="btn btn-xs btn-primary btn-block">{{ __('certificates.list') }}</button>
+		</div>
+		</div>		
+	</div> 
+	<div class="panel-body">
+		<p class="p2">{{ info }} <a href="{{ router('admin.certificates.index') }}">{{ __('certificates.info.list') }}</a></p>
+	</div>
+	</div>   
+</div>
+{% endblock content %}
