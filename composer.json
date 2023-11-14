@@ -16,7 +16,6 @@
         "ext-json": "*",
         "aldas/modbus-tcp-client": "^2.3",
         "amphp/socket": "^1.2",
-        "anourvalar/eloquent-serialize": "^1.2",
         "asimlqt/php-google-spreadsheet-client": "^3.0",
         "barryvdh/laravel-ide-helper": "^2.12",
         "bjeavons/zxcvbn-php": "^1.2",
