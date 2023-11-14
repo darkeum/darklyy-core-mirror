@@ -145,7 +145,7 @@
         "workerman/workerman": "^4.0"
     },
     "conflict": {
-        "laravel/framework": "^"
+        "laravel/framework": "*"
     },
     "autoload": {
         "files": [
