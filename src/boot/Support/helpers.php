@@ -11,7 +11,7 @@
 */
 
 // подключение всех вспомогательных функций
-foreach (glob(ROOT . 'boot/Support/Helpers/*.helpers.php') as $listed) {
+foreach (glob(__DIR__ . '/*.helpers.php') as $listed) {
     if (file_exists($listed) && is_file($listed)) {
         require_once($listed);
     }
@@ -29,7 +29,7 @@ if (!function_exists('ee')) {
      * Функция преобразует специальные HTML-сущности обратно в соответствующие символы
      *
      * @param  string       $value Исходная строка
-     * @param  array|null   $request  Массив с параметрами 
+     * @param  array|null   $request  Массив с параметрами
      *                      Возможные параметры: (type: тип (default, word), enter: разделитель строки (по умолчанию \n))
      * @return string       Возвращает строку где все специальные HTML-сущности преобразованы обратно в соответствующие символы
      */
@@ -52,4 +52,3 @@ if (!function_exists('env')) {
         return \Boot\Support\Env::get($key, $default);
     }
 }
-
