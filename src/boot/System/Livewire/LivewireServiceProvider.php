@@ -63,7 +63,7 @@ class LivewireServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->registerTestMacros();
+        // $this->registerTestMacros();
         $this->registerLivewireSingleton();
         $this->registerComponentAutoDiscovery();
     }
