@@ -130,7 +130,7 @@
         "symfony/http-kernel": "6.0.2",
         "symfony/mime": "6.0.2",
         "symfony/translation": "6.0.2",
-        "symfony/yaml": "6.0.2",
+        "symfony/yaml": "6.2.0",
         "tecnickcom/tcpdf": "^6.3",
         "telegram-bot/api": "^2.3",
         "twig/extra-bundle": "^3.3",
