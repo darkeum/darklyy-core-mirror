@@ -1,9 +1,0 @@
-#panel_main{
-    grid-template-columns: none!important;
-}
-#panel_info{
-    order: 1;
-}
-#list{
-    order: 2;
-}

@@ -1,9 +1,0 @@
-.point-item{
-    display: flex;
-    align-items: flex-end;
-}
-
-.point-item__line{
-    flex: 1;
-    border-bottom: 1px black dotted;
-}

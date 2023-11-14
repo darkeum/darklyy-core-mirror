@@ -1,8 +1,0 @@
-{% for item in items %}
-    {% set find_item = attribute(item, name) %}
-    {% if find_item|length > 0 %}
-        {% for elem in find_item %}
-            <div>{{elem}}</div>
-        {% endfor %}
-    {% endif %}
-{% endfor %}

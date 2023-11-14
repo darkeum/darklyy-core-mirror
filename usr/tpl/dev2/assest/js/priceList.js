@@ -1,1 +1,0 @@
-var priceList={"001":{"id":"001","subid":{},"name":"001","price":"20500"}};

@@ -1,9 +1,0 @@
-<ul id="breadcrumbs-two" class="breadcrumb">
-{% for bread in breadcrumbs %}       
-    {% if loop.last %}
-        <li class="active"><span>{{ bread.name }}</span></li>
-    {% else %}
-        <li><a href="{{ bread.url }}"> {{ bread.name }}</a></li>
-    {% endif %}       
-{% endfor %}
-</ul>

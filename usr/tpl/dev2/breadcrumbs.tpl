@@ -1,1 +1,0 @@
-<li [active:1]class="active"[/active]>[active:1]<span>{%NAME%}</span>[/active][active:0]<a href="{%URL%}">{%NAME%}</a>[/active]</li>
