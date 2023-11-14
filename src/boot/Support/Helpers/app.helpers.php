@@ -7,10 +7,10 @@
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan & Volkov Aleksander
-* @description Cache helper function 
+* @description Cache helper function
 */
 
-use Illuminate\Foundation\Mix;
+use Boot\App\Mix;
 use Boot\System\Routing\Router;
 use Illuminate\Support\HtmlString;
 use Illuminate\Container\Container;
