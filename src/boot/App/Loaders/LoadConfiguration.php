@@ -3,8 +3,8 @@
 namespace Boot\App\Loaders;
 
 use \Exception;
-use Illuminate\Config\Repository;
-use Illuminate\Contracts\Config\Repository as RepositoryContract;
+use Boot\System\Config\Repository;
+use Boot\Contracts\Config\Repository as RepositoryContract;
 use \Boot\Contracts\App\Application;
 use \SplFileInfo;
 use \Symfony\Component\Finder\Finder;
