@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Log\Events\MessageLogged;
 use Boot\Support\AggregateServiceProvider;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Testing\LoggedExceptionCollection;
+use Boot\System\Testing\LoggedExceptionCollection;
 use Illuminate\Testing\ParallelTestingServiceProvider;
 use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
 
