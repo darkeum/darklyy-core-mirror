@@ -3,7 +3,7 @@
 namespace Boot\System\Config;
 
 use ArrayAccess;
-use Illuminate\Contracts\Config\Repository as ConfigContract;
+use Boot\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 
 class Repository implements ArrayAccess, ConfigContract
