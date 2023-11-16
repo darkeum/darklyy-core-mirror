@@ -6,7 +6,7 @@ use Exception;
 use SplFileInfo;
 use Boot\System\Config\Repository;
 use Symfony\Component\Finder\Finder;
-use Boot\Contracts\Foundation\Application;
+use Boot\Contracts\App\Application;
 use Boot\Contracts\Config\Repository as RepositoryContract;
 
 class LoadConfiguration
