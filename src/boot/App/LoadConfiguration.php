@@ -83,7 +83,7 @@ class LoadConfiguration
 
         $configPath = realpath($app->configPath());
 
-        foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {
+        foreach (Finder::create()->files()->name('*.config.php')->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 
             $files[$directory.basename($file->getRealPath(), '.php')] = $file->getRealPath();
