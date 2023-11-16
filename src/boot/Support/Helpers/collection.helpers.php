@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Boot\Support\Collection;
 
 if (! function_exists('collect')) {
     /**
