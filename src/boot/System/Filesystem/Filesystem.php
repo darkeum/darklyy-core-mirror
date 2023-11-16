@@ -27,6 +27,21 @@ class Filesystem extends LaravelFilesystem
     }
 
     /**
+     * Get the contents of a file as decoded JSON.
+     *
+     * @param  string  $path
+     * @param  int  $flags
+     * @param  bool  $lock
+     * @return array
+     *
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     */
+    public function json($path, $flags = 0, $lock = false)
+    {
+        return json_decode($this->get($path, $lock), true, 512, $flags);
+    }
+
+    /**
      * Get the contents of a file.
      *
      * @param  string  $path
@@ -73,7 +88,7 @@ class Filesystem extends LaravelFilesystem
         return $contents;
     }
 
- 
+
 
 
 
@@ -97,7 +112,7 @@ class Filesystem extends LaravelFilesystem
      * @param  string  $content
      * @return void
      */
-    public function replace($path, $content, $mode=null)
+    public function replace($path, $content, $mode = null)
     {
         // If the path already exists and is a symlink, get the real path...
         clearstatcache(true, $path);
@@ -124,7 +139,7 @@ class Filesystem extends LaravelFilesystem
     public function prepend($path, $data)
     {
         if ($this->exists($path)) {
-            return $this->put($path, $data.$this->get($path));
+            return $this->put($path, $data . $this->get($path));
         }
 
         return $this->put($path, $data);
@@ -172,7 +187,7 @@ class Filesystem extends LaravelFilesystem
 
         foreach ($paths as $path) {
             try {
-                if (! @unlink($path)) {
+                if (!@unlink($path)) {
                     $success = false;
                 }
             } catch (ErrorException $e) {
@@ -216,13 +231,13 @@ class Filesystem extends LaravelFilesystem
      */
     public function link($target, $link)
     {
-        if (! windows_os()) {
+        if (!windows_os()) {
             return symlink($target, $link);
         }
 
         $mode = $this->isDirectory($target) ? 'J' : 'H';
 
-        exec("mklink /{$mode} ".escapeshellarg($link).' '.escapeshellarg($target));
+        exec("mklink /{$mode} " . escapeshellarg($link) . ' ' . escapeshellarg($target));
     }
 
     /**
@@ -379,7 +394,7 @@ class Filesystem extends LaravelFilesystem
     public function files($directory, $hidden = false)
     {
         return iterator_to_array(
-            Finder::create()->files()->ignoreDotFiles(! $hidden)->in($directory)->depth(0)->sortByName(),
+            Finder::create()->files()->ignoreDotFiles(!$hidden)->in($directory)->depth(0)->sortByName(),
             false
         );
     }
@@ -394,7 +409,7 @@ class Filesystem extends LaravelFilesystem
     public function allFiles($directory, $hidden = false)
     {
         return iterator_to_array(
-            Finder::create()->files()->ignoreDotFiles(! $hidden)->in($directory)->sortByName(),
+            Finder::create()->files()->ignoreDotFiles(!$hidden)->in($directory)->sortByName(),
             false
         );
     }
@@ -444,7 +459,7 @@ class Filesystem extends LaravelFilesystem
      */
     public function moveDirectory($from, $to, $overwrite = false)
     {
-        if ($overwrite && $this->isDirectory($to) && ! $this->deleteDirectory($to)) {
+        if ($overwrite && $this->isDirectory($to) && !$this->deleteDirectory($to)) {
             return false;
         }
 
@@ -461,7 +476,7 @@ class Filesystem extends LaravelFilesystem
      */
     public function copyDirectory($directory, $destination, $options = null)
     {
-        if (! $this->isDirectory($directory)) {
+        if (!$this->isDirectory($directory)) {
             return false;
         }
 
@@ -470,7 +485,7 @@ class Filesystem extends LaravelFilesystem
         // If the destination directory does not actually exist, we will go ahead and
         // create it recursively, which just gets the destination prepared to copy
         // the files over. Once we make the directory we'll proceed the copying.
-        if (! $this->isDirectory($destination)) {
+        if (!$this->isDirectory($destination)) {
             $this->makeDirectory($destination, 0777, true);
         }
 
@@ -480,12 +495,12 @@ class Filesystem extends LaravelFilesystem
             // As we spin through items, we will check to see if the current file is actually
             // a directory or a file. When it is actually a directory we will need to call
             // back into this function recursively to keep copying these nested folders.
-            $target = $destination.'/'.$item->getBasename();
+            $target = $destination . '/' . $item->getBasename();
 
             if ($item->isDir()) {
                 $path = $item->getPathname();
 
-                if (! $this->copyDirectory($path, $target, $options)) {
+                if (!$this->copyDirectory($path, $target, $options)) {
                     return false;
                 }
             }
@@ -494,7 +509,7 @@ class Filesystem extends LaravelFilesystem
             // location and keep looping. If for some reason the copy fails we'll bail out
             // and return false, so the developer is aware that the copy process failed.
             else {
-                if (! $this->copy($item->getPathname(), $target)) {
+                if (!$this->copy($item->getPathname(), $target)) {
                     return false;
                 }
             }
@@ -514,7 +529,7 @@ class Filesystem extends LaravelFilesystem
      */
     public function deleteDirectory($directory, $preserve = false)
     {
-        if (! $this->isDirectory($directory)) {
+        if (!$this->isDirectory($directory)) {
             return false;
         }
 
@@ -524,7 +539,7 @@ class Filesystem extends LaravelFilesystem
             // If the item is a directory, we can just recurse into the function and
             // delete that sub-directory otherwise we'll just delete the file and
             // keep iterating through each file until the directory is cleaned.
-            if ($item->isDir() && ! $item->isLink()) {
+            if ($item->isDir() && !$item->isLink()) {
                 $this->deleteDirectory($item->getPathname());
             }
 
@@ -536,7 +551,7 @@ class Filesystem extends LaravelFilesystem
             }
         }
 
-        if (! $preserve) {
+        if (!$preserve) {
             @rmdir($directory);
         }
 
@@ -553,7 +568,7 @@ class Filesystem extends LaravelFilesystem
     {
         $allDirectories = $this->directories($directory);
 
-        if (! empty($allDirectories)) {
+        if (!empty($allDirectories)) {
             foreach ($allDirectories as $directoryName) {
                 $this->deleteDirectory($directoryName);
             }
