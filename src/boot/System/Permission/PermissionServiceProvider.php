@@ -14,7 +14,7 @@ use Boot\System\Permission\Contracts\Role as RoleContract;
 class PermissionServiceProvider extends ServiceProvider
 {
     public function boot(PermissionRegistrar $permissionLoader)
-    {     
+    {
         $this->registerMacroHelpers();
 
         $this->registerCommands();
@@ -33,17 +33,17 @@ class PermissionServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(
-            ROOT.'config/permission.config.php',
-            'permission'
-        );
+        // $this->mergeConfigFrom(
+        //     ROOT.'config/permission.config.php',
+        //     'permission'
+        // );
 
         $this->callAfterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $this->registerBladeExtensions($bladeCompiler);
         });
     }
 
-  
+
     protected function registerCommands()
     {
         $this->commands([

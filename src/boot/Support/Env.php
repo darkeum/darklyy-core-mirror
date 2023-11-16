@@ -18,11 +18,11 @@ use PhpOption\Option;
 class Env
 {
     /**
-     * Флаг для включения или отключения putenv адаптера
+     * Indicates if the putenv adapter is enabled.
      *
      * @var bool
      */
-    protected static $putenv = false;
+    protected static $putenv = true;
 
     /**
      * The environment repository instance.
@@ -69,19 +69,42 @@ class Env
 
             static::$repository = $builder->immutable()->make();
         }
-        $dotenv = \Dotenv\Dotenv::create(static::$repository, ROOT);
-        $dotenv->load();
+
         return static::$repository;
     }
 
     /**
-     * Gets the value of an environment variable.
+     * Get the value of an environment variable.
      *
      * @param  string  $key
      * @param  mixed  $default
      * @return mixed
      */
     public static function get($key, $default = null)
+    {
+        return self::getOption($key)->getOrCall(fn () => value($default));
+    }
+
+    /**
+     * Get the value of a required environment variable.
+     *
+     * @param  string  $key
+     * @return mixed
+     *
+     * @throws \RuntimeException
+     */
+    public static function getOrFail($key)
+    {
+        return self::getOption($key)->getOrThrow(new RuntimeException("Environment variable [$key] has no value."));
+    }
+
+    /**
+     * Get the possible option for this environment variable.
+     *
+     * @param  string  $key
+     * @return \PhpOption\Option|\PhpOption\Some
+     */
+    protected static function getOption($key)
     {
         return Option::fromValue(static::getRepository()->get($key))
             ->map(function ($value) {
@@ -105,9 +128,6 @@ class Env
                 }
 
                 return $value;
-            })
-            ->getOrCall(function () use ($default) {
-                return value($default);
             });
     }
 }
