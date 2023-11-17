@@ -4,8 +4,8 @@ namespace Boot\System\Database\Console\Migrations;
 
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Database\Migrations\MigrationCreator;
-use Illuminate\Support\Composer;
-use Illuminate\Support\Str;
+use Boot\Support\Composer;
+use Boot\Support\Str;
 
 class MigrateMakeCommand extends BaseCommand implements PromptsForMissingInput
 {
