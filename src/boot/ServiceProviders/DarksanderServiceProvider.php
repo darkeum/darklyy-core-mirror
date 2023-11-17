@@ -92,6 +92,7 @@ class DarksanderServiceProvider extends ServiceProvider implements DeferrablePro
      * @var array
      */
     protected $commands = [
+        'About' => AboutCommand::class,
         'CacheClear' => CacheClearCommand::class,
         'CacheForget' => CacheForgetCommand::class,
         'ClearCompiled' => ClearCompiledCommand::class,
@@ -209,6 +210,15 @@ class DarksanderServiceProvider extends ServiceProvider implements DeferrablePro
 
         $this->commands(array_values($commands));
     }
+
+
+    protected function registerAboutCommand()
+    {
+        $this->app->singleton(AboutCommand::class, function ($app) {
+            return new AboutCommand($app['composer']);
+        });
+    }
+
 
     /**
      * Register the command.
