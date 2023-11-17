@@ -12,6 +12,7 @@ use Illuminate\Database\Console\PruneCommand;
 use Boot\System\Console\Foundation\DownCommand;
 use Illuminate\Auth\Console\ClearResetsCommand;
 use Boot\System\Cache\Console\CacheTableCommand;
+use Boot\System\Console\Foundation\AboutCommand;
 use Boot\System\Console\Foundation\ServeCommand;
 use Boot\System\Queue\Console\FailedTableCommand;
 use Boot\System\Console\Foundation\JobMakeCommand;
