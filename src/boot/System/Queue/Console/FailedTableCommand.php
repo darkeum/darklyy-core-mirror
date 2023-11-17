@@ -4,7 +4,7 @@ namespace Boot\System\Queue\Console;
 
 use Boot\System\Console\Command;
 use Boot\System\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
+use Boot\Support\Composer;
 
 class FailedTableCommand extends Command
 {
@@ -41,7 +41,7 @@ class FailedTableCommand extends Command
     protected $files;
 
     /**
-     * @var \Illuminate\Support\Composer
+     * @var \Boot\Support\Composer
      */
     protected $composer;
 
@@ -49,7 +49,7 @@ class FailedTableCommand extends Command
      * Create a new failed queue jobs table command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Support\Composer  $composer
+     * @param  \Boot\Support\Composer  $composer
      * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)

@@ -3,7 +3,7 @@
 namespace Boot\ServiceProviders;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Support\Composer;
+use Boot\Support\Composer;
 use Boot\Support\ServiceProvider;
 
 class ComposerServiceProvider extends ServiceProvider implements DeferrableProvider

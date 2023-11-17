@@ -4,7 +4,7 @@ namespace Boot\System\Notifications\Console;
 
 use Boot\System\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
+use Boot\Support\Composer;
 
 class NotificationTableCommand extends Command
 {
@@ -30,7 +30,7 @@ class NotificationTableCommand extends Command
     protected $files;
 
     /**
-     * @var \Illuminate\Support\Composer
+     * @var \Boot\Support\Composer
      */
     protected $composer;
 
@@ -38,7 +38,7 @@ class NotificationTableCommand extends Command
      * Create a new notifications table command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Support\Composer  $composer
+     * @param  \Boot\Support\Composer  $composer
      * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)

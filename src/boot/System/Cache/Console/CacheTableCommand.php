@@ -4,7 +4,7 @@ namespace Boot\System\Cache\Console;
 
 use Boot\System\Console\Command;
 use Boot\System\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
+use Boot\Support\Composer;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'cache:table')]
@@ -43,7 +43,7 @@ class CacheTableCommand extends Command
     protected $files;
 
     /**
-     * @var \Illuminate\Support\Composer
+     * @var \Boot\Support\Composer
      */
     protected $composer;
 
@@ -51,7 +51,7 @@ class CacheTableCommand extends Command
      * Create a new cache table command instance.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
-     * @param  \Illuminate\Support\Composer  $composer
+     * @param  \Boot\Support\Composer  $composer
      * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)

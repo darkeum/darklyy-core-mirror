@@ -28,7 +28,7 @@ class AboutCommand extends Command
     /**
      * The Composer instance.
      *
-     * @var \Illuminate\Support\Composer
+     * @var \Boot\Support\Composer
      */
     protected $composer;
 
@@ -49,7 +49,7 @@ class AboutCommand extends Command
     /**
      * Create a new command instance.
      *
-     * @param  \Illuminate\Support\Composer  $composer
+     * @param  \Boot\Support\Composer  $composer
      * @return void
      */
     public function __construct(Composer $composer)
