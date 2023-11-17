@@ -3,14 +3,14 @@
 namespace Boot\System\Database;
 
 use Boot\Contracts\Support\DeferrableProvider;
-use Illuminate\Database\Console\Migrations\FreshCommand;
-use Illuminate\Database\Console\Migrations\InstallCommand;
-use Illuminate\Database\Console\Migrations\MigrateCommand;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
-use Illuminate\Database\Console\Migrations\RefreshCommand;
-use Illuminate\Database\Console\Migrations\ResetCommand;
-use Illuminate\Database\Console\Migrations\RollbackCommand;
-use Illuminate\Database\Console\Migrations\StatusCommand;
+use Boot\System\Database\Console\Migrations\FreshCommand;
+use Boot\System\Database\Console\Migrations\InstallCommand;
+use Boot\System\Database\Console\Migrations\MigrateCommand;
+use Boot\System\Database\Console\Migrations\MigrateMakeCommand;
+use Boot\System\Database\Console\Migrations\RefreshCommand;
+use Boot\System\Database\Console\Migrations\ResetCommand;
+use Boot\System\Database\Console\Migrations\RollbackCommand;
+use Boot\System\Database\Console\Migrations\StatusCommand;
 use Illuminate\Database\Migrations\DatabaseMigrationRepository;
 use Illuminate\Database\Migrations\MigrationCreator;
 use Illuminate\Database\Migrations\Migrator;
