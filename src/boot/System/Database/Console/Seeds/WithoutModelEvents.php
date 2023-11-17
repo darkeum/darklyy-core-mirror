@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Console\Seeds;
+namespace Boot\System\Database\Console\Seeds;
 
 use Illuminate\Database\Eloquent\Model;
 

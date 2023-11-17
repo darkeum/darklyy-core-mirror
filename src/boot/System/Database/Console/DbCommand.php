@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace Boot\System\Database\Console;
 
-use Illuminate\Console\Command;
+use Boot\System\Console\Command;
 use Illuminate\Support\ConfigurationUrlParser;
 use Symfony\Component\Process\Process;
 use UnexpectedValueException;

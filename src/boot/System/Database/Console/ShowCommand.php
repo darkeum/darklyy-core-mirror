@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace Boot\System\Database\Console;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Table;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace Boot\System\Database\Console;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\ConnectionResolverInterface;

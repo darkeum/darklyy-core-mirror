@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Console\Migrations;
+namespace Boot\System\Database\Console\Migrations;
 
-use Illuminate\Console\ConfirmableTrait;
+use Boot\System\Console\ConfirmableTrait;
 use Illuminate\Database\Migrations\Migrator;
 use Symfony\Component\Console\Input\InputOption;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Console\Seeds;
+namespace Boot\System\Database\Console\Seeds;
 
-use Illuminate\Console\Command;
+use Boot\System\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 use Illuminate\Database\Eloquent\Model;

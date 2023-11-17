@@ -1,9 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Console;
+namespace Boot\System\Database\Console;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Illuminate\Console\Command;
+use Boot\System\Console\Command;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\PostgresConnection;

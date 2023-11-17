@@ -1,8 +1,8 @@
 <?php
 
-namespace Illuminate\Database\Console\Factories;
+namespace Boot\System\Database\Console\Factories;
 
-use Illuminate\Console\GeneratorCommand;
+use Boot\System\Console\GeneratorCommand;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;

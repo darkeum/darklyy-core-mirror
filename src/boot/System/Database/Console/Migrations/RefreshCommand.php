@@ -1,9 +1,9 @@
 <?php
 
-namespace Illuminate\Database\Console\Migrations;
+namespace Boot\System\Database\Console\Migrations;
 
-use Illuminate\Console\Command;
-use Illuminate\Console\ConfirmableTrait;
+use Boot\System\Console\Command;
+use Boot\System\Console\ConfirmableTrait;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Events\DatabaseRefreshed;
 use Symfony\Component\Console\Input\InputOption;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Database\Console\Migrations;
+namespace Boot\System\Database\Console\Migrations;
 
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Database\Migrations\MigrationCreator;
