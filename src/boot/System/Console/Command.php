@@ -36,6 +36,7 @@ class Command extends SymfonyCommand
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $laravel;
+    protected $darklyy;
 
     protected $darksander;
 
@@ -272,6 +273,11 @@ class Command extends SymfonyCommand
         return $this->laravel;
     }
 
+    public function getDarklyy()
+    {
+        return $this->darklyy;
+    }
+
     public function getDarksander()
     {
         return $this->darksander;
@@ -286,11 +292,17 @@ class Command extends SymfonyCommand
     public function setLaravel($laravel)
     {
         $this->laravel = $laravel;
+        $this->darklyy = $laravel;
         $this->darksander = $laravel;
     }
 
     public function setDarksander($darksander)
     {
         $this->darksander = $darksander;
+    }   
+    
+    public function setDarklyy($darklyy)
+    {
+        $this->darklyy = $darklyy;
     }
 }

@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Foundation;
 
 use Boot\System\Console\Command;
@@ -11,43 +20,43 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class AboutCommand extends Command
 {
     /**
-     * The console command signature.
+     * Имя и параметры консольной команды.
      *
      * @var string
      */
-    protected $signature = 'about {--only= : The section to display}
-                {--json : Output the information as JSON}';
+    protected $signature = 'about {--only= : Выбор раздела для отображения}
+                {--json : Вывести информацию в формате JSON}';
 
     /**
-     * The console command description.
+     * Описание консольной команды.
      *
      * @var string
      */
-    protected $description = 'Display basic information about your application';
+    protected $description = 'Вывод базовой информации о вашем приложении';
 
     /**
-     * The Composer instance.
+     * Экземпляр Composer
      *
      * @var \Boot\Support\Composer
      */
     protected $composer;
 
     /**
-     * The data to display.
+     * Данные для отображения
      *
      * @var array
      */
     protected static $data = [];
 
     /**
-     * The registered callables that add custom data to the command output.
+     * Зарегистрированные вызываемые объекты, которые добавляют пользовательские данные.
      *
      * @var array
      */
     protected static $customDataResolvers = [];
 
     /**
-     * Create a new command instance.
+     * Создание нового экземпляра команды.
      *
      * @param  \Boot\Support\Composer  $composer
      * @return void
@@ -60,7 +69,7 @@ class AboutCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * Выполнение консольной команды.
      *
      * @return int
      */
@@ -69,21 +78,22 @@ class AboutCommand extends Command
         $this->gatherApplicationInformation();
 
         collect(static::$data)
-            ->map(fn ($items) => collect($items)
-                ->map(function ($value) {
-                    if (is_array($value)) {
-                        return [$value];
-                    }
+            ->map(
+                fn ($items) => collect($items)
+                    ->map(function ($value) {
+                        if (is_array($value)) {
+                            return [$value];
+                        }
 
-                    if (is_string($value)) {
-                        $value = $this->laravel->make($value);
-                    }
+                        if (is_string($value)) {
+                            $value = $this->laravel->make($value);
+                        }
 
-                    return collect($this->laravel->call($value))
-                        ->map(fn ($value, $key) => [$key, $value])
-                        ->values()
-                        ->all();
-                })->flatten(1)
+                        return collect($this->laravel->call($value))
+                            ->map(fn ($value, $key) => [$key, $value])
+                            ->values()
+                            ->all();
+                    })->flatten(1)
             )
             ->sortBy(function ($data, $key) {
                 $index = array_search($key, ['Environment', 'Cache', 'Drivers']);
@@ -101,9 +111,9 @@ class AboutCommand extends Command
     }
 
     /**
-     * Display the application information.
+     * Отображение информации о приложении
      *
-     * @param  \Illuminate\Support\Collection  $data
+     * @param  \Boot\Support\Collection  $data
      * @return void
      */
     protected function display($data)
@@ -112,9 +122,9 @@ class AboutCommand extends Command
     }
 
     /**
-     * Display the application information as a detail view.
+     * Отображение информации о приложении в подробном виде
      *
-     * @param  \Illuminate\Support\Collection  $data
+     * @param  \Boot\Support\Collection  $data
      * @return void
      */
     protected function displayDetail($data)
@@ -122,7 +132,7 @@ class AboutCommand extends Command
         $data->each(function ($data, $section) {
             $this->newLine();
 
-            $this->components->twoColumnDetail('  <fg=green;options=bold>'.$section.'</>');
+            $this->components->twoColumnDetail('  <fg=green;options=bold>' . $section . '</>');
 
             $data->pipe(fn ($data) => $section !== 'Environment' ? $data->sort() : $data)->each(function ($detail) {
                 [$label, $value] = $detail;
@@ -133,9 +143,9 @@ class AboutCommand extends Command
     }
 
     /**
-     * Display the application information as JSON.
+     * Отображение информации о приложении в формате JSON
      *
-     * @param  \Illuminate\Support\Collection  $data
+     * @param  \Boot\Support\Collection  $data
      * @return void
      */
     protected function displayJson($data)
@@ -152,37 +162,37 @@ class AboutCommand extends Command
     }
 
     /**
-     * Gather information about the application.
+     * Сбор информации о приложении
      *
      * @return void
      */
     protected function gatherApplicationInformation()
     {
         static::addToSection('Environment', fn () => [
-            'Application Name' => config('app.name'),
-            'Laravel Version' => $this->laravel->version(),
-            'PHP Version' => phpversion(),
-            'Composer Version' => $this->composer->getVersion() ?? '<fg=yellow;options=bold>-</>',
-            'Environment' => $this->laravel->environment(),
-            'Debug Mode' => config('app.debug') ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
+            'Имя приложения' => config('app.name'),
+            'Версия Darklyy' => $this->darklyy->version(),
+            'Версия PHP' => phpversion(),
+            'Версия Composer' => $this->composer->getVersion() ?? '<fg=yellow;options=bold>-</>',
+            'Тип окружения' => $this->darklyy->environment(),
+            'Отладка' => config('app.debug') ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
             'URL' => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
-            'Maintenance Mode' => $this->laravel->isDownForMaintenance() ? '<fg=yellow;options=bold>ENABLED</>' : 'OFF',
+            'Режим обслуживания' => $this->darklyy->isDownForMaintenance() ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
         ]);
 
         static::addToSection('Cache', fn () => [
-            'Config' => $this->laravel->configurationIsCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
-            'Events' => $this->laravel->eventsAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
-            'Routes' => $this->laravel->routesAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
+            'Config' => $this->darklyy->configurationIsCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
+            'Events' => $this->darklyy->eventsAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
+            'Routes' => $this->darklyy->routesAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
             'Views' => $this->hasPhpFiles($this->laravel->storagePath('framework/views')) ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
         ]);
 
         $logChannel = config('logging.default');
 
-        if (config('logging.channels.'.$logChannel.'.driver') === 'stack') {
-            $secondary = collect(config('logging.channels.'.$logChannel.'.channels'))
+        if (config('logging.channels.' . $logChannel . '.driver') === 'stack') {
+            $secondary = collect(config('logging.channels.' . $logChannel . '.channels'))
                 ->implode(', ');
 
-            $logs = '<fg=yellow;options=bold>'.$logChannel.'</> <fg=gray;options=bold>/</> '.$secondary;
+            $logs = '<fg=yellow;options=bold>' . $logChannel . '</> <fg=gray;options=bold>/</> ' . $secondary;
         } else {
             $logs = $logChannel;
         }
@@ -203,18 +213,18 @@ class AboutCommand extends Command
     }
 
     /**
-     * Determine whether the given directory has PHP files.
+     * Определение, есть ли в данном каталоге файлы PHP.
      *
      * @param  string  $path
      * @return bool
      */
     protected function hasPhpFiles(string $path): bool
     {
-        return count(glob($path.'/*.php')) > 0;
+        return count(glob($path . '/*.php')) > 0;
     }
 
     /**
-     * Add additional data to the output of the "about" command.
+     * Добавление дополнительных данных в вывод команды «about».
      *
      * @param  string  $section
      * @param  callable|string|array  $data
@@ -227,7 +237,7 @@ class AboutCommand extends Command
     }
 
     /**
-     * Add additional data to the output of the "about" command.
+     * Добавление дополнительных данных в вывод команды «about».
      *
      * @param  string  $section
      * @param  callable|string|array  $data
@@ -248,7 +258,7 @@ class AboutCommand extends Command
     }
 
     /**
-     * Get the sections provided to the command.
+     * Получение разделов
      *
      * @return array
      */
@@ -261,7 +271,7 @@ class AboutCommand extends Command
     }
 
     /**
-     * Format the given string for searching.
+     * Форматирование строки поиска.
      *
      * @param  string  $value
      * @return string

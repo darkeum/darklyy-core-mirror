@@ -108,7 +108,6 @@
         "phpunit/phpunit": "^10.1",
         "prettus/l5-repository": "^2.8",
         "pris/darklyy-menu": "^1.0",
-        "pris/module-away": "^1.0",
         "pris/darklyy-module-installer": "^1.0",
         "pusher/pusher-php-server": "^7.2",
         "rakit/validation": "^1.4",
@@ -161,7 +160,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "php-http/discovery": true,
-            "pris/module-installer": true
+            "pris/module-installer": true,
+            "pris/darklyy-module-installer": true
         }
     },
     "require-dev": {
