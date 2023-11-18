@@ -168,7 +168,7 @@ class AboutCommand extends Command
      */
     protected function gatherApplicationInformation()
     {
-        static::addToSection('Environment', fn () => [
+        static::addToSection('Окружение', fn () => [
             'Имя приложения' => config('app.name'),
             'Версия Darklyy' => $this->darklyy->version(),
             'Версия PHP' => phpversion(),
@@ -179,11 +179,11 @@ class AboutCommand extends Command
             'Режим обслуживания' => $this->darklyy->isDownForMaintenance() ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
         ]);
 
-        static::addToSection('Cache', fn () => [
-            'Config' => $this->darklyy->configurationIsCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
-            'Events' => $this->darklyy->eventsAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
-            'Routes' => $this->darklyy->routesAreCached() ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
-            'Views' => $this->hasPhpFiles($this->laravel->storagePath('framework/views')) ? '<fg=green;options=bold>CACHED</>' : '<fg=yellow;options=bold>NOT CACHED</>',
+        static::addToSection('Кэширование', fn () => [
+            'Конфигурация' => $this->darklyy->configurationIsCached() ? '<fg=green;options=bold>КЭШИРОВАНА</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНА</>',
+            'События' => $this->darklyy->eventsAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
+            'Маршруты' => $this->darklyy->routesAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
+            'Представления' => $this->hasPhpFiles($this->laravel->storagePath('framework/views')) ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
         ]);
 
         $logChannel = config('logging.default');
@@ -197,16 +197,15 @@ class AboutCommand extends Command
             $logs = $logChannel;
         }
 
-        static::addToSection('Drivers', fn () => array_filter([
-            'Broadcasting' => config('broadcasting.default'),
-            'Cache' => config('cache.default'),
-            'Database' => config('database.default'),
-            'Logs' => $logs,
-            'Mail' => config('mail.default'),
-            'Octane' => config('octane.server'),
-            'Queue' => config('queue.default'),
-            'Scout' => config('scout.driver'),
-            'Session' => config('session.driver'),
+        static::addToSection('Драйверы', fn () => array_filter([
+            'Вещание' => config('broadcasting.default'),
+            'Кэш' => config('cache.default'),
+            'База данных' => config('database.default'),
+            'Логирование' => $logs,
+            'Почта' => config('mail.default'),           
+            'Очередь' => config('queue.default'),
+            'Полнотекстовый поиск' => config('scout.driver'),
+            'Сессии' => config('session.driver'),
         ]));
 
         collect(static::$customDataResolvers)->each->__invoke();
