@@ -12,8 +12,8 @@
 namespace Boot\System\Console\Foundation;
 
 use Boot\System\Console\Command;
-use Boot\Support\Carbon;
-use Boot\Support\Env;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Env;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
@@ -246,7 +246,7 @@ class ServeCommand extends Command
     protected function handleProcessOutput()
     {
         return fn ($type, $buffer) => str($buffer)->explode("\n")->each(function ($line) {
-            if (str($line)->contains('Сервер разработки (http')) {
+            if (str($line)->contains('Development Server (http')) {
                 if ($this->serverRunningHasBeenDisplayed) {
                     return;
                 }
