@@ -24,11 +24,13 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 class Command extends SymfonyCommand
 {
     use Concerns\CallsCommands,
+        Concerns\ConfiguresPrompts,
         Concerns\HasParameters,
         Concerns\InteractsWithIO,
         Concerns\InteractsWithSignals,
         Concerns\PromptsForMissingInput,
         Macroable;
+
 
     /**
      * The Laravel application instance.
