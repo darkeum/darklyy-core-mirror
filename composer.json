@@ -115,7 +115,7 @@
         "react/socket": "^1.9",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.3",
-        "spatie/laravel-fractal": "6.0.0",
+        "spatie/laravel-fractal": "^6.0",
         "spatie/laravel-ignition": "^1.0",
         "spatie/laravel-permission": "^5.5",
         "squizlabs/php_codesniffer": "^3.5",
