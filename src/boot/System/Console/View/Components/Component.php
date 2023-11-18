@@ -2,8 +2,8 @@
 
 namespace Boot\System\Console\View\Components;
 
-use Illuminate\Console\OutputStyle;
-use Illuminate\Console\QuestionHelper;
+use Boot\System\Console\OutputStyle;
+use Boot\System\Console\QuestionHelper;
 use ReflectionClass;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 
@@ -107,8 +107,6 @@ abstract class Component
         $property = with(new ReflectionClass(OutputStyle::class))
             ->getParentClass()
             ->getProperty('questionHelper');
-
-        $property->setAccessible(true);
 
         $currentHelper = $property->isInitialized($this->output)
             ? $property->getValue($this->output)

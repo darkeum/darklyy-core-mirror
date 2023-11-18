@@ -2,7 +2,7 @@
 
 namespace Boot\System\Console\View\Components;
 
-use Illuminate\Console\Contracts\NewLineAware;
+use Boot\System\Console\Contracts\NewLineAware;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Line extends Component
@@ -47,7 +47,7 @@ class Line extends Component
         ]);
 
         $this->renderView('line', array_merge(static::$styles[$style], [
-            'marginTop' => ($this->output instanceof NewLineAware && $this->output->newLineWritten()) ? 0 : 1,
+            'marginTop' => $this->output instanceof NewLineAware ? max(0, 2 - $this->output->newLinesWritten()) : 1,
             'content' => $string,
         ]), $verbosity);
     }

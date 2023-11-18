@@ -49,7 +49,7 @@ class Factory
      */
     public function __call($method, $parameters)
     {
-        $component = '\Boot\System\Console\View\Components\\'.ucfirst($method);
+        $component = '\Illuminate\Console\View\Components\\'.ucfirst($method);
 
         throw_unless(class_exists($component), new InvalidArgumentException(sprintf(
             'Console component [%s] not found.', $method
