@@ -209,11 +209,19 @@ class Core
 
     public function getSectionVendorPaths(): array
     {
-        return File::directories(modules_path('vendor'));
+        if (File::isDirectory(modules_path('vendor'))) {
+            return File::directories(modules_path('vendor'));
+        } else {
+            return [];
+        }
     }
 
     public function getSectionContainerVendorPaths(string $sectionName): array
     {
-        return File::directories(modules_path('vendor' . DIRECTORY_SEPARATOR . $sectionName));
+        if (File::isDirectory(modules_path('vendor' . DIRECTORY_SEPARATOR . $sectionName))) {
+            return File::directories(modules_path('vendor' . DIRECTORY_SEPARATOR . $sectionName));
+        } else {
+            return [];
+        }
     }
 }
