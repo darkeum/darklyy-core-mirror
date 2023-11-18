@@ -122,13 +122,13 @@
         "squizlabs/php_codesniffer": "^3.5",
         "symfony/asset": "^5.3",
         "symfony/cache": "5.4.3",
-        "symfony/console": "^6.0.3",
-        "symfony/dependency-injection": "6.0.2",
-        "symfony/error-handler": "6.0.2",
-        "symfony/http-foundation": "6.0.2",
-        "symfony/http-kernel": "6.0.2",
-        "symfony/mime": "6.0.2",
-        "symfony/translation": "6.0.2",
+        "symfony/console": "^6.2",
+        "symfony/dependency-injection": "6.2",
+        "symfony/error-handler": "6.2",
+        "symfony/http-foundation": "6.2",
+        "symfony/http-kernel": "6.2",
+        "symfony/mime": "6.2",
+        "symfony/translation": "6.2",
         "symfony/yaml": "6.2.0",
         "tecnickcom/tcpdf": "^6.3",
         "telegram-bot/api": "^2.3",
@@ -140,8 +140,7 @@
         "vinkla/hashids": "^10.0",
         "vlucas/phpdotenv": "^5.3",
         "workerman/channel": "^1.1",
-        "workerman/workerman": "^4.0",
-        "laravel/prompts": "^0.1.13"
+        "workerman/workerman": "^4.0"
         
     },
     "conflict": {

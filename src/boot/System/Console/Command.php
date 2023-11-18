@@ -24,7 +24,7 @@ use Symfony\Component\Console\Command\Command as SymfonyCommand;
 class Command extends SymfonyCommand
 {
     use Concerns\CallsCommands,
-        Concerns\ConfiguresPrompts,
+        // Concerns\ConfiguresPrompts,
         Concerns\HasParameters,
         Concerns\InteractsWithIO,
         Concerns\InteractsWithSignals,
@@ -38,8 +38,19 @@ class Command extends SymfonyCommand
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $laravel;
+
+    /**
+     * The Laravel application instance.
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
     protected $darklyy;
 
+    /**
+     * The Laravel application instance.
+     *
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
     protected $darksander;
 
     /**
@@ -78,6 +89,27 @@ class Command extends SymfonyCommand
     protected $hidden = false;
 
     /**
+     * Indicates whether only one instance of the command can run at any given time.
+     *
+     * @var bool
+     */
+    protected $isolated = false;
+
+    /**
+     * The default exit code for isolated commands.
+     *
+     * @var int
+     */
+    protected $isolatedExitCode = self::SUCCESS;
+
+    /**
+     * The console command name aliases.
+     *
+     * @var array
+     */
+    protected $aliases;
+
+    /**
      * Create a new console command instance.
      *
      * @return void
@@ -105,6 +137,10 @@ class Command extends SymfonyCommand
         $this->setHelp((string) $this->help);
 
         $this->setHidden($this->isHidden());
+
+        if (isset($this->aliases)) {
+            $this->setAliases((array) $this->aliases);
+        }
 
         if (!isset($this->signature)) {
             $this->specifyParameters();
@@ -157,17 +193,17 @@ class Command extends SymfonyCommand
      */
     public function run(InputInterface $input, OutputInterface $output): int
     {
-        $this->output = $this->laravel->make(
-            OutputStyle::class,
-            ['input' => $input, 'output' => $output]
+        $this->output = $output instanceof OutputStyle ? $output : $this->laravel->make(
+            OutputStyle::class, ['input' => $input, 'output' => $output]
         );
 
         $this->components = $this->laravel->make(Factory::class, ['output' => $this->output]);
 
+        $this->configurePrompts($input);
+
         try {
             return parent::run(
-                $this->input = $input,
-                $this->output
+                $this->input = $input, $this->output
             );
         } finally {
             $this->untrap();
@@ -301,8 +337,8 @@ class Command extends SymfonyCommand
     public function setDarksander($darksander)
     {
         $this->darksander = $darksander;
-    }   
-    
+    }
+
     public function setDarklyy($darklyy)
     {
         $this->darklyy = $darklyy;
