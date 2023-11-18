@@ -257,7 +257,7 @@ class ServeCommand extends Command
                 $this->newLine();
 
                 $this->serverRunningHasBeenDisplayed = true;
-            } elseif (str($line)->contains(' Принял')) {
+            } elseif (str($line)->contains(' Accepted')) {
                 $requestPort = $this->getRequestPortFromLine($line);
 
                 $this->requestsPool[$requestPort] = [
@@ -268,7 +268,7 @@ class ServeCommand extends Command
                 $requestPort = $this->getRequestPortFromLine($line);
 
                 $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
-            } elseif (str($line)->contains(' Закрытие')) {
+            } elseif (str($line)->contains(' Closing')) {
                 $requestPort = $this->getRequestPortFromLine($line);
 
                 if (empty($this->requestsPool[$requestPort])) {
@@ -295,7 +295,7 @@ class ServeCommand extends Command
 
                 $this->output->write(' ' . str_repeat('<fg=gray>.</>', $dots));
                 $this->output->writeln(" <fg=gray>~ {$runTime}s</>");
-            } elseif (str($line)->contains(['Закрыто без отправки запроса'])) {
+            } elseif (str($line)->contains(['Closed without sending a request'])) {
                 // ...
             } elseif (!empty($line)) {
                 $position = strpos($line, '] ');
