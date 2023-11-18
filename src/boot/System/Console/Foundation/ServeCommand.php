@@ -1,47 +1,84 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Foundation;
 
 use Boot\System\Console\Command;
-use Illuminate\Support\Env;
+use Boot\Support\Carbon;
+use Boot\Support\Env;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
+use function Termwind\terminal;
+
+#[AsCommand(name: 'serve')]
 class ServeCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя консольной команды
      *
      * @var string
      */
     protected $name = 'serve';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     */
-    protected static $defaultName = 'serve';
-
-    /**
-     * The console command description.
+     * Описание консольной команды
      *
      * @var string
      */
-    protected $description = 'Serve the application on the PHP development server';
+    protected $description = 'Запустить приложение на внутреннем сервере дял разработки';
 
     /**
-     * The current port offset.
+     * Текущее смещение порта
      *
      * @var int
      */
     protected $portOffset = 0;
 
     /**
-     * Execute the console command.
+     * Список обрабатываемых запросов и время их начала
+     *
+     * @var array<int, \Boot\Support\Carbon>
+     */
+    protected $requestsPool;
+
+    /**
+     * Указывает, отображалось ли выходное сообщение «Сервер работает...».
+     *
+     * @var bool
+     */
+    protected $serverRunningHasBeenDisplayed = false;
+
+    /**
+     * Переменные среды, которые должны быть переданы с хост-компьютера в процесс PHP-сервера.
+     *
+     * @var string[]
+     */
+    public static $passthroughVariables = [
+        'APP_ENV',
+        'IGNITION_LOCAL_SITES_PATH',
+        'LARAVEL_SAIL',
+        'PATH',
+        'PHP_CLI_SERVER_WORKERS',
+        'PHP_IDE_CONFIG',
+        'SYSTEMROOT',
+        'XDEBUG_CONFIG',
+        'XDEBUG_MODE',
+        'XDEBUG_SESSION',
+    ];
+
+    /**
+     * Выполнение консольной команды.
      *
      * @return int
      *
@@ -49,17 +86,15 @@ class ServeCommand extends Command
      */
     public function handle()
     {
-        $this->line("<info>Starting Laravel development server:</info> http://{$this->host()}:{$this->port()}");
-
         $environmentFile = $this->option('env')
-                            ? base_path('.env').'.'.$this->option('env')
-                            : base_path('.env');
+            ? base_path('.env') . '.' . $this->option('env')
+            : base_path('.env');
 
         $hasEnvironment = file_exists($environmentFile);
 
         $environmentLastModified = $hasEnvironment
-                            ? filemtime($environmentFile)
-                            : now()->addDays(30)->getTimestamp();
+            ? filemtime($environmentFile)
+            : now()->addDays(30)->getTimestamp();
 
         $process = $this->startProcess($hasEnvironment);
 
@@ -68,14 +103,20 @@ class ServeCommand extends Command
                 clearstatcache(false, $environmentFile);
             }
 
-            if (! $this->option('no-reload') &&
+            if (
+                !$this->option('no-reload') &&
                 $hasEnvironment &&
-                filemtime($environmentFile) > $environmentLastModified) {
+                filemtime($environmentFile) > $environmentLastModified
+            ) {
                 $environmentLastModified = filemtime($environmentFile);
 
-                $this->comment('Environment modified. Restarting server...');
+                $this->newLine();
+
+                $this->components->info('Окружение изменено. Перезапуск сервера...');
 
                 $process->stop(5);
+
+                $this->serverRunningHasBeenDisplayed = false;
 
                 $process = $this->startProcess($hasEnvironment);
             }
@@ -95,7 +136,7 @@ class ServeCommand extends Command
     }
 
     /**
-     * Start a new server process.
+     * Запуск нового серверного процесса.
      *
      * @param  bool  $hasEnvironment
      * @return \Symfony\Component\Process\Process
@@ -103,31 +144,20 @@ class ServeCommand extends Command
     protected function startProcess($hasEnvironment)
     {
         $process = new Process($this->serverCommand(), public_path(), collect($_ENV)->mapWithKeys(function ($value, $key) use ($hasEnvironment) {
-            if ($this->option('no-reload') || ! $hasEnvironment) {
+            if ($this->option('no-reload') || !$hasEnvironment) {
                 return [$key => $value];
             }
 
-            return in_array($key, [
-                'APP_ENV',
-                'LARAVEL_SAIL',
-                'PHP_CLI_SERVER_WORKERS',
-                'PHP_IDE_CONFIG',
-                'SYSTEMROOT',
-                'XDEBUG_CONFIG',
-                'XDEBUG_MODE',
-                'XDEBUG_SESSION',
-            ]) ? [$key => $value] : [$key => false];
+            return in_array($key, static::$passthroughVariables) ? [$key => $value] : [$key => false];
         })->all());
 
-        $process->start(function ($type, $buffer) {
-            $this->output->write($buffer);
-        });
+        $process->start($this->handleProcessOutput());
 
         return $process;
     }
 
     /**
-     * Get the full server command.
+     * Получение полной команды сервера
      *
      * @return array
      */
@@ -135,30 +165,30 @@ class ServeCommand extends Command
     {
         $server = file_exists(base_path('server.php'))
             ? base_path('server.php')
-            : __DIR__.'/../resources/server.php';
+            : __DIR__ . '/../resources/server.php';
 
         return [
             (new PhpExecutableFinder)->find(false),
             '-S',
-            $this->host().':'.$this->port(),
+            $this->host() . ':' . $this->port(),
             $server,
         ];
     }
 
     /**
-     * Get the host for the command.
+     * Получение хоста из запроса
      *
      * @return string
      */
     protected function host()
     {
-        [$host, ] = $this->getHostAndPort();
+        [$host] = $this->getHostAndPort();
 
         return $host;
     }
 
     /**
-     * Get the port for the command.
+     * Получение порта из запроса
      *
      * @return string
      */
@@ -176,12 +206,19 @@ class ServeCommand extends Command
     }
 
     /**
-     * Get the host and port from the host option string.
+     * Получение хоста и порта из запроса
      *
      * @return array
      */
     protected function getHostAndPort()
     {
+        if (preg_match('/(\[.*\]):?([0-9]+)?/', $this->input->getOption('host'), $matches) !== false) {
+            return [
+                $matches[1] ?? $this->input->getOption('host'),
+                $matches[2] ?? null,
+            ];
+        }
+
         $hostParts = explode(':', $this->input->getOption('host'));
 
         return [
@@ -191,28 +228,131 @@ class ServeCommand extends Command
     }
 
     /**
-     * Check if the command has reached its max amount of port tries.
+     * Проверка, достигла ли команда максимального количества попыток выбора порта
      *
      * @return bool
      */
     protected function canTryAnotherPort()
     {
         return is_null($this->input->getOption('port')) &&
-               ($this->input->getOption('tries') > $this->portOffset);
+            ($this->input->getOption('tries') > $this->portOffset);
     }
 
     /**
-     * Get the console command options.
+     * Возвращает «вызываемый объект» для обработки выходных данных процесса.
+     *
+     * @return callable(string, string): void
+     */
+    protected function handleProcessOutput()
+    {
+        return fn ($type, $buffer) => str($buffer)->explode("\n")->each(function ($line) {
+            if (str($line)->contains('Сервер разработки (http')) {
+                if ($this->serverRunningHasBeenDisplayed) {
+                    return;
+                }
+
+                $this->components->info("Сервер запущен на [http://{$this->host()}:{$this->port()}].");
+                $this->comment('  <fg=yellow;options=bold>Нажмите Ctrl+C для остановки сервера</>');
+
+                $this->newLine();
+
+                $this->serverRunningHasBeenDisplayed = true;
+            } elseif (str($line)->contains(' Принял')) {
+                $requestPort = $this->getRequestPortFromLine($line);
+
+                $this->requestsPool[$requestPort] = [
+                    $this->getDateFromLine($line),
+                    false,
+                ];
+            } elseif (str($line)->contains([' [200]: GET '])) {
+                $requestPort = $this->getRequestPortFromLine($line);
+
+                $this->requestsPool[$requestPort][1] = trim(explode('[200]: GET', $line)[1]);
+            } elseif (str($line)->contains(' Закрытие')) {
+                $requestPort = $this->getRequestPortFromLine($line);
+
+                if (empty($this->requestsPool[$requestPort])) {
+                    return;
+                }
+
+                [$startDate, $file] = $this->requestsPool[$requestPort];
+
+                $formattedStartedAt = $startDate->format('Y-m-d H:i:s');
+
+                unset($this->requestsPool[$requestPort]);
+
+                [$date, $time] = explode(' ', $formattedStartedAt);
+
+                $this->output->write("  <fg=gray>$date</> $time");
+
+                $runTime = $this->getDateFromLine($line)->diffInSeconds($startDate);
+
+                if ($file) {
+                    $this->output->write($file = " $file");
+                }
+
+                $dots = max(terminal()->width() - mb_strlen($formattedStartedAt) - mb_strlen($file) - mb_strlen($runTime) - 9, 0);
+
+                $this->output->write(' ' . str_repeat('<fg=gray>.</>', $dots));
+                $this->output->writeln(" <fg=gray>~ {$runTime}s</>");
+            } elseif (str($line)->contains(['Закрыто без отправки запроса'])) {
+                // ...
+            } elseif (!empty($line)) {
+                $position = strpos($line, '] ');
+
+                if ($position !== false) {
+                    $line = substr($line, $position + 1);
+                }
+
+                $this->components->warn($line);
+            }
+        });
+    }
+
+    /**
+     * Получение даты из данных PHP-сервера.
+     *
+     * @param  string  $line
+     * @return \Boot\Support\Carbon
+     */
+    protected function getDateFromLine($line)
+    {
+        $regex = env('PHP_CLI_SERVER_WORKERS', 1) > 1
+            ? '/^\[\d+]\s\[([a-zA-Z0-9: ]+)\]/'
+            : '/^\[([^\]]+)\]/';
+
+        $line = str_replace('  ', ' ', $line);
+
+        preg_match($regex, $line, $matches);
+
+        return Carbon::createFromFormat('D M d H:i:s Y', $matches[1]);
+    }
+
+    /**
+     * Получение порта запроса из данных PHP-сервера.
+     *
+     * @param  string  $line
+     * @return int
+     */
+    protected function getRequestPortFromLine($line)
+    {
+        preg_match('/:(\d+)\s(?:(?:\w+$)|(?:\[.*))/', $line, $matches);
+
+        return (int) $matches[1];
+    }
+
+    /**
+     * Получение параметров консольной команды
      *
      * @return array
      */
     protected function getOptions()
     {
         return [
-            ['host', null, InputOption::VALUE_OPTIONAL, 'The host address to serve the application on', '127.0.0.1'],
-            ['port', null, InputOption::VALUE_OPTIONAL, 'The port to serve the application on', Env::get('SERVER_PORT')],
-            ['tries', null, InputOption::VALUE_OPTIONAL, 'The max number of ports to attempt to serve from', 10],
-            ['no-reload', null, InputOption::VALUE_NONE, 'Do not reload the development server on .env file changes'],
+            ['host', null, InputOption::VALUE_OPTIONAL, 'Адрес хоста для сервера приложения', Env::get('SERVER_HOST', '127.0.0.1')],
+            ['port', null, InputOption::VALUE_OPTIONAL, 'Порт для сервера приложения', Env::get('SERVER_PORT')],
+            ['tries', null, InputOption::VALUE_OPTIONAL, 'Максимальное количество портов, с которых можно попытаться запустить', 10],
+            ['no-reload', null, InputOption::VALUE_NONE, 'Не перезагружайте сервер разработки при изменении файла .env'],
         ];
     }
 }
