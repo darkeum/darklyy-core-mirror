@@ -2,7 +2,7 @@
 
 namespace Boot\System\Database\Console\Migrations;
 
-use Illuminate\Console\Command;
+use Boot\System\Console\Command;
 use Illuminate\Database\Migrations\MigrationRepositoryInterface;
 use Symfony\Component\Console\Input\InputOption;
 
