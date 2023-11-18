@@ -12,11 +12,12 @@
 
 namespace Boot\Support;
 
+use Traversable;
 use Ramsey\Uuid\Uuid;
 use voku\helper\ASCII;
-use Illuminate\Support\Str as LaravelStr;
 use Ramsey\Uuid\UuidFactory;
 use Ramsey\Uuid\Generator\CombGenerator;
+use Illuminate\Support\Str as LaravelStr;
 use Ramsey\Uuid\Codec\TimestampFirstCombCodec;
 
 
@@ -1542,14 +1543,29 @@ class Str
     /**
      * Метод возвращает строку где все найденные подстроки замены на указанное значение
      *
-     * @param  string $value Исходная строка
-     * @param  string $search Строка поиска
-     * @param  string $replacement Строка замены
+     * @param  string|iterable<string> $search Строка поиска
+     * @param  string|iterable<string> $replace Строка замены
+     * @param  string|iterable<string> $subject Исходная строка
+     * @param  bool  $caseSensitive
      * @return static Возвращает строку где все найденные подстроки замены на указанное значение
      */
-    public static function replace($value, $search, $replacement)
+    public static function replace($search, $replace, $subject, $caseSensitive = true)
     {
-        return static::eregReplace(preg_quote($search), $replacement, $value);
+        if ($search instanceof Traversable) {
+            $search = collect($search)->all();
+        }
+
+        if ($replace instanceof Traversable) {
+            $replace = collect($replace)->all();
+        }
+
+        if ($subject instanceof Traversable) {
+            $subject = collect($subject)->all();
+        }
+
+        return $caseSensitive
+            ? str_replace($search, $replace, $subject)
+            : str_ireplace($search, $replace, $subject);
     }
 
 
@@ -1597,7 +1613,8 @@ class Str
         return $new_value;
     }
 
-    public static function word($value){
+    public static function word($value)
+    {
         $request['type'] = 'word';
         return static::ee($value, $request);
     }
@@ -1644,7 +1661,8 @@ class Str
         return implode('', $parts) . self::plural($lastWord, $count);
     }
 
-    public static function betweenFirst($subject, $from, $to) {
+    public static function betweenFirst($subject, $from, $to)
+    {
         return LaravelStr::betweenFirst($subject, $from, $to);
     }
 
@@ -1658,5 +1676,4 @@ class Str
     {
         return preg_replace('~(\s|\x{3164})+~u', ' ', preg_replace('~^[\s﻿]+|[\s﻿]+$~u', '', $value));
     }
-
 }
