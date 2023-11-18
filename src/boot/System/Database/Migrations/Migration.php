@@ -2,7 +2,9 @@
 
 namespace Boot\System\Database\Migrations;
 
-abstract class Migration
+use Illuminate\Database\Migrations\Migration as MigrationBase;
+
+abstract class Migration extends MigrationBase
 {
     /**
      * The name of the database connection to use.
