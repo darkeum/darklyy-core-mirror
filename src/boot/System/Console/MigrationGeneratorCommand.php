@@ -3,7 +3,7 @@
 namespace Boot\System\Console;
 
 use Boot\System\Filesystem\Filesystem;
-use Boot\System\Support\Composer;
+use Boot\Support\Composer;
 
 abstract class MigrationGeneratorCommand extends Command
 {
