@@ -2,17 +2,16 @@
 
 namespace Boot\System\Database\Schema;
 
-use Closure;
-use \Boot\Support\Fluent;
 use BadMethodCallException;
+use Closure;
 use \Boot\System\Database\Connection;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Database\Schema\Blueprint as BaseBlueprint;
 use \Boot\System\Database\Query\Expression;
-use \Boot\System\Database\SQLiteConnection;
 use \Boot\System\Database\Schema\Grammars\Grammar;
+use \Boot\System\Database\SQLiteConnection;
+use \Boot\Support\Fluent;
+use Illuminate\Support\Traits\Macroable;
 
-class Blueprint extends BaseBlueprint
+class Blueprint
 {
     use Macroable;
 
@@ -90,8 +89,75 @@ class Blueprint extends BaseBlueprint
         }
     }
 
-    
+    /**
+     * Execute the blueprint against the database.
+     *
+     * @param  \Boot\System\Database\Connection  $connection
+     * @param  \Boot\System\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
+     */
+    public function build(Connection $connection, Grammar $grammar)
+    {
+        foreach ($this->toSql($connection, $grammar) as $statement) {
+            $connection->statement($statement);
+        }
+    }
 
+    /**
+     * Get the raw SQL statements for the blueprint.
+     *
+     * @param  \Boot\System\Database\Connection  $connection
+     * @param  \Boot\System\Database\Schema\Grammars\Grammar  $grammar
+     * @return array
+     */
+    public function toSql(Connection $connection, Grammar $grammar)
+    {
+        $this->addImpliedCommands($grammar);
+
+        $statements = [];
+
+        // Each type of command has a corresponding compiler function on the schema
+        // grammar which is used to build the necessary SQL statements to build
+        // the blueprint element, so we'll just call that compilers function.
+        $this->ensureCommandsAreValid($connection);
+
+        foreach ($this->commands as $command) {
+            $method = 'compile'.ucfirst($command->name);
+
+            if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
+                if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
+                    $statements = array_merge($statements, (array) $sql);
+                }
+            }
+        }
+
+        return $statements;
+    }
+
+    /**
+     * Ensure the commands on the blueprint are valid for the connection type.
+     *
+     * @param  \Boot\System\Database\Connection  $connection
+     * @return void
+     *
+     * @throws \BadMethodCallException
+     */
+    protected function ensureCommandsAreValid(Connection $connection)
+    {
+        if ($connection instanceof SQLiteConnection) {
+            if ($this->commandsNamed(['dropColumn', 'renameColumn'])->count() > 1) {
+                throw new BadMethodCallException(
+                    "SQLite doesn't support multiple calls to dropColumn / renameColumn in a single modification."
+                );
+            }
+
+            if ($this->commandsNamed(['dropForeign'])->count() > 0) {
+                throw new BadMethodCallException(
+                    "SQLite doesn't support dropping foreign keys (you would need to re-create the table)."
+                );
+            }
+        }
+    }
 
     /**
      * Get all of the commands matching the given names.
@@ -106,7 +172,27 @@ class Blueprint extends BaseBlueprint
         });
     }
 
- 
+    /**
+     * Add the commands that are implied by the blueprint's state.
+     *
+     * @param  \Boot\System\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
+     */
+    protected function addImpliedCommands(Grammar $grammar)
+    {
+        if (count($this->getAddedColumns()) > 0 && ! $this->creating()) {
+            array_unshift($this->commands, $this->createCommand('add'));
+        }
+
+        if (count($this->getChangedColumns()) > 0 && ! $this->creating()) {
+            array_unshift($this->commands, $this->createCommand('change'));
+        }
+
+        $this->addFluentIndexes();
+
+        $this->addFluentCommands($grammar);
+    }
+
     /**
      * Add the index commands fluently specified on columns.
      *
@@ -139,8 +225,42 @@ class Blueprint extends BaseBlueprint
         }
     }
 
+    /**
+     * Add the fluent commands specified on any columns.
+     *
+     * @param  \Boot\System\Database\Schema\Grammars\Grammar  $grammar
+     * @return void
+     */
+    public function addFluentCommands(Grammar $grammar)
+    {
+        foreach ($this->columns as $column) {
+            foreach ($grammar->getFluentCommands() as $commandName) {
+                $attributeName = lcfirst($commandName);
 
+                if (! isset($column->{$attributeName})) {
+                    continue;
+                }
 
+                $value = $column->{$attributeName};
+
+                $this->addCommand(
+                    $commandName, compact('value', 'column')
+                );
+            }
+        }
+    }
+
+    /**
+     * Determine if the blueprint has a create command.
+     *
+     * @return bool
+     */
+    protected function creating()
+    {
+        return collect($this->commands)->contains(function ($command) {
+            return $command->name === 'create';
+        });
+    }
 
     /**
      * Indicate that the table needs to be created.
@@ -1065,7 +1185,16 @@ class Blueprint extends BaseBlueprint
         return $this->addColumn('binary', $column);
     }
 
-   
+    /**
+     * Create a new uuid column on the table.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ColumnDefinition
+     */
+    public function uuid($column)
+    {
+        return $this->addColumn('uuid', $column);
+    }
 
     /**
      * Create a new UUID column on the table with a foreign key constraint.
@@ -1081,7 +1210,27 @@ class Blueprint extends BaseBlueprint
         ]);
     }
 
-    
+    /**
+     * Create a new IP address column on the table.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ColumnDefinition
+     */
+    public function ipAddress($column)
+    {
+        return $this->addColumn('ipAddress', $column);
+    }
+
+    /**
+     * Create a new MAC address column on the table.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ColumnDefinition
+     */
+    public function macAddress($column)
+    {
+        return $this->addColumn('macAddress', $column);
+    }
 
     /**
      * Create a new geometry column on the table.
