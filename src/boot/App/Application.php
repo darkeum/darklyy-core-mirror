@@ -3,39 +3,41 @@
 namespace Boot\App;
 
 use Closure;
-use Illuminate\Container\Container;
-use Boot\Contracts\App\Application as ApplicationContract;
-use Illuminate\Contracts\Foundation\CachesConfiguration;
-use Illuminate\Contracts\Foundation\CachesRoutes;
-use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
-use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Boot\System\Events\EventServiceProvider;
-use Boot\System\Filesystem\Filesystem;
-use Boot\App\LoadEnvironmentVariables;
-use Boot\Events\LocaleUpdated;
-use Boot\System\Http\Request;
-use Boot\System\Log\LogServiceProvider;
-use Boot\System\Routing\RoutingServiceProvider;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Env;
-use Boot\Support\ServiceProvider;
-use Illuminate\Support\Str;
 use RuntimeException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Env;
+use Illuminate\Support\Str;
+use Boot\System\Http\Request;
+use Boot\Events\LocaleUpdated;
+use Boot\Support\ServiceProvider;
+use Illuminate\Support\Collection;
+use Illuminate\Container\Container;
+use Boot\App\LoadEnvironmentVariables;
+use Boot\System\Filesystem\Filesystem;
+use Boot\System\Log\LogServiceProvider;
+use Illuminate\Support\Traits\Macroable;
+use Boot\System\Events\EventServiceProvider;
+use Boot\System\Routing\RoutingServiceProvider;
+use Illuminate\Contracts\Foundation\CachesRoutes;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Boot\Contracts\App\Application as ApplicationContract;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
 
 class Application extends Container implements ApplicationContract, CachesConfiguration, CachesRoutes, HttpKernelInterface
 {
+    use Macroable;
     /**
      * The Laravel framework version.
      *
      * @var string
      */
-    const VERSION = '9.1.0';
+    const VERSION = '10.32.1';
 
     /**
      * The base path for the Laravel installation.
@@ -101,11 +103,26 @@ class Application extends Container implements ApplicationContract, CachesConfig
     protected $deferredServices = [];
 
     /**
+     * The custom bootstrap path defined by the developer.
+     *
+     * @var string
+     */
+    protected $bootstrapPath;
+
+    /**
      * The custom application path defined by the developer.
      *
      * @var string
      */
     protected $appPath;
+
+    /**
+     * The custom configuration path defined by the developer.
+     *
+     * @var string
+     */
+    protected $configPath;
+
 
     /**
      * The custom database path defined by the developer.
@@ -120,6 +137,13 @@ class Application extends Container implements ApplicationContract, CachesConfig
      * @var string
      */
     protected $langPath;
+
+    /**
+     * The custom public / web path defined by the developer.
+     *
+     * @var string
+     */
+    protected $publicPath;
 
     /**
      * The custom storage path defined by the developer.
@@ -323,7 +347,12 @@ class Application extends Container implements ApplicationContract, CachesConfig
         $this->instance('path.storage', $this->storagePath());
         $this->instance('path.database', $this->databasePath());
         $this->instance('path.resources', $this->resourcePath());
-        $this->instance('path.bootstrap', $this->bootstrapPath());
+
+        $this->useBootstrapPath(value(function () {
+            return is_dir($directory = $this->basePath('.laravel'))
+                ? $directory
+                : $this->basePath('bootstrap');
+        }));
 
         $this->useLangPath(value(function () {
             if (is_dir($directory = $this->resourcePath('lang'))) {
@@ -342,12 +371,10 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function path($path = '')
     {
-        $appPath = $this->appPath ?: $this->basePath . DIRECTORY_SEPARATOR . 'app';
-
-        return $appPath . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($this->appPath ?: $this->basePath('app'), $path);
     }
 
-     /**
+    /**
      * Получение директории расположения модулей
      *
      * @param  string  $path
@@ -406,7 +433,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function basePath($path = '')
     {
-        return $this->basePath . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($this->basePath, $path);
     }
 
     /**
@@ -420,6 +447,15 @@ class Application extends Container implements ApplicationContract, CachesConfig
         return $this->basePath . DIRECTORY_SEPARATOR . 'tmp' .  ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
     }
 
+    public function useBootstrapPath($path)
+    {
+        $this->bootstrapPath = $path;
+
+        $this->instance('path.bootstrap', $path);
+
+        return $this;
+    }
+
     /**
      * Get the path to the application configuration files.
      *
@@ -428,7 +464,22 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function configPath($path = '')
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'config' . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($this->configPath ?: $this->basePath('config'), $path);
+    }
+
+    /**
+     * Set the configuration directory.
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function useConfigPath($path)
+    {
+        $this->configPath = $path;
+
+        $this->instance('path.config', $path);
+
+        return $this;
     }
 
     /**
@@ -439,7 +490,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function databasePath($path = '')
     {
-        return ($this->databasePath ?: $this->basePath . DIRECTORY_SEPARATOR . 'database') . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($this->databasePath ?: $this->basePath('database'), $path);
     }
 
     /**
@@ -465,7 +516,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function langPath($path = '')
     {
-        return $this->langPath . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($this->langPath, $path);
     }
 
     /**
@@ -488,10 +539,31 @@ class Application extends Container implements ApplicationContract, CachesConfig
      *
      * @return string
      */
-    public function publicPath()
+    public function publicPath($path = '')
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'public';
+        return $this->joinPaths($this->publicPath ?: $this->basePath('public'), $path);
     }
+
+    /**
+     * Set the public / web directory.
+     *
+     * @param  string  $path
+     * @return $this
+     */
+    public function usePublicPath($path)
+    {
+        $this->publicPath = $path;
+
+        $this->instance('path.public', $path);
+
+        return $this;
+    }
+
+    public function joinPaths($basePath, $path = '')
+    {
+        return $basePath . ($path != '' ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : '');
+    }
+
 
     /**
      * Get the path to the storage directory.
@@ -547,9 +619,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
      */
     public function viewPath($path = '')
     {
-        $basePath = $this['config']->get('view.paths')[0];
+        $viewPath = rtrim($this['config']->get('view.paths')[0], DIRECTORY_SEPARATOR);
 
-        return rtrim($basePath, DIRECTORY_SEPARATOR) . ($path != '' ? DIRECTORY_SEPARATOR . $path : '');
+        return $this->joinPaths($viewPath, $path);
     }
 
     /**
@@ -674,6 +746,24 @@ class Application extends Container implements ApplicationContract, CachesConfig
     }
 
     /**
+     * Determine if the application is running any of the given console commands.
+     *
+     * @param  string|array  ...$commands
+     * @return bool
+     */
+    public function runningConsoleCommand(...$commands)
+    {
+        if (!$this->runningInConsole()) {
+            return false;
+        }
+
+        return in_array(
+            $_SERVER['argv'][1] ?? null,
+            is_array($commands[0]) ? $commands[0] : $commands
+        );
+    }
+
+    /**
      * Determine if the application is running unit tests.
      *
      * @return bool
@@ -715,9 +805,9 @@ class Application extends Container implements ApplicationContract, CachesConfig
     /**
      * Register a service provider with the application.
      *
-     * @param  \Illuminate\Support\ServiceProvider|string  $provider
+     * @param  \Boot\Support\ServiceProvider|string  $provider
      * @param  bool  $force
-     * @return \Illuminate\Support\ServiceProvider
+     * @return \Boot\Support\ServiceProvider
      */
     public function register($provider, $force = false)
     {
@@ -1189,7 +1279,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     public function abort($code, $message = '', array $headers = [])
     {
         if ($code == 404) {
-            throw new NotFoundHttpException($message);
+            throw new NotFoundHttpException($message, null, 0, $headers);
         }
 
         throw new HttpException($code, $message, null, $headers);
