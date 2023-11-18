@@ -3,7 +3,7 @@
 namespace Boot\System\Notifications\Console;
 
 use Boot\System\Console\Command;
-use Illuminate\Filesystem\Filesystem;
+use Boot\System\Filesystem\Filesystem;
 use Boot\Support\Composer;
 
 class NotificationTableCommand extends Command
