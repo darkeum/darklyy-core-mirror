@@ -20,7 +20,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class AboutCommand extends Command
 {
     /**
-     * Имя и параметры консольной команды.
+     * Имя и параметры консольной команды
      *
      * @var string
      */
@@ -28,7 +28,7 @@ class AboutCommand extends Command
                 {--json : Вывести информацию в формате JSON}';
 
     /**
-     * Описание консольной команды.
+     * Описание консольной команды
      *
      * @var string
      */
