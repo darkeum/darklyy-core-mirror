@@ -5,7 +5,7 @@ namespace Boot\System\Database;
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
 use Illuminate\Contracts\Queue\EntityResolver;
-use Illuminate\Database\Connectors\ConnectionFactory;
+use Boot\System\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\DatabaseTransactionsManager;
 use Illuminate\Database\Eloquent\QueueEntityResolver;

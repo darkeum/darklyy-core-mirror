@@ -2,27 +2,28 @@
 
 namespace Boot\System\Database;
 
+use PDO;
 use Closure;
-use DateTimeInterface;
-use Doctrine\DBAL\Connection as DoctrineConnection;
 use Exception;
+use PDOStatement;
+use LogicException;
+use \Boot\Support\Arr;
+use DateTimeInterface;
+
+use \Boot\System\Database\Query\Expression;
 use Illuminate\Contracts\Events\Dispatcher;
 use \Boot\System\Database\Events\QueryExecuted;
 use \Boot\System\Database\Events\StatementPrepared;
+use Doctrine\DBAL\Connection as DoctrineConnection;
+use \Boot\System\Database\Query\Processors\Processor;
 use \Boot\System\Database\Events\TransactionBeginning;
 use \Boot\System\Database\Events\TransactionCommitted;
 use \Boot\System\Database\Events\TransactionRolledBack;
 use \Boot\System\Database\Query\Builder as QueryBuilder;
-use \Boot\System\Database\Query\Expression;
-use \Boot\System\Database\Query\Grammars\Grammar as QueryGrammar;
-use \Boot\System\Database\Query\Processors\Processor;
 use \Boot\System\Database\Schema\Builder as SchemaBuilder;
-use \Boot\Support\Arr;
-use LogicException;
-use PDO;
-use PDOStatement;
+use \Boot\System\Database\Query\Grammars\Grammar as QueryGrammar;
 
-class Connection implements ConnectionInterface
+class Connection extends \Illuminate\Database\Connection implements ConnectionInterface
 {
     use DetectsConcurrencyErrors,
         DetectsLostConnections,
@@ -608,42 +609,7 @@ class Connection implements ConnectionInterface
         return $bindings;
     }
 
-    /**
-     * Run a SQL statement and log its execution context.
-     *
-     * @param  string  $query
-     * @param  array  $bindings
-     * @param  \Closure  $callback
-     * @return mixed
-     *
-     * @throws \Boot\System\Database\QueryException
-     */
-    protected function run($query, $bindings, Closure $callback)
-    {
-        $this->reconnectIfMissingConnection();
-
-        $start = microtime(true);
-
-        // Here we will run this query. If an exception occurs we'll determine if it was
-        // caused by a connection that has been lost. If that is the cause, we'll try
-        // to re-establish connection and re-run the query with a fresh connection.
-        try {
-            $result = $this->runQueryCallback($query, $bindings, $callback);
-        } catch (QueryException $e) {
-            $result = $this->handleQueryException(
-                $e, $query, $bindings, $callback
-            );
-        }
-
-        // Once we have run the query we will calculate the time that it took to run and
-        // then log the query, bindings, and execution time so we will report them on
-        // the event that the developer needs them. We'll log time in milliseconds.
-        $this->logQuery(
-            $query, $bindings, $this->getElapsedTime($start)
-        );
-
-        return $result;
-    }
+    
 
     /**
      * Run a SQL statement.
@@ -704,50 +670,7 @@ class Connection implements ConnectionInterface
         return round((microtime(true) - $start) * 1000, 2);
     }
 
-    /**
-     * Handle a query exception.
-     *
-     * @param  \Boot\System\Database\QueryException  $e
-     * @param  string  $query
-     * @param  array  $bindings
-     * @param  \Closure  $callback
-     * @return mixed
-     *
-     * @throws \Boot\System\Database\QueryException
-     */
-    protected function handleQueryException(QueryException $e, $query, $bindings, Closure $callback)
-    {
-        if ($this->transactions >= 1) {
-            throw $e;
-        }
-
-        return $this->tryAgainIfCausedByLostConnection(
-            $e, $query, $bindings, $callback
-        );
-    }
-
-    /**
-     * Handle a query exception that occurred during query execution.
-     *
-     * @param  \Boot\System\Database\QueryException  $e
-     * @param  string  $query
-     * @param  array  $bindings
-     * @param  \Closure  $callback
-     * @return mixed
-     *
-     * @throws \Boot\System\Database\QueryException
-     */
-    protected function tryAgainIfCausedByLostConnection(QueryException $e, $query, $bindings, Closure $callback)
-    {
-        if ($this->causedByLostConnection($e->getPrevious())) {
-            $this->reconnect();
-
-            return $this->runQueryCallback($query, $bindings, $callback);
-        }
-
-        throw $e;
-    }
-
+  
     /**
      * Reconnect to the database.
      *
@@ -766,17 +689,7 @@ class Connection implements ConnectionInterface
         throw new LogicException('Lost connection and no reconnector available.');
     }
 
-    /**
-     * Reconnect to the database if a PDO connection is missing.
-     *
-     * @return void
-     */
-    protected function reconnectIfMissingConnection()
-    {
-        if (is_null($this->pdo)) {
-            $this->reconnect();
-        }
-    }
+    
 
     /**
      * Disconnect from the underlying PDO connection.
@@ -1053,19 +966,7 @@ class Connection implements ConnectionInterface
         return $this->queryGrammar;
     }
 
-    /**
-     * Set the query grammar used by the connection.
-     *
-     * @param  \Boot\System\Database\Query\Grammars\Grammar  $grammar
-     * @return $this
-     */
-    public function setQueryGrammar(Query\Grammars\Grammar $grammar)
-    {
-        $this->queryGrammar = $grammar;
-
-        return $this;
-    }
-
+   
     /**
      * Get the schema grammar used by the connection.
      *
@@ -1076,19 +977,7 @@ class Connection implements ConnectionInterface
         return $this->schemaGrammar;
     }
 
-    /**
-     * Set the schema grammar used by the connection.
-     *
-     * @param  \Boot\System\Database\Schema\Grammars\Grammar  $grammar
-     * @return $this
-     */
-    public function setSchemaGrammar(Schema\Grammars\Grammar $grammar)
-    {
-        $this->schemaGrammar = $grammar;
-
-        return $this;
-    }
-
+   
     /**
      * Get the query post processor used by the connection.
      *
@@ -1099,18 +988,7 @@ class Connection implements ConnectionInterface
         return $this->postProcessor;
     }
 
-    /**
-     * Set the query post processor used by the connection.
-     *
-     * @param  \Boot\System\Database\Query\Processors\Processor  $processor
-     * @return $this
-     */
-    public function setPostProcessor(Processor $processor)
-    {
-        $this->postProcessor = $processor;
-
-        return $this;
-    }
+   
 
     /**
      * Get the event dispatcher used by the connection.
@@ -1253,18 +1131,7 @@ class Connection implements ConnectionInterface
         return $this;
     }
 
-    /**
-     * Set the table prefix and return the grammar.
-     *
-     * @param  \Boot\System\Database\Grammar  $grammar
-     * @return \Boot\System\Database\Grammar
-     */
-    public function withTablePrefix(Grammar $grammar)
-    {
-        $grammar->setTablePrefix($this->tablePrefix);
-
-        return $grammar;
-    }
+ 
 
     /**
      * Register a connection resolver.

@@ -2,17 +2,18 @@
 
 namespace Boot\System\Database\Connectors;
 
-use Illuminate\Contracts\Container\Container;
-use Boot\System\Database\Connection;
-use Boot\System\Database\MySqlConnection;
-use Boot\System\Database\PostgresConnection;
-use Boot\System\Database\SQLiteConnection;
-use Boot\System\Database\SqlServerConnection;
+use PDOException;
 use Boot\Support\Arr;
 use InvalidArgumentException;
-use PDOException;
+use Boot\System\Database\Connection;
+use Boot\System\Database\MySqlConnection;
+use Boot\System\Database\SQLiteConnection;
+use Boot\System\Database\PostgresConnection;
+use Boot\System\Database\SqlServerConnection;
+use Illuminate\Contracts\Container\Container;
 
-class ConnectionFactory
+
+class ConnectionFactory extends \Illuminate\Database\Connectors\ConnectionFactory
 {
     /**
      * The IoC container instance.
@@ -166,30 +167,7 @@ class ConnectionFactory
                             : $this->createPdoResolverWithoutHosts($config);
     }
 
-    /**
-     * Create a new Closure that resolves to a PDO instance with a specific host or an array of hosts.
-     *
-     * @param  array  $config
-     * @return \Closure
-     *
-     * @throws \PDOException
-     */
-    protected function createPdoResolverWithHosts(array $config)
-    {
-        return function () use ($config) {
-            foreach (Arr::shuffle($hosts = $this->parseHosts($config)) as $key => $host) {
-                $config['host'] = $host;
 
-                try {
-                    return $this->createConnector($config)->connect($config);
-                } catch (PDOException $e) {
-                    continue;
-                }
-            }
-
-            throw $e;
-        };
-    }
 
     /**
      * Parse the hosts configuration item into an array.

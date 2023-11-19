@@ -2,10 +2,11 @@
 
 namespace Boot\System\Database;
 
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Traits\Macroable;
 
-abstract class Grammar
+use Illuminate\Support\Traits\Macroable;
+use Illuminate\Database\Query\Expression;
+
+abstract class Grammar extends \Illuminate\Database\Grammar
 {
     use Macroable;
 
