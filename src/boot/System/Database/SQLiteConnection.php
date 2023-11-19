@@ -3,8 +3,8 @@
 namespace Boot\System\Database;
 
 use Doctrine\DBAL\Driver\PDOSqlite\Driver as DoctrineDriver;
-use \Boot\System\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
-use \Boot\System\Database\Query\Processors\SQLiteProcessor;
+use Illuminate\Database\Query\Grammars\SQLiteGrammar as QueryGrammar;
+use Illuminate\Database\Query\Processors\SQLiteProcessor;
 use \Boot\System\Database\Schema\Grammars\SQLiteGrammar as SchemaGrammar;
 use \Boot\System\Database\Schema\SQLiteBuilder;
 

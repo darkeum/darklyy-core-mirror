@@ -2,13 +2,14 @@
 
 namespace Boot\System\Database\Connectors;
 
-use Doctrine\DBAL\Driver\PDOConnection;
-use Exception;
-use Boot\System\Database\DetectsLostConnections;
 use PDO;
+use Exception;
 use Throwable;
+use Doctrine\DBAL\Driver\PDOConnection;
 
-class Connector
+use Boot\System\Database\DetectsLostConnections;
+
+class Connector extends \Illuminate\Database\Connectors\Connector
 {
     use DetectsLostConnections;
 

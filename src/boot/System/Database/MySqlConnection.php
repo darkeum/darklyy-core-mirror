@@ -3,8 +3,8 @@
 namespace Boot\System\Database;
 
 use Doctrine\DBAL\Driver\PDOMySql\Driver as DoctrineDriver;
-use Boot\System\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
-use Boot\System\Database\Query\Processors\MySqlProcessor;
+use Illuminate\Database\Query\Grammars\MySqlGrammar as QueryGrammar;
+use Illuminate\Database\Query\Processors\MySqlProcessor;
 use Boot\System\Database\Schema\Grammars\MySqlGrammar as SchemaGrammar;
 use Boot\System\Database\Schema\MySqlBuilder;
 
