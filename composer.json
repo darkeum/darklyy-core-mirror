@@ -165,7 +165,7 @@
         }
     },
     "require-dev": {
-        "darkeum/darklyy-php-debugbar": "^1.0",
+        "pris/darklyy-php-debugbar": "^1.0",
         "mockery/mockery": "^1.5"
     },
     "scripts": {
