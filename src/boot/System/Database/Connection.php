@@ -10,7 +10,7 @@ use LogicException;
 use \Boot\Support\Arr;
 use DateTimeInterface;
 
-use \Boot\System\Database\Query\Expression;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Contracts\Events\Dispatcher;
 use \Boot\System\Database\Events\QueryExecuted;
 use \Boot\System\Database\Events\StatementPrepared;
@@ -609,7 +609,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $bindings;
     }
 
-    
+
 
     /**
      * Run a SQL statement.
@@ -670,7 +670,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return round((microtime(true) - $start) * 1000, 2);
     }
 
-  
+
     /**
      * Reconnect to the database.
      *
@@ -689,7 +689,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         throw new LogicException('Lost connection and no reconnector available.');
     }
 
-    
+
 
     /**
      * Disconnect from the underlying PDO connection.
@@ -966,7 +966,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this->queryGrammar;
     }
 
-   
+
     /**
      * Get the schema grammar used by the connection.
      *
@@ -977,7 +977,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this->schemaGrammar;
     }
 
-   
+
     /**
      * Get the query post processor used by the connection.
      *
@@ -988,7 +988,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this->postProcessor;
     }
 
-   
+
 
     /**
      * Get the event dispatcher used by the connection.
@@ -1131,7 +1131,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this;
     }
 
- 
+
 
     /**
      * Register a connection resolver.
