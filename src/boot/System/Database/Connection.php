@@ -272,18 +272,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
     }
 
     /**
-     * Get a new query builder instance.
-     *
-     * @return \Boot\System\Database\Query\Builder
-     */
-    public function query()
-    {
-        return new QueryBuilder(
-            $this, $this->getQueryGrammar(), $this->getPostProcessor()
-        );
-    }
-
-    /**
      * Run a select statement and return a single result.
      *
      * @param  string  $query
