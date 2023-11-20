@@ -102,7 +102,7 @@
         "phpoffice/phpspreadsheet": "^1.15",
         "phpoffice/phpword": "^1.1.0",
         "phpoption/phpoption": "^1.7",
-        "phpspec/prophecy": "^1.12",
+        "phpspec/prophecy": "^1.17",
         "phpunit/php-code-coverage": "^10.1",
         "phpunit/phpunit": "^10.1",
         "prettus/l5-repository": "^2.8",
