@@ -11,7 +11,7 @@
 
 namespace Boot\System\Twig\Extensions\Core;
 
-use Illuminate\Config\Repository as ConfigRepository;
+use Boot\System\Config\Repository as ConfigRepository;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
 
@@ -21,14 +21,14 @@ use Twig\Extension\AbstractExtension;
 class Config extends AbstractExtension
 {
     /**
-     * @var \Illuminate\Config\Repository
+     * @var \Boot\System\Config\Repository
      */
     protected $config;
 
     /**
      * Create a new config extension
      *
-     * @param \Illuminate\Config\Repository
+     * @param \Boot\System\Config\Repository
      */
     public function __construct(ConfigRepository $config)
     {

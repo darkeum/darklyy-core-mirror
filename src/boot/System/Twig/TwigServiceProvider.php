@@ -169,9 +169,9 @@ class TwigServiceProvider extends ServiceProvider
         $this->app->bindIf('twig.loader.array', function ($app) {
             return new ArrayLoader($app['twig.templates']);
         });
-       
-        $this->app->bindIf('twig.loader.finder', function () {           
-           
+
+        $this->app->bindIf('twig.loader.finder', function () {
+
             if (\Boot\Support\Facades\Request::is('administration/*')) {
                 $twigPatch['manager'] = ROOT . 'usr/tpl/admin/';
             } else {
@@ -197,7 +197,7 @@ class TwigServiceProvider extends ServiceProvider
 
     protected function registerPaths()
     {
-       
+
     }
 
     /**
@@ -230,6 +230,7 @@ class TwigServiceProvider extends ServiceProvider
                         try {
                             $extension = $this->app->make($extension);
                         } catch (\Exception $e) {
+
                             throw new InvalidArgumentException(
                                 "Cannot instantiate Twig extension '$extension': " . $e->getMessage()
                             );

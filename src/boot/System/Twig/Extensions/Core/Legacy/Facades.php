@@ -11,7 +11,7 @@
 
 namespace Boot\System\Twig\Extensions\Core\Legacy;
 
-use Illuminate\Config\Repository as Config;
+use Boot\System\Config\Repository as Config;
 use Boot\App\Application;
 use Twig\TwigFunction;
 use Twig\Extension\AbstractExtension;
@@ -26,12 +26,12 @@ use Twig\Extension\AbstractExtension;
 class Facades extends AbstractExtension
 {
     /**
-     * @var \Illuminate\Foundation\Application
+     * @var \Boot\App\Application
      */
     protected $app;
 
     /**
-     * @var \Illuminate\Config\Repository
+     * @var \Boot\System\Config\Repository
      */
     protected $config;
 
@@ -62,7 +62,7 @@ class Facades extends AbstractExtension
      * Create a new legacy facade extension
      *
      * @param \Illuminate\Foundation\Application
-     * @param \Illuminate\Config\Repository
+     * @param \Boot\System\Config\Repository
      */
     public function __construct(Application $app, Config $config)
     {

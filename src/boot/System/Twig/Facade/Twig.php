@@ -10,7 +10,7 @@
  */
 namespace TwigBridge\Facade;
 
-use Illuminate\Support\Facades\Facade;
+use Boot\Support\Facades\Facade;
 
 /**
  * @see \Twig\Environment

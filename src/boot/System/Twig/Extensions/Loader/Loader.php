@@ -11,7 +11,7 @@
 
 namespace Boot\System\Twig\Extensions\Loader;
 
-use Illuminate\Contracts\Config\Repository as Config;
+use Boot\Contracts\Config\Repository as Config;
 use Twig\Extension\AbstractExtension;
 
 /**
@@ -23,14 +23,15 @@ use Twig\Extension\AbstractExtension;
  */
 abstract class Loader extends AbstractExtension
 {
+    public $config;
     /**
      * Create a new loader extension.
      *
-     * @param \Illuminate\Config\Repository
+     * @param \Boot\System\Config\Repository
      */
-    public function __construct(Config $config)
+    public function __construct()
     {
-        $this->config = $config;
+        $this->config = app()->make(\Boot\System\Config\Repository::class);
     }
 
     /**
