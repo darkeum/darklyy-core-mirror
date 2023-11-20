@@ -430,7 +430,7 @@ class LivewireServiceProvider extends ServiceProvider
     {
         if (! Livewire::isProbablyLivewireRequest()) return;
 
-        $kernel = $this->app->make(\Illuminate\Contracts\Http\Kernel::class);
+        $kernel = $this->app->make(\Boot\Contracts\Http\Kernel::class);
 
         invade($kernel)->middleware = array_diff(
             invade($kernel)->middleware,

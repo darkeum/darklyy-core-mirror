@@ -30,7 +30,7 @@ class auth
 	var $user_info = false;
 	var $group_info = false;
 	var $banUser = false;
-	var $groups_array = false;
+	var $groups_array = [];
 	var $access_array = array();
 	var $newPms = false;
 	var $newPmsNumb = 0;
@@ -58,7 +58,7 @@ class auth
 		}
 	}
 
-	
+
 
 
 	public function authByHash($hash)
@@ -94,7 +94,7 @@ class auth
 			}
 		}
 		\Boot\Models\Online::where('time_marker', '<', DB::raw('CURRENT_TIMESTAMP() - INTERVAL ' . PAUSE_TIME . ' SECOND'))->delete();
-		// dd(\Boot\Models\Online::where('time_marker', '>', date('Y-m-d H:i:s', time() - PAUSE_TIME))->get()->toArray());	
+		// dd(\Boot\Models\Online::where('time_marker', '>', date('Y-m-d H:i:s', time() - PAUSE_TIME))->get()->toArray());
 	}
 
 
@@ -107,7 +107,7 @@ class auth
 		//получаем группы пользователей
 		$this->getGroups();
 		//получаем права пользователей
-	
+
 		global $db;
 		// dump(AuthFacade::user());
 		if (AuthFacade::check()) {
@@ -133,7 +133,7 @@ class auth
 				$this->isAdmin = true;
 				$this->isUser = true;
 			}
-			
+
 			// dd($this->user_info);
 			// $this->group = $this->user_info['group'];
 			// if (isset($this->groups_array[$this->group])) {
@@ -151,16 +151,16 @@ class auth
 			// 	$this->user_info = array_merge($this->user_info, $this->group_info);
 			// 	unset($group_info);
 			// }
-			
+
 			// if ($this->group_info['user'] == 1)
-				
+
 
 			// if ($this->group_info['admin'] == 1)
-				
+
 
 			// if ($this->group_info['moderator'] == 1)
 			// 	$this->isModer = true;
-		} 
+		}
 	}
 
 
@@ -193,7 +193,7 @@ class auth
 		}
 		return $user_info_array;
 	}
-	
+
 	public function login_()
 	{
 		$this->get_login_data();
