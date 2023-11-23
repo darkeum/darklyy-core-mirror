@@ -38,4 +38,4 @@ class TelegramApi extends Api
 
         return $update;
     }
-}ы
+}
