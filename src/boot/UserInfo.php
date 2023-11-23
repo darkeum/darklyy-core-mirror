@@ -41,7 +41,7 @@ class UserInfo {
         /*
          * Загружает массивы из папки с массивами
          */
-        $Load = require_once( dirname( __FILE__ ) ) . '/userinfo/'.$file_and_array_name.'.php';
+        $Load = require_once( dirname( __FILE__ ) ) . '/sub_classes/userinfo/'.$file_and_array_name.'.php';
         $this->$file_and_array_name =  $Load;
     }
 
