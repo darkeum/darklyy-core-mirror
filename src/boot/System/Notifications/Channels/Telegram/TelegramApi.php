@@ -17,7 +17,7 @@ use Telegram\Bot\Events\UpdateWasReceived;
 
 class TelegramApi extends Api
 {
-    public function getWebhookUpdateCallback($shouldEmitEvent = true,  UpdateObject $update): UpdateObject
+    public function getWebhookUpdateCallback($shouldDispatchEvents = true,  UpdateObject $update): UpdateObject
     {
         $callbackData = $update->callbackQuery->data;
         $rowBody = [
@@ -32,10 +32,10 @@ class TelegramApi extends Api
 
         $update = new UpdateObject($body);
 
-        if ($shouldEmitEvent) {
-            $this->emitEvent(new UpdateWasReceived($this, $update));
+        if ($shouldDispatchEvents) {
+            $this->dispatchUpdateEvent($update);
         }
 
         return $update;
     }
-}
+}ы
