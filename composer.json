@@ -34,6 +34,7 @@
         "pris/darklyy-invisible-recaptcha": "^1.0",
         "pris/darklyy-json-attributes": "^1.0",
         "pris/darklyy-responsivefilemanager": "^1.0",
+        "pris/darklyy-serialize": "^1.0",
         "pris/dpot": "^1.0",
         "pris/jpgraph": "^1.0",
         "doctrine/annotations": "^1.11",
