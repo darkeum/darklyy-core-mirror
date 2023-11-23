@@ -397,7 +397,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     {
 
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        if ($trace[0]['file'] == $this->basePath('boot' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR . 'app.helpers.php')) {
+        if ($trace[0]['file'] == $this->basePath('vendor' . DIRECTORY_SEPARATOR . 'pris' . DIRECTORY_SEPARATOR . 'darklyy-core' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'boot' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR . 'app.helpers.php')) {
             $current_path = $trace[1]['file'];
         } else {
             $current_path = $trace[0]['file'];
