@@ -9,12 +9,12 @@
 * @author      Komarov Ivan
 */
 
-if (!defined('ACCESS')) 
+if (!defined('ACCESS'))
 {
 	header('Location: /');
 	exit;
 }
- 
+
 class template
 {
 
@@ -29,7 +29,7 @@ class template
 	var $tplDir = false;
 	var $filesTpl = false;
 	var $cacheTpl = array();
-	var $open_file = 'table';	
+	var $open_file = 'table';
 	var $headerIncludes = array();
 	var $footIncludes = array();
 	var $subNavIncludes = array();
@@ -40,7 +40,7 @@ class template
 	var $feed_link = '';
 	var $uniqTag = array();
 	var $fullAjaxBody = '';
-	var $adminTheme = false;	
+	var $adminTheme = false;
 	var $time_compile = false;
 	var $startCompile = false;
 	var $starWidth = 19;
@@ -57,8 +57,8 @@ class template
 	var $showMenu =  false;
 	var $openMenu =  false;
 	var $preview =  '/usr/tpl/dev2/assest/images/og_default.png';
-	
-	
+
+
 	function __construct()
 	{
 		global $db, $config, $url;
@@ -67,15 +67,15 @@ class template
             $this->adminTheme = true;
             $this->file_dir = ADMIN_TPL;
             $this->sep = '';
-        }       	
-		
+        }
+
 		if(!isset($_COOKIE['smartphone']))
 		{
-			setcookie('smartphone', 1);		
+			setcookie('smartphone', 1);
 		}
-		
-		
-				
+
+
+
 		if(empty($this->file_dir))
 		{
 			if (($config['smartphone']=='1')&&($this->check_phone()==true)&&(($_COOKIE['smartphone'] == 1)||(!isset($_COOKIE['smartphone']))))
@@ -87,9 +87,9 @@ class template
 				$this->file_dir = 'usr/tpl/'.$config['tpl'].'/';
 			}
 		}
-		
+
 		$this->filesTpl = getcache('tplFiles');
-		
+
 		if(empty($this->filesTpl) || $this->filesTpl['theme'] != $this->file_dir || ($config['tpl_change'] == '0' && 'usr/tpl/'.$config['tpl'].'/' != $this->file_dir))
 		{
 			$this->filesTpl = listFiles($this->file_dir, $this->ext);
@@ -99,11 +99,11 @@ class template
 
 
 		$modArr = getcache('plugins');
-		
-		if (empty($modArr)) 
+
+		if (empty($modArr))
 		{
 			$query = $db->query("SELECT * FROM `".DB_PREFIX."_plugins` WHERE `active` = '1' ORDER BY priority ASC");
-			while ($result = $db->getRow($query)) 
+			while ($result = $db->getRow($query))
 			{
 				if($result['service'] == 'blocks')
 				{
@@ -122,11 +122,11 @@ class template
 			$this->modules = $modArr[1];
 		}
 	}
-    
+
     function __destruct()
     {
         die();
-    }	
+    }
 
 	private function getThemeFile($file)
 	{
@@ -140,7 +140,7 @@ class template
 			{
 				$this->uniqTag = array($this->uniqTag);
 			}
-			
+
 			if(INDEX == true) $this->uniqTag[] = 'index';
 
 			foreach($this->uniqTag as $uniq)
@@ -154,45 +154,45 @@ class template
 				{
 					$loadFile = $file . '_' . $uniq . $this->ext;
 					break;
-				}	
+				}
 				elseif(in_array($file . '--' . $uniq . $this->ext, $this->filesTpl))
 				{
 					$loadFile = $file . '--' . $uniq . $this->ext;
 					break;
-				}									
+				}
 			}
-			
+
 			// dd($this->filesTpl);
 		}
-		
-		
+
+
 			if(in_array($file . '-' . $url[0] . $this->ext, $this->filesTpl))
 			{
 				$loadFile = $file . '-' . $url[0] . $this->ext;
-				
-				
+
+
 			}
 			elseif(in_array($file . $this->ext, $this->filesTpl))
 			{
 				$loadFile = $file . $this->ext;
 			}
-			
+
 		// dd($this->uniqTag);
 		//echo '%'.$file'%';
 		return $loadFile;
-		
+
 	}
 
-	
-	public function loadFileADM($file, $check = false) 
+
+	public function loadFileADM($file, $check = false)
 	{
 		$loadDefault = ADMIN_TPL . $file . $this->ext;
-	
+
 		$loadUrl = $loadDefault;
-	
+
 		if(!isset($this->cacheTpl[$loadUrl]))
 		{
-			
+
 			if(is_file(ROOT . $loadUrl))
 			{
 				//$lo = explode('/', $loadUrl);
@@ -218,68 +218,68 @@ class template
 				}
 			}
 		}
-		
-		$this->file = $loadUrl;		
+
+		$this->file = $loadUrl;
 		$lo = explode('/', $loadUrl);
 		$this->tplDir = $lo[2];
 		$this->startCompile = microtime(1);
 		$this->sources = $this->cacheTpl[$loadUrl];
 	}
-	
-	function check_phone() 
-	{ 
+
+	function check_phone()
+	{
 		$agent_now = strtolower( $_SERVER['HTTP_USER_AGENT'] );
-		$agent_array = array('opera mini', 'ipad', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'cellphone', 'opera mobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'iphone', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser'); 
-		foreach ($agent_array as $agent) 
-		{ 
+		$agent_array = array('opera mini', 'ipad', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'cellphone', 'opera mobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'iphone', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser');
+		foreach ($agent_array as $agent)
+		{
 			if ( strpos($agent_now, $agent) !== false )
 			{
 				return true;
 			}
- 
+
 		}
-		return false; 
+		return false;
 	}
-	
-	
-	public function loadFile($file, $check = false) 
+
+
+	public function loadFile($file, $check = false)
 	{
-		global $config, $url, $db, $core;		
-		$loadDefault = 'usr/tpl/default/' . $file . $this->ext;	
-		
+		global $config, $url, $db, $core;
+		$loadDefault = 'usr/tpl/default/' . $file . $this->ext;
+
 		if($this->adminTheme == false)
 		{
-			
+
 			$loadUrl = $this->getThemeFile($file);
-			//if (empty($loadUrl)) 
+			//if (empty($loadUrl))
 			//{
 			//	exit;
 		//	}
-			//echo $file.'1'.$loadUrl.'2'; 
-			
+			//echo $file.'1'.$loadUrl.'2';
+
 		}
 		else if ($config['tpl_change'] == '0')
 		{
 			$loadUrl = 'usr/tpl/'.$config['tpl'].'/' . $file . $this->ext;
-			// echo $file.'2'; 
-			
+			// echo $file.'2';
+
 		}
 		else
 		{
 			$loadUrl = $this->file_dir . $file . $this->ext;
 			if(isset($this->cacheTpl[$loadDefault])) $loadUrl = $loadDefault;
-			// echo $file.'3'; 
+			// echo $file.'3';
 		}
 
 		// dd($loadUrl);
 		if(!isset($this->cacheTpl[$loadUrl]))
 		{
-			
+
 			//print_r($loadUrl);
-			
+
 			if(is_file(ROOT . $loadUrl))
 			{
-				
+
 				$this->cacheTpl[$loadUrl] = file_get_contents(ROOT . $loadUrl);
 			}
 			elseif(is_file(ROOT . $loadDefault))
@@ -302,11 +302,11 @@ class template
 				}
 			}
 		}
-		
-//	echo $file; 
-		
-		include(ROOT.'boot/vars.class.php');
-		$this->file = $loadUrl;		
+
+//	echo $file;
+
+		include(__DIR__.'/vars.class.php');
+		$this->file = $loadUrl;
 		$lo = explode('/', $loadUrl);
 		//print_r($lo);
 		$this->tplDir = $lo[2];
@@ -314,26 +314,26 @@ class template
 		$this->sources = $this->cacheTpl[$loadUrl];
 	}
 
-	public function setVar($k, $v) 
+	public function setVar($k, $v)
 	{
 		$this->vars[$k] = $v;
-	}	
-	
-	
-	public function setVarTPL($k, $v) 
+	}
+
+
+	public function setVarTPL($k, $v)
 	{
 		$this->vars_tpl[$k] = $v;
 	}
 
-	public function parse() 
-	{ 
-		global $config, $url, $core, $lang, $db;		
+	public function parse()
+	{
+		global $config, $url, $core, $lang, $db;
 		if($url[0] != ADMIN)
-		{	
+		{
 			$tpl_now =  str_replace("usr/tpl/", '', $this->file_dir);
 			$tpl_now = substr($tpl_now, 0, -1);
-			$this->sources = preg_replace_callback( "#\\[lang_old:(.+?)]#is", function($matches) { return constant($matches[1]);}, $this->sources);	
-			$this->sources = preg_replace_callback( "#\\[lang:(.+?)\\]#i", array( &$this, 'lang_include'), $this->sources );			
+			$this->sources = preg_replace_callback( "#\\[lang_old:(.+?)]#is", function($matches) { return constant($matches[1]);}, $this->sources);
+			$this->sources = preg_replace_callback( "#\\[lang:(.+?)\\]#i", array( &$this, 'lang_include'), $this->sources );
 			$this->sources = preg_replace_callback( "#\\{%NOWDATE:(.*?)%\\}#is", function($matches) { return date($matches[1], time());}, $this->sources );
 			$this->sources = preg_replace_callback( "#\\[group=(.+?)](.*?)\\[/group]#is", "Group", $this->sources);
 			$this->sources = preg_replace_callback( "#\\[nogroup=(.+?)](.*?)\\[/nogroup]#is", "noGroup", $this->sources);
@@ -354,11 +354,11 @@ class template
 			$this->sources = preg_replace_callback( "#\\[open](.*?)\\[/open]#is", array(&$this, 'preOpen'), $this->sources);
 			$this->sources = preg_replace_callback( "#\\[userinfo:(.*?)]#is", array(&$this, 'ustinf'), $this->sources);
 			$this->sources = preg_replace_callback( "#\\[custom category=\"(.*?)\" template=\"(.*?)\" aviable=\"(.*?)\" limit=\"(.*?)\" module=\"(.*?)\" order=\"(.*?)\" short=\"(.*?)\" notin=\"(.*?)\"]#is", "buildCustom", $this->sources);
-			$this->sources = preg_replace_callback( "#\\[custom category=\"(.*?)\" template=\"(.*?)\" aviable=\"(.*?)\" limit=\"(.*?)\" module=\"(.*?)\" order=\"(.*?)\" short=\"(.*?)\"]#is", "buildCustom", $this->sources);		
+			$this->sources = preg_replace_callback( "#\\[custom category=\"(.*?)\" template=\"(.*?)\" aviable=\"(.*?)\" limit=\"(.*?)\" module=\"(.*?)\" order=\"(.*?)\" short=\"(.*?)\"]#is", "buildCustom", $this->sources);
 			if(file_exists(ROOT . 'usr/other/other.replace.php'))
 			{
 				include(ROOT . 'usr/other/other.replace.php');
-			}	
+			}
 			if(file_exists(ROOT . 'usr/tpl/'.$tpl_now.'/function.php'))
 			{
 				include(ROOT . 'usr/tpl/'.$tpl_now.'/function.php');
@@ -377,56 +377,56 @@ class template
 		}
 		else
 		{
-			$this->sources = preg_replace_callback( "#\\[alang_old:(.+?)]#is", function($matches) { return constant($matches[1]); }, $this->sources);			
-			$this->sources = preg_replace_callback ( "#\\[(lang)=(.+?)\\](.*?)\\[/lang\\]#is", array( &$this, 'check_lang'), $this->sources ); 
+			$this->sources = preg_replace_callback( "#\\[alang_old:(.+?)]#is", function($matches) { return constant($matches[1]); }, $this->sources);
+			$this->sources = preg_replace_callback ( "#\\[(lang)=(.+?)\\](.*?)\\[/lang\\]#is", array( &$this, 'check_lang'), $this->sources );
 			$this->sources = preg_replace_callback( "#\\[alang:(.+?)\\]#i", array( &$this, 'lang_include'), $this->sources );
-		}		
-		
-		foreach ($this->vars as $k => $v) 
+		}
+
+		foreach ($this->vars as $k => $v)
 		{
 			$in['#{' . $this->sep . $k . $this->sep . '}#i'] = $v;
-		}		
-		
+		}
+
 		if(!empty($in))
 		{
 			$this->sources = preg_replace(array_keys($in), array_values($in), $this->sources);
 		}
 		if($url[0] != ADMIN)
-		{	
+		{
 			$this->sources = preg_replace_callback( "#\\{".$this->sep."BLOCKS:(.*?):(.*?)".$this->sep."\\}#is", array(&$this, 'blockParse'), $this->sources);
 			$this->sources = preg_replace_callback( "#\\{".$this->sep."TPL:(.*?)".$this->sep."\\}#is", array(&$this, 'loadTPL'), $this->sources);
-		}		
+		}
 	}
-	
-	function check_lang($matches=array()) 
-	{ 
-		global $config; 
-		if ($config['lang']==$matches[2]) 
-			return $matches[3]; 
-		else 
-			return false; 
-	} 
-	
-	
-	
-	function lang_include($matches=array()) 
-	{ 
-		global $lang; 
-		return isset($lang[$matches[1]]) ? $lang[$matches[1]] : ''; 
+
+	function check_lang($matches=array())
+	{
+		global $config;
+		if ($config['lang']==$matches[2])
+			return $matches[3];
+		else
+			return false;
 	}
-	
+
+
+
+	function lang_include($matches=array())
+	{
+		global $lang;
+		return isset($lang[$matches[1]]) ? $lang[$matches[1]] : '';
+	}
+
 	function preOpen($matches=array())
 	{
 		$this->open();
 		echo stripslashes($matches[1]);
 		return $this->close(true);
-	}	
-	
+	}
+
 	function preTitle($matches=array())
 	{
 		return $this->title(stripslashes($matches[1]), true);
 	}
-	
+
 	function enUrl($urlGo, $lang)
 	{
 	global $config;
@@ -444,7 +444,7 @@ class template
 			return 'href="index.php?url='.$urlGo.'"';
 		}
 	}
-	
+
 	function ustinf($matches=array())
 	{
 	global $core;
@@ -454,19 +454,19 @@ class template
 		}
 	}
 
-	private function compile() 
+	private function compile()
 	{
 		echo $this->sources;
 	}
 
-	private function clear() 
+	private function clear()
 	{
 		$this->sources = false;
 		$this->vars = array();
 		$this->file = false;
 		$this->startCompile = false;
 	}
-	
+
 	public function return_end()
 	{
 		global $core, $lang;
@@ -475,17 +475,17 @@ class template
 		if(file_exists(ROOT . 'langs/'.$core->langs.'/tpl/'.$core->langs.'.'.$tpl_now.'.lng'))
 		{
 			include(ROOT . 'langs/'.$core->langs.'/tpl/'.$core->langs.'.'.$tpl_now.'.lng');
-		}	
+		}
 		$this->time_compile += microtime(1)-$this->startCompile;
 		$this->parse();
 		return $this->sources;
 		$this->clear();
 	}
-		
-	public function end() 
+
+	public function end()
 	{
 		global $core, $lang;
-		if(DEBUG) 
+		if(DEBUG)
 		{
 			$this->listTemplates[($this->file ? $this->file : 'main')] = MicroTime(1)-$this->startCompile;
 		}
@@ -494,24 +494,24 @@ class template
 		if(file_exists(ROOT . 'langs/'.$core->langs.'/tpl/'.$core->langs.'.'.$tpl_now.'.lng'))
 		{
 			include(ROOT . 'langs/'.$core->langs.'/tpl/'.$core->langs.'.'.$tpl_now.'.lng');
-		}	
+		}
 		$this->time_compile += microtime(1)-$this->startCompile;
 		$this->parse();
 		$this->compile();
 		$this->clear();
 	}
-		
-	public function head() 
+
+	public function head()
 	{
 		ob_start();
-	}	
-		
-	public function foot($subContent = false) 
+	}
+
+	public function foot($subContent = false)
 	{
 	global $config, $url, $db, $core, $lang;
 		$content = ob_get_contents();
-		ob_end_clean();		
-		$cat_keyword = (isset($this->keywords) ? ', ' .$this->keywords : false);		
+		ob_end_clean();
+		$cat_keyword = (isset($this->keywords) ? ', ' .$this->keywords : false);
 		$this->description = (!empty($this->description) ? $this->description : $config['description']);
 		$this->title_now = html_entity_decode((!empty($this->title) && !empty($_REQUEST['url']) ? $this->title . $config['name'] : $config['name'] . $config['divider'] . $config['slogan']), ENT_QUOTES);
 		$meta  =  "<title>" . 	$this->title_now . "</title>" . "\n";
@@ -522,9 +522,9 @@ class template
 		$meta .= "		<meta name=\"copyright\" content=\"ООО «АТРИ-ЭНЕРГО»\" />" . "\n";
 		$meta .= "		<base href=\"" . $config['url'] . "/\" />" . "\n";
 		$meta .= "		<meta name=\"robots\" content=\"index, follow\" />" . "\n";
-		$meta .= "		<meta name=\"generator\" content=\"JMY CORE V5.16.78\" />" . "\n";		
+		$meta .= "		<meta name=\"generator\" content=\"JMY CORE V5.16.78\" />" . "\n";
 		$meta .= "		<link rel=\"alternate\" href=\"" . $config['url'] . "/feed/rss/" . $this->feed_link . "\" type=\"application/rss+xml\" title=\"Rss 2.0\" />" . "\n";
-		$meta .= "		<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"" . $config['url'] . "/feed/opensearch/\"  title=\"" . $config['name'] . "\" />" . "";	
+		$meta .= "		<link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"" . $config['url'] . "/feed/opensearch/\"  title=\"" . $config['name'] . "\" />" . "";
 		//$meta .= "<script src=\"usr/plugins/js/JMY_Ajax.min.js\" type=\"text/javascript\"></script>" . "\n";
 		//$meta .= "<script src=\"usr/plugins/js/engine.min.js\" type=\"text/javascript\"></script>" . "\n";
 		//$meta .= "<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js\"></script>" . "\n";
@@ -533,15 +533,15 @@ class template
 			//$meta .= $this->players;
 		}
 		array_unique($this->headerIncludes);
-		
+
 		foreach($this->headerIncludes as $metas)
 		{
 			if($metas)
 			{
 				$meta .= $metas;
-			}		
+			}
 		}
-		
+
 
 		if ($url[0] == 'corp')
 		{
@@ -552,55 +552,55 @@ class template
 			$this->loadFile('index');
 		}
 		/*
-		if (strpos($this->sources, "<body") !== false) 
+		if (strpos($this->sources, "<body") !== false)
 		{
 			$this->sources = preg_replace('#<body(.*)[^>]#i', '<body\\1<div id="loading" class="loading" style="display:none;top:0;"><img src="media/showloading.gif" alt="Загрузка..." /></div>'.$this->bodyIncludes, $this->sources);
 		}
 		else
 		{
 			$meta .= '<div id="loading" class="loading" style="display:none;top:0;"><img src="media/showloading.gif" alt="Загрузка..." /></div>' . "\n";
-		}		
+		}
 		*/
 		if(!empty($this->endJs))
 		{
 			$this->sources = preg_replace('#</body(.*)[^>]#i', $this->endJs.'</body\\1', $this->sources);
 		}
-		
-				
-		if (strpos($this->sources, "{%FULL_AJAX:") !== false && $config['fullajax']) 
+
+
+		if (strpos($this->sources, "{%FULL_AJAX:") !== false && $config['fullajax'])
 		{
 			if(preg_match("#({%FULL_AJAX:start%}(.+){%FULL_AJAX:end%})#si", $this->sources, $fullAjax) && $subContent)
 			{
 				$this->sources = $fullAjax[1];
 			}
 		}
-		
+
 		$this->setVar('META', $meta);
-		$this->setVar('MODULE', $content);			
+		$this->setVar('MODULE', $content);
 		$this->end();
         unset($this->cacheTpl);
 	}
-	
-	public function loadTPL($matches=array()) 
+
+	public function loadTPL($matches=array())
 	{
 		global $config, $url, $db, $core;
 		$this->loadFile($matches[1]);
-		include(ROOT.'boot/vars.class.php');	
+		include(ROOT.'boot/vars.class.php');
 		return $this->return_end();
 	}
-		
-	public function open($file = null) 
+
+	public function open($file = null)
 	{
 	global $config, $url;
 		if($file)
 		{
 			$this->uniqTag[] = $file;
 		}
-		
+
 		ob_start();
 	}
 
-	public function close($return = false) 
+	public function close($return = false)
 	{
 		$content = ob_get_contents();
 		ob_end_clean();
@@ -611,8 +611,8 @@ class template
 		else
 			return $this->return_end();
 	}
-	
-	public function title($text, $return = false) 
+
+	public function title($text, $return = false)
 	{
 		$this->loadFile('title');
 		$this->setVar('TITLE', $text);
@@ -621,31 +621,31 @@ class template
 		else
 			return $this->return_end();
 	}
-	
-	
-	public function get_breadcrumbs($breadArray = null) 
-	{ 
-		global $config; 
+
+
+	public function get_breadcrumbs($breadArray = null)
+	{
+		global $config;
 		$return ='';
-		if(empty($breadArray)) 
+		if(empty($breadArray))
 		{
 			$breadArray = $this->breadcrumbs;
 		}
-		//print_r($breadArray); 
-		if(!empty($breadArray)) 
+		//print_r($breadArray);
+		if(!empty($breadArray))
 		{
-			foreach ($breadArray as $k => $v) 
-			{	
+			foreach ($breadArray as $k => $v)
+			{
 				//$this->loadFile('breadcrumbs');
 				$this->loadFile('breadcrumbs');
 				$this->setVar('NUMB', $k);
 				$this->setVar('NAME', $v['name']);
 				$this->setVar('URL', $v['url']);
-				$active = $v['active'];				
+				$active = $v['active'];
 				$this->sources = preg_replace_callback("#\\[active:(.+?)\\](.*?)\\[/active\\]#is", function($matches) use($active)
 				{
 					$tag = $matches[1];
-					$content = $matches[2];	
+					$content = $matches[2];
 					if($active == '1')
 					{
 						if($tag == 1) return stripslashes($content);
@@ -653,39 +653,39 @@ class template
 					else
 					{
 						if($tag == 0) return stripslashes($content);
-					}								
+					}
 				}, $this->sources);
 				$return .= $this->return_end();
 			}
-			
+
 		}
 		return $return;
-	} 
-	
-	public function info($text, $type = 'info', $redicret = null, $title = null, $url_text = null, $url = null, $url_type = 'url', $return = false) 
+	}
+
+	public function info($text, $type = 'info', $redicret = null, $title = null, $url_text = null, $url = null, $url_type = 'url', $return = false)
 	{
 	global $config, $urll;
-	
+
 		$GLOBALS["urll"] = $url;
-		switch($url_type) 
-		{			
+		switch($url_type)
+		{
 			case 'url':
 				$url = "location.href = '".$url."'";
 			break;
 			case 'modal':
 				$url = "modal_o('#".$url."')";
 			break;
-			
+
 			default:
-				
+
 			break;
-		}			
+		}
 		$this->loadFile($type);
 		$this->setVar('TEXT', $text);
 		$this->setVar('TITLE', $title);
 		$this->setVar('URL', $url);
-		$this->setVar('URL_TEXT', $url_text);	
-		$this->sources = preg_replace_callback("#\\[URL](.*?)\\[/URL]#is", function($matches) { if(!empty($GLOBALS["urll"])) {return $matches[1];}},$this->sources);		
+		$this->setVar('URL_TEXT', $url_text);
+		$this->sources = preg_replace_callback("#\\[URL](.*?)\\[/URL]#is", function($matches) { if(!empty($GLOBALS["urll"])) {return $matches[1];}},$this->sources);
 		if ($return)
 		{
 			return $this->return_end();
@@ -693,10 +693,10 @@ class template
 		else
 		{
 				$this->end();
-		}	
+		}
 	}
-	
-	public function alert($type = 'info', $title = null, $text = null, $url = null) 
+
+	public function alert($type = 'info', $title = null, $text = null, $url = null)
 	{
 	global $config, $urll;
 		$GLOBALS["urll"] = $url;
@@ -704,11 +704,11 @@ class template
 		$this->setVar('TEXT', $text);
 		$this->setVar('TYPE', $type);
 		$this->setVar('TITLE', $title);
-		$this->setVar('URL', $urll);		
+		$this->setVar('URL', $urll);
 		$this->end();
 	}
-	
-	public function redicret($message, $url = 'news', $text = 'Спасибо') 
+
+	public function redicret($message, $url = 'news', $text = 'Спасибо')
 	{
 		global $config;
 		$full_url = $url;
@@ -722,61 +722,61 @@ class template
 			location($full_url);
 		}
 	}
-	
-	
+
+
 	public function blockParse($matches = array())
 	{
 	global $db, $config, $core, $url;
 		$type = mb_strtolower($matches[1]);
 		$file = $matches[2];
-		
-		switch($type) 
+
+		switch($type)
 		{
 			case 'file':
 				$block_path = ROOT . "usr/blocks/{$file}.block.php";
-				if (!empty($file) && file_exists($block_path)) 
+				if (!empty($file) && file_exists($block_path))
 				{
 					ob_start();
 					include_once($block_path);
 					$contetn_block = ob_get_contents();
 					ob_end_clean();
 					return $contetn_block;
-				} 
-				else 
+				}
+				else
 				{
 					return _BLOCK_EMPTY;
 				}
 				break;
-				
+
 			case 'type':
 				if (empty($file)) return false;
 				$block_content = null;
-				
 
-				$sideDe = !empty($this->modules[$url[0]]) ? explode(',', $this->modules[$url[0]]['unshow']) : '';				
-				$sideDe = !empty($this->modules[$url[0]]) ? explode(',', $this->modules[$url[0]]['unshow']) : '';				
 
-				foreach ($this->blocks as $array) 
+				$sideDe = !empty($this->modules[$url[0]]) ? explode(',', $this->modules[$url[0]]['unshow']) : '';
+				$sideDe = !empty($this->modules[$url[0]]) ? explode(',', $this->modules[$url[0]]['unshow']) : '';
+
+				foreach ($this->blocks as $array)
 				{
 					if($this->blockShow($array['showin'], $array['unshow'], $array['groups']))
 					{
-						if ($array['type'] == $file && (empty($sideDe) || !in_array($file, $sideDe))) 
+						if ($array['type'] == $file && (empty($sideDe) || !in_array($file, $sideDe)))
 						{
 							$block_path = ROOT . "usr/blocks/" . $array['file'];
-							if (!empty($array['file']) && file_exists($block_path)) 
+							if (!empty($array['file']) && file_exists($block_path))
 							{
 								ob_start();
 								require($block_path);
 								$contetn_block = ob_get_contents();
 								ob_end_clean();
 								$this->uniqTag = array($array['id'], $array['file'], $array['type']);
-							} 
-							elseif (empty($array['file']) && !empty($array['content'])) 
+							}
+							elseif (empty($array['file']) && !empty($array['content']))
 							{
 								$contetn_block = $core->bbDecode($array['content']);
 								$this->uniqTag = array($array['id'], $array['type']);
 							}
-							else $contetn_block = '<center><b>' . _EMPTY_CONTENT . '</b></center>';						
+							else $contetn_block = '<center><b>' . _EMPTY_CONTENT . '</b></center>';
 							ob_start();
 							$this->loadFile('block');
 							$this->setVar('TITLE', $array['title']);
@@ -790,60 +790,60 @@ class template
 					}
 				}
 				return $block_content;
-				
+
 				break;
-				
+
 			case 'id':
 				if (empty($file)) return false;
 				$block_content = null;
-				
+
 				if(isset($this->blocks[$file]))
 				{
 					$array = $this->blocks[$file];
-					
+
 					$block_path = ROOT . "usr/blocks/" . $array['file'];
-					
-					if (!empty($array['file']) && empty($array['content']) && file_exists($block_path)) 
+
+					if (!empty($array['file']) && empty($array['content']) && file_exists($block_path))
 					{
 						ob_start();
 						require($block_path);
 						$contetn_block = ob_get_contents();
 						ob_end_clean();
-					} 
-					elseif (empty($array['file']) && !empty($array['content'])) 
+					}
+					elseif (empty($array['file']) && !empty($array['content']))
 					{
 						$contetn_block = $core->bbDecode($array['content']);
-					} 
+					}
 					else $contetn_block = '<center><b>Нет содержания!</b></center>';
-					
+
 					return $contetn_block;
 					unset($contetn_block);
 				}
 				break;
-			
+
 			default:
 
 			break;
 		}
 	}
-	
+
 	private function blockShow($mods, $unmods, $groups, $free = false)
 	{
 	global $url, $core;
-	
+
 		if(eregStrt('_free', $mods) && $free == false) return false;
-		
+
 		$modNow = $url[0];
 		$modsArr = explode(',', $mods);
 		$unModsArr = explode(',', $unmods);
 		$groupsArr = explode(',', $groups);
 		$groupAccess = false;
-		
+
 		if((is_array($groupsArr) && in_array($core->auth->user_info['group'], $groupsArr)) OR $groups == '' OR $core->auth->isAdmin)
 		{
 			$groupAccess = true;
 		}
-		
+
 		if(is_array($unModsArr) && in_array($modNow, $unModsArr))
 		{
 			return false;
@@ -860,7 +860,7 @@ class template
 			}
 			else
 			{
-				return false; 
+				return false;
 			}
 		}
 		elseif(eregStrt('_all', $mods))
@@ -870,31 +870,31 @@ class template
 	}
 
 
-	public function pages($page, $num, $all, $link, $onClick = false, $return = false) 
+	public function pages($page, $num, $all, $link, $onClick = false, $return = false)
 	{
 		global $config, $nums, $url;
 		if(!eregStrt('{page}', $link)) $link = $link . '/{page}';
 		$numpages = ceil($all/$num);
-		
+
 		$predel = 4;
 		$prevpage = $page-1;
-		
-		for ($var = 1; $var < $numpages+1; $var++) 
+
+		for ($var = 1; $var < $numpages+1; $var++)
 		{
-			if ($var == $page) 
+			if ($var == $page)
 			{
 				//$nums .= '<li class="active"><a>' . $var . '</a></li>';
 				$nums .= '<li class="pagination-widget__page pagination-widget__page_active">' . $var . '</li>';
-			} 
-			else 
+			}
+			else
 			{
-				if ((($var > ($page - $predel)) && ($var < ($page + $predel))) or ($var == $numpages) || ($var == 1)) 
+				if ((($var > ($page - $predel)) && ($var < ($page + $predel))) or ($var == $numpages) || ($var == 1))
 				{
 					$nums .= ' <li> </li>';
 					$nums .= '<li class="pagination-widget__page pagination-widget__page"  onclick="location.href=\'' . str_replace('{page}', 'page/'.$var, $link) . '\';" ><a href="' . str_replace('{page}', 'page/'.$var, $link) . '" ' . ($onClick ? str_replace('{num}', $var, $onClick) : '') . '><b>' . $var . '</b></a></li>';
-				} 
-				
-				if ($var < $numpages) 
+				}
+
+				if ($var < $numpages)
 				{
 					if (($var > ($page - $predel-2)) && ($var < ($page + $predel))) $nums .= " ";
 					if (($page > $predel+2) && ($var == 1)) $nums .= '<li class="pagination-widget__page">...</li>';
@@ -903,13 +903,13 @@ class template
 			}
 		}
 		$nextpage = $page + 1;
-		if($numpages != 1 && $numpages != 0) 
+		if($numpages != 1 && $numpages != 0)
 		{
-		
+
 			$this->loadFile('pages');
-			$this->setVar('NUM', $nums);			
-			
-			$this->sources = preg_replace_callback("#\\{" . $this->sep . "NEXT" . $this->sep . "\\}(.*?)\\{/" . $this->sep . "NEXT" . $this->sep . "\\}#is", function($matches) use($page, $nextpage,$link,$onClick,$var){ 
+			$this->setVar('NUM', $nums);
+
+			$this->sources = preg_replace_callback("#\\{" . $this->sep . "NEXT" . $this->sep . "\\}(.*?)\\{/" . $this->sep . "NEXT" . $this->sep . "\\}#is", function($matches) use($page, $nextpage,$link,$onClick,$var){
 				if ($page < $var-1)
 				{
 					$type = $nextpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : '');
@@ -919,61 +919,61 @@ class template
 				else
 				{
 					return '<li class="pagination-widget__page pagination-widget__page_next pagination-widget__page_cna"><i class="fas fa-angle-right"></i></li>';
-				}				
+				}
 			}, $this->sources);
-			
+
 			$this->sources = preg_replace_callback("#\\{" . $this->sep . "LAST" . $this->sep . "\\}(.*?)\\{/" . $this->sep . "LAST" . $this->sep . "\\}#is", function($matches) use($page, $numpages, $link, $onClick, $var)
-			{ 
+			{
 				if ($page < $var-1)
 				{
-					
+
 					$type = $numpages.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : '');
 					//return pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 					return '<li class="pagination-widget__page pagination-widget__page_last" onclick="location.href=\''.str_replace('{page}', 'page/' . $type, $link).'\';" >' . $matches[1] . '</li>';
-					
+
 					//pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 				}
 				else
 				{
 					return '<li class="pagination-widget__page pagination-widget__page_last pagination-widget__page_cna">' . $matches[1] . '</li>';
-				}				
+				}
 			}, $this->sources);
-			
+
 			$this->sources = preg_replace_callback("#\\{" . $this->sep . "PREV" . $this->sep . "\\}(.*?)\\{/" . $this->sep . "PREV" . $this->sep . "\\}#is", function($matches) use($page, $prevpage, $link, $onClick, $var)
-			{ 
+			{
 				if ($page >= $var-1)
 				{
 					$type = $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : '');
 					//return pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 					return '<li class="pagination-widget__page pagination-widget__page_prev" onclick="location.href=\''.str_replace('{page}', 'page/' . $type, $link).'\';" >' . $matches[1] . '</li>';
-					
+
 					//pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 				}
 				else
 				{
 					return '<li class="pagination-widget__page pagination-widget__page_prev pagination-widget__page_cna">' . $matches[1] . '</li>';
-				}				
+				}
 			}, $this->sources);
-			
-			
+
+
 			$this->sources = preg_replace_callback("#\\{" . $this->sep . "FIRST" . $this->sep . "\\}(.*?)\\{/" . $this->sep . "FIRST" . $this->sep . "\\}#is", function($matches) use($page, $prevpage, $link, $onClick, $var)
-			{ 
+			{
 				if ($page >= $var-1)
 				{
 					$first = 1;
 					$type = $first.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : '');
 					//return pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 					return '<li class="pagination-widget__page pagination-widget__page_first" onclick="location.href=\''.str_replace('{page}', 'page/' . $type, $link).'\';" >' . $matches[1] . '</li>';
-					
+
 					//pageLink($link, $matches[1], $prevpage.($onClick ? ", '" . str_replace("'", "\'", $onClick) . "'" : ''));
 				}
 				else
 				{
 					return '<li class="pagination-widget__page pagination-widget__page_first pagination-widget__page_cna">' . $matches[1] . '</li>';
-				}				
+				}
 			}, $this->sources);
-			
-			
+
+
 			if ($return)
 			{
 				return $this->return_end();
@@ -981,7 +981,7 @@ class template
 			else
 			{
 				$this->end();
-			}			
+			}
 			$nums = '';
 		}
 	}

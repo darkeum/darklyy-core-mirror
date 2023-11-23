@@ -12,15 +12,15 @@
 		if (!defined('ACCESS')) {
 			header('Location: /');
 			exit;
-		}  
+		}
 		if(file_exists(ROOT . 'usr/other/other.vars.php'))
 		{
 			include(ROOT . 'usr/other/other.vars.php');
-		}			
-		$full_lnk = $config['url'].(!empty($url[0]) ? '/'.$url[0] : '').(!empty($url[1]) ? '/'.$url[1] : '').(!empty($url[2]) ? '/'.$url[2] : '').(!empty($url[3]) ? '/'.$url[3] : '');	
-		$cat_keyword = (isset($this->keywords) ? ', ' .$this->keywords : false);		
+		}
+		$full_lnk = $config['url'].(!empty($url[0]) ? '/'.$url[0] : '').(!empty($url[1]) ? '/'.$url[1] : '').(!empty($url[2]) ? '/'.$url[2] : '').(!empty($url[3]) ? '/'.$url[3] : '');
+		$cat_keyword = (isset($this->keywords) ? ', ' .$this->keywords : false);
 		$desc = (isset($this->description) ? $this->description : $config['description']);
-		$title_now = html_entity_decode((!empty($this->title) && !empty($_REQUEST['url']) ? $this->title . $config['name'] : $config['name'] . $config['divider'] . $config['slogan']), ENT_QUOTES);		
+		$title_now = html_entity_decode((!empty($this->title) && !empty($_REQUEST['url']) ? $this->title . $config['name'] : $config['name'] . $config['divider'] . $config['slogan']), ENT_QUOTES);
 		// include(ROOT . 'usr/modules/tagcode/index.php');
 		$this->setVar('FULL_AJAX:start', '<div id="fullAjax">');
 		$this->setVar('FULL_AJAX:end', '</div>');
@@ -64,8 +64,8 @@
 		$this->setVar('URL_GUEST', 'guestbook');
 		$this->setVar('URL_GALLERY', 'gallery');
 		$this->setVar('URL_SITEMAP', 'sitemap');
-		$this->setVar('URL_FEEDBACK', 'feedback');	
-		$this->setVar('URL_FAQ', 'help');	
+		$this->setVar('URL_FEEDBACK', 'feedback');
+		$this->setVar('URL_FAQ', 'help');
 		$this->setVar('SEARCH', 'search');
 		//auth
 		$this->setVar('AUTH_LIST', social_list());
@@ -91,7 +91,6 @@
 		$this->setVar('SHARE_PR', 'javascript:window.print();');
 		$this->setVar('SHARE_MA', 'mailto:?Subject='.$title_now.'&amp;Body=Share%20from%20'.$config['name'].'%20'.$full_lnk);
 		$this->setVar('SHARE_PT', 'javascript:void((function()%7Bvar%20e=document.createElement(\'script\');e.setAttribute(\'type\',\'text/javascript\');e.setAttribute(\'charset\',\'UTF-8\');e.setAttribute(\'src\',\'http://assets.pinterest.com/js/pinmarklet.js?r=\'+Math.random()*99999999);document.body.appendChild(e)%7D)());');
-		
-		
 
-		
+
+
