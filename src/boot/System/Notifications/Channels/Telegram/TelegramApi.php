@@ -27,13 +27,13 @@ class TelegramApi extends Api
         $rowBody['message']['text'] =  '/' . $callbackData;
         $rowBody['message']['entities'] = ['offset' => 0, 'length' =>  strlen($callbackData), 'type' => "bot_command"];
         $rowBody['message']['reply_markup'] = null;
-       
+
         $body = $rowBody;
 
         $update = new UpdateObject($body);
 
         if ($shouldEmitEvent) {
-            $this->emitEvent(new UpdateWasReceived($update, $this));
+            $this->emitEvent(new UpdateWasReceived($this, $update));
         }
 
         return $update;
