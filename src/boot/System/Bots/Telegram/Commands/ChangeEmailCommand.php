@@ -20,12 +20,12 @@ class ChangeEmailCommand extends Command
     /**
      * @var string Имя команды
      */
-    protected $name = "change_email";
+    protected string $name = "change_email";
 
     /**
      * @var string Описание команды
      */
-    protected $description = "Изменение Email при регистрации";
+    protected string $description = "Изменение Email при регистрации";
 
     /**
      * Исполнитель команды
@@ -47,6 +47,6 @@ class ChangeEmailCommand extends Command
         }
         $this->replyWithMessage([
             'text' => $text
-        ]);   
+        ]);
     }
 }

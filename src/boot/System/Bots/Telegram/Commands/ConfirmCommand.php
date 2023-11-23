@@ -12,17 +12,17 @@ class ConfirmCommand extends Command
     /**
      * @var string Имя команды
      */
-    protected $name = "confirm";
+    protected string $name = "confirm";
 
     /**
      * @var string Паттерн аргументов
      */
-    protected $pattern = "{id}";
+    protected string $pattern = "{id}";
 
     /**
      * @var string Описание команды
      */
-    protected $description = "Подтверждение действий";
+    protected string $description = "Подтверждение действий";
 
 
     /**
@@ -50,7 +50,7 @@ class ConfirmCommand extends Command
                     } else {
                         $text = 'Данное действие уже было подтверждено!';
                     }
-                  
+
                 } else {
                     $text = 'У вас нет доступа к данному действию!';
                 }
@@ -62,7 +62,7 @@ class ConfirmCommand extends Command
         }
         $this->replyWithMessage([
             'text' => $text
-        ]);   
-       
+        ]);
+
     }
 }

@@ -22,12 +22,12 @@ class SendEmailCodeCommand extends Command
     /**
      * @var string Имя команды
      */
-    protected $name = "send_code";
+    protected string $name = "send_code";
 
     /**
      * @var string Описание команды
      */
-    protected $description = "Повторная отправка кода";
+    protected string $description = "Повторная отправка кода";
 
     /**
      * Исполнитель команды
@@ -43,13 +43,13 @@ class SendEmailCodeCommand extends Command
         $usersToken = UsersToken::where('platform', 'telegram')->where('device_id', $botId)->where('status', 0)->where('token', $chatId)->whereNotNull('uid')->first();
         if(!empty($usersToken)){
             $user = Users::find($usersToken->uid);
-            Mail::to($user->email)->send(new \Boot\Mails\TelegramRegister($usersToken->veritification_code));  
+            Mail::to($user->email)->send(new \Boot\Mails\TelegramRegister($usersToken->veritification_code));
             $text = 'Код выслан повторно!';
         } else {
             $text = 'Вы уже зарегистрированы!';
         }
         $this->replyWithMessage([
             'text' => $text
-        ]);   
+        ]);
     }
 }
