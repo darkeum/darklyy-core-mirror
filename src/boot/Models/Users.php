@@ -11,24 +11,25 @@
 
 namespace Boot\Models;
 
-use Boot\System\Core\Traits\HashIdTrait;
-use Boot\System\Core\Traits\HasResourceKeyTrait;
+use Orgs\Models\Org;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
 use Boot\System\Sanctum\HasApiTokens;
 use Boot\System\Settings\HasSettings;
+use Organizations\Model\Organizations;
+use Boot\System\Core\Traits\HashIdTrait;
 use Boot\System\Auth\Access\Authorizable;
 use Boot\System\Notifications\Notifiable;
 use Boot\System\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Boot\System\Auth\Passwords\CanResetPassword;
+use Boot\System\Core\Traits\HasResourceKeyTrait;
 use Boot\System\Permission\Traits\HasPermissions;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Organizations\Model\Organizations;
 
 class Users extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract
 {
@@ -113,6 +114,6 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     }
 
     public function orgs() {
-        return $this->belongsToMany(Organizations::class, 'users_org_relation', 'uid', 'org');
+        return $this->belongsToMany(Org::class, 'users_org_relation', 'uid2', 'org');
     }
 }
