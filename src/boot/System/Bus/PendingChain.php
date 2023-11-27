@@ -9,7 +9,7 @@ use Laravel\SerializableClosure\SerializableClosure;
 
 class PendingChain
 {
-    /**
+   /**
      * The class name of the job being dispatched.
      *
      * @var mixed
