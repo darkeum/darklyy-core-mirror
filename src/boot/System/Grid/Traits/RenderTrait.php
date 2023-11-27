@@ -12,6 +12,7 @@
 namespace Boot\System\Grid\Traits;
 
 use Boot\Support\Str;
+use Boot\Support\Facades\DB;
 use Boot\System\Grid\Utils\Utils;
 
 trait RenderTrait
@@ -74,6 +75,10 @@ trait RenderTrait
 
     protected function renderColumn($c)
     {
+        if(is_object($c['db']) and $c['db'] instanceof  \Illuminate\Database\Query\Expression)
+        {
+            $c['db'] = strval($c['db']->getValue(DB::connection()->getQueryGrammar()));
+        }
         return $c;
     }
 

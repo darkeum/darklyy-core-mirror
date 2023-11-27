@@ -11,6 +11,7 @@
 
 namespace Boot\System\Grid\Utils;
 
+use Boot\Support\Facades\DB;
 use Boot\System\Grid\Exception\ExceptionGrid;
 
 class Utils
@@ -54,7 +55,7 @@ class Utils
 
         if(is_object($a) and $a instanceof  \Illuminate\Database\Query\Expression)
         {
-            return strval($a);
+            return strval($a->getValue(DB::connection()->getQueryGrammar()));
         }
 
         $isList = true;
