@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Permission\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -7,52 +16,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 interface Role
 {
     /**
-     * A role may be given various permissions.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Роли могут быть предоставлены различные разрешения.
      */
     public function permissions(): BelongsToMany;
 
     /**
-     * Find a role by its name and guard name.
+     * Найдите роль по ее имени и имени охранника.
      *
-     * @param string $name
-     * @param string|null $guardName
      *
-     * @return \Spatie\Permission\Contracts\Role
-     *
-     * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
+     * @throws \Boot\System\Permission\Exceptions\RoleDoesNotExist
      */
-    public static function findByName(string $name, $guardName): self;
+    public static function findByName(string $name, ?string $guardName): self;
 
     /**
-     * Find a role by its id and guard name.
+     * Найдите роль по ее идентификатору и имени охранника.
      *
-     * @param int $id
-     * @param string|null $guardName
      *
-     * @return \Spatie\Permission\Contracts\Role
-     *
-     * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
+     * @throws \Boot\System\Permission\Exceptions\RoleDoesNotExist
      */
-    public static function findById(int $id, $guardName): self;
+    public static function findById(int|string $id, ?string $guardName): self;
 
     /**
-     * Find or create a role by its name and guard name.
-     *
-     * @param string $name
-     * @param string|null $guardName
-     *
-     * @return \Spatie\Permission\Contracts\Role
+     * Найдите или создайте роль по ее имени и имени охранника.
      */
-    public static function findOrCreate(string $name, $guardName): self;
+    public static function findOrCreate(string $name, ?string $guardName): self;
 
     /**
-     * Determine if the user may perform the given permission.
+     * Определите, может ли пользователь выполнить данное разрешение.
      *
-     * @param string|\Spatie\Permission\Contracts\Permission $permission
-     *
-     * @return bool
+     * @param  string|\Boot\System\Permission\Contracts\Permission  $permission
      */
-    public function hasPermissionTo($permission): bool;
+    public function hasPermissionTo($permission, ?string $guardName): bool;
 }

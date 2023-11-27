@@ -1,19 +1,29 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Permission;
 
-use Boot\System\Filesystem\Filesystem;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Routing\Route;
 use Boot\Support\ServiceProvider;
+use Boot\Contracts\App\Application;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\View\Compilers\BladeCompiler;
-use Boot\System\Permission\Contracts\Permission as PermissionContract;
 use Boot\System\Permission\Contracts\Role as RoleContract;
+use Boot\System\Permission\Contracts\Permission as PermissionContract;
 
 class PermissionServiceProvider extends ServiceProvider
 {
-    public function boot(PermissionRegistrar $permissionLoader)
+    public function boot()
     {
         $this->registerMacroHelpers();
 
@@ -21,26 +31,23 @@ class PermissionServiceProvider extends ServiceProvider
 
         $this->registerModelBindings();
 
-        if ($this->app->config['permission.register_permission_check_method']) {
-            $permissionLoader->clearClassPermissions();
-            $permissionLoader->registerPermissions();
-        }
+        $this->registerOctaneListener();
 
-        $this->app->singleton(PermissionRegistrar::class, function ($app) use ($permissionLoader) {
-            return $permissionLoader;
+        $this->callAfterResolving(Gate::class, function (Gate $gate, Application $app) {
+            if ($this->app['config']->get('permission.register_permission_check_method')) {
+                /** @var PermissionRegistrar $permissionLoader */
+                $permissionLoader = $app->get(PermissionRegistrar::class);
+                $permissionLoader->clearPermissionsCollection();
+                $permissionLoader->registerPermissions($gate);
+            }
         });
+
+        $this->app->singleton(PermissionRegistrar::class);
     }
 
     public function register()
     {
-        // $this->mergeConfigFrom(
-        //     ROOT.'config/permission.config.php',
-        //     'permission'
-        // );
-
-        $this->callAfterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
-            $this->registerBladeExtensions($bladeCompiler);
-        });
+        $this->callAfterResolving('blade.compiler', fn (BladeCompiler $bladeCompiler) => $this->registerBladeExtensions($bladeCompiler));
     }
 
 
@@ -48,85 +55,79 @@ class PermissionServiceProvider extends ServiceProvider
     {
         $this->commands([
             Commands\CacheReset::class,
-            Commands\CreateRole::class,
-            Commands\CreatePermission::class,
-            Commands\Show::class,
-            Commands\UpgradeForTeams::class,
         ]);
-    }
 
-    protected function registerModelBindings()
-    {
-        $config = $this->app->config['permission.models'];
-
-        if (! $config) {
+        if (! $this->app->runningInConsole()) {
             return;
         }
 
-        $this->app->bind(PermissionContract::class, $config['permission']);
-        $this->app->bind(RoleContract::class, $config['role']);
+        $this->commands([
+            Commands\CreateRole::class,
+            Commands\CreatePermission::class,
+            Commands\Show::class
+        ]);
     }
 
-    protected function registerBladeExtensions($bladeCompiler)
+    protected function registerOctaneListener(): void
     {
-        $bladeCompiler->directive('role', function ($arguments) {
-            list($role, $guard) = explode(',', $arguments.',');
+        if ($this->app->runningInConsole() || ! $this->app['config']->get('octane.listeners')) {
+            return;
+        }
 
-            return "<?php if(auth({$guard})->check() && auth({$guard})->user()->hasRole({$role})): ?>";
-        });
-        $bladeCompiler->directive('elserole', function ($arguments) {
-            list($role, $guard) = explode(',', $arguments.',');
-
-            return "<?php elseif(auth({$guard})->check() && auth({$guard})->user()->hasRole({$role})): ?>";
-        });
-        $bladeCompiler->directive('endrole', function () {
-            return '<?php endif; ?>';
+        $dispatcher = $this->app[Dispatcher::class];
+        // @phpstan-ignore-next-line
+        $dispatcher->listen(function (\Laravel\Octane\Events\OperationTerminated $event) {
+            // @phpstan-ignore-next-line
+            $event->sandbox->make(PermissionRegistrar::class)->setPermissionsTeamId(null);
         });
 
-        $bladeCompiler->directive('hasrole', function ($arguments) {
-            list($role, $guard) = explode(',', $arguments.',');
+        if (! $this->app['config']->get('permission.register_octane_reset_listener')) {
+            return;
+        }
+        // @phpstan-ignore-next-line
+        $dispatcher->listen(function (\Laravel\Octane\Events\OperationTerminated $event) {
+            // @phpstan-ignore-next-line
+            $event->sandbox->make(PermissionRegistrar::class)->clearPermissionsCollection();
+        });
+    }
 
-            return "<?php if(auth({$guard})->check() && auth({$guard})->user()->hasRole({$role})): ?>";
-        });
-        $bladeCompiler->directive('endhasrole', function () {
-            return '<?php endif; ?>';
-        });
+    protected function registerModelBindings(): void
+    {
+        $this->app->bind(PermissionContract::class, fn ($app) => $app->make($app->config['permission.models.permission']));
+        $this->app->bind(RoleContract::class, fn ($app) => $app->make($app->config['permission.models.role']));
+    }
 
-        $bladeCompiler->directive('hasanyrole', function ($arguments) {
-            list($roles, $guard) = explode(',', $arguments.',');
+    public static function bladeMethodWrapper($method, $role, $guard = null): bool
+    {
+        return auth($guard)->check() && auth($guard)->user()->{$method}($role);
+    }
 
-            return "<?php if(auth({$guard})->check() && auth({$guard})->user()->hasAnyRole({$roles})): ?>";
-        });
-        $bladeCompiler->directive('endhasanyrole', function () {
-            return '<?php endif; ?>';
-        });
+    protected function registerBladeExtensions($bladeCompiler): void
+    {
+        $bladeMethodWrapper = '\\Boot\\System\\Permission\\PermissionServiceProvider::bladeMethodWrapper';
 
-        $bladeCompiler->directive('hasallroles', function ($arguments) {
-            list($roles, $guard) = explode(',', $arguments.',');
+        $bladeCompiler->directive('role', fn ($args) => "<?php if({$bladeMethodWrapper}('hasRole', {$args})): ?>");
+        $bladeCompiler->directive('elserole', fn ($args) => "<?php elseif({$bladeMethodWrapper}('hasRole', {$args})): ?>");
+        $bladeCompiler->directive('endrole', fn () => '<?php endif; ?>');
 
-            return "<?php if(auth({$guard})->check() && auth({$guard})->user()->hasAllRoles({$roles})): ?>";
-        });
-        $bladeCompiler->directive('endhasallroles', function () {
-            return '<?php endif; ?>';
-        });
+        $bladeCompiler->directive('haspermission', fn ($args) => "<?php if({$bladeMethodWrapper}('checkPermissionTo', {$args})): ?>");
+        $bladeCompiler->directive('elsehaspermission', fn ($args) => "<?php elseif({$bladeMethodWrapper}('checkPermissionTo', {$args})): ?>");
+        $bladeCompiler->directive('endhaspermission', fn () => '<?php endif; ?>');
 
-        $bladeCompiler->directive('unlessrole', function ($arguments) {
-            list($role, $guard) = explode(',', $arguments.',');
+        $bladeCompiler->directive('hasrole', fn ($args) => "<?php if({$bladeMethodWrapper}('hasRole', {$args})): ?>");
+        $bladeCompiler->directive('endhasrole', fn () => '<?php endif; ?>');
 
-            return "<?php if(!auth({$guard})->check() || ! auth({$guard})->user()->hasRole({$role})): ?>";
-        });
-        $bladeCompiler->directive('endunlessrole', function () {
-            return '<?php endif; ?>';
-        });
+        $bladeCompiler->directive('hasanyrole', fn ($args) => "<?php if({$bladeMethodWrapper}('hasAnyRole', {$args})): ?>");
+        $bladeCompiler->directive('endhasanyrole', fn () => '<?php endif; ?>');
 
-        $bladeCompiler->directive('hasexactroles', function ($arguments) {
-            list($roles, $guard) = explode(',', $arguments.',');
+        $bladeCompiler->directive('hasallroles', fn ($args) => "<?php if({$bladeMethodWrapper}('hasAllRoles', {$args})): ?>");
+        $bladeCompiler->directive('endhasallroles', fn () => '<?php endif; ?>');
 
-            return "<?php if(auth({$guard})->check() && auth({$guard})->user()->hasExactRoles({$roles})): ?>";
-        });
-        $bladeCompiler->directive('endhasexactroles', function () {
-            return '<?php endif; ?>';
-        });
+        $bladeCompiler->directive('unlessrole', fn ($args) => "<?php if(! {$bladeMethodWrapper}('hasRole', {$args})): ?>");
+        $bladeCompiler->directive('endunlessrole', fn () => '<?php endif; ?>');
+
+        $bladeCompiler->directive('hasexactroles', fn ($args) => "<?php if({$bladeMethodWrapper}('hasExactRoles', {$args})): ?>");
+        $bladeCompiler->directive('endhasexactroles', fn () => '<?php endif; ?>');
     }
 
     protected function registerMacroHelpers()
@@ -136,38 +137,14 @@ class PermissionServiceProvider extends ServiceProvider
         }
 
         Route::macro('role', function ($roles = []) {
-            $roles = implode('|', Arr::wrap($roles));
-
-            $this->middleware("role:$roles");
-
-            return $this;
+            /** @var Route $this */
+            return $this->middleware('role:'.implode('|', Arr::wrap($roles)));
         });
 
         Route::macro('permission', function ($permissions = []) {
-            $permissions = implode('|', Arr::wrap($permissions));
-
-            $this->middleware("permission:$permissions");
-
-            return $this;
+            /** @var Route $this */
+            return $this->middleware('permission:'.implode('|', Arr::wrap($permissions)));
         });
     }
 
-    /**
-     * Returns existing migration file if found, else uses the current timestamp.
-     *
-     * @return string
-     */
-    protected function getMigrationFileName($migrationFileName)
-    {
-        $timestamp = date('Y_m_d_His');
-
-        $filesystem = $this->app->make(Filesystem::class);
-
-        return Collection::make($this->app->databasePath().DIRECTORY_SEPARATOR.'migrations'.DIRECTORY_SEPARATOR)
-            ->flatMap(function ($path) use ($filesystem, $migrationFileName) {
-                return $filesystem->glob($path.'*_'.$migrationFileName);
-            })
-            ->push($this->app->databasePath()."/migrations/{$timestamp}_{$migrationFileName}")
-            ->first();
-    }
 }

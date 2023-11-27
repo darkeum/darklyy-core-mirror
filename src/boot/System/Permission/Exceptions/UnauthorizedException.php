@@ -1,7 +1,17 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Permission\Exceptions;
 
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UnauthorizedException extends HttpException
@@ -12,11 +22,10 @@ class UnauthorizedException extends HttpException
 
     public static function forRoles(array $roles): self
     {
-        $message = 'User does not have the right roles.';
+        $message = 'У пользователя нет подходящих ролей.';
 
-        if (config('permission.display_permission_in_exception')) {
-            $permStr = implode(', ', $roles);
-            $message = 'User does not have the right roles. Necessary roles are '.$permStr;
+        if (config('permission.display_role_in_exception')) {
+            $message .= ' Необходимые роли '.implode(', ', $roles);
         }
 
         $exception = new static(403, $message, null, []);
@@ -27,11 +36,10 @@ class UnauthorizedException extends HttpException
 
     public static function forPermissions(array $permissions): self
     {
-        $message = 'User does not have the right permissions.';
+        $message = 'У пользователя нет необходимых разрешений.';
 
         if (config('permission.display_permission_in_exception')) {
-            $permStr = implode(', ', $permissions);
-            $message = 'User does not have the right permissions. Necessary permissions are '.$permStr;
+            $message .= ' Необходимые разрешения '.implode(', ', $permissions);
         }
 
         $exception = new static(403, $message, null, []);
@@ -42,11 +50,10 @@ class UnauthorizedException extends HttpException
 
     public static function forRolesOrPermissions(array $rolesOrPermissions): self
     {
-        $message = 'User does not have any of the necessary access rights.';
+        $message = 'У пользователя нет необходимых прав доступа.';
 
         if (config('permission.display_permission_in_exception') && config('permission.display_role_in_exception')) {
-            $permStr = implode(', ', $rolesOrPermissions);
-            $message = 'User does not have the right permissions. Necessary permissions are '.$permStr;
+            $message .= ' Необходимые роли или разрешения '.implode(', ', $rolesOrPermissions);
         }
 
         $exception = new static(403, $message, null, []);
@@ -55,9 +62,16 @@ class UnauthorizedException extends HttpException
         return $exception;
     }
 
+    public static function missingTraitHasRoles(Authorizable $user): self
+    {
+        $class = get_class($user);
+
+        return new static(403, "Класс авторизации `{$class}` должен быть Boot\System\Permission\Traits\HasRoles.", null, []);
+    }
+
     public static function notLoggedIn(): self
     {
-        return new static(403, 'User is not logged in.', null, []);
+        return new static(403, 'Пользователь не авторизован.', null, []);
     }
 
     public function getRequiredRoles(): array

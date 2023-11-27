@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -16,8 +16,8 @@ use Boot\System\Permission\Contracts\Permission as PermissionContract;
 
 class CreatePermission extends Command
 {
-    protected $signature = 'permission:create-permission 
-                {name : Имя разрешения} 
+    protected $signature = 'permission:create-permission
+                {name : Имя разрешения}
                 {guard? : Название защитника (WEB, API)}';
 
     protected $description = 'Создание разрешения';

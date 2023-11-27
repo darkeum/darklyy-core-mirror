@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Permission\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -7,43 +16,28 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 interface Permission
 {
     /**
-     * A permission can be applied to roles.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * Разрешение можно применить к ролям.
      */
     public function roles(): BelongsToMany;
 
     /**
-     * Find a permission by its name.
+     * Найдите разрешение по его названию.
      *
-     * @param string $name
-     * @param string|null $guardName
      *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
-     *
-     * @return Permission
+     * @throws \Boot\System\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findByName(string $name, $guardName): self;
+    public static function findByName(string $name, ?string $guardName): self;
 
     /**
-     * Find a permission by its id.
+     * Найдите разрешение по его идентификатору.
      *
-     * @param int $id
-     * @param string|null $guardName
      *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
-     *
-     * @return Permission
+     * @throws \Boot\System\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findById(int $id, $guardName): self;
+    public static function findById(int|string $id, ?string $guardName): self;
 
     /**
-     * Find or Create a permission by its name and guard name.
-     *
-     * @param string $name
-     * @param string|null $guardName
-     *
-     * @return Permission
+     * Найдите или создайте разрешение по его имени и имени охранника.
      */
-    public static function findOrCreate(string $name, $guardName): self;
+    public static function findOrCreate(string $name, ?string $guardName): self;
 }

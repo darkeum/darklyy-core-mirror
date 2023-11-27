@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -19,41 +19,40 @@ use Boot\System\Permission\PermissionRegistrar;
 class CreateRole extends Command
 {
     protected $signature = 'permission:create-role
-        {name : The name of the role}
-        {guard? : The name of the guard}
-        {permissions? : A list of permissions to assign to the role, separated by | }
+        {name : Имя роли}
+        {guard? : Имя защитника}
+        {permissions? : Список разрешений для роли, разделитель | }
         {--team-id=}';
 
     protected $description = 'Создание роли';
 
-    public function handle()
+    public function handle(PermissionRegistrar $permissionRegistrar)
     {
         $roleClass = app(RoleContract::class);
 
         $teamIdAux = getPermissionsTeamId();
         setPermissionsTeamId($this->option('team-id') ?: null);
 
-        if (! PermissionRegistrar::$teams && $this->option('team-id')) {
-            $this->warn("Teams feature disabled, argument --team-id has no effect. Either enable it in permissions config file or remove --team-id parameter");
-
+        if (!$permissionRegistrar->teams && $this->option('team-id')) {
+            $this->warn('Функционал команд отключен, аргумент --team-id не имеет никакого эффекта. Либо включите команды его в файле конфигурации разрешений, либо удалите параметр --team-id.');
             return;
         }
 
         $role = $roleClass::findOrCreate($this->argument('name'), $this->argument('guard'));
         setPermissionsTeamId($teamIdAux);
 
-        $teams_key = PermissionRegistrar::$teamsKey;
-        if (PermissionRegistrar::$teams && $this->option('team-id') && is_null($role->$teams_key)) {
-            $this->warn("Role `{$role->name}` already exists on the global team; argument --team-id has no effect");
+        $teams_key = $permissionRegistrar->teamsKey;
+        if ($permissionRegistrar->teams && $this->option('team-id') && is_null($role->$teams_key)) {
+            $this->warn("Роль `{$role->name}` уже существует в глобальной команде; аргумент --team-id не имеет никакого эффекта");
         }
 
         $role->givePermissionTo($this->makePermissions($this->argument('permissions')));
 
-        $this->info("Role `{$role->name}` ".($role->wasRecentlyCreated ? 'created' : 'updated'));
+        $this->info("Роль `{$role->name}` " . ($role->wasRecentlyCreated ? 'создана' : 'обновлена'));
     }
 
     /**
-     * @param array|null|string $string
+     * @param  array|null|string  $string
      */
     protected function makePermissions($string = null)
     {
