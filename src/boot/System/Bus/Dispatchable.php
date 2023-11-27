@@ -8,7 +8,7 @@ use Illuminate\Support\Fluent;
 
 trait Dispatchable
 {
-       /**
+    /**
      * Dispatch the job with the given arguments.
      *
      * @param  mixed  ...$arguments
@@ -95,5 +95,6 @@ trait Dispatchable
      */
     public static function withChain($chain)
     {
-        return new PendingChain(static::class, $c
+        return new PendingChain(static::class, $chain);
+    }
 }
