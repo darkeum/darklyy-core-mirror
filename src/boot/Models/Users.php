@@ -114,6 +114,6 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     }
 
     public function orgs() {
-        return $this->belongsToMany(Org::class, 'users_org_relation', 'uid2', 'org');
+        return $this->belongsToMany(Org::class, 'users_org_relation', 'uid', 'org');
     }
 }
