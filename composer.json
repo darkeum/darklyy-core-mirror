@@ -14,7 +14,7 @@
         "ext-bcmath": "*",
         "ext-gd": "*",
         "ext-json": "*",
-        "aldas/modbus-tcp-client": "^2.3",
+        "aldas/modbus-tcp-client": "^3.4",
         "amphp/socket": "^1.2",
         "asimlqt/php-google-spreadsheet-client": "^3.0",
         "barryvdh/laravel-ide-helper": "^2.13",
