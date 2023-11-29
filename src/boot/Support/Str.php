@@ -55,6 +55,17 @@ class Str
     }
 
     /**
+     * Проверка строки на IP
+     *
+     * @param  string   $value Исходная строка
+     * @return bool     Возвращает true если $value является IP, иначе false.
+     */
+    public static function isIp($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_IP);
+    }
+
+    /**
      * Проверка строки на нижний регистр
      *
      * @param  string    $value Исходная строка
@@ -238,7 +249,7 @@ class Str
      *
      * @param  string  $subject Исходная строка
      * @param  string  $search Что искать
-     * @return string  Остаток строки либо вся строка будет, если заданного значения нет в строке 
+     * @return string  Остаток строки либо вся строка будет, если заданного значения нет в строке
      */
     public static function after($subject, $search)
     {
@@ -498,7 +509,7 @@ class Str
     }
 
     /**
-     * Обрезание строки 
+     * Обрезание строки
      *
      * @param  string    $string Исходная строка
      * @param  int       $start Начало
@@ -514,7 +525,7 @@ class Str
      * Получение суммы прописью
      *
      * @param  float     $num Сумма
-     * @return string    Возвращает сумму (число) прописью 
+     * @return string    Возвращает сумму (число) прописью
      */
     public static function numbToString($num)
     {
@@ -583,7 +594,7 @@ class Str
      * @param  int       $length Длина до который нужно дополнить
      * @param  string    $pad Заполнение
      * @param  string    $padType Тип дополнения (right, left, both)
-     * @return string    Возвращает строку $value дополненною указанными символами до указанной длины, по указанному шаблону 
+     * @return string    Возвращает строку $value дополненною указанными символами до указанной длины, по указанному шаблону
      */
     public static function pad($value, $length, $pad = ' ', $padType = 'right')
     {
@@ -602,12 +613,12 @@ class Str
     }
 
     /**
-     * Дополняет строку справа до заданной длины. 
+     * Дополняет строку справа до заданной длины.
      *
      * @param  string    $value Исходная строка
      * @param  int       $length Длина до который нужно дополнить
      * @param  string    $pad Заполнение
-     * @return string    Возвращает строку $value дополненною справа указанными символами до указанной длины. 
+     * @return string    Возвращает строку $value дополненною справа указанными символами до указанной длины.
      */
     public static function padRight($value, $length, $pad = ' ')
     {
@@ -615,12 +626,12 @@ class Str
     }
 
     /**
-     * Дополняет строку слева до заданной длины. 
+     * Дополняет строку слева до заданной длины.
      *
      * @param  string    $value Исходная строка
      * @param  int       $length Длина до который нужно дополнить
      * @param  string    $pad Заполнение
-     * @return string    Возвращает строку $value дополненною слева указанными символами до указанной длины. 
+     * @return string    Возвращает строку $value дополненною слева указанными символами до указанной длины.
      */
     public static function padLeft($value, $length, $pad = ' ')
     {
@@ -628,12 +639,12 @@ class Str
     }
 
     /**
-     * Дополняет строку по середине до заданной длины. 
+     * Дополняет строку по середине до заданной длины.
      *
      * @param  string    $value Исходная строка
      * @param  int       $length Длина до который нужно дополнить
      * @param  string    $pad Заполнение
-     * @return string    Возвращает строку $value дополненною по середине указанными символами до указанной длины. 
+     * @return string    Возвращает строку $value дополненною по середине указанными символами до указанной длины.
      */
     public static function padBoth($value, $length, $pad = ' ')
     {
@@ -647,7 +658,7 @@ class Str
      * @param  string|array<string>   $search Значение или массив значение для удаления
      * @param  string                 $length Исходная трока
      * @param  bool                   $pad Чувствительность к регистру
-     * @return string                 Возвращает строку где удалены все указанные значения. 
+     * @return string                 Возвращает строку где удалены все указанные значения.
      */
     public static function remove($search, $subject, $caseSensitive = true)
     {
@@ -1057,7 +1068,7 @@ class Str
 
 
     /**
-     * Возвращает строку с удаленными пробелами в начале и в конце строки. Поддерживает удаление пробелов Unicode. 
+     * Возвращает строку с удаленными пробелами в начале и в конце строки. Поддерживает удаление пробелов Unicode.
      *
      * @param  string $value Исходная строка
      * @param  string $chars Необязательная строка символов для удаления
@@ -1086,7 +1097,7 @@ class Str
     }
 
     /**
-     * Метод преобразовывает все объекты HTML в соответствующие символы. Псевдоним html_entity_decode. 
+     * Метод преобразовывает все объекты HTML в соответствующие символы. Псевдоним html_entity_decode.
      * Список флагов см. На http://php.net/manual/en/function.html-entity-decode.php
      *
      * @param  string        $value Исходная строка
@@ -1100,7 +1111,7 @@ class Str
 
     /**
      * Метод преобразовывает все спец. символы в объекты HTML. Псевдоним htmlentities.
-     * Список флагов см. На http://php.net/manual/en/function.htmlentities.php 
+     * Список флагов см. На http://php.net/manual/en/function.htmlentities.php
      *
      * @param  string        $value Исходная строка
      * @param  string|null   $flags флаги
@@ -1124,12 +1135,12 @@ class Str
     }
 
     /**
-     * Возвращает индекс первого вхождения в строке и false, если не найдено. 
+     * Возвращает индекс первого вхождения в строке и false, если не найдено.
      *
      * @param  string        $value Исходная строка
      * @param  string        $needle Поисковая трока
      * @param  int           $offset Принимает необязательное смещение, с которого следует начать поиск. Отрицательный индекс ищет с конца
-     * @return int|bool      Возвращает индекс первого вхождения в строке и false, если не найдено. 
+     * @return int|bool      Возвращает индекс первого вхождения в строке и false, если не найдено.
      */
     public static function indexOf($value, $needle, $offset = 0)
     {
@@ -1137,12 +1148,12 @@ class Str
     }
 
     /**
-     * Возвращает индекс последнего вхождения в строке и false, если не найдено. 
+     * Возвращает индекс последнего вхождения в строке и false, если не найдено.
      *
      * @param  string        $value Исходная строка
      * @param  string        $needle Поисковая трока
      * @param  int           $offset Принимает необязательное смещение, с которого следует начать поиск. Отрицательный индекс ищет с конца
-     * @return int|bool      Возвращает индекс последнего вхождения в строке и false, если не найдено. 
+     * @return int|bool      Возвращает индекс последнего вхождения в строке и false, если не найдено.
      */
     public static function indexOfLast($value, $needle, $offset = 0)
     {
@@ -1184,7 +1195,7 @@ class Str
 
     /**
      * Метод преобразует строку в массив разбивая по переносам
-     * 
+     *
      * @param  string $value Исходная строка
      * @return static[] Возвращает массив из разбитый строки по переносам
      */
@@ -1315,7 +1326,7 @@ class Str
      *
      * @param  string        $title Исходная строка
      * @param  string        $separator Разделитель
-     * @param  string        $language Язык поддерживается только en 
+     * @param  string        $language Язык поддерживается только en
      * @return string        Возвращает строку преобразованную к URL адресу
      */
     public static function slug($title, $separator = '-', $language = 'en')
@@ -1335,7 +1346,7 @@ class Str
      * @param  string $value Исходная строка
      * @param  string $substring Исходная строка
      * @return static Возвращает строку которую окружает указанная подстрока
-     *                 
+     *
      */
     public static function surround($value, $substring)
     {
@@ -1347,7 +1358,7 @@ class Str
      *
      * @param  string $value Исходная строка
      * @return static Возвращает строку без пробелов
-     *                 
+     *
      */
     public static function removeSpaces($value)
     {
@@ -1364,14 +1375,14 @@ class Str
     }
 
     /**
-     * Возвращает подстроку, начинающуюся с $start и до $end, не включая индекс, указанный в $end. 
+     * Возвращает подстроку, начинающуюся с $start и до $end, не включая индекс, указанный в $end.
      * Если $end не указан, функция извлекает оставшуюся строку. Если $end отрицательный, то вычисляется с конца строки.
      *
      * @param  string   $value Исходная строка
      * @param  int      $start Начало
      * @param  int|null $end конец
      * @return static   Возвращает обрезанную строку
-     *                 
+     *
      */
     public static function slice($value, $start, $end = null)
     {
@@ -1392,7 +1403,7 @@ class Str
      *
      * @param  string   $value Исходная строка
      * @return static   Возвращает строку с преобразованными кавычками тире и многоточиями
-     *                 
+     *
      */
     public static function tidy($value)
     {
@@ -1490,7 +1501,7 @@ class Str
     }
 
     /**
-     * Метод преобразует строку где каждое слово будет начинаться с заглавной буквы. 
+     * Метод преобразует строку где каждое слово будет начинаться с заглавной буквы.
      * Также принимает массив $ignore, позволяющий перечислять слова без заглавных букв.
      *
      * @param  string     $value Исходная строка
@@ -1514,7 +1525,7 @@ class Str
 
 
     /**
-     * Возвращает строку с удаленными пробелами только в начале. Поддерживает удаление пробелов Unicode. 
+     * Возвращает строку с удаленными пробелами только в начале. Поддерживает удаление пробелов Unicode.
      *
      * @param  string $value Исходная строка
      * @param  string $chars Необязательная строка символов для удаления
@@ -1527,7 +1538,7 @@ class Str
     }
 
     /**
-     * Возвращает строку с удаленными пробелами только в конце. Поддерживает удаление пробелов Unicode. 
+     * Возвращает строку с удаленными пробелами только в конце. Поддерживает удаление пробелов Unicode.
      *
      * @param  string $value Исходная строка
      * @param  string $chars Необязательная строка символов для удаления
@@ -1588,7 +1599,7 @@ class Str
      * Метод преобразует специальные HTML-сущности обратно в соответствующие символы
      *
      * @param  string       $value Исходная строка
-     * @param  array|null   $request  Массив с параметрами 
+     * @param  array|null   $request  Массив с параметрами
      *                      Возможные параметры: (type: тип (default, word), enter: разделитель строки (по умолчанию \n))
      * @return string       Возвращает строку где все специальные HTML-сущности преобразованы обратно в соответствующие символы
      */
