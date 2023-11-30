@@ -30,7 +30,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
 
 
     /**
-     * Метод определяет глобальные переменные 
+     * Метод определяет глобальные переменные
      *
      * @return array
      */
@@ -38,7 +38,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
     {
         $uid = Auth::id();
         $task_count =  TaskSupport::getTaskCount();
-        
+
         $fcontrol = ControlSupport::getControlCount();
         $fcontrol_pay = ControlSupport::getControlPayCount();
         $fcontrol_all = $fcontrol + $fcontrol_pay;
@@ -66,7 +66,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
                 if (!empty($value['icon'])) {
                     $icon = $value['icon'];
                 }
-                $notifications .=  '<li style="cursor:pointer" onclick="location.href=\'/' . ADMIN . '/module/notif/redirect/' . $value['id'] . '\';" class="list-group-item"><span class="pull-left mg-t-xs mg-r-md"><img src="' . $icon . '" class="avatar avatar-sm img-circle" alt=""></span><div class="m-body show pd-t-xs"><span>' . $value['title'] . '</span><br>' . $value['text'] . '</div></li>';
+                $notifications .=  '<li style="cursor:pointer" onclick="location.href=\'/' . ADMIN . '/module/notif/redirect/' . $value['id'] . '\';" class="list-group-item"><span class="pull-left mg-t-xs mg-r-md"><img src="' . $icon . '" class="avatar avatar-sm img-circle" alt=""></span><div class="m-body show pd-t-xs"><span>' . $value['title'] . '</span><br>' . ee($value['text']) . '</div></li>';
             }
         }
         $avatar = avatar($uid);
@@ -127,7 +127,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
 
 
     /**
-     * Метод определяет глобальные функции 
+     * Метод определяет глобальные функции
      *
      * @return array
      */
@@ -156,7 +156,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
                 echo constant($key);
             }
         });
-  
+
 
         return array(
             'menu_open' => $menu_open,
@@ -260,11 +260,11 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
             return '<header id="topbar" class="alt" style="padding: 30px 20px">
           <div class="topbar-left pull-left">
             <h1 class="mn" >Корпоративный портал</h1><span class="text-shady-lady fs15">version ' . VERSION_ID . '</span>
-          </div> 
+          </div>
 <div class="topbar-right">
-							<a class="btn btn-system" href="' . ADMIN . '/calendar"><span class="mr10 icon fal fa-calendar"></span>Календарь событий</a> 
+							<a class="btn btn-system" href="' . ADMIN . '/calendar"><span class="mr10 icon fal fa-calendar"></span>Календарь событий</a>
 							<a class="btn btn-system" href="javascript:void(0);" onclick="editDashboard();"><span class="icon fal fa-cog"></span></a>
-						  </div>		  
+						  </div>
         </header>';
         }
     }
