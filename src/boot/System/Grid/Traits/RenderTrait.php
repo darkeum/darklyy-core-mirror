@@ -27,7 +27,7 @@ trait RenderTrait
     {
         $data = [];
         $data['extend'] = $this->render_extend;
-        $data['id'] = Str::replace($this->grid_id, '::', '_');
+        $data['id'] = Str::replace('::', '_', $this->grid_id);
 
         $index = 0;
         foreach ($this->cols as $k => $c) {
