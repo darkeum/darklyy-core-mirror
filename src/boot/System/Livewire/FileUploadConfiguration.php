@@ -105,7 +105,7 @@ class FileUploadConfiguration
     {
         $rules = config('livewire.temporary_file_upload.rules');
 
-        if (is_null($rules)) return ['required', 'file', 'max:12288'];
+        if (is_null($rules)) return ['required', 'file', 'max:122880'];
 
         if (is_array($rules)) return $rules;
 
