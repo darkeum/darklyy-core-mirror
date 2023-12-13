@@ -130,34 +130,6 @@ class Filesystem extends LaravelFilesystem
     }
 
     /**
-     * Prepend to a file.
-     *
-     * @param  string  $path
-     * @param  string  $data
-     * @return int
-     */
-    public function prepend($path, $data)
-    {
-        if ($this->exists($path)) {
-            return $this->put($path, $data . $this->get($path));
-        }
-
-        return $this->put($path, $data);
-    }
-
-    /**
-     * Append to a file.
-     *
-     * @param  string  $path
-     * @param  string  $data
-     * @return int
-     */
-    public function append($path, $data)
-    {
-        return file_put_contents($path, $data, FILE_APPEND);
-    }
-
-    /**
      * Get or set UNIX mode of a file or directory.
      *
      * @param  string  $path
