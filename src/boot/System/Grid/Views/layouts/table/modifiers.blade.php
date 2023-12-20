@@ -3,9 +3,9 @@
         type="button"
         class="btn btn-icon btn-flat-secondary waves-effect"
         title="Модификаторы таблицы"
-        data-bs-original-title="Модификаторы таблицы"
-        data-bs-toggle="tooltip"
-        data-bs-placement="left"
+        {{--data-bs-original-title="Модификаторы таблицы"--}}
+        {{--data-bs-toggle="tooltip"--}}
+        {{--data-bs-placement="left"--}}
 >
     <i class="feather-cpu"></i>
 </button>
