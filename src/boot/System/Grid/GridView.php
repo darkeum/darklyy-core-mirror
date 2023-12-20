@@ -22,4 +22,14 @@ class GridView
         return view('grid::layouts.actions', $params)->render();
     }
 
+    /**
+     * @param $path
+     * @param $params
+     * @return string
+     */
+    public static function view($path, $params = []): string
+    {
+        return view($path, $params)->render();
+    }
+
 }
