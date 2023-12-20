@@ -24,10 +24,10 @@ class GridView
 
     /**
      * @param $path
-     * @param $params
+     * @param array $params
      * @return string
      */
-    public static function view($path, $params = []): string
+    public static function view($path, array $params = []): string
     {
         return view($path, $params)->render();
     }
