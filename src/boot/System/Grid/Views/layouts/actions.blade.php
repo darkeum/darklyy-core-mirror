@@ -176,10 +176,10 @@ https://app.weeek.net/ws/288286/document/12
                         <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
                            target="_blank"
                            class="btn btn-sm btn-outline-secondary"
-                           {{--title="{{ $actions_cfg[$key][0] }}"--}}
+                           title="{{ $actions_cfg[$key][0] }}"
                            data-bs-original-title="{{ $actions_cfg[$key][0] }}"
                            data-bs-toggle="tooltip"
-                           {{--data-bs-placement="left"--}}
+                           {{ $tooltip ? 'data-bs-placement="'. $tooltip .'"'  : '' }}
                         >
                             <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
                         </a>
