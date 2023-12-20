@@ -1,14 +1,12 @@
 {{-- Модификаторы таблицы --}}
-
 <button id="g-modifier"
         type="button"
         class="btn btn-icon btn-flat-secondary waves-effect"
-        {{--class="btn btn-icon btn-outline-primary waves-effect"--}}
         title="Модификаторы таблицы"
         data-bs-original-title="Модификаторы таблицы"
         data-bs-toggle="tooltip"
+        data-bs-placement="left"
 >
-    {{--<i class="feather-settings"></i>--}}
     <i class="feather-cpu"></i>
 </button>
 
