@@ -179,7 +179,7 @@ https://app.weeek.net/ws/288286/document/12
                            title="{{ $actions_cfg[$key][0] }}"
                            data-bs-original-title="{{ $actions_cfg[$key][0] }}"
                            data-bs-toggle="tooltip"
-                           {{ $tooltip ? 'data-bs-placement="'. $tooltip .'"'  : '' }}
+                           {{ $tooltip ? "data-bs-placement=". $tooltip .'"'  : '' }}
                         >
                             <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
                         </a>
