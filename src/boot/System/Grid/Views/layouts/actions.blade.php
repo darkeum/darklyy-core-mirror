@@ -131,7 +131,12 @@ https://app.weeek.net/ws/288286/document/12
                     @switch($marker($key))
 
                         @case('destroy')
-                        <button class="btn btn-sm btn-outline-secondary" type="submit" title="{{ $actions_cfg[$key][0] }}">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit"
+                                title="{{ $actions_cfg[$key][0] }}"
+                                data-bs-original-title="{{ $actions_cfg[$key][0] }}"
+                                data-bs-toggle="tooltip"
+                                @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
+                        >
                             <i class="feather-trash"></i>
                         </button>
                         @break
