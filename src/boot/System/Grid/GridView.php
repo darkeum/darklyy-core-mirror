@@ -12,7 +12,12 @@ class GridView
     }
 
     // Вывод автоматической генерации Actions
-    public static function actions($params): string
+
+    /**
+     * @param array $params
+     * @return string
+     */
+    public static function actions(array $params): string
     {
         return view('grid::layouts.actions', $params)->render();
     }
