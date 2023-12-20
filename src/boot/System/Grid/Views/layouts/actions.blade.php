@@ -11,13 +11,7 @@ https://app.weeek.net/ws/288286/document/12
 @php
 
     // Конфиг
-    // $actions_cfg = config('grid.actions');
-    $actions_cfg = [
-        'show' => ['Просмотр', 'eye'],
-        'edit' => ['Редактировать', 'edit'],
-        'print' => ['Распечатать', 'printer'],
-        'destroy' => ['Удалить', 'trash']
-        ];
+    $actions_cfg = config('grid.actions'); // Переделать на мультиязычность
 
     // Фильтруем от false, если ЕСТЬ то убираем
     $actions = array_filter($actions, function ($elem) {
