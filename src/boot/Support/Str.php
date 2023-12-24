@@ -1558,7 +1558,7 @@ class Str
      * @param  string|iterable<string> $replace Строка замены
      * @param  string|iterable<string> $subject Исходная строка
      * @param  bool  $caseSensitive
-     * @return static Возвращает строку где все найденные подстроки замены на указанное значение
+     * @return string Возвращает строку где все найденные подстроки замены на указанное значение
      */
     public static function replace($search, $replace, $subject, $caseSensitive = true)
     {
