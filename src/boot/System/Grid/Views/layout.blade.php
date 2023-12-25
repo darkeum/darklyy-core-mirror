@@ -48,7 +48,7 @@
                 </div>
 
                 <table id="{{ $data['id'] }}"
-                       class="table table-striped table-bordered table-sm grid-table {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}}"
+                       class="table table-striped table-bordered {{--table-sm--}} grid-table {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}}"
                 >
                     {{-- Table Header --}}
                     <thead>
@@ -1005,7 +1005,7 @@
     <style>
 
         table.dataTable th {
-            font-size: 0.7rem !important;
+            /*font-size: 0.7rem !important;*/
         }
 
         table.dataTable td {
