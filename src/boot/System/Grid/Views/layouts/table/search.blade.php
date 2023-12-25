@@ -1,13 +1,7 @@
 <div id="g-search" class="input-group">
-
-    {{--<a class="btn btn-sm btn-outline-primary waves-effect">--}}
-    {{--    <i class="feather-search"></i>--}}
-    {{--</a>--}}
-
-    <a class="input-group-text">
+    <div class="input-group-text">
         {{--<i data-feather="search"></i>--}}
         <i class="feather-search"></i>
-    </a>
-
+    </div>
     {{-- Поле поиска будет тут --}}
 </div>

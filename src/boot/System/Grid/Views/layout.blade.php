@@ -1073,7 +1073,8 @@
 
     {{-- vendor css files --}}
     {{-- datatable --}}
-    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.min.css') }}">
+    {{--<link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.min.css') }}">--}}
+    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables-fix.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
     {{-- datatable --}}
 
