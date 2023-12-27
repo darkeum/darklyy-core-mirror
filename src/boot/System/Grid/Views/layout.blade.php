@@ -48,7 +48,7 @@
                 </div>
 
                 <table id="{{ $data['id'] }}"
-                       class="table table-striped table-bordered compact table-sm grid-table {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}}"
+                       class="table table-striped table-bordered compact table-sm {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} grid-table"
                 >
                     {{-- Table Header --}}
                     <thead>
