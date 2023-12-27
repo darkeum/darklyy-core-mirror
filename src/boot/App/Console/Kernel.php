@@ -29,6 +29,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('price:currency')->daily()->runInBackground();
         $schedule->command('price:work')->twiceDaily(0, 6)->runInBackground();
         $schedule->command('calls:get')->everyMinute()->runInBackground();
+        $schedule->command('report:supply:get')->daily()->runInBackground();
     }
 
     /**
