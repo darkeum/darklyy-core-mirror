@@ -84,10 +84,11 @@ if (!isset($c['render'])) {
 //}
 
 #width - Фильтр по типу поля для width по умолчанию
-//if (!isset($c['width'])) {
-//    $f = $cols['width'];
-//    $c['width'] = $filter($t, $f, current($f));
-//}
+if (!isset($c['width'])) {
+   // $f = $cols['width'];
+   // $c['width'] = $filter($t, $f, current($f));
+   $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
+}
 
 #className - Фильтр по типу поля для className по умолчанию
 //if (!isset($c['className'])) {
