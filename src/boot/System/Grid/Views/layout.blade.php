@@ -351,7 +351,7 @@
                             label: "{{ $col['label'] }}",
                             name: "{{ $col['db'] }}",
 
-                            width: "{{ $col['width'] }}",
+                            width: "{{ isset($col['width']) ? $col['width'] . '%' : '' }}",
                             visible: {{ $col['visible'] ? 'true' : 'false' }},
                             className: "{{ $col['className'] ?? '' }} col-{{ $col['type'] }}",
 
