@@ -11,15 +11,24 @@ class GridView
         $this->namespace = $namespace;
     }
 
-    // Вывод автоматической генерации Actions
-
     /**
      * @param array $params
      * @return string
+     * # Вывод автоматической генерации Actions
      */
     public static function actions(array $params): string
     {
         return view('grid::layouts.actions', $params)->render();
+    }
+
+    /**
+     * @param array $params
+     * @return string
+     * # Вывод автоматической генерации Img
+     */
+    public static function img(array $params): string
+    {
+        return view('grid::layouts.img', $params)->render();
     }
 
     /**
