@@ -48,7 +48,7 @@
                 </div>
 
                 <table id="{{ $data['id'] }}"
-                       class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} grid-table"
+                       class="table table-striped table-bordered table-loader compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} grid-table"
                 >
                     {{-- Table Header --}}
                     <thead class="">
@@ -786,15 +786,6 @@
 
                 }
             );
-
-            console.log(table);
-
-            // table.dom.loader = $('<div class="dataTables_processing dts_loading">' + table.s.dt.oLanguage.sLoadingRecords + '</div>')
-            //     .css('display', 'none');
-            //
-            // $(table.dom.scroller.parentNode)
-            //     .css('position', 'relative')
-            //     .append(table.dom.loader);
 
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
