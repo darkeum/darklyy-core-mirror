@@ -464,8 +464,8 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        console.log(data)
-                        
+                        console.log(data.columns)
+
                         //
                         data['order'].forEach(function (items, index) {
                             data['order'][index]['column_name'] = data['columns'][items.column]['name'];
