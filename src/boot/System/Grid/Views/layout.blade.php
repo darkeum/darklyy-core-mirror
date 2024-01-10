@@ -532,12 +532,14 @@
                         // console.log(settings.aoColumns);
 
                         let params = {
-                            'titles' : columns,
-                            'rows' : rows,
-                            'loader' : false,
+                            'api' : api,
+                            'columns' : columns,
+                            // 'titles' : columns,
+                            // 'rows' : rows,
+                            // 'loader' : false,
                         };
 
-                        grid.draw(columns);
+                        grid.draw(params);
 
                         // grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
                         grid.emptyTable(rows); // Работа с пустой таблицей
