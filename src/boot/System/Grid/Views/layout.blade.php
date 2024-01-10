@@ -94,7 +94,6 @@
                     </thead>
                     {{-- Table Header --}}
 
-                    {{--<tbody class="bg chess"></tbody>--}}
                     {{--<tbody class="table-sm table-sm-px"></tbody>--}}
                     {{-- table-sm-px - очень важный класс для выравнивая DT --}}
 
@@ -1026,6 +1025,10 @@
         #g-control .dt-button-collection.dtb-collection-closeable {
             left: auto !important;
             right: 0;
+        }
+
+        .grid-container .dataTables_scrollBody table {
+            z-index: 0 !important;
         }
 
         {{-- CSS render-class --}}
