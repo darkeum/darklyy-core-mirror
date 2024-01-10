@@ -482,15 +482,7 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        if (dataIndex == 1) {
-                            // log('createdRow');
-                            // console.log(row)
-                            // console.log(data)
-                            // console.log(dataIndex)
-                        }
-
                         grid.qRow(row);
-                        // grid.setTitles(columns);
 
                     }, // END - createdRow
 
@@ -505,11 +497,7 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        let params = {
-                            'settings' : settings,
-                        };
-
-                        grid.drawCallback(params);
+                        grid.drawCallback(settings);
 
                     }, // END - drawCallback
 
