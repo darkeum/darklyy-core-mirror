@@ -463,11 +463,6 @@
 
                         let api = this.api();
                         let grid = new Grid(api);
-                        // grid.setTitles(api.columns);
-
-                        console.log(data.columns)
-                        console.log(api.columns)
-                        console.log(grid.columns)
 
                         //
                         data['order'].forEach(function (items, index) {
@@ -495,17 +490,13 @@
                         }
 
                         grid.qRow(row);
+                        // grid.setTitles(columns);
 
                     }, // END - createdRow
 
                     // #4 - Создание Header'а таблицы
                     headerCallback: function (thead, data, start, end, display) {
                         // log('headerCallback')
-                        log(thead)
-                        log(data)
-                        log(start)
-                        log(end)
-                        log(display)
                     },
 
                     // #5 - Отрисовка
@@ -537,10 +528,10 @@
                         // log(columns[3])
 
                         // ### LOAD
-                        console.log(settings);
-                        console.log(settings.aoColumns);
+                        // console.log(settings);
+                        // console.log(settings.aoColumns);
 
-                        // grid.setTitles(columns);
+                        grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
                         grid.emptyTable(rows); // Работа с пустой таблицей
                         feather.replace(); // Обновление иконок внутри таблицы
                         grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
