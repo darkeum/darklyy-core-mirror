@@ -94,6 +94,7 @@
                     </thead>
                     {{-- Table Header --}}
 
+                    <tbody class="bg chess"></tbody>
                     {{--<tbody class="table-sm table-sm-px"></tbody>--}}
                     {{-- table-sm-px - очень важный класс для выравнивая DT --}}
 
