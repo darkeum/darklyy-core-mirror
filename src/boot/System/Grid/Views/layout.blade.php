@@ -501,13 +501,11 @@
 
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
-                        // console.log('drawCallback');
 
                         let api = this.api();
                         let grid = new Grid(api);
 
                         let params = {
-                            // 'api' : api,
                             'settings' : settings,
                         };
 
