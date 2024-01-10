@@ -19,7 +19,7 @@ class ResourceRegistrar
      *
      * @var string[]
      */
-    protected $resourceDefaults = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy', 'grid'];
+    protected $resourceDefaults = ['index', 'create', 'store', 'grid', 'show', 'edit', 'update', 'destroy'];
 
     /**
      * The parameters set for this resource instance.
@@ -74,7 +74,7 @@ class ResourceRegistrar
      */
     public function register($name, $controller, array $options = [])
     {
-        if (isset($options['parameters']) && ! isset($this->parameters)) {
+        if (isset($options['parameters']) && !isset($this->parameters)) {
             $this->parameters = $options['parameters'];
         }
 
@@ -97,8 +97,11 @@ class ResourceRegistrar
         $collection = new RouteCollection;
 
         foreach ($this->getResourceMethods($defaults, $options) as $m) {
-            $route = $this->{'addResource'.ucfirst($m)}(
-                $name, $base, $controller, $options
+            $route = $this->{'addResource' . ucfirst($m)}(
+                $name,
+                $base,
+                $controller,
+                $options
             );
 
             if (isset($options['bindingFields'])) {
@@ -204,7 +207,7 @@ class ResourceRegistrar
      */
     protected function addResourceCreate($name, $base, $controller, $options)
     {
-        $uri = $this->getResourceUri($name).'/'.static::$verbs['create'];
+        $uri = $this->getResourceUri($name) . '/' . static::$verbs['create'];
 
         unset($options['missing']);
 
@@ -246,7 +249,7 @@ class ResourceRegistrar
     {
         $name = $this->getShallowName($name, $options);
 
-        $uri = $this->getResourceUri($name).'/{'.$base.'}';
+        $uri = $this->getResourceUri($name) . '/{' . $base . '}';
 
         $action = $this->getResourceAction($name, $controller, 'show', $options);
 
@@ -266,14 +269,14 @@ class ResourceRegistrar
     {
         $name = $this->getShallowName($name, $options);
 
-        $uri = $this->getResourceUri($name).'/{'.$base.'}/'.static::$verbs['edit'];
+        $uri = $this->getResourceUri($name) . '/{' . $base . '}/' . static::$verbs['edit'];
 
         $action = $this->getResourceAction($name, $controller, 'edit', $options);
 
         return $this->router->get($uri, $action);
     }
 
-       /**
+    /**
      * Add the edit method for a resourceful route.
      *
      * @param  string  $name
@@ -286,7 +289,7 @@ class ResourceRegistrar
     {
         $name = $this->getShallowName($name, $options);
 
-        $uri = $this->getResourceUri($name).'/'.static::$verbs['grid'];
+        $uri = $this->getResourceUri($name) . '/' . static::$verbs['grid'];
 
         $action = $this->getResourceAction($name, $controller, 'grid', $options);
 
@@ -306,7 +309,7 @@ class ResourceRegistrar
     {
         $name = $this->getShallowName($name, $options);
 
-        $uri = $this->getResourceUri($name).'/{'.$base.'}';
+        $uri = $this->getResourceUri($name) . '/{' . $base . '}';
 
         $action = $this->getResourceAction($name, $controller, 'update', $options);
 
@@ -326,7 +329,7 @@ class ResourceRegistrar
     {
         $name = $this->getShallowName($name, $options);
 
-        $uri = $this->getResourceUri($name).'/{'.$base.'}';
+        $uri = $this->getResourceUri($name) . '/{' . $base . '}';
 
         $action = $this->getResourceAction($name, $controller, 'destroy', $options);
 
@@ -343,8 +346,8 @@ class ResourceRegistrar
     protected function getShallowName($name, $options)
     {
         return isset($options['shallow']) && $options['shallow']
-                    ? last(explode('.', $name))
-                    : $name;
+            ? last(explode('.', $name))
+            : $name;
     }
 
     /**
@@ -361,7 +364,8 @@ class ResourceRegistrar
         $fields = array_fill_keys($matches[0], null);
 
         $route->setBindingFields(array_replace(
-            $fields, array_intersect_key($bindingFields, $fields)
+            $fields,
+            array_intersect_key($bindingFields, $fields)
         ));
     }
 
@@ -373,7 +377,7 @@ class ResourceRegistrar
      */
     public function getResourceUri($resource)
     {
-        if (! str_contains($resource, '.')) {
+        if (!str_contains($resource, '.')) {
             return $resource;
         }
 
@@ -384,7 +388,7 @@ class ResourceRegistrar
 
         $uri = $this->getNestedResourceUri($segments);
 
-        return str_replace('/{'.$this->getResourceWildcard(end($segments)).'}', '', $uri);
+        return str_replace('/{' . $this->getResourceWildcard(end($segments)) . '}', '', $uri);
     }
 
     /**
@@ -399,7 +403,7 @@ class ResourceRegistrar
         // resource segments, as well as the resource itself. Then we should get an
         // entire string for the resource URI that contains all nested resources.
         return implode('/', array_map(function ($s) {
-            return $s.'/{'.$this->getResourceWildcard($s).'}';
+            return $s . '/{' . $this->getResourceWildcard($s) . '}';
         }, $segments));
     }
 
@@ -435,7 +439,7 @@ class ResourceRegistrar
     {
         $name = $this->getResourceRouteName($resource, $method, $options);
 
-        $action = ['as' => $name, 'uses' => $controller.'@'.$method];
+        $action = ['as' => $name, 'uses' => $controller . '@' . $method];
 
         if (isset($options['middleware'])) {
             $action['middleware'] = $options['middleware'];
@@ -482,7 +486,7 @@ class ResourceRegistrar
         // If a global prefix has been assigned to all names for this resource, we will
         // grab that so we can prepend it onto the name when we create this name for
         // the resource action. Otherwise we'll just use an empty string for here.
-        $prefix = isset($options['as']) ? $options['as'].'.' : '';
+        $prefix = isset($options['as']) ? $options['as'] . '.' : '';
 
         return trim(sprintf('%s%s.%s', $prefix, $name, $method), '.');
     }
