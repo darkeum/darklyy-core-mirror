@@ -1028,10 +1028,6 @@
             right: 0;
         }
 
-        .grid-container .dataTables_scrollBody table {
-            z-index: 0 !important;
-        }
-
         {{-- CSS render-class --}}
           table.dataTable > tbody > tr > td > input.render-class {
             border-color: transparent;
