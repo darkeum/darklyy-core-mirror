@@ -1077,7 +1077,7 @@
     {{-- vendor css files --}}
     {{-- datatable --}}
     {{--<link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.min.css') }}">--}}
-    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full2/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
     {{-- datatable --}}
 
