@@ -506,7 +506,6 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        log(this)
                         // log(settings)
 
                         // Таблица
@@ -517,9 +516,9 @@
                         // let header = $(settings.nTHead.children);
 
                         // let rows = settings.aoData.length;
-                        let rows = api.rows().count();
+                        // let rows = api.rows().count();
 
-                        let columns = settings.aoColumns;
+                        // let columns = settings.aoColumns;
                         // let columns = api.columns().header().toArray();
 
                         //log(settings.aoColumns[3])
@@ -533,8 +532,8 @@
                         // console.log(settings.aoColumns);
 
                         let params = {
-                            'api' : api,
-                            'columns' : columns,
+                            // 'api' : api,
+                            'settings' : settings,
                             // 'titles' : columns,
                             // 'rows' : rows,
                             // 'loader' : false,
@@ -543,10 +542,10 @@
                         grid.draw(params);
 
                         // grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
-                        grid.emptyTable(rows); // Работа с пустой таблицей
-                        feather.replace(); // Обновление иконок внутри таблицы
-                        grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
-                        grid.loader(false); // Hide Loader
+                        // grid.emptyTable(rows); // Работа с пустой таблицей
+                        // feather.replace(); // Обновление иконок внутри таблицы
+                        // grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
+                        // grid.loader(false); // Hide Loader
 
                     }, // END - drawCallback
 
