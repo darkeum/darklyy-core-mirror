@@ -51,7 +51,7 @@
                        class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} grid-table"
                 >
                     {{-- Table Header --}}
-                    <thead class="d-none">
+                    <thead class="">
 
                     @php
                         function ignored ($type):bool {
