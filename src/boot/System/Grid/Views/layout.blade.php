@@ -187,12 +187,6 @@
                     //     ]
                     // },
 
-                    scrollY: '61vh', // Высота таблицы по умолчанию
-                    scrollX: false,
-                    // scrollXInner: false,
-                    // scrollCollapse: true, // Высота таблицы будет максимальной если false даже если пуста!
-                    // stateSave: true, // Не дает использовать appendTools и PerfectScrollbar
-
                     // Конструктор поиска
                     searchBuilder: {},
 
@@ -319,6 +313,13 @@
                         ],
 
                     },
+
+                    //
+                    scrollY: '61vh', // Высота таблицы по умолчанию
+                    scrollX: false,
+                    // scrollXInner: false,
+                    // scrollCollapse: true, // Высота таблицы будет максимальной если false даже если пуста!
+                    // stateSave: true, // Не дает использовать appendTools и PerfectScrollbar
 
                     // Обработчик прокрутки
                     scroller: {
@@ -1076,8 +1077,8 @@
 
     {{-- vendor css files --}}
     {{-- datatable --}}
-    {{--<link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/last/datatables.css') }}">--}}
-    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/last/datatables.css') }}">
+{{--    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.css') }}">--}}
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
     {{-- datatable --}}
 
@@ -1099,8 +1100,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
 
     {{-- DATATABLE --}}
-    {{--<script src="{{ asset('vendors/js/tables/datatable/last/datatables.min.js') }}"></script>--}}
-    <script src="{{ asset('vendors/js/tables/datatable/full/datatables.min.js') }}"></script>
+    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.min.js') }}"></script>
+{{--    <script src="{{ asset('vendors/js/tables/datatable/full/datatables.min.js') }}"></script>--}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
