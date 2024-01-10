@@ -1099,7 +1099,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
 
     {{-- DATATABLE --}}
-    <script src="{{ asset('vendors/js/tables/datatable/full/datatables.min.js') }}"></script>
+    {{--<script src="{{ asset('vendors/js/tables/datatable/full/datatables.min.js') }}"></script>--}}
+    <script src="{{ asset('vendors/js/tables/datatable/full2/datatables.min.js') }}"></script>
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
