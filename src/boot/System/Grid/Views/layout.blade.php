@@ -375,8 +375,6 @@
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
 
-
-
                             {{-- WIP - Кастомные параметры для колонок - ДОВЕСТИ ДО УМА !!! --}}
                             configs: {
                                 {{--icon: "{{ $col['icon'] ?? false }}",--}}
@@ -492,6 +490,7 @@
                         }
 
                         grid.qRow(row);
+                        // grid.setTitles(columns);
 
                     }, // END - createdRow
 
@@ -529,7 +528,10 @@
                         // log(columns[3])
 
                         // ### LOAD
-                        grid.setTitles(columns);
+                        console.log(settings);
+                        console.log(settings.aoColumns);
+
+                        // grid.setTitles(columns);
                         grid.emptyTable(rows); // Работа с пустой таблицей
                         feather.replace(); // Обновление иконок внутри таблицы
                         grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
