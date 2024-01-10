@@ -477,7 +477,6 @@
 
                     // #3 - Создание строк в таблице
                     createdRow: function (row, data, dataIndex) {
-                        // log('createdRow');
 
                         let api = this.api();
                         let grid = new Grid(api);
