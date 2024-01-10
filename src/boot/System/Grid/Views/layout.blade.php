@@ -463,8 +463,9 @@
 
                         let api = this.api();
                         let grid = new Grid(api);
+                        grid.setTitles(api.columns);
 
-                        console.log(data.columns)
+                        // console.log(data.columns)
 
                         //
                         data['order'].forEach(function (items, index) {
@@ -492,7 +493,6 @@
                         }
 
                         grid.qRow(row);
-                        // grid.setTitles(columns);
 
                     }, // END - createdRow
 
