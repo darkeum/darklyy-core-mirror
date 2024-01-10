@@ -110,9 +110,15 @@ trait RenderTrait
     // Языковой файл для Grid
     protected function getLanguage() {
         $language = trans('grid::lang');
+
+        //
         // $language['infoPostFix'] = " © " . trans('app.name_' . check_company(true));
-        $language['infoPostFix'] = "";
-        $language['loadingRecords'] = str_replace(["\r\n", "\r", "\n", "\t", '  '], '', view("elements.preloader", ['bg' => false]));
+
+        // Замена текста в лоадере на анимацию
+        $language['loadingRecords'] = str_replace(["\r\n", "\r", "\n", "\t", '  '], '',
+            view("elements.preloader", ['bg' => false])
+        );
+
         return $language;
     }
 }

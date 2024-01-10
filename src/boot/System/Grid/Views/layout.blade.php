@@ -786,14 +786,6 @@
 
                 }
             );
-
-            table.dom.loader = $('<div class="dataTables_processing dts_loading">' + table.s.dt.oLanguage.sLoadingRecords + '</div>')
-                .css('display', 'none');
-            
-            $(table.dom.scroller.parentNode)
-                .css('position', 'relative')
-                .append(table.dom.loader);
-
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
             // Создаем Grid для функций вне событий DataTable
