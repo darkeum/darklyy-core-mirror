@@ -14,7 +14,7 @@ class GridView
     /**
      * @param array $params
      * @return string
-     * # Вывод автоматической генерации Actions
+     * # Вывод автоматической генерации Actions в Grid
      */
     public static function actions(array $params): string
     {
@@ -24,7 +24,7 @@ class GridView
     /**
      * @param array $params
      * @return string
-     * # Вывод автоматической генерации Img
+     * # Вывод автоматической генерации Img в Grid
      */
     public static function img(array $params): string
     {
