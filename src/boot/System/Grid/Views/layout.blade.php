@@ -497,6 +497,11 @@
                     // #4 - Создание Header'а таблицы
                     headerCallback: function (thead, data, start, end, display) {
                         // log('headerCallback')
+                        log(thead)
+                        log(data)
+                        log(start)
+                        log(end)
+                        log(display)
                     },
 
                     // #5 - Отрисовка
