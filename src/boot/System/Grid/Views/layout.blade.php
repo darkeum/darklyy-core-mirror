@@ -506,46 +506,12 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        // log(settings)
-
-                        // Таблица
-                        // log(settings.nTable)
-                        // log(settings.oInstance)
-
-                        // let table = $(settings.nTable);
-                        // let header = $(settings.nTHead.children);
-
-                        // let rows = settings.aoData.length;
-                        // let rows = api.rows().count();
-
-                        // let columns = settings.aoColumns;
-                        // let columns = api.columns().header().toArray();
-
-                        //log(settings.aoColumns[3])
-                        //log(api.settings()[0].aoColumns)
-
-                        // log(api.columns().header().settings())
-                        // log(columns[3])
-
-                        // ### LOAD
-                        // console.log(settings);
-                        // console.log(settings.aoColumns);
-
                         let params = {
                             // 'api' : api,
                             'settings' : settings,
-                            // 'titles' : columns,
-                            // 'rows' : rows,
-                            // 'loader' : false,
                         };
 
-                        grid.draw(params);
-
-                        // grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
-                        // grid.emptyTable(rows); // Работа с пустой таблицей
-                        // feather.replace(); // Обновление иконок внутри таблицы
-                        // grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
-                        // grid.loader(false); // Hide Loader
+                        grid.drawCallback(params);
 
                     }, // END - drawCallback
 
