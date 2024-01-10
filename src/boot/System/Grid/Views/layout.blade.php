@@ -94,6 +94,8 @@
                     </thead>
                     {{-- Table Header --}}
 
+                    <tbody class="table-sm"></tbody>
+
                 </table>
             </div>
         </div>
