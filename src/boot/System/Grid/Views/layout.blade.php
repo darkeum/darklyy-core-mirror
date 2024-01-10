@@ -70,7 +70,7 @@
                                 data-db="{{ $col['db'] }}"
                                 data-type="{{ $col['type'] }}"
                             >
-                                {{ $col['title'] ?? $col['db'] }}
+                                {!! $col['title'] ?? $col['db'] !!}
                             </th>
                         @endforeach
                     </tr>
