@@ -506,6 +506,7 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
+                        log(this)
                         // log(settings)
 
                         // Таблица
