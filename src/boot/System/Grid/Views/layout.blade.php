@@ -531,7 +531,15 @@
                         // console.log(settings);
                         // console.log(settings.aoColumns);
 
-                        grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
+                        let params = {
+                            'titles' : columns,
+                            'rows' : rows,
+                            'loader' : false,
+                        };
+
+                        grid.draw(columns);
+
+                        // grid.setTitles(columns); // ПЕРЕДЕЛАТЬ!
                         grid.emptyTable(rows); // Работа с пустой таблицей
                         feather.replace(); // Обновление иконок внутри таблицы
                         grid.bootstrapReload(); // Перезагрузка всех Bootstrap элементов на странице
