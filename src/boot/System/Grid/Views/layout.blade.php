@@ -481,7 +481,6 @@
                         let api = this.api();
                         let grid = new Grid(api);
 
-                        // grid.qRow(row);
                         grid.createdRow(row, data, dataIndex);
 
                     }, // END - createdRow
