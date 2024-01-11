@@ -6,8 +6,6 @@
     }
 @endphp
 
-{{ params('123', '123123123123123') }}
-
 <section>
     <div class="row">
         <div class="col-12">
@@ -422,13 +420,13 @@
                             @if($col['type'] == 'checkbox'){
                             targets: [{{ $key }}],
                             render: function (data, type, full, meta) {
-                                return ('<div class="form-check"> <input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
+                                return ('<div class="form-check"><input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
                                 );
                             },
                             checkboxes: {
                                 selectRow: true, // Отмечать чекбокс при клике на строке таблицы
                                 selectAllRender:
-                                    '<div class="form-check"> <input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" /><label class="form-check-label" for="checkboxSelectAll"></label></div>'
+                                    '<div class="form-check"><input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" /><label class="form-check-label" for="checkboxSelectAll"></label></div>'
                             },
                         },
                         @endif
@@ -440,7 +438,7 @@
                         // selector: 'td:first-child > input.checkbox'
                     },
 
-                    // Перевод GRID
+                    // Перевод DataTables
                     language: {!! collect($language)->toJson(JSON_UNESCAPED_UNICODE) !!},
 
                     // Кастомные параметры
@@ -452,20 +450,17 @@
                     {{--    },--}}
                     {{--},--}}
 
-                    /* *** СОБЫТИЯ *** */
-                    // #1 -
-                    // preDrawCallback: function (data) {
-                    //     log('preDrawCallback')
-                    // },
+                    /* *** СОБЫТИЯ - Callback's *** */
+                    // #1 - preDrawCallback
+                    // preDrawCallback: function (data) {},
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
-                        // log('fnServerParams');
 
                         let api = this.api();
                         let grid = new aGrid(api);
 
-                        //
+                        // ...
                         data['order'].forEach(function (items, index) {
                             data['order'][index]['column_name'] = data['columns'][items.column]['name'];
                         });
@@ -487,9 +482,7 @@
                     }, // END - createdRow
 
                     // #4 - Создание Header'а таблицы
-                    headerCallback: function (thead, data, start, end, display) {
-                        // log('headerCallback')
-                    },
+                    // headerCallback: function (thead, data, start, end, display) {},
 
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
@@ -509,7 +502,6 @@
 
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
-                        // console.log('fnInitComplete');
 
                         let api = this.api();
                         let grid = new aGrid(api);
