@@ -465,7 +465,7 @@
                         //     data['order'][index]['column_name'] = data['columns'][items.column]['name'];
                         // });
 
-                        data = grid.serverParams();
+                        data = grid.serverParams(data);
 
                         // LOAD
                         // grid.hideSearchInputs(api.columns().responsiveHidden().toArray()); // Скрытие полей поиска
