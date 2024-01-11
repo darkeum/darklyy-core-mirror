@@ -456,45 +456,24 @@
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
-
-                        let api = this.api();
-                        let grid = new aGrid(api);
-
-                        // ...
-                        // data['order'].forEach(function (items, index) {
-                        //     data['order'][index]['column_name'] = data['columns'][items.column]['name'];
-                        // });
-
+                        let grid = new aGrid(this.api());
                         data = grid.serverParams(data);
-
-                        // LOAD
-                        // grid.hideSearchInputs(api.columns().responsiveHidden().toArray()); // Скрытие полей поиска
-                        // grid.loader(true); // Show Loader
-
-                    }, // END - fnServerParams
+                    },
 
                     // #3 - Создание строк в таблице
                     createdRow: function (row, data, dataIndex) {
-
-                        let api = this.api();
-                        let grid = new aGrid(api);
-
+                        let grid = new aGrid(this.api());
                         grid.createdRow(row, data, dataIndex);
-
-                    }, // END - createdRow
+                    },
 
                     // #4 - Создание Header'а таблицы
                     // headerCallback: function (thead, data, start, end, display) {},
 
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
-
-                        let api = this.api();
-                        let grid = new aGrid(api);
-
+                        let grid = new aGrid(this.api());
                         grid.drawCallback(settings);
-
-                    }, // END - drawCallback
+                    },
 
                     // #6 - ...
                     // stateLoadCallback: function () {},
@@ -504,7 +483,6 @@
 
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
-
                         let api = this.api();
                         let grid = new aGrid(api);
 
