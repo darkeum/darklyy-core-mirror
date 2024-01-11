@@ -347,9 +347,8 @@
 
                             @foreach ($cols as $key => $col){
 
-                            @if($col['type'] == 'checkbox')
-                                @php $checkbox_target[] = $key; @endphp
-                                @endif
+{{--                            @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif--}}
+                            {{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}
 
                             title: "{{ $col['title'] }}",
                             label: "{{ $col['label'] }}",
@@ -375,7 +374,7 @@
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
 
-                            {{-- WIP - Кастомные параметры для колонок - ДОВЕСТИ ДО УМА !!! --}}
+                                {{-- WIP - Кастомные параметры для колонок - ДОВЕСТИ ДО УМА !!! --}}
                             configs: {
                                 {{--icon: "{{ $col['icon'] ?? false }}",--}}
                                     {!! isset($col['icon']) ? 'icon: "' . $col['icon'] . '",' : false !!}
@@ -419,18 +418,18 @@
                     columnDefs: [
                             @foreach ($cols as $key => $col)
                             @if($col['type'] == 'checkbox'){
-                                targets: [{{ $key }}],
-                                render: function (data, type, full, meta) {
-                                    return ('<div class="form-check"> <input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
+                            targets: [{{ $key }}],
+                            render: function (data, type, full, meta) {
+                                return ('<div class="form-check"> <input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
                                 );
-                                    },
-                                checkboxes: {
+                            },
+                            checkboxes: {
                                 selectRow: true, // Отмечать чекбокс при клике на строке таблицы
                                 selectAllRender:
                                     '<div class="form-check"> <input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" /><label class="form-check-label" for="checkboxSelectAll"></label></div>'
-                                },
                             },
-                            @endif
+                        },
+                        @endif
                         @endforeach
                     ],
 
@@ -987,6 +986,7 @@
         #g-control .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
             width: 50% !important;
         }
+
         #g-control .dt-button-collection.dtb-collection-closeable {
             left: auto !important;
             right: 0;
@@ -1042,7 +1042,6 @@
     {{-- vendor css files --}}
     {{-- datatable --}}
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/last/datatables.css') }}">
-{{--    <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/full/datatables.css') }}">--}}
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
     {{-- datatable --}}
 
@@ -1066,7 +1065,6 @@
     {{-- DATATABLE --}}
     {{--<script src="{{ asset('vendors/js/tables/datatable/last/datatables.min.js') }}"></script>--}}
     <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
-{{--    <script src="{{ asset('vendors/js/tables/datatable/full/datatables.min.js') }}"></script>--}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
