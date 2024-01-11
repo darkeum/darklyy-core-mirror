@@ -461,13 +461,15 @@
                         let grid = new aGrid(api);
 
                         // ...
-                        data['order'].forEach(function (items, index) {
-                            data['order'][index]['column_name'] = data['columns'][items.column]['name'];
-                        });
+                        // data['order'].forEach(function (items, index) {
+                        //     data['order'][index]['column_name'] = data['columns'][items.column]['name'];
+                        // });
+
+                        data = grid.serverParams();
 
                         // LOAD
-                        grid.hideSearchInputs(api.columns().responsiveHidden().toArray()); // Скрытие полей поиска
-                        grid.loader(true); // Show Loader
+                        // grid.hideSearchInputs(api.columns().responsiveHidden().toArray()); // Скрытие полей поиска
+                        // grid.loader(true); // Show Loader
 
                     }, // END - fnServerParams
 
