@@ -462,7 +462,7 @@
                         // log('fnServerParams');
 
                         let api = this.api();
-                        let grid = new Grid(api);
+                        let grid = new aGrid(api);
 
                         //
                         data['order'].forEach(function (items, index) {
@@ -479,7 +479,7 @@
                     createdRow: function (row, data, dataIndex) {
 
                         let api = this.api();
-                        let grid = new Grid(api);
+                        let grid = new aGrid(api);
 
                         grid.createdRow(row, data, dataIndex);
 
@@ -494,7 +494,7 @@
                     drawCallback: function (settings) {
 
                         let api = this.api();
-                        let grid = new Grid(api);
+                        let grid = new aGrid(api);
 
                         grid.drawCallback(settings);
 
@@ -511,7 +511,7 @@
                         // console.log('fnInitComplete');
 
                         let api = this.api();
-                        let grid = new Grid(api);
+                        let grid = new aGrid(api);
 
                         // Установить css-класс заголовка таблицы
                         api.tables().header().to$().addClass('table-header');
@@ -753,7 +753,7 @@
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
             // Создаем Grid для функций вне событий DataTable
-            const grid = new Grid(table);
+            const grid = new aGrid(table);
 
             /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
             // Loader Grid JS - Загрузка одной функцией
@@ -1102,6 +1102,6 @@
 
 
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
-    <script src="{{ asset('js/scripts/custom/grid.js') }}"></script>
+    <script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>
 
 @endsection
