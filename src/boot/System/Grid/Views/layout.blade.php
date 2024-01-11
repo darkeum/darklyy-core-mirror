@@ -1,10 +1,12 @@
 {{-- Тело главного Grid --}}
 
 @php
-    function columns () {
-
+    function param (name, value = false) {
+        return name . ' ' . value;
     }
 @endphp
+
+{{ param('123', '123123123123123') }}
 
 <section>
     <div class="row">
@@ -347,8 +349,8 @@
 
                             @foreach ($cols as $key => $col){
 
-{{--                            @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif--}}
-                            {{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}
+                            @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
+                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
                             title: "{{ $col['title'] }}",
                             label: "{{ $col['label'] }}",
