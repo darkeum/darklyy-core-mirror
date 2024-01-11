@@ -1,12 +1,12 @@
 {{-- Тело главного Grid --}}
 
 @php
-    function param (name, value = false) {
-        return name . ' ' . value;
+    function params ($name, $value = false) {
+        return $name . ' ' . $value;
     }
 @endphp
 
-{{ param('123', '123123123123123') }}
+{{ params('123', '123123123123123') }}
 
 <section>
     <div class="row">
