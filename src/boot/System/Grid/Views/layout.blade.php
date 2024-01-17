@@ -470,10 +470,7 @@
                     // headerCallback: function (thead, data, start, end, display) {},
 
                     // #5 - Отрисовка
-                    drawCallback: function (settings, adsd) {
-
-                        console.log(settings);
-
+                    drawCallback: function (settings) {
                         let grid = new aGrid(this.api());
                         grid.drawCallback(settings);
                     },
