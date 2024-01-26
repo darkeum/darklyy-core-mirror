@@ -937,23 +937,11 @@
     {{-- Тестовый Style CSS - После разработки все пернести в Grid SCSS --}}
     <style>
 
-        table.dataTable th {
-            /*font-size: 0.7rem !important;*/
-        }
-
-        table.dataTable td {
-            position: relative;
-        }
-
-        table.dataTable td .badge-render i, table.dataTable td .badge-render svg {
-            margin-left: 3px;
-        }
-
-        .grid-control .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
+        .grid-controls .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
             width: 50% !important;
         }
 
-        .grid-control .dt-button-collection.dtb-collection-closeable {
+        .grid-controls .dt-button-collection.dtb-collection-closeable {
             left: auto !important;
             right: 0;
         }
