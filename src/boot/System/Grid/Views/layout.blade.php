@@ -136,18 +136,13 @@
 @push('scripts')
     <script type="text/javascript" data-info="Darklyy Grid Table - DataTable JS">
 
-        const g_gen = new UiCreator();
-        const log = function (data) {
-            return console.log(data)
-        }
-
-        // log(store.getAll())
-        // grid.log(store.getAll());
+        // const g_gen = new UiCreator(); // UI либа
+        // console.log(store.getAll())
 
         // Параметры до загрузки Grid
         // $.extend(true, $.fn.dataTable.defaults, {});
 
-        // Главный скрипт
+        // Главный скрипт DataTable
         $(document).ready(function () {
 
             /* *** ОТРИСОВКА ТАБЛИЦЫ *** */
@@ -270,14 +265,14 @@
                                             columns: [
                                                 @foreach ($cols as $key => $col)
                                                     @if($col['visible'] == true || $col['visible'] == 'true')
-                                                    @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
-                                                    {{$key}},
-                                                @endif
+                                                        @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
+                                                            {{$key}},
+                                                        @endif
                                                     @else
-                                                    @if($col['excel_only'] == true || $col['excel_only'] == 'true')
-                                                    {{$key}},
-                                                @endif
-                                                @endif
+                                                        @if($col['excel_only'] == true || $col['excel_only'] == 'true')
+                                                            {{$key}},
+                                                         @endif
+                                                    @endif
                                                 @endforeach
                                             ]
                                         }
@@ -348,11 +343,11 @@
                             @foreach ($cols as $key => $col){
 
                             @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
-                            title: "{{ $col['title'] }}",
-                            label: "{{ $col['label'] }}",
-                            name: "{{ $col['db'] }}",
+                            title: "{{ $col['title'] ?? '' }}",
+                            label: "{{ $col['label'] ?? '' }}",
+                            name: "{{ $col['db'] ?? '' }}",
 
                             width: "{{ $col['width'] }}",
                             visible: {{ $col['visible'] ? 'true' : 'false' }},
@@ -373,19 +368,14 @@
                                 {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
-
                                 {{-- WIP - Кастомные параметры для колонок - ДОВЕСТИ ДО УМА !!! --}}
                             configs: {
-                                {{--icon: "{{ $col['icon'] ?? false }}",--}}
-                                    {!! isset($col['icon']) ? 'icon: "' . $col['icon'] . '",' : false !!}
-                                    {{--tooltip: "{{ $col['tooltip'] ?? false }}",--}}
+                                {!! isset($col['icon']) ? 'icon: "' . $col['icon'] . '",' : false !!}
                                     {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
-                                    {{--popover: "{{ $col['popover'] }}",--}}
                                     {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
                                     {{--displayFormat: "{{ $col['format_date'] ?? false }}",--}}
                                     {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
                                 type: "{{ $col['type'] }}",
-                                {{--type: "{{ $col['type'] }}",--}}
                                 prefix: "{{ $col['prefix'] }}",
                             }
                             {{-- WIP - Кастомные параметры для колонок --}}
@@ -522,6 +512,47 @@
                                 switch (type) {
 
                                     // Выпадающий список
+                                    case 'select' :
+
+                                        const values = JSON.parse(option.options.value);
+                                        // Object.keys(values).forEach(function (item, index) {
+
+                                        let option_tpl = $('<option></option>');
+                                        option_tpl.attr({
+                                            'value': '__ALL_SELECT_GRID'
+                                        }).html('Все');
+                                        select_options.push(option_tpl);
+
+                                        $.each(values, function (index, item) {
+
+                                            // Создаем option'ы для select'а
+                                            let option = $('<option></option>');
+                                            option.attr({
+                                                // 'value': index, // Было
+                                                'value': index, // Не ставить value если 0 КОСТЫЛЬ
+                                            }).html(item);
+                                            select_options.push(option);
+                                        });
+
+                                        // Создаем select выпадающий список
+                                        select = $('<select></select>');
+                                        select.attr({
+                                            'id': option.data,
+                                            'class': 'form-select form-select-sm d-table-select-sm'
+                                        }).html(select_options);
+                                        $(this).append(select);
+
+                                        $('select', this).on('change', function () {
+                                            if (table.column(option.idx).search() !== this.value) {
+                                                table.column(option.idx).search(this.value).draw();
+                                                // console.log(option.idx)
+                                                // console.log(this.value)
+                                            }
+                                        });
+
+                                        break;
+
+                                    // Выпадающий список - Select2.js
                                     case 'select2' :
                                         // let select_options = [];
                                         option.options.value.split(';').forEach(function (items, index) {
@@ -546,45 +577,6 @@
                                         $('select', this).on('change', function () {
                                             if (table.column(option.idx).search() !== this.value) {
                                                 table.column(option.idx).search(this.value).draw();
-                                            }
-                                        });
-
-                                        break;
-
-                                    case 'select' :
-
-                                        const values = JSON.parse(option.options.value);
-                                        // Object.keys(values).forEach(function (item, index) {
-
-                                        let option_tpl = $('<option></option>');
-                                        option_tpl.attr({
-                                            'value': '__ALL_SELECT_GRID'
-                                        }).html('Все');
-                                        select_options.push(option_tpl);
-                                        $.each(values, function (index, item) {
-
-                                            // Создаем option'ы для select'а
-                                            let option = $('<option></option>');
-                                            option.attr({
-                                                // 'value': index, // Было
-                                                'value': index, // Не ставить value если 0 КОСТЫЛЬ
-                                            }).html(item);
-                                            select_options.push(option);
-                                        });
-
-                                        // Создаем select выпадающий список
-                                        select = $('<select></select>');
-                                        select.attr({
-                                            'id': option.data,
-                                            'class': 'form-select form-select-sm d-table-select-sm'
-                                        }).html(select_options);
-                                        $(this).append(select);
-
-                                        $('select', this).on('change', function () {
-                                            if (table.column(option.idx).search() !== this.value) {
-                                                table.column(option.idx).search(this.value).draw();
-                                                console.log(option.idx)
-                                                console.log(this.value)
                                             }
                                         });
 
@@ -957,17 +949,13 @@
             margin-left: 3px;
         }
 
-        #g-control .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
+        .grid-control .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
             width: 50% !important;
         }
 
-        #g-control .dt-button-collection.dtb-collection-closeable {
+        .grid-control .dt-button-collection.dtb-collection-closeable {
             left: auto !important;
             right: 0;
-        }
-
-        .grid-container .dataTables_scrollBody table {
-            z-index: 0 !important;
         }
 
         {{-- CSS render-class --}}
