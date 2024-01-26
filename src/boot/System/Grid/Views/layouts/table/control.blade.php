@@ -1,4 +1,4 @@
-<div id="grid-controls" class="grid-controls btn-group position-inherit ">
+<div id="aGrid-controls" class="aGrid-controls btn-group position-inherit ">
     {{--<button class="btn btn-sm btn-outline-secondary">Фильтр</button>--}}
     {{-- Кнопки будут тут --}}
 </div>

@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-12">
 
-            <div class="card grid-container">
+            <div class="card aGrid-container">
                 <div class="card-header py-1">
 
                     {{-- Заголовок --}}
@@ -61,7 +61,7 @@
                     @endphp
 
                     {{-- Заголовки столбцов --}}
-                    <tr class="grid-titles">
+                    <tr class="aGrid-titles">
                         @foreach ($cols as $k => $col)
 
                             {{--<th rowspan="{{ (array_key_last($cols) == $k and $col['type'] == 'actions' and $col['type'] == 'checkbox') ? 2 : 1 }}"--}}
@@ -206,7 +206,7 @@
                             },
                             collection: {
                                 tag: 'div',
-                                className: 'dropdown-menu d-inline grid-container-collection',
+                                className: 'dropdown-menu d-inline aGrid-container-collection',
                                 closeButton: false,
                                 button: {
                                     tag: 'a',
@@ -495,7 +495,7 @@
 
                         // WIP - ПЕРЕДЕЛАТЬ!
                         api.tables().header().to$().children('tr.grid-filters').children().each(function (i) { // #3 - Новый
-                            // $('.grid-container table .grid-filters th').each(function (i) { // #2 - Рабочий
+                            // $('.aGrid-container table .grid-filters th').each(function (i) { // #2 - Рабочий
 
                             let option = (options[i]) ? options[i] : false;
                             let placeholder = option.label;
@@ -830,9 +830,9 @@
             // Обработка события по (+) (Разворачивание скрытого)
             // .on('click', 'tr td.dtr-control', function () {})
 
-            // Обработка Кликов вне блока grid-container
+            // Обработка Кликов вне блока aGrid-container
             $(document).on('click', function (e) {
-                if (!$(e.target).closest(".grid-container, ul.context-menu-list, .toast-player-container").length) {
+                if (!$(e.target).closest(".aGrid-container, ul.context-menu-list, .toast-player-container").length) {
                     table.$('tr.selected').toggleClass('selected');
                 }
                 // return;
@@ -937,11 +937,11 @@
     {{-- Тестовый Style CSS - После разработки все пернести в Grid SCSS --}}
     <style>
 
-        .grid-controls .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
+        .aGrid-controls .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
             width: 50% !important;
         }
 
-        .grid-controls .dt-button-collection.dtb-collection-closeable {
+        .aGrid-controls .dt-button-collection.dtb-collection-closeable {
             left: auto !important;
             right: 0;
         }

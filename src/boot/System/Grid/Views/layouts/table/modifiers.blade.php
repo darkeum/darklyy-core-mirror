@@ -1,5 +1,5 @@
 {{-- Модификаторы таблицы --}}
-<button id="g-modifier"
+<button id="aGrid-modifier"
         type="button"
         class="btn btn-icon btn-flat-secondary waves-effect"
         title="Модификаторы таблицы"
@@ -11,7 +11,7 @@
 </button>
 
 {{-- Параметры таблицы --}}
-<div id="g-modifiers" class="d-none">
+<div id="aGrid-modifiers" class="d-none">
 
     <ul class="list-group search-options-popover-content">
 
