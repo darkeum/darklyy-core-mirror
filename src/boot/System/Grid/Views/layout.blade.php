@@ -11,7 +11,7 @@
         <div class="col-12">
 
             <div class="card aGrid-container">
-                <div class="card-header py-1 pe-50">
+                <div class="card-header py-50 pe-50">
 
                     {{-- Заголовок --}}
                     <div class="col-12 col-xl-6">
