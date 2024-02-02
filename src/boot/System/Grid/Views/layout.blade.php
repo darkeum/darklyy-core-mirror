@@ -933,58 +933,6 @@
 @endpush
 
 @section('page-style')
-
-    {{-- Тестовый Style CSS - После разработки все пернести в Grid SCSS --}}
-    <style>
-
-        .aGrid-controls .dt-button-collection.dtb-collection-closeable:has(.search-builder-custom) {
-            width: 50% !important;
-        }
-
-        .aGrid-controls .dt-button-collection.dtb-collection-closeable {
-            left: auto !important;
-            right: 0;
-        }
-
-        {{-- CSS render-class --}}
-          table.dataTable > tbody > tr > td > input.render-class {
-            border-color: transparent;
-            background: transparent;
-            text-overflow: ellipsis;
-        }
-
-        table.dataTable > tbody > tr.selected > td > input.render-class {
-            /*border: 1px solid #ffffff52;*/
-            color: white;
-            box-shadow: none;
-        }
-
-        {{-- CSS render-class --}}
-
-        @media (max-width: 575.98px) {
-            div.dataTables_wrapper {
-                overflow: hidden !important;
-            }
-        }
-
-        div.dataTables_wrapper .dt-button-collection > div.dtsb-searchBuilder[role=menu] {
-            display: block;
-            transform: none;
-            box-shadow: none;
-        }
-
-        div.dtb-popover-close {
-            top: 2px;
-            right: 2px;
-        }
-
-        .search-builder-custom .dtsb-inputCont select, .search-builder-custom .dtsb-inputCont input {
-            height: 100%;
-        }
-
-    </style>
-    {{-- Тестовый Style CSS - После разработки все пернести в Grid SCSS --}}
-
 @endsection
 
 @section('vendor-style')
