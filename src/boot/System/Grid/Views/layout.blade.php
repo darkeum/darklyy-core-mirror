@@ -15,13 +15,13 @@
 
                     {{-- Заголовок --}}
                     <div class="col-12 col-xl-6">
-                        <h4 class="card-title">{{ $title }}</h4>
+                        <h4 class="card-title aGrid-container-title">{{ $title }}</h4>
                     </div>
                     {{-- Заголовок --}}
 
                     {{-- Панель поиска и параметров --}}
                     <div class="col-12 col-xl-6">
-                        <div class="aGrid-toolbar btn-toolbar justify-content-end">
+                        <div class="btn-toolbar justify-content-end aGrid-toolbar">
 
                             {{-- Поле поиска --}}
                             @include('grid::layouts.toolbar.search')
@@ -48,7 +48,7 @@
                 </div>
 
                 <table id="{{ $data['id'] }}"
-                       class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} grid-table"
+                       class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} aGrid-table"
                 >
                     {{-- Table Header --}}
                     <thead class="">
