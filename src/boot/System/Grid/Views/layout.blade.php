@@ -51,7 +51,7 @@
                        class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} aGrid-table"
                 >
                     {{-- Table Header --}}
-                    <thead class="">
+                    <thead class="{{--d-none--}}">
 
                     @php
                         function ignored ($type):bool {
@@ -231,7 +231,8 @@
                                 @if ($nav['export'])
                             {
                                 extend: 'collection',
-                                text: feather.icons['share'].toSvg({class: 'font-small-4 me-50'}) + 'Экспорт',
+                                // text: feather.icons['share'].toSvg({class: 'font-small-4 me-50'}) + 'Экспорт',
+                                text: '<i class="feather-share font-small-4 me-50">' + 'Экспорт',
                                 className: 'btn-outline-secondary dropdown-toggle',
                                 align: 'button-right',
                                 attr: {
@@ -462,6 +463,7 @@
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
                         let grid = new aGrid(this.api());
+                        // $(this.api().table().header()).removeClass('d-none');
                         grid.drawCallback(settings);
                     },
 
