@@ -11,7 +11,7 @@
         <div class="col-12">
 
             <div class="card aGrid-container">
-                <div class="card-header py-1">
+                <div class="card-header py-1 pe-50">
 
                     {{-- Заголовок --}}
                     <div class="col-12 col-xl-6">
@@ -21,14 +21,14 @@
 
                     {{-- Панель поиска и параметров --}}
                     <div class="col-12 col-xl-6">
-                        <div class="btn-toolbar justify-content-end">
+                        <div class="aGrid-toolbar btn-toolbar justify-content-end">
 
                             {{-- Поле поиска --}}
-                            @include('grid::layouts.table.search')
+                            @include('grid::layouts.toolbar.search')
                             {{-- Поле поиска --}}
 
                             {{-- Кнопки управления --}}
-                            @include('grid::layouts.table.control')
+                            @include('grid::layouts.toolbar.control')
                             {{-- Кнопки управления --}}
 
                             {{-- Место под свои кнопки --}}
@@ -38,7 +38,7 @@
                             {{-- Место под свои кнопки --}}
 
                             {{-- Модификаторы таблицы --}}
-                            @include('grid::layouts.table.modifiers')
+                            @include('grid::layouts.toolbar.modifiers')
                             {{-- Модификаторы таблицы --}}
 
                         </div>
