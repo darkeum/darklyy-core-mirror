@@ -77,7 +77,7 @@
                     {{-- Заголовки столбцов --}}
 
                     {{-- Поля поиска столбцов --}}
-                    <tr class="grid-filters">
+                    <tr class="aGrid-filters">
                         @foreach ($cols as $k => $col)
                             {{--@if(array_key_last($cols) !== $k or $col['type'] !== 'actions' or $col['type'] !== 'checkbox')--}}
                             @if(!ignored($col['type']))
@@ -497,8 +497,8 @@
                         // console.log(options)
 
                         // WIP - ПЕРЕДЕЛАТЬ!
-                        api.tables().header().to$().children('tr.grid-filters').children().each(function (i) { // #3 - Новый
-                            // $('.aGrid-container table .grid-filters th').each(function (i) { // #2 - Рабочий
+                        api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) { // #3 - Новый
+                            // $('.aGrid-container table .aGrid-filters th').each(function (i) { // #2 - Рабочий
 
                             let option = (options[i]) ? options[i] : false;
                             let placeholder = option.label;
@@ -710,7 +710,7 @@
                         });
 
                         // ### LOAD
-                        grid.select2($(".grid-filters th select")); // Использование select2
+                        grid.select2($(".aGrid-filters th select")); // Использование select2
                         // grid.loader(false); // Hide Loader
 
                     } //  END - fnInitComplete
