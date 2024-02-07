@@ -232,7 +232,7 @@
                             {
                                 extend: 'collection',
                                 // text: feather.icons['share'].toSvg({class: 'font-small-4 me-50'}) + 'Экспорт',
-                                text: '<i class="feather-share font-small-4 me-50">' + 'Экспорт',
+                                text: '<i class="feather-share font-small-4 me-50">' + 'Экспорт' + '</i>',
                                 className: 'btn-outline-secondary dropdown-toggle',
                                 align: 'button-right',
                                 attr: {
