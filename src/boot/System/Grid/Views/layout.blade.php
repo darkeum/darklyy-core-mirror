@@ -223,7 +223,8 @@
                         buttons: [
                             {
                                 extend: 'searchBuilder',
-                                text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
+                                // text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
+                                text: '<i class="feather-plus font-small-4 me-50">' + 'Расширенный поиск' + '</i>',
                                 className: 'btn-outline-secondary',
                                 align: 'button-right',
                                 background: false,
