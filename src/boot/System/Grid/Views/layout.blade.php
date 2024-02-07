@@ -224,7 +224,7 @@
                             {
                                 extend: 'searchBuilder',
                                 // text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
-                                text: '<i class="feather-plus font-small-4 me-50">' + 'Расширенный поиск' + '</i>',
+                                text: '<i class="feather-plus font-small-4 me-50"></i>' + 'Расширенный поиск',
                                 className: 'btn-outline-secondary',
                                 align: 'button-right',
                                 background: false,
@@ -233,7 +233,7 @@
                             {
                                 extend: 'collection',
                                 // text: feather.icons['share'].toSvg({class: 'font-small-4 me-50'}) + 'Экспорт',
-                                text: '<i class="feather-share font-small-4 me-50">' + 'Экспорт' + '</i>',
+                                text: '<i class="feather-share font-small-4 me-50"></i>' + 'Экспорт',
                                 className: 'btn-outline-secondary dropdown-toggle',
                                 align: 'button-right',
                                 attr: {
