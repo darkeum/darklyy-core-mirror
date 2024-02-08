@@ -267,14 +267,14 @@
                                             columns: [
                                                 @foreach ($cols as $key => $col)
                                                     @if($col['visible'] == true || $col['visible'] == 'true')
-                                                        @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
-                                                            {{$key}},
-                                                        @endif
+                                                    @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
+                                                    {{$key}},
+                                                @endif
                                                     @else
-                                                        @if($col['excel_only'] == true || $col['excel_only'] == 'true')
-                                                            {{$key}},
-                                                         @endif
-                                                    @endif
+                                                    @if($col['excel_only'] == true || $col['excel_only'] == 'true')
+                                                    {{$key}},
+                                                @endif
+                                                @endif
                                                 @endforeach
                                             ]
                                         }
@@ -411,15 +411,21 @@
                             @foreach ($cols as $key => $col)
                             @if($col['type'] == 'checkbox'){
                             targets: [{{ $key }}],
+                            // className: '',
+                            // render: function (data, type, full, meta) {
+                            //     return ('<div class="form-check"><input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
+                            //     );
+                            // },
                             render: function (data, type, full, meta) {
-                                return ('<div class="form-check"><input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
-                                );
+                                return ('<input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" />');
                             },
                             checkboxes: {
-                                selectRow: true, // Отмечать чекбокс при клике на строке таблицы
-                                selectAllRender:
-                                    '<div class="form-check"><input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" /><label class="form-check-label" for="checkboxSelectAll"></label></div>'
+                                // selectRow: true, // Отмечать чекбокс при клике на строке таблицы
+                                // selectAllRender:
+                                //     '<div class="form-check"><input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" /><label class="form-check-label" for="checkboxSelectAll"></label></div>'
+                                selectAllRender: '<input class="form-check-input" type="checkbox" value="" id="checkboxSelectAll" />'
                             },
+
                         },
                         @endif
                         @endforeach
