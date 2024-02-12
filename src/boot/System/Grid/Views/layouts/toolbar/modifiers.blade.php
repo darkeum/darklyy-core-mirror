@@ -1,7 +1,7 @@
 {{-- Модификаторы таблицы --}}
 <button id="aGrid-modifier"
         type="button"
-        class="btn btn-sm btn-icon btn-flat-secondary waves-effect"
+        class="btn btn-sm btn-icon btn-flat-secondary waves-effect aGrid-modifier"
         title="Модификаторы таблицы"
         {{--data-bs-original-title="Модификаторы таблицы"--}}
         {{--data-bs-toggle="tooltip"--}}
