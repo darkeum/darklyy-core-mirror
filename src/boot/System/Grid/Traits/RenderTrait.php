@@ -53,7 +53,7 @@ trait RenderTrait
 
         // Структура элементов DOM
         if (!isset($data['options']['dom'])) {
-            $data['dom'] = '<"dt-action-buttons"f B>t<"d-flex justify-content-between mx-0 p-50 row dt-footer"<"text-start"i><"d-none"p>>';
+            $data['dom'] = '<"dt-action-buttons"f B>t<"d-flex justify-content-between mx-0 p-0 row dt-footer"<"text-start"i><"d-none"p>>';
         } else {
             $data['dom'] = $data['options']['dom'];
         }
