@@ -971,7 +971,7 @@
     <script src="{{ asset('vendors/js/moment/moment.min.js') }}"></script>
 
     {{-- DATATABLE --}}
-    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.min.js') }}"></script>
+    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
     {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
 
