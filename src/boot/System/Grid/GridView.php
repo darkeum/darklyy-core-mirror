@@ -41,4 +41,9 @@ class GridView
         return view($path, $params)->render();
     }
 
+    public static function modifiers ()
+    {
+        return view('grid::layouts.toolbar.modifiers.list')->render();
+    }
+
 }

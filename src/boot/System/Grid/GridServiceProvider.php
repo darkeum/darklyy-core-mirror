@@ -121,11 +121,14 @@ class GridServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        Route::get('/grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
-        Route::get('/grid/grid.css', [GridAssets::class, 'style'])->name('grid.source.css');
+        Route::get('grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
+        Route::get('grid/grid.css', [GridAssets::class, 'style'])->name('grid.source.css');
         Route::group($this->getRouteGroup(), function ($router) {
-            Route::any('/grid/{id}', [GridController::class, 'index'])->name('grid.index');
+            Route::any('grid/{id}', [GridController::class, 'index'])->name('grid.index');
         });
+
+        // Модификаторы
+        Route::get('grid/views/modifiers', [GridView::class, 'modifiers'])->name('grid.view.modifiers');
     }
 
     /**
