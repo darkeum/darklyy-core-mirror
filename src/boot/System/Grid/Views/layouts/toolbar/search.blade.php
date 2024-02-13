@@ -1,7 +1,8 @@
 <div id="aGrid-search" class="input-group">
-    <div class="input-group-text">
+
+    <a class="input-group-text">
         {{--<i data-feather="search"></i>--}}
         <i class="feather-search"></i>
-    </div>
+    </a>
     {{-- Поле поиска будет тут --}}
 </div>
