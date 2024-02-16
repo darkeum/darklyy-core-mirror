@@ -136,7 +136,7 @@
 @push('scripts')
     <script type="text/javascript" data-info="Darklyy Grid Table - DataTable JS">
 
-        // const g_gen = new UiCreator(); // UI либа
+        const g_gen = new UiCreator(); // UI либа
         // console.log(store.getAll())
 
         // Параметры до загрузки Grid
@@ -972,8 +972,8 @@
 
     {{-- DATATABLE --}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
-    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
-    {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
+    {{--<script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>--}}
+    <script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.responsive.min.js')) }}"></script>
