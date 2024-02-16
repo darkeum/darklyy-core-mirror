@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-12">
 
-            <div class="card aGrid-container">
+            <div class="card aGrid-container" data-module-name="{{ Request::segment(3) }}">
                 <div class="card-header py-50 pe-50">
 
                     {{-- Заголовок --}}
@@ -454,13 +454,13 @@
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
-                        let grid = new aGrid(this.api());
+                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
                         data = grid.serverParams(data);
                     },
 
                     // #3 - Создание строк в таблице
                     createdRow: function (row, data, dataIndex) {
-                        let grid = new aGrid(this.api());
+                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
                         grid.createdRow(row, data, dataIndex);
                     },
 
@@ -469,7 +469,7 @@
 
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
-                        let grid = new aGrid(this.api());
+                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
                         // $(this.api().table().header()).removeClass('d-none');
                         grid.drawCallback(settings);
                     },
@@ -483,7 +483,7 @@
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
                         let api = this.api();
-                        let grid = new aGrid(api);
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ
 
                         // Установить css-класс заголовка таблицы
                         api.tables().header().to$().addClass('table-header');
@@ -727,7 +727,7 @@
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
             // Создаем Grid для функций вне событий DataTable
-            const grid = new aGrid(table);
+            const grid = new aGrid(table); // ПЕРЕДЕЛАТЬ
 
             /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
             // Loader Grid JS - Загрузка одной функцией
