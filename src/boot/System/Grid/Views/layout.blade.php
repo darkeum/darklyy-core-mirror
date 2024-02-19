@@ -38,7 +38,7 @@
                             {{-- Место под свои кнопки --}}
 
                             {{-- Модификаторы таблицы --}}
-                            @include('grid::layouts.toolbar.modifiers.button')
+                            @include('grid::layouts.toolbar.mods.button')
                             {{-- Модификаторы таблицы --}}
 
                         </div>

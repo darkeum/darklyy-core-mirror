@@ -128,7 +128,7 @@ class GridServiceProvider extends ServiceProvider
         });
 
         // Модификаторы
-        Route::get('grid/views/modifiers', [GridView::class, 'modifiers'])->name('grid.view.modifiers');
+        Route::get('grid/views/mods', [GridView::class, 'mods'])->name('grid.view.mods');
     }
 
     /**

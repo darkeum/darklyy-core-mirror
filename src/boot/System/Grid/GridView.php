@@ -48,9 +48,9 @@ class GridView
      * # Модификаторы в Grid
      * @throws Throwable
      */
-    public static function modifiers (): string
+    public static function mods (): string
     {
-        return view('grid::layouts.toolbar.modifiers.list')->render();
+        return view('grid::layouts.toolbar.mods.list')->render();
     }
 
 }

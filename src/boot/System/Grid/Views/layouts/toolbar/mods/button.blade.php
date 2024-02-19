@@ -1,9 +1,9 @@
 {{-- Модификаторы таблицы --}}
 <button type="button"
-        id="aGrid-modifiers-button"
-        class="btn btn-sm btn-icon btn-flat-secondary waves-effect aGrid-modifiers-button"
+        id="aGrid-mods-button"
+        class="btn btn-sm btn-icon btn-flat-secondary waves-effect aGrid-mods-button"
         title="Модификаторы таблицы"
-        data-content="{{ route('grid.view.modifiers') }}"
+        data-content="{{ route('grid.view.mods') }}"
     {{--data-bs-original-title="Модификаторы таблицы"--}}
     {{--data-bs-toggle="tooltip"--}}
     {{--data-bs-placement="left"--}}
