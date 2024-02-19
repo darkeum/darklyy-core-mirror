@@ -2,6 +2,8 @@
 
 namespace Boot\System\Grid;
 
+use Throwable;
+
 class GridView
 {
     protected $namespace;
@@ -41,7 +43,12 @@ class GridView
         return view($path, $params)->render();
     }
 
-    public static function modifiers ()
+    /**
+     * @return string
+     * # Модификаторы в Grid
+     * @throws Throwable
+     */
+    public static function modifiers (): string
     {
         return view('grid::layouts.toolbar.modifiers.list')->render();
     }

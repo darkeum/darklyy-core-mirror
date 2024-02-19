@@ -1,5 +1,5 @@
 {{-- Параметры таблицы --}}
-<ul class="list-group search-options-popover-content new">
+<ul class="list-group search-options-popover-content">
 
     {{-- Блокировка прокрутки таблицы --}}
     <li class="list-group-item d-flex align-items-center">
