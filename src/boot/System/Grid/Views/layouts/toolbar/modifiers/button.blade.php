@@ -1,6 +1,7 @@
 {{-- Модификаторы таблицы --}}
 <button type="button"
-        class="btn btn-sm btn-icon btn-flat-secondary waves-effect aGrid-modifiers-button"
+        id="aGrid-modifiers-button"
+        class="btn btn-sm btn-icon btn-flat-secondary waves-effect"
         title="Модификаторы таблицы"
         data-html="{{ route('grid.view.modifiers') }}"
     {{--data-bs-original-title="Модификаторы таблицы"--}}
