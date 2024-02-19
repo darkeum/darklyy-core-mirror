@@ -7,9 +7,7 @@
         <span class="ms-auto">
                 <div class="form-check form-check-primary form-switch">
                     <input class="form-check-input search-options-anchor"
-                           name="aGrid-blocked" type="checkbox"
-                           id="aGrid-blocked"
-                           data-aGrid-modifier="blocked"
+                           name="blocked" type="checkbox"
                            title="Блокировка прокрутки страницы когда курсор над таблицей"
                     />
                 </div>
@@ -23,9 +21,7 @@
         <span class="ms-auto">
                 <div class="form-check form-check-primary form-switch">
                     <input class="form-check-input search-options-anchor"
-                           name="aGrid-visible" type="checkbox"
-                           id="aGrid-visible"
-                           data-aGrid-modifier="visible"
+                           name="visible" type="checkbox"
                            title="Быстрый просмотр строки"
                     />
                 </div>
