@@ -558,7 +558,8 @@
 
                                         break;
 
-                                    // Выпадающий список - Select2.js
+                                    // Выпадающий список - Select2.js // ПОКА НЕ ИСПОЛЬЗУЕТСЯ В ПРОЕКТЕ (Старый вариант данных)
+                                    /*/
                                     case 'select2' :
                                         // console.log(col.options.value.split(';'))
                                         col.options.value.split(';').forEach(function (items, index) {
@@ -587,6 +588,7 @@
                                         });
 
                                         break;
+                                    /**/
 
                                     // Даты - WIP ПЕРЕДЕЛАТЬ !!!
                                     case 'date_range':
