@@ -506,15 +506,15 @@
                         api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) { // #3 - Новый
                             // $('.aGrid-container table .aGrid-filters th').each(function (i) { // #2 - Рабочий
 
-                            let option = (options[i]) ? options[i] : false;
-                            let placeholder = option.label;
-                            let type = option.type;
+                            let col = (options[i]) ? options[i] : false;
+                            let placeholder = col.label;
+                            let type = col.type;
 
-                            // console.log(option);
+                            // console.log(col);
                             // console.log(type);
 
                             // Генерация полей для поиска и сортировки
-                            if (option.searchable) {
+                            if (col.searchable) {
 
                                 // Типы полей на switch - Добавление типов полей для Grid
                                 let input, select, select_options = [];
@@ -523,7 +523,7 @@
                                     // Выпадающий список
                                     case 'select' :
 
-                                        let values = JSON.parse(option.options.value);
+                                        let values = JSON.parse(col.options.value);
 
                                         let option_tpl = $('<option></option>');
                                         option_tpl.attr({
@@ -536,7 +536,6 @@
                                             // Создаем option'ы для select'а
                                             let option = $('<option></option>');
                                             option.attr({
-                                                // 'value': index, // Было
                                                 'value': index, // Не ставить value если 0 КОСТЫЛЬ
                                             }).html(item);
                                             select_options.push(option);
@@ -545,15 +544,15 @@
                                         // Создаем select выпадающий список
                                         select = $('<select></select>');
                                         select.attr({
-                                            'id': option.data,
+                                            'id': col.data,
                                             'class': 'form-select form-select-sm'
                                         }).html(select_options);
                                         $(this).append(select);
 
                                         $('select', this).on('change', function () {
-                                            if (table.column(option.idx).search() !== this.value) {
-                                                table.column(option.idx).search(this.value).draw();
-                                                // console.log(option.idx)
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
+                                                // console.log(col.idx)
                                                 // console.log(this.value)
                                             }
                                         });
@@ -563,7 +562,7 @@
                                     // Выпадающий список - Select2.js
                                     case 'select2' :
                                         // let select_options = [];
-                                        option.options.value.split(';').forEach(function (items, index) {
+                                        col.options.value.split(';').forEach(function (items, index) {
                                             let item = items.split(':');
 
                                             // Создаем option'ы для select'а
@@ -577,14 +576,14 @@
                                         // Создаем select выпадающий список
                                         select = $('<select></select>');
                                         select.attr({
-                                            'id': option.data,
+                                            'id': col.data,
                                             'class': 'form-select form-select-sm d-table-select-sm'
                                         }).html(select_options);
                                         $(this).append(select);
 
                                         $('select', this).on('change', function () {
-                                            if (table.column(option.idx).search() !== this.value) {
-                                                table.column(option.idx).search(this.value).draw();
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
                                             }
                                         });
 
@@ -596,22 +595,22 @@
                                         input = $('<input />');
                                         input.attr({
                                             'type': 'text',
-                                            'id': 'date-range-' + option.data,
+                                            'id': 'date-range-' + col.data,
                                             'class': 'form-control form-control-sm flatpickr-range',
                                             'placeholder': placeholder
                                         });
                                         $(this).append(input);
 
                                         flatpickr.localize(flatpickr.l10ns.{!! app()->getLocale() !!});
-                                        let rangePicker = $('#date-range-' + option.data);
+                                        let rangePicker = $('#date-range-' + col.data);
 
                                         if (rangePicker.length) {
                                             rangePicker.flatpickr({
                                                 mode: 'range',
-                                                enableTime: option.configs.displayFormat.includes(' '), // Проверка пробела чтобы понять нужна ли дата
+                                                enableTime: col.configs.displayFormat.includes(' '), // Проверка пробела чтобы понять нужна ли дата
                                                 // noCalendar: true,
                                                 time_24hr: true,
-                                                dateFormat: option.configs.displayFormat, // Формат даты
+                                                dateFormat: col.configs.displayFormat, // Формат даты
                                                 // positionElement: '',
                                                 locale: {
                                                     rangeSeparator: ' - '
@@ -622,7 +621,7 @@
                                                     }
                                                     if (selectedDates[1] != undefined) {
                                                         // $(instance.input).addClass('text-center');
-                                                        // console.log(table.column(option.idx));
+                                                        // console.log(table.column(col.idx));
                                                     }
 
                                                     // title к полям выбора даты
@@ -653,8 +652,8 @@
                                                     }
                                                     $(rangePicker).trigger('change').trigger('keyup');
 
-                                                    // if (table.column(option.idx).search() !== this.value) {
-                                                    //     table.column(option.idx).search(this.value).draw();
+                                                    // if (table.column(col.idx).search() !== this.value) {
+                                                    //     table.column(col.idx).search(this.value).draw();
                                                     // }
 
                                                 },
@@ -667,8 +666,8 @@
                                         // $('input', this).on('keypress', function (e) {
                                         //     if (e.which === 13) {
                                         //         $(this).attr("disabled", "disabled");
-                                        //         if (table.column(option.idx).search() !== this.value) {
-                                        //             table.column(option.idx).search(this.value).draw();
+                                        //         if (table.column(col.idx).search() !== this.value) {
+                                        //             table.column(col.idx).search(this.value).draw();
                                         //         }
                                         //         $(this).removeAttr("disabled");
                                         //     }
@@ -676,8 +675,8 @@
 
                                         $('input', this).on('change', function () {
                                             $(this).attr('disabled', 'disabled');
-                                            if (table.column(option.idx).search() !== this.value) {
-                                                table.column(option.idx).search(this.value).draw();
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
                                             }
                                             $(this).removeAttr('disabled');
                                         });
@@ -690,7 +689,7 @@
                                         input = $('<input />');
                                         input.attr({
                                             'type': 'text',
-                                            'id': option.data,
+                                            'id': col.data,
                                             'class': 'form-control form-control-sm',
                                             'placeholder': placeholder,
                                         });
@@ -699,8 +698,8 @@
                                         $('input', this).on('keypress', function (e) {
                                             if (e.which === 13) {
                                                 $(this).attr("disabled", "disabled");
-                                                if (table.column(option.idx).search() !== this.value) {
-                                                    table.column(option.idx).search(this.value).draw();
+                                                if (table.column(col.idx).search() !== this.value) {
+                                                    table.column(col.idx).search(this.value).draw();
                                                 }
                                                 $(this).removeAttr("disabled");
                                             }
