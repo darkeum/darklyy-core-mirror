@@ -547,7 +547,7 @@
                                         select = $('<select></select>');
                                         select.attr({
                                             'id': option.data,
-                                            'class': 'form-select form-select-sm d-table-select-sm'
+                                            'class': 'form-select form-select-sm'
                                         }).html(select_options);
                                         $(this).append(select);
 
@@ -613,7 +613,7 @@
                                                 // noCalendar: true,
                                                 time_24hr: true,
                                                 dateFormat: option.configs.displayFormat, // Формат даты
-
+                                                positionElement: '',
                                                 locale: {
                                                     rangeSeparator: ' - '
                                                 },
@@ -661,7 +661,7 @@
 
                                                 },
                                                 onReady: function (_, __, fp) {
-                                                    fp.calendarContainer.classList.add("grid-pack");
+                                                    fp.calendarContainer.classList.add('flatpickr-calendar-grid');
                                                 }
                                             });
                                         }
@@ -972,8 +972,8 @@
 
     {{-- DATATABLE --}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
-    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
-    {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
+    {{--<script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>--}}
+    <script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.responsive.min.js')) }}"></script>
