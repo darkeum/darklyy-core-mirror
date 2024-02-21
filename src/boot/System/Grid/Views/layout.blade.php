@@ -613,7 +613,7 @@
                                                 // noCalendar: true,
                                                 time_24hr: true,
                                                 dateFormat: option.configs.displayFormat, // Формат даты
-                                                positionElement: '',
+                                                // positionElement: '',
                                                 locale: {
                                                     rangeSeparator: ' - '
                                                 },
@@ -623,7 +623,6 @@
                                                     }
                                                     if (selectedDates[1] != undefined) {
                                                         // $(instance.input).addClass('text-center');
-
                                                         // console.log(table.column(option.idx));
                                                     }
 
@@ -661,7 +660,7 @@
 
                                                 },
                                                 onReady: function (_, __, fp) {
-                                                    fp.calendarContainer.classList.add('flatpickr-calendar-grid');
+                                                    // fp.calendarContainer.classList.add('flatpickr-calendar');
                                                 }
                                             });
                                         }
