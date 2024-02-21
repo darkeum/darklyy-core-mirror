@@ -523,8 +523,7 @@
                                     // Выпадающий список
                                     case 'select' :
 
-                                        const values = JSON.parse(option.options.value);
-                                        // Object.keys(values).forEach(function (item, index) {
+                                        let values = JSON.parse(option.options.value);
 
                                         let option_tpl = $('<option></option>');
                                         option_tpl.attr({
@@ -676,11 +675,11 @@
                                         // });
 
                                         $('input', this).on('change', function () {
-                                            $(this).attr("disabled", "disabled");
+                                            $(this).attr('disabled', 'disabled');
                                             if (table.column(option.idx).search() !== this.value) {
                                                 table.column(option.idx).search(this.value).draw();
                                             }
-                                            $(this).removeAttr("disabled");
+                                            $(this).removeAttr('disabled');
                                         });
 
                                         break;
