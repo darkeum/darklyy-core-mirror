@@ -506,30 +506,29 @@
                         api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) { // #3 - Новый
                             // $('.aGrid-container table .aGrid-filters th').each(function (i) { // #2 - Рабочий
 
+                            // Все от столбца в COL
                             let col = (options[i]) ? options[i] : false;
-                            let placeholder = col.label;
-                            let type = col.type;
-
+                            col.placeholder = col.label; // Добавим placeholder
                             // console.log(col);
-                            // console.log(type);
+                            // console.log(col.type);
 
                             // Генерация полей для поиска и сортировки
                             if (col.searchable) {
 
                                 // Типы полей на switch - Добавление типов полей для Grid
                                 let input, select, select_options = [];
-                                switch (type) {
+                                switch (col.type) {
 
                                     // Выпадающий список
                                     case 'select' :
 
                                         let values = JSON.parse(col.options.value);
+                                        let option = $('<option></option>');
 
-                                        let option_tpl = $('<option></option>');
-                                        option_tpl.attr({
+                                        option.attr({
                                             'value': '__ALL_SELECT_GRID'
                                         }).html('Все');
-                                        select_options.push(option_tpl);
+                                        select_options.push(option);
 
                                         $.each(values, function (index, item) {
 
@@ -561,7 +560,7 @@
 
                                     // Выпадающий список - Select2.js
                                     case 'select2' :
-                                        // let select_options = [];
+                                        // console.log(col.options.value.split(';'))
                                         col.options.value.split(';').forEach(function (items, index) {
                                             let item = items.split(':');
 
@@ -597,7 +596,7 @@
                                             'type': 'text',
                                             'id': 'date-range-' + col.data,
                                             'class': 'form-control form-control-sm flatpickr-range',
-                                            'placeholder': placeholder
+                                            'placeholder': col.placeholder
                                         });
                                         $(this).append(input);
 
@@ -691,7 +690,7 @@
                                             'type': 'text',
                                             'id': col.data,
                                             'class': 'form-control form-control-sm',
-                                            'placeholder': placeholder,
+                                            'placeholder': col.placeholder,
                                         });
                                         $(this).append(input);
 
