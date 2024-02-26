@@ -602,7 +602,7 @@
                                         });
                                         $(this).append(input);
 
-                                        flatpickr.localize(flatpickr.l10ns.[$('html').attr('lang')]);
+                                        flatpickr.localize(flatpickr.l10ns[$('html').attr('lang')]);
                                         let rangePicker = $('#date-range-' + col.data);
 
                                         if (rangePicker.length) {
