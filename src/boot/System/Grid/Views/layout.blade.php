@@ -945,10 +945,10 @@
 @section('vendor-style')
 
     {{-- vendor css files --}}
-    {{-- datatable --}}
+    {{-- DATATABLE --}}
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/last/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
-    {{-- datatable --}}
+    {{-- DATATABLE --}}
 
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/pickers/flatpickr/flatpickr.min.css')) }}">
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/forms/select/select2.min.css')) }}">
@@ -970,8 +970,8 @@
 
     {{-- DATATABLE --}}
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
-    {{--<script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>--}}
-    <script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>
+    {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
+    <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
 
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.bootstrap5.min.js')) }}"></script>--}}
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.responsive.min.js')) }}"></script>
