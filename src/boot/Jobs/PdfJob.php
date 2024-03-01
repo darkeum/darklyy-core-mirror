@@ -39,8 +39,8 @@ class PdfJob implements ShouldQueue
         $converter->convertTo($this->file_name);
     }
 
-    public function middleware()
-    {
-        return [new WithoutOverlapping(0)];
-    }
+    // public function middleware()
+    // {
+    //     return [new WithoutOverlapping(0)];
+    // }
 }
