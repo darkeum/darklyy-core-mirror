@@ -72,7 +72,8 @@ https://app.weeek.net/ws/288286/document/12
                                 @csrf
                                 @method('DELETE')
                                 <button class="dropdown-item w-100" type="submit">
-                                    <i data-feather="trash" class="me-50"></i> Удалить
+                                    <i data-feather="trash" class="me-50"></i>
+                                    Удалить
                                 </button>
                             </form>
                             @break
