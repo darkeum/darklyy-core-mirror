@@ -58,6 +58,7 @@ https://app.weeek.net/ws/288286/document/12
                 >
                     <i class="feather-chevron-left"></i>
                 </a>
+
                 <div class="dropdown-menu p-0">
 
                     {{--<h6 class="dropdown-header text-center">Действия</h6>--}}
