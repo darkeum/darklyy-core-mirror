@@ -45,7 +45,7 @@ https://app.weeek.net/ws/288286/document/12
     >
         @csrf
         @method('DELETE')
-@endif
+        @endif
 
         <div class="btn-group {{ ($count >= 2) ? 'dropstart' : '' }}" role="group">
 
@@ -67,54 +67,54 @@ https://app.weeek.net/ws/288286/document/12
                         @switch($marker($key))
 
                             @case('destroy')
-                            <form action="{{ route('admin.'. $module .'.destroy', $id) }}" method="POST"
-                                  onsubmit="if(confirm('Удалить ?')){ return true }else{ return false }"
-                            >
-                                @csrf
-                                @method('DELETE')
-                                <button class="dropdown-item w-100" type="submit">
-                                    <i data-feather="trash" class="me-50"></i>
-                                    Удалить
-                                </button>
-                            </form>
-                            @break
+                                <form action="{{ route('admin.'. $module .'.destroy', $id) }}" method="POST"
+                                      onsubmit="if(confirm('Удалить ?')){ return true }else{ return false }"
+                                >
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="dropdown-item w-100" type="submit">
+                                        <i data-feather="trash" class="me-50"></i>
+                                        Удалить
+                                    </button>
+                                </form>
+                                @break
 
                             @case('custom')
-                            {{--<a href=""--}}
-                            {{--   target="_blank"--}}
-                            {{--   class="dropdown-item"--}}
-                            {{-->--}}
-                            {{--    <i class="feather-{{ $key }} me-50"></i> custom--}}
-                            {{--</a>--}}
-                            @break
+                                {{--<a href=""--}}
+                                {{--   target="_blank"--}}
+                                {{--   class="dropdown-item"--}}
+                                {{-->--}}
+                                {{--    <i class="feather-{{ $key }} me-50"></i> custom--}}
+                                {{--</a>--}}
+                                @break
 
                             @case('html')
-                            {!! view('grid::layouts.actions.html', [
-                                    'type' => 'drop',
-                                    'html' => $action
-                            ])->render() !!}
-                            @break
+                                {!! view('grid::layouts.actions.html', [
+                                        'type' => 'drop',
+                                        'html' => $action
+                                ])->render() !!}
+                                @break
 
                             @case('print')
-                            <a href="{{ $actions[$key] }}"
-                               target="_blank"
-                               class="dropdown-item"
-                            >
-                                <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i> {{ $actions_cfg[$key][0] }}
-                            </a>
-                            @break
+                                <a href="{{ $actions[$key] }}"
+                                   target="_blank"
+                                   class="dropdown-item"
+                                >
+                                    <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i> {{ $actions_cfg[$key][0] }}
+                                </a>
+                                @break
 
                             @case('export')
-                            @break
+                                @break
 
-                            {{-- show, edit, destroy --}}
+                                {{-- show, edit, destroy --}}
                             @default
-                            <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
-                               target="_blank"
-                               class="dropdown-item"
-                            >
-                                <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i> {{ $actions_cfg[$key][0] }}
-                            </a>
+                                <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
+                                   target="_blank"
+                                   class="dropdown-item"
+                                >
+                                    <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i> {{ $actions_cfg[$key][0] }}
+                                </a>
 
                         @endswitch
 
@@ -133,58 +133,61 @@ https://app.weeek.net/ws/288286/document/12
                     @switch($marker($key))
 
                         @case('destroy')
-                        <button class="btn btn-sm btn-outline-secondary" type="submit"
-                                title="{{ $actions_cfg[$key][0] }}"
-                                data-bs-original-title="{{ $actions_cfg[$key][0] }}"
-                                data-bs-toggle="tooltip"
-                                @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
-                        >
-                            <i class="feather-trash"></i>
-                        </button>
-                        @break
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"
+                                    title="{{ $actions_cfg[$key][0] }}"
+                                    data-bs-original-title="{{ $actions_cfg[$key][0] }}"
+                                    data-bs-toggle="tooltip"
+                                    @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
+                            >
+                                <i class="feather-trash"></i>
+                            </button>
+                            @break
 
                         @case('custom')
-                        {{--<a href=""--}}
-                        {{--   target="_blank"--}}
-                        {{--   class="btn btn-sm btn-outline-secondary"--}}
-                        {{-->--}}
-                        {{--    <i class="feather-{{ $actions_cfg[$key][1] }}"></i>--}}
-                        {{--</a>--}}
-                        @break
+                            <a href=""
+                               target="_blank"
+                               class="btn btn-sm btn-outline-secondary"
+                               title="{{ $actions[$key]['text'] ?? '' }}"
+                               data-bs-original-title="{{ $actions[$key]['text'] ?? '' }}"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
+                            >
+                                <i class="feather-{{ $actions[$key]['icon'] }}"></i>
+                            </a>
+                            @break
 
                         @case('html')
-                        {!! view('grid::layouts.actions.html', [
-                            'type' => 'btn',
-                            'html' => $action
-                        ])->render() !!}
-                        @break
+                            {!! view('grid::layouts.actions.html', [
+                                'type' => 'btn',
+                                'html' => $action
+                            ])->render() !!}
+                            @break
 
                         @case('print')
-                        <a href="{{ $actions[$key] }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-secondary"
-                           title="{{ $actions_cfg[$key][0] }}"
-                        >
-                            <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
-                        </a>
-                        @break
+                            <a href="{{ $actions[$key] }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-secondary"
+                               title="{{ $actions_cfg[$key][0] }}"
+                            >
+                                <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
+                            </a>
+                            @break
 
                         @case('export')
-                        @break
+                            @break
 
-                        {{-- show, edit, destroy --}}
+                            {{-- show, edit, destroy --}}
                         @default
-                        <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-secondary"
-                           title="{{ $actions_cfg[$key][0] }}"
-                           data-bs-original-title="{{ $actions_cfg[$key][0] }}"
-                           data-bs-toggle="tooltip"
-                           data-bs-placement="left"
-                           @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
-                        >
-                            <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
-                        </a>
+                            <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
+                               target="_blank"
+                               class="btn btn-sm btn-outline-secondary"
+                               title="{{ $actions_cfg[$key][0] }}"
+                               data-bs-original-title="{{ $actions_cfg[$key][0] }}"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
+                            >
+                                <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
+                            </a>
                     @endswitch
 
                 @endforeach
@@ -193,9 +196,11 @@ https://app.weeek.net/ws/288286/document/12
 
         </div>
 
-@if($destroy ?? false)</form>@endif
+        @if($destroy ?? false)</form>
+@endif
 {{-- Автоматический actions генератор --}}
 
+{{-- ЯВНО СКРИПТЫ НЕ ТУТ!!! --}}
 {{--@section('vendor-script')--}}
 {{--    <!-- vendor files -->--}}
 {{--    <script src="{{ asset(mix('vendors/js/extensions/jquery.contextMenu.min.js')) }}"></script>--}}
