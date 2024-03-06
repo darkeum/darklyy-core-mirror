@@ -264,7 +264,7 @@ abstract class GridModern
         foreach ($this->default['filters'] as $fi) {
             if (!isset($c[$fi])) {
                 $x = $cols[$fi];
-                $c[$fi] = $this->check($t, $x, current($x));
+                $c[$fi] = $this->checkFilters($t, $x, current($x));
             }
         }
 
@@ -273,7 +273,7 @@ abstract class GridModern
         if (!isset($c['render'])) {
             $f = $cols['render'];
             $tt = $c['render'] ?? ''; // Исправить !!!
-            $c['render'] = $this->check($tt, $f, current($f));
+            $c['render'] = $this->checkFilters($tt, $f, current($f));
         }
         ####################################################################
 
@@ -284,7 +284,7 @@ abstract class GridModern
         #icon - Иконка вместо заголовка столбца
         if (isset($c['icon'])) {
             $f = $cols['icon'];
-            $c['icon'] = $this->check($t, $f);
+            $c['icon'] = $this->checkFilters($t, $f);
         }
         ####################################################################
 
