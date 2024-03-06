@@ -85,6 +85,7 @@ https://app.weeek.net/ws/288286/document/12
                                    class="dropdown-item"
                                 >
                                     <i class="feather-{{ $actions[$key]['icon'] }} me-50"></i>
+                                    {{ $actions[$key]['text'] }}
                                 </a>
 
                                 @break
@@ -114,7 +115,8 @@ https://app.weeek.net/ws/288286/document/12
                                    target="_blank"
                                    class="dropdown-item"
                                 >
-                                    <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i> {{ $actions_cfg[$key][0] }}
+                                    <i class="feather-{{ $actions_cfg[$key][1] }} me-50"></i>
+                                    {{ $actions_cfg[$key][0] }}
                                 </a>
 
                         @endswitch
