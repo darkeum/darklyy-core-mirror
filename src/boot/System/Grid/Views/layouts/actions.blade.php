@@ -34,13 +34,11 @@ https://app.weeek.net/ws/288286/document/12
     $destroy = array_search('destroy', array_keys($actions));
     $actions_keys = array_keys($actions);
     $count = count($actions);
-
-    $id = $row['id'];
-
+    
 @endphp
 
 @if($destroy ?? false)
-    <form action="{{ route('admin.'. $module .'.destroy', $id) }}" method="POST"
+    <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}" method="POST"
           onsubmit="return confirm('Удалить ?');"
     >
         @csrf
@@ -67,7 +65,7 @@ https://app.weeek.net/ws/288286/document/12
                         @switch($marker($key))
 
                             @case('destroy')
-                                <form action="{{ route('admin.'. $module .'.destroy', $id) }}" method="POST"
+                                <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}" method="POST"
                                       onsubmit="if(confirm('Удалить ?')){ return true }else{ return false }"
                                 >
                                     @csrf
@@ -111,7 +109,7 @@ https://app.weeek.net/ws/288286/document/12
 
                                 {{-- show, edit, destroy --}}
                             @default
-                                <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
+                                <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $row['id']) : $actions[$key] }}"
                                    target="_blank"
                                    class="dropdown-item"
                                 >
@@ -181,7 +179,7 @@ https://app.weeek.net/ws/288286/document/12
 
                             {{-- show, edit, destroy --}}
                         @default
-                            <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $id) : $actions[$key] }}"
+                            <a href="{{ (is_bool($actions[$key])) ? route('admin.'. $module .'.'. $key, $row['id']) : $actions[$key] }}"
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions_cfg[$key][0] }}"
