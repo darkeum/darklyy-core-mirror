@@ -17,5 +17,10 @@ use Boot\System\Grid\Utils\Utils;
 
 trait ColumnsFiltersTrait
 {
+    # Функция проверки
+    public function check($type, $filters, $default = null)
+    {
+        return array_key_exists($type, $filters) ? $filters[$type] : $default;
+    }
 
 }

@@ -12,6 +12,7 @@
 namespace Boot\System\Grid;
 
 use Boot\Support\Str;
+use Boot\System\Grid\Traits\ColumnsFiltersTrait;
 use Boot\System\Media\Downloaders\DefaultDownloader;
 use Exception;
 use Boot\Support\Facades\DB;
@@ -32,6 +33,7 @@ use Boot\System\Grid\GridFilter;
 abstract class GridModern
 {
     use RenderTrait;
+    use ColumnsFiltersTrait;
 
     protected Repository $repository;
     protected
@@ -62,6 +64,8 @@ abstract class GridModern
         $this->init();
         $this->afterInit();
         $this->prepareColumn();
+
+        $this->check();
     }
 
     /**
@@ -252,18 +256,73 @@ abstract class GridModern
 
         # ***********************************************************************
         # Начало фильтрации *****************************************************
-        include('layouts/initColumnsFilters.php'); // Переделать в Trait (ColumnsFiltersTrait) или в Class
+        // Переделать в Trait (ColumnsFiltersTrait) или в Class
+
+        # Фильтрация
+
+        $cols = $this->default['cols'];
+        $t = $c['type'] ?? $cols['type'];
+
+        # Что фильтруем?
+        foreach ($this->default['filters'] as $fi) {
+            if (!isset($c[$fi])) {
+                $x = $cols[$fi];
+                $c[$fi] = GridFilter::check($t, $x, current($x));
+            }
+        }
+
+        #render - Фильтрация по типу поля для render
+        //if (isset($c['render']) or !isset($c['render'])) {
+        if (!isset($c['render'])) {
+            $f = $cols['render'];
+            $tt = $c['render'] ?? ''; // Исправить !!!
+            $c['render'] = GridFilter::check($tt, $f, current($f));
+        }
+        ####################################################################
+
+        #width - Фильтр по типу поля для width по умолчанию
+        $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
+        ####################################################################
+
+        #icon - Иконка вместо заголовка столбца
+        if (isset($c['icon'])) {
+            $f = $cols['icon'];
+            $c['icon'] = GridFilter::check($t, $f);
+        }
+        ####################################################################
+
+        #priority - Приоритет показа столбцов
+        // if (!isset($c['priority'])) {
+        //     $f = $cols['priority'];
+        //     $c['priority'] = GridFilter::check($t, $f);
+        // }
+        ####################################################################
+
+        ####################################################################
+        # Дополнительный custom функционал
+        #popover - Временный фильтр для true popover
+        if (isset($c['popover']) and $c['popover'] == true) {
+            if (is_bool($c['popover']) === true) {
+                $c['popover'] = $cols['popover'];
+            }
+        }
+        ####################################################################
+
+        #excel_only - Экспорт
+        if (isset($c['excel_only']) && $c['excel_only'] == true) {
+            $c['visible'] = false;
+        }
+        ####################################################################
+
+        //$c['configs'] = json_encode($configs, JSON_UNESCAPED_UNICODE);
+        ####################################################################
+
         # Конец фильтрации ******************************************************
         # ***********************************************************************
 
         #Merge with defaults
         //$c = array_merge($this->default['cols'], $this->cols_default, $c);
         $c = array_merge($this->default['cols'], $c);
-        //if ($c['type'] == 'actions') {
-            //dd($c);
-            //dd($this->default['cols']);
-            //dd($this->cols_default);
-        //}
 
         #DB = column key if not set
         //$c['db'] = $c['db'] ? $c['db'] : $k;
