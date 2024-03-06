@@ -254,60 +254,7 @@ abstract class GridModern
 
         # ***********************************************************************
         # Начало фильтрации *****************************************************
-        // Переделать в Trait (ColumnsFiltersTrait) или в Class
-        // include('layouts/initColumnsFilters.php'); // Переделать в Trait (ColumnsFiltersTrait) или в Class
-        
-        # Фильтрация
-        $cols = $this->default['cols'];
-        $t = $c['type'] ?? $cols['type'];
-
-        # Что фильтруем?
-        foreach ($this->default['filters'] as $fi) {
-            if (!isset($c[$fi])) {
-                $x = $cols[$fi];
-                $c[$fi] = $this->checkFilters($t, $x, current($x));
-            }
-        }
-
-        #render - Фильтрация по типу поля для render
-        //if (isset($c['render']) or !isset($c['render'])) {
-        if (!isset($c['render'])) {
-            $f = $cols['render'];
-            $tt = $c['render'] ?? ''; // Исправить !!!
-            $c['render'] = $this->checkFilters($tt, $f, current($f));
-        }
-        ####################################################################
-
-        #width - Фильтр по типу поля для width по умолчанию
-        $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
-        ####################################################################
-
-        #icon - Иконка вместо заголовка столбца
-        if (isset($c['icon'])) {
-            $f = $cols['icon'];
-            $c['icon'] = $this->checkFilters($t, $f);
-        }
-        ####################################################################
-
-        ####################################################################
-        # Дополнительный custom функционал
-        #popover - Временный фильтр для true popover
-        if (isset($c['popover']) and $c['popover'] == true) {
-            if (is_bool($c['popover']) === true) {
-                $c['popover'] = $cols['popover'];
-            }
-        }
-        ####################################################################
-
-        #excel_only - Экспорт
-        if (isset($c['excel_only']) && $c['excel_only'] == true) {
-            $c['visible'] = false;
-        }
-        ####################################################################
-
-        //$c['configs'] = json_encode($configs, JSON_UNESCAPED_UNICODE);
-        ####################################################################
-
+        include('layouts/initColumnsFilters.php'); // Переделать в Trait (ColumnsFiltersTrait) или в Class
         # Конец фильтрации ******************************************************
         # ***********************************************************************
 
