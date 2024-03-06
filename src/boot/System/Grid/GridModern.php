@@ -28,7 +28,6 @@ use Boot\System\Grid\Repositories\DBRepository;
 use Boot\System\Grid\Repositories\ModelRepository;
 use Boot\System\Grid\Repositories\QueryRepository;
 use Boot\System\Database\Model\Builder as ModelBuilder;
-use Boot\System\Grid\GridFilter;
 
 abstract class GridModern
 {
@@ -65,7 +64,6 @@ abstract class GridModern
         $this->afterInit();
         $this->prepareColumn();
 
-        $this->check();
     }
 
     /**
@@ -259,7 +257,6 @@ abstract class GridModern
         // Переделать в Trait (ColumnsFiltersTrait) или в Class
 
         # Фильтрация
-
         $cols = $this->default['cols'];
         $t = $c['type'] ?? $cols['type'];
 
@@ -267,7 +264,7 @@ abstract class GridModern
         foreach ($this->default['filters'] as $fi) {
             if (!isset($c[$fi])) {
                 $x = $cols[$fi];
-                $c[$fi] = GridFilter::check($t, $x, current($x));
+                $c[$fi] = $this->check($t, $x, current($x));
             }
         }
 
@@ -276,7 +273,7 @@ abstract class GridModern
         if (!isset($c['render'])) {
             $f = $cols['render'];
             $tt = $c['render'] ?? ''; // Исправить !!!
-            $c['render'] = GridFilter::check($tt, $f, current($f));
+            $c['render'] = $this->check($tt, $f, current($f));
         }
         ####################################################################
 
@@ -287,7 +284,7 @@ abstract class GridModern
         #icon - Иконка вместо заголовка столбца
         if (isset($c['icon'])) {
             $f = $cols['icon'];
-            $c['icon'] = GridFilter::check($t, $f);
+            $c['icon'] = $this->check($t, $f);
         }
         ####################################################################
 
