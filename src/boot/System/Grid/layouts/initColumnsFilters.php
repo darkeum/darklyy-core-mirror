@@ -11,11 +11,7 @@ $filter = function ($t, $f, $def = null) {
 };
 
 # Что фильтруем?
-$filters = [
-    'label', 'format_date',
-    //'render',
-    'manual', 'encode', 'sortable', 'search', 'search_op', 'width', 'className', 'icon', 'priority'
-];
+$filters = $this->default['filters'];
 
 foreach ($filters as $fi) {
     if (!isset($c[$fi])) {
