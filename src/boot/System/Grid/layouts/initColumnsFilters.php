@@ -5,28 +5,17 @@
 $cols = $this->default['cols'];
 $t = $c['type'] ?? $cols['type'];
 
-# Фильтрация - Функция
-$filter = function ($t, $f, $def = null) {
-    return array_key_exists($t, $f) ? $f[$t] : $def;
-};
+# Функция проверки
+// $filters = function ($type, $filter, $default = null) {
+//     return array_key_exists($type, $filter) ? $filter[$type] : $default;
+// };
 
 # Что фильтруем?
-$filters = [
-    'label', 'format_date',
-    //'render',
-    'manual', 'encode', 'sortable', 'search', 'search_op', 'width', 'className', 'icon', 'priority'
-];
-
-foreach ($filters as $fi) {
+foreach ($this->default['filters'] as $fi) {
     if (!isset($c[$fi])) {
         $x = $cols[$fi];
-        $c[$fi] = $filter($t, $x, current($x));
-
-        //if ($fi == 'width') {
-        //    //dd($x);
-        //    dd(key($x));
-        //}
-
+        // $c[$fi] = $filters($t, $x, current($x));
+        $c[$fi] = \Boot\System\Grid\GridFilter::check($t, $x, current($x));
     }
 }
 ####################################################################
@@ -36,14 +25,14 @@ foreach ($filters as $fi) {
 //if (!isset($c['label'])) {
 //    $f = $cols['label'];
 //    //$c['label'] = array_key_exists($t, $f) ? $f[$t] : current($f);
-//    $c['label'] = $filter($t, $f, current($f));
+//    $c['label'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #format_date - Формат даты
 //if (!isset($c['format_date'])) {
 //    $f = $cols['format_date'];
-//    $c['format_date'] = $filter($t, $f);
+//    $c['format_date'] = $filters($t, $f);
 //}
 ####################################################################
 
@@ -52,49 +41,49 @@ foreach ($filters as $fi) {
 if (!isset($c['render'])) {
     $f = $cols['render'];
     $tt = $c['render'] ?? ''; // Исправить !!!
-    $c['render'] = $filter($tt, $f, current($f));
+    $c['render'] = $filters($tt, $f, current($f));
 }
 ####################################################################
 
 #manual - Фильтр по типу поля для manual по умолчанию
 //if (!isset($c['manual'])) {
 //    $f = $cols['manual'];
-//    $c['manual'] = $filter($t, $f, current($f));
+//    $c['manual'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #encode - Фильтр по типу поля для encode по умолчанию
 //if (!isset($c['encode'])) {
 //    $f = $cols['encode'];
-//    $c['encode'] = $filter($t, $f, current($f));
+//    $c['encode'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #sortable - Фильтр по типу поля для sortable по умолчанию
 //if (!isset($c['sortable'])) {
 //    $f = $cols['sortable'];
-//    $c['sortable'] = $filter($t, $f, current($f));
+//    $c['sortable'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #search - Фильтр по типу поля для search по умолчанию
 //if (!isset($c['search'])) {
 //    $f = $cols['search'];
-//    $c['search'] = $filter($t, $f, current($f));
+//    $c['search'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #search_op - Фильтр по типу поля для search_op по умолчанию
 //if (!isset($c['search_op'])) {
 //    $f = $cols['search_op'];
-//    $c['search_op'] = $filter($t, $f, current($f));
+//    $c['search_op'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #width - Фильтр по типу поля для width по умолчанию
 // if (!isset($c['width'])) {
-    // $f = $cols['width'];
-    // $c['width'] = $filter($t, $f, current($f));
+// $f = $cols['width'];
+// $c['width'] = $filters($t, $f, current($f));
 // }
 $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
 ####################################################################
@@ -102,21 +91,21 @@ $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
 #className - Фильтр по типу поля для className по умолчанию
 //if (!isset($c['className'])) {
 //    $f = $cols['className'];
-//    $c['className'] = $filter($t, $f, current($f));
+//    $c['className'] = $filters($t, $f, current($f));
 //}
 ####################################################################
 
 #icon - Иконка вместо заголовка столбца
 if (isset($c['icon'])) {
-   $f = $cols['icon'];
-   $c['icon'] = $filter($t, $f);
+    $f = $cols['icon'];
+    $c['icon'] = $filters($t, $f);
 }
 ####################################################################
 
 #priority - Приоритет показа столбцов
 //if (!isset($c['priority'])) {
 //    $f = $cols['priority'];
-//    $c['priority'] = $filter($t, $f);
+//    $c['priority'] = $filters($t, $f);
 //}
 ####################################################################
 

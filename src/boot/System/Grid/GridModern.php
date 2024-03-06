@@ -27,6 +27,7 @@ use Boot\System\Grid\Repositories\DBRepository;
 use Boot\System\Grid\Repositories\ModelRepository;
 use Boot\System\Grid\Repositories\QueryRepository;
 use Boot\System\Database\Model\Builder as ModelBuilder;
+use Boot\System\Grid\GridFilter;
 
 abstract class GridModern
 {
