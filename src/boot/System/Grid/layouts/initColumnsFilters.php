@@ -14,8 +14,7 @@ $t = $c['type'] ?? $cols['type'];
 foreach ($this->default['filters'] as $fi) {
     if (!isset($c[$fi])) {
         $x = $cols[$fi];
-        // $c[$fi] = $filters($t, $x, current($x));
-        $c[$fi] = \Boot\System\Grid\GridFilter::check($t, $x, current($x));
+        $c[$fi] = GridFilter::check($t, $x, current($x));
     }
 }
 ####################################################################

@@ -14,13 +14,13 @@ class GridFilter
     }
 
     // Проверка если есть
-    public function check($type, $filters, $default = null)
+    public static function check($type, $filters, $default = null)
     {
         return array_key_exists($type, $filters) ? $filters[$type] : $default;
     }
 
     // Фильтруем
-    public function filter(): void
+    public static function filter(): void
     {
 
     }
