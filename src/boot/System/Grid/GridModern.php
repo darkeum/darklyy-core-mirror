@@ -255,7 +255,8 @@ abstract class GridModern
         # ***********************************************************************
         # Начало фильтрации *****************************************************
         // Переделать в Trait (ColumnsFiltersTrait) или в Class
-
+        // include('layouts/initColumnsFilters.php'); // Переделать в Trait (ColumnsFiltersTrait) или в Class
+        
         # Фильтрация
         $cols = $this->default['cols'];
         $t = $c['type'] ?? $cols['type'];
