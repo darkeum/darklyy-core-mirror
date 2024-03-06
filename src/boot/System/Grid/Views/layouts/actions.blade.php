@@ -34,7 +34,7 @@ https://app.weeek.net/ws/288286/document/12
     $destroy = array_search('destroy', array_keys($actions));
     $actions_keys = array_keys($actions);
     $count = count($actions);
-    
+
 @endphp
 
 @if($destroy ?? false)
