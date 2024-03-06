@@ -80,12 +80,13 @@ https://app.weeek.net/ws/288286/document/12
                                 @break
 
                             @case('custom')
-                                {{--<a href=""--}}
-                                {{--   target="_blank"--}}
-                                {{--   class="dropdown-item"--}}
-                                {{-->--}}
-                                {{--    <i class="feather-{{ $key }} me-50"></i> custom--}}
-                                {{--</a>--}}
+                                <a href="{{ $actions[$key]['url'] }}"
+                                   target="_blank"
+                                   class="dropdown-item"
+                                >
+                                    <i class="feather-{{ $actions[$key]['icon'] }} me-50"></i>
+                                </a>
+
                                 @break
 
                             @case('html')
@@ -144,7 +145,7 @@ https://app.weeek.net/ws/288286/document/12
                             @break
 
                         @case('custom')
-                            <a href=""
+                            <a href="{{ $actions[$key]['url'] }}"
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions[$key]['text'] ?? '' }}"
