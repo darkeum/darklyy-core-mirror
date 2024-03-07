@@ -63,6 +63,10 @@ class GridView
                 $css = '<i class="' . $css . '" title="' . $title . '"></i>';
                 break;
 
+            // case 'badge':
+            //     $css = '<i class="' . $css . '" title="' . $title . '"></i>';
+            //     break;
+
             default:
                 $css = '<i class="' . $css . '" title="' . $title . '"></i>';
                 break;
