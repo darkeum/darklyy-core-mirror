@@ -57,6 +57,13 @@ class GridView
     {
         switch ($type) {
             case 'fe':
+                $css = '<i class="feather-' . $css . '" title="' . $title . '"></i>';
+                break;
+            case 'fa':
+                $css = '<i class="' . $css . '" title="' . $title . '"></i>';
+                break;
+
+            default:
                 $css = '<i class="' . $css . '" title="' . $title . '"></i>';
                 break;
         }
