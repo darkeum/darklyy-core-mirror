@@ -432,7 +432,7 @@
                     ],
 
                     select: {
-                        style: 'multi',
+                        style: 'os', // Варианты os, single, multi # https://datatables.net/extensions/select/
                         // selector: 'td:first-child > input.checkbox'
                     },
 
