@@ -48,9 +48,21 @@ class GridView
      * # Модификаторы в Grid
      * @throws Throwable
      */
-    public static function mods (): string
+    public static function mods(): string
     {
         return view('grid::layouts.toolbar.mods.list')->render();
+    }
+
+    public static function icon($type, $css, $title = false)
+    {
+        switch ($type) {
+            case 'fe':
+                $css = '<i class="' . $css . '" title="' . $title . '"></i>';
+                break;
+        }
+
+        return $css;
+
     }
 
 }
