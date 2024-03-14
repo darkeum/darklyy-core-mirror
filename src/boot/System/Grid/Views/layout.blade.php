@@ -345,7 +345,7 @@
                             @foreach ($cols as $key => $col){
 
                             @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
                             title: "{{ $col['title'] ?? '' }}",
                             label: "{{ $col['label'] ?? '' }}",
