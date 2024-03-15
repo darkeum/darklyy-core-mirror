@@ -5,7 +5,7 @@ namespace Boot\System\Grid;
 class GridParams
 {
 
-    // WIP - Придумать как лучше всего сделать на PHP 
+    // WIP - Придумать как лучше всего сделать на PHP
     public static function columns($cols)
     {
         $columns = collect();
