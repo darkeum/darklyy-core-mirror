@@ -1566,18 +1566,23 @@ abstract class Grid
     {
         $data['extend'] = $data['extend'] ? $data['extend'] : '{}'; //prevent errors on empty 'extend'
         $options = Utils::jsonEncode($data['options']);
-        $client = $this->getSetting('client');        
+        $client = $this->getSetting('client');
+
+        $script = function ($path) use ($client) {
+            return '<script src="' . $client . $path . '"></script>';
+        };
+
         #Плагин Multiselect для jQuery UI необходим для выбора колонок
-        $return['javascript']['multiselect'] = '<script src="' . $client . '/js/ui.multiselect.js"></script>';
+        $return['javascript']['multiselect'] = $script('/js/ui.multiselect.js');
         #Плагин DateRangePicker для выбора даты
-        $return['javascript']['daterangepicker'] = '<script src="' . $client . '/js/daterangepicker.js"></script>';
+        $return['javascript']['daterangepicker'] = $script('/js/daterangepicker.js');
         #Библиотека jqGrid
-        $return['javascript']['jqGrid'] = '<script src="' . $client . '/js/trirand/jquery.jqGrid.min.js"></script>';
+        $return['javascript']['jqGrid'] = $script('/js/trirand/jquery.jqGrid.min.js');
         #Язык для  библиотеки jqGrid
-        $return['javascript']['jqGridLocale'] = '<script src="' . $client . '/js/trirand/i18n/grid.locale-ru.js"></script>';
+        $return['javascript']['jqGridLocale'] = $script('/js/trirand/i18n/grid.locale-ru.js');
         #Расширение библиотеки jqGrid для работы с phpGrid
-        $return['javascript']['jqGridExt'] = '<script src="' . $client . '/js/jquery.jqGrid.ext.js"></script>';
-        $return['javascript']['context'] = '<script src="' . $client . '/js/context-menu.js"></script>';
+        $return['javascript']['jqGridExt'] = $script('/js/jquery.jqGrid.ext.js');
+        $return['javascript']['context'] = $script('/js/context-menu.js');
         #Стиль для плагина multiselect
         $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="' . $client . '/css/ui.multiselect.css" />';
         #Стиль для jqGrid
