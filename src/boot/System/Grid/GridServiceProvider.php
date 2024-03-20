@@ -34,7 +34,7 @@ class GridServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerViews();
         $this->registerLanguages();
-        //$this->registerConfigs(); // WIP
+        $this->registerConfigs();
         $this->registerBladeDirective();
     }
 
@@ -76,7 +76,7 @@ class GridServiceProvider extends ServiceProvider
      */
     public function registerConfigs()
     {
-        $this->mergeConfigFrom(__DIR__ . '/Configs/grid.config.php', 'grid'); // Не доделано...
+        $this->mergeConfigFrom(__DIR__ . '/Configs/grid.config.php', 'grid');
     }
 
     /**
