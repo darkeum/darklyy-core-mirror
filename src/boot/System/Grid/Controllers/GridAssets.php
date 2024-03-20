@@ -9,62 +9,43 @@ class GridAssets
 {
     use CanPretendToBeAFile;
 
+    //
     public function source($path)
     {
         return $this->pretendResponseIsFile($this->generateSourceResource($path));
     }
 
+    //
     public function script()
     {
         return $this->pretendResponseIsFile($this->generateSourceJavaScripts());
     }
 
-    public function ascript()
-    {
-        return $this->pretendResponseIsFile($this->generateSourceJavaScripts2());
-    }
-
+    //
     public function style()
     {
         return $this->pretendResponseIsFile($this->generateSourceStyle(), 'text/css');
     }
 
+    //
+    public function aGridAssets($path)
+    {
+        return $this->pretendResponseIsFile($this->generateSourceResource($path));
+    }
+
+    //
     protected function generateSourceResource($path)
     {
         $source = __DIR__ . '/../Resources/' . $path;
-
         //if (!file_exists($source)) {
-            $minify = new Js();
-        //    $dir = __DIR__ . '/../Resources/src/js/';
-        //    $f = scandir($dir);
-        //    foreach ($f as $file) {
-        //        if (preg_match('/\.(js)/', $file)) {
-        //            $minify->add($dir . $file);
-        //        }
-        //    }
-            $minify->minify($source);
+        //$minify = new Js();
+        //$minify->minify($source);
         //}
 
         return $source;
     }
 
-    protected function generateSourceJavaScripts2()
-    {
-        $source = __DIR__ . '/../Resources/libs/aGrid/aGrid.js';
-        if (!file_exists($source)) {
-            $minify = new Js();
-            $dir = __DIR__ . '/../Resources/src/js/';
-            $f = scandir($dir);
-            foreach ($f as $file) {
-                if (preg_match('/\.(js)/', $file)) {
-                    $minify->add($dir . $file);
-                }
-            }
-            $minify->minify($source);
-        }
-        return $source;
-    }
-
+    //
     protected function generateSourceJavaScripts()
     {
         $source = __DIR__ . '/../Resources/dist/grid.js';

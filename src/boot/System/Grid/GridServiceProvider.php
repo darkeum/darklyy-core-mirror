@@ -136,7 +136,8 @@ class GridServiceProvider extends ServiceProvider
         Route::get('grid/grid.js', [GridAssets::class, 'script'])->name('grid.source.js');
         Route::get('grid/grid.css', [GridAssets::class, 'style'])->name('grid.source.css');
 
-        Route::get('grid/agrid.js', [GridAssets::class, 'ascript']);
+        Route::get('grid/{path}', [GridAssets::class, 'aGridAssets']);
+        //Route::get('grid/aGrid.css', [GridAssets::class, 'aGridCSS']);
 
         //Route::get('grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
 
