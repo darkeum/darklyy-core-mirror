@@ -87,6 +87,8 @@ class GridServiceProvider extends ServiceProvider
     public function registerBladeDirective()
     {
         Blade::directive('grid', [GridBladeDirectives::class, 'grid']);
+        Blade::directive('gridAssets', [GridBladeDirectives::class, 'gridAssets']);
+
         if (method_exists($this->app['blade.compiler'], 'precompiler')) {
             $this->app['blade.compiler']->precompiler(function ($string) {
                 return app(GridTagCompiler::class)->compile($string);

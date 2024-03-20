@@ -15,16 +15,16 @@ use Boot\System\Grid\Controllers\GridAssets;
 use Illuminate\Support\Str;
 
 class GridBladeDirectives
-{    
+{
     /**
      * Действие при обнаружение указанной директивы Blade
      *
-     * @param  mixed $expression
+     * @param  mixed  $expression
      * @return void
      */
     public static function grid($expression)
     {
-        $cachedKey = "'" . Str::random(7) . "'";
+        $cachedKey = "'".Str::random(7)."'";
         $pattern = "/,\s*?key\(([\s\S]*)\)/";
         $expression = preg_replace_callback($pattern, function ($match) use (&$cachedKey) {
             $cachedKey = trim($match[1]) ?: $cachedKey;
@@ -33,7 +33,14 @@ class GridBladeDirectives
         return "<?php echo app('grid')->mount($expression); ?>";
     }
 
-    public static function gridAssets($asset) {
+    /**
+     * Действие при обнаружение указанной директивы BladeAssets
+     *
+     * @param  mixed  $asset
+     * @return string
+     */
+    public static function gridAssets($asset)
+    {
         return GridAssets::source($asset);
     }
 }
