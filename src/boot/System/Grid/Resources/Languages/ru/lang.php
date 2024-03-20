@@ -83,9 +83,9 @@ return [
 
     "select" => [
         'rows' => [
-            '_' => 'You have selected %d rows',
-            0 => 'Click a row to select it',
-            1 => 'Only 1 row selected',
+            '_' => 'Вы выбрали %d строк',
+            0 => 'Щелкните по строке, чтобы выбрать ее',
+            1 => 'Выбрана только 1 строка',
 
         ]
     ],
