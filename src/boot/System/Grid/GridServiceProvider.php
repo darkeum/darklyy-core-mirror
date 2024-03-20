@@ -87,7 +87,6 @@ class GridServiceProvider extends ServiceProvider
     public function registerBladeDirective()
     {
         Blade::directive('grid', [GridBladeDirectives::class, 'grid']);
-        //Blade::directive('gridAssets', [GridBladeDirectives::class, 'gridAssets']);
 
         if (method_exists($this->app['blade.compiler'], 'precompiler')) {
             $this->app['blade.compiler']->precompiler(function ($string) {
@@ -136,6 +135,8 @@ class GridServiceProvider extends ServiceProvider
     {
         Route::get('grid/grid.js', [GridAssets::class, 'script'])->name('grid.source.js');
         Route::get('grid/grid.css', [GridAssets::class, 'style'])->name('grid.source.css');
+
+        Route::get('grid/agrid.js', [GridAssets::class, 'ascript']);
 
         //Route::get('grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
 

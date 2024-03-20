@@ -33,17 +33,4 @@ class GridBladeDirectives
         return "<?php echo app('grid')->mount($expression); ?>";
     }
 
-    /**
-     * Действие при обнаружение указанной директивы BladeAssets
-     *
-     * @param  mixed  $asset
-     * @return string
-     */
-    public static function gridAssets($expression)
-    {
-        $expression = trim($expression, "\'\"");
-        $GridAssets = new GridAssets();
-
-        return $GridAssets->source($expression);
-    }
 }
