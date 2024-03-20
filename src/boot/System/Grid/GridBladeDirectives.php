@@ -39,8 +39,11 @@ class GridBladeDirectives
      * @param  mixed  $asset
      * @return string
      */
-    public static function gridAssets($asset)
+    public static function gridAssets($expression)
     {
-        return GridAssets::source($asset);
+        $expression = trim($expression, "\'\"");
+        $GridAssets = new GridAssets();
+
+        return $GridAssets->source($expression);
     }
 }
