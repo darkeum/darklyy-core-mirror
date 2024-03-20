@@ -80,22 +80,34 @@ return [
         "logicAnd" => "И",
         "logicOr" => "ИЛИ",
     ],
+
+    "select" => [
+        'rows' => [
+            '_' => 'You have selected %d rows',
+            0 => 'Click a row to select it',
+            1 => 'Only 1 row selected',
+
+        ]
+    ],
+
     "emptyTable" => "В таблице отсутствуют данные",
     "info" => "Показано _START_ до _END_ из _TOTAL_ записей",
     "infoEmpty" => "Нет записей для отображения",
     "infoFiltered" => "- отфильтровано из _MAX_ записей",
     "infoPostFix" => "",
     "lengthMenu" => "Показать _MENU_ записи",
-    "loadingRecords" => "",
+    "loadingRecords" => "", //
     "processing" => "Обработка...",
     "search" => "Поиск",
     "zeroRecords" => "Совпадающих записей не найдено",
+
     "paginate" => [
         "first" => "Первый",
         "previous" => "Предыдущий",
         "next" => "Следующий",
         "last" => "Последний",
     ],
+
     "aria" => [
         "sortAscending" =>
             ": активировать для сортировки столбцов по возрастанию",
