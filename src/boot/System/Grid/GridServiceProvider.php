@@ -34,6 +34,7 @@ class GridServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerViews();
         $this->registerLanguages();
+        //$this->registerConfigs(); // WIP
         $this->registerBladeDirective();
     }
 
@@ -66,6 +67,16 @@ class GridServiceProvider extends ServiceProvider
     public function registerLanguages()
     {
         $this->loadTranslationsFrom(__DIR__ . '/Resources/Languages', 'grid');
+    }
+
+    /**
+     * Регистрация Configs файлов
+     *
+     * @return void
+     */
+    public function registerConfigs()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/Configs/grid.config.php', 'grid'); // Не доделано...
     }
 
     /**
@@ -121,8 +132,11 @@ class GridServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        Route::get('grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
+        Route::get('grid/grid.js', [GridAssets::class, 'script'])->name('grid.source.js');
         Route::get('grid/grid.css', [GridAssets::class, 'style'])->name('grid.source.css');
+
+        //Route::get('grid/grid.js', [GridAssets::class, 'source'])->name('grid.source.js');
+
         Route::group($this->getRouteGroup(), function ($router) {
             Route::any('grid/{id}', [GridController::class, 'index'])->name('grid.index');
         });
