@@ -11,6 +11,7 @@
 
 namespace Boot\System\Grid;
 
+use Boot\System\Grid\Controllers\GridAssets;
 use Illuminate\Support\Str;
 
 class GridBladeDirectives
@@ -30,5 +31,9 @@ class GridBladeDirectives
             return "";
         }, $expression);
         return "<?php echo app('grid')->mount($expression); ?>";
+    }
+
+    public static function gridAssets($asset) {
+        return GridAssets::source($asset);
     }
 }

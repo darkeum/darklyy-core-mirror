@@ -9,9 +9,9 @@ class GridAssets
 {
     use CanPretendToBeAFile;
 
-    public function source()
+    public function source($path)
     {
-        //return $this->pretendResponseIsFile($this->generateSourceResource());
+        return $this->pretendResponseIsFile($this->generateSourceResource($path));
     }
 
     public function script()
@@ -28,19 +28,9 @@ class GridAssets
     {
         $source = __DIR__ . '/../Resources/' . $path;
 
-        //if (!file_exists($source)) {
-        //    $minify = new Js();
-        //    $dir = __DIR__ . '/../Resources/src/js/';
-        //    $f = scandir($dir);
-        //    foreach ($f as $file) {
-        //        if (preg_match('/\.(js)/', $file)) {
-        //            $minify->add($dir . $file);
-        //        }
-        //    }
-        //    $minify->minify($source);
-        //}
-
-        return $source;
+        if (!file_exists($source)) {
+            return $source;
+        }
     }
 
     protected function generateSourceJavaScripts()
