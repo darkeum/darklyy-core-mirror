@@ -2,6 +2,7 @@
 
 namespace Boot\System\Grid\Controllers;
 
+use Illuminate\Http\Request;
 use MatthiasMullie\Minify\Js;
 use MatthiasMullie\Minify\Css;
 
@@ -10,10 +11,10 @@ class GridAssets
     use CanPretendToBeAFile;
 
     //
-    public function source($path)
-    {
-        return $this->pretendResponseIsFile($this->generateSourceResource($path));
-    }
+    //public function source(Request $request)
+    //{
+    //    return $this->pretendResponseIsFile($this->generateSourceResource($path));
+    //}
 
     //
     public function script()
@@ -28,8 +29,10 @@ class GridAssets
     }
 
     //
-    public function aGridAssets($path)
+    public function aGridAssets()
     {
+        $path = str_replace('http://atrienergo', '', url()->current());
+
         return $this->pretendResponseIsFile($this->generateSourceResource($path));
     }
 
