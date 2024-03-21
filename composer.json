@@ -148,8 +148,9 @@
     },
     "autoload": {
         "files": [
+            "src/boot/Autoloader.class.php",
             "src/boot/Support/helpers.php",
-            "src/boot/Autoloader.class.php"
+            "src/boot/System/Grid/Helpers/helpers.php"
         ],
         "psr-4": {
             "Boot\\": "src/boot/"

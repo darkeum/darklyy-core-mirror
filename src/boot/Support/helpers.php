@@ -10,8 +10,8 @@
 * @description Helpers public function
 */
 
-// подключение всех вспомогательных функций
-foreach (glob(__DIR__ . DIRECTORY_SEPARATOR . 'Helpers' . DIRECTORY_SEPARATOR . '*.helpers.php') as $listed) {
+// Подключение всех вспомогательных функций
+foreach (glob(__DIR__.DIRECTORY_SEPARATOR.'Helpers'.DIRECTORY_SEPARATOR.'*.helpers.php') as $listed) {
     if (file_exists($listed) && is_file($listed)) {
         require_once($listed);
     }
@@ -28,8 +28,8 @@ if (!function_exists('ee')) {
     /**
      * Функция преобразует специальные HTML-сущности обратно в соответствующие символы
      *
-     * @param  string       $value Исходная строка
-     * @param  array|null   $request  Массив с параметрами
+     * @param  string  $value  Исходная строка
+     * @param  array|null  $request  Массив с параметрами
      *                      Возможные параметры: (type: тип (default, word), enter: разделитель строки (по умолчанию \n))
      * @return string       Возвращает строку где все специальные HTML-сущности преобразованы обратно в соответствующие символы
      */
@@ -43,8 +43,8 @@ if (!function_exists('env')) {
     /**
      * Функция получает значение из среды окружения (environment)
      *
-     * @param  string  $key Ключ параметра
-     * @param  mixed   $default Значение по умолчанию
+     * @param  string  $key  Ключ параметра
+     * @param  mixed  $default  Значение по умолчанию
      * @return mixed   Возвращает найденное по ключу значение, иначе возвращает $default
      */
     function env($key, $default = null)
