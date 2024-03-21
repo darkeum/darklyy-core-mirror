@@ -1,9 +1,8 @@
 <?php
 
-if (!function_exists('gridAssets')) {
-
-    function gridAssets($path)
-    {
-        return $path;
-    }
-}
+//if (!function_exists('name')) {
+//
+//    function name()
+//    {
+//    }
+//}

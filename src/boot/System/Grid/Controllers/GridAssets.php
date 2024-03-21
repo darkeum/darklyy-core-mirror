@@ -11,12 +11,6 @@ class GridAssets
     use CanPretendToBeAFile;
 
     //
-    //public function source(Request $request)
-    //{
-    //    return $this->pretendResponseIsFile($this->generateSourceResource($path));
-    //}
-
-    //
     public function script()
     {
         return $this->pretendResponseIsFile($this->generateSourceJavaScripts());
@@ -29,23 +23,13 @@ class GridAssets
     }
 
     //
-    public function aGridAssets()
+    public function assets()
     {
-        $path = str_replace('http://atrienergo', '', url()->current());
+        $path = url()->getRequest()->path();
 
-        return $this->pretendResponseIsFile($this->generateSourceResource($path));
-    }
+        $source = __DIR__ . '/../Resources/Assets/' . $path;
 
-    //
-    protected function generateSourceResource($path)
-    {
-        $source = __DIR__ . '/../Resources/' . $path;
-        //if (!file_exists($source)) {
-        //$minify = new Js();
-        //$minify->minify($source);
-        //}
-
-        return $source;
+        return $this->pretendResponseIsFile($source);
     }
 
     //
