@@ -14,7 +14,7 @@ namespace Boot\System\Settings;
 use Boot\Support\Facades\Auth;
 
 class SettingsManager
-{    
+{
     /**
      * Получить настройки пользователя по ключу
      *
@@ -24,10 +24,10 @@ class SettingsManager
      */
     public function get($key, $default = null)
     {
-        
+
         return Auth::check() ? Auth::user()->settings($key, $default) : $default;
     }
-    
+
     /**
      * Установить настройки пользователя по ключу
      *
@@ -35,8 +35,8 @@ class SettingsManager
      * @param  mixed $value Значение
      * @return void
      */
-    public function set($key, $value)
+    public function set($key, $value, $type = 'string')
     {
-        return Auth::user()->setSetting($key, $value);
+        return Auth::user()->setSetting($key, $value, $type);
     }
 }

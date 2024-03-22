@@ -25,7 +25,7 @@ trait HasSettings {
     public function settings($key, $default = null)
     {
         $settings = $this->getCache();
-        $data = $this->searchSetting($key, $settings);   
+        $data = $this->searchSetting($key, $settings);
         if(isset($data['value'])){
             $value = $data['value'];
             $type = $data['type'];
@@ -42,7 +42,7 @@ trait HasSettings {
         } else {
             return $default;
         }
-       
+
     }
 
     private function searchSetting($key, $array, $column = 'name')
