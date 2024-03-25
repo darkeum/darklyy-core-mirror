@@ -58,6 +58,8 @@ trait RenderTrait
             $data['dom'] = $data['options']['dom'];
         }
 
+        $this->getParams($this);
+
         return view('grid::layout', [
             'title' => $this->title ?? 'Список компонента Grid',
             'data' => $data,
@@ -107,6 +109,22 @@ trait RenderTrait
         return route('grid.index', $this->grid_id);
     }
 
+    protected function getParams($t)
+    {
+        dd($t);
+
+        $params = collect();
+
+        $params->put('configs', [
+            '' => '',
+            '' => '',
+            '' => '',
+            '' => '',
+            '' => '',
+        ]);
+
+    }
+
     // Языковой файл для Grid
     protected function getLanguage() {
         $language = trans('grid::lang');
@@ -119,6 +137,6 @@ trait RenderTrait
             view("elements.preloader", ['bg' => false])
         );
 
-        return $language;
+        return collect($language)->toJson(JSON_UNESCAPED_UNICODE);
     }
 }

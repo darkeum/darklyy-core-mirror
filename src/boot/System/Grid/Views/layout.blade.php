@@ -437,7 +437,7 @@
                     },
 
                     // Перевод DataTables
-                    language: {!! collect($language)->toJson(JSON_UNESCAPED_UNICODE) !!},
+                    language: {!! $language !!},
 
                     // Кастомные параметры
                     // Использование table.settings()[0].oInit.settings.param или settings.oInit.settings.param из функций событий
