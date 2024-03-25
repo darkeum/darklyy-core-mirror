@@ -1,0 +1,626 @@
+// ================================================================================================
+//     File Name: aGrid.scss
+//     Description: Datatables aGrid
+//     --------------------------------------------------------------------------------------------
+//     Item Name: Darklyy Framework
+//     Author: Sergey Pereverzev
+// ================================================================================================
+
+// Панель инструментов
+.aGrid-toolbar {
+  gap: 8px;
+
+  // Элементы управления
+  .aGrid-controls {
+    position: inherit;
+
+    // Обратимся хитро к родителю dtsb-searchBuilder через has()
+    :has(.search-builder-custom) {
+      position: absolute;
+      max-width: 50%;
+      right: 8px;
+      left: initial !important;
+
+      // Обратимся к dtsb-searchBuilder он же search-builder-custom
+      .search-builder-custom {
+        .dtsb-inputCont {
+          select, input {
+            height: 100%;
+          }
+        }
+      }
+
+    }
+
+    .dt-button-collection.dtb-collection-closeable {
+      // Обратимся хитро к родителю dtsb-searchBuilder через has()
+      //&:has(.search-builder-custom) {
+      //  //width: 50% !important;
+      //  //left: auto !important;
+      //  //right: 0;
+      //}
+    }
+  }
+
+  .dt-button-background {
+    background-color: #80808042;
+  }
+}
+
+// Main container Datatables aGrid
+.aGrid-container {
+  //margin-bottom: 0;
+  //padding: 0;
+
+  // Модификаторы (Активность кнопки модификаторов)
+  &.mods {
+    button.aGrid-mods-button {
+      border-color: var(--a-primary-color);
+
+      i {
+        color: var(--a-primary-color);
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          //&:last-child:after {
+          //  position: absolute;
+          //  top: 45%;
+          //  left: 2px;
+          //  width: 6px;
+          //  height: 6px;
+          //  content: "";
+          //  border-radius: 50%;
+          //  background: var(--a-primary-color);
+          //}
+        }
+      }
+    }
+
+  }
+
+  // Рамка индикатор блокировки
+  &.blocked {
+    -webkit-box-shadow: 0 0 5px 0 rgb(255 0 0);
+    -moz-box-shadow: 0 0 5px 0 rgb(255 0 0);
+    box-shadow: 0 0 5px 0 rgb(255 0 0);
+  }
+
+  &.dt-button-background {
+    cursor: pointer;
+  }
+
+  // Зона 1 - Хеадер - Тут у нас заголовки и поля фильтрации и поиска
+  .dataTables_scrollHead {
+
+    .dataTables_scrollHeadInner {
+      table {
+        margin-top: 0 !important;
+
+        // Исправление столбцов Datatables (Что бы border'ы были ровными)
+        &.table-sm-px {
+          tr {
+            th, td {
+              //padding: 5px;
+            }
+          }
+        }
+
+        thead {
+          tr {
+            // Заголовки
+            &.aGrid-titles {
+              //white-space: nowrap; // Перенос заголовков таблицы
+
+              th {
+                //padding: 0.3rem 0.5rem; // Сломает столбцы
+
+                // Нумерация столбцов
+                .col-number {
+                  position: absolute;
+                  left: 50%;
+                  transform: translate(-50%);
+                  top: -7px;
+                  color: var(--a-primary-color);
+                  border: 1px solid var(--a-primary-color);
+                  background: white;
+                  padding: 0 3px;
+                  font-size: 0.6rem;
+                  border-radius: 3px;
+                  line-height: normal;
+                }
+
+              }
+
+            }
+
+            // Фильтры и поиски
+            &.aGrid-filters {
+
+              th {
+                padding: 0.3rem 0.5rem;
+
+                input {
+                  padding-right: inherit;
+                  padding-left: inherit;
+                }
+
+                select {
+                  &.form-select-sm {
+                    // Уменьшеный select для grid
+                    //min-height: 2.142rem;
+                  }
+                }
+
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Зона 2 - Загружаемый Контент - Строки ROW тут
+  .dataTables_scrollBody {
+    // Фон Grid - "Шахматный фон"
+    background: repeating-conic-gradient(#fff1 0% 25%, #0001 0% 50%) 0/30px 30px !important;
+
+    table {
+
+      &.dt-behavior {
+        overscroll-behavior: contain;
+      }
+
+      &.dataTable {
+
+        td {
+          position: relative;
+
+          .badge-render {
+            i, svg {
+              margin-left: 3px;
+            }
+          }
+        }
+
+      }
+    }
+
+  }
+
+  // Зона 3 - Лоадер - processing
+  .dataTables_processing {
+    position: absolute;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    //height: 100%!important; // Покроет зону с заголовками
+    margin-left: inherit;
+    margin-top: inherit;
+    text-align: center;
+    padding: inherit;
+    pointer-events: none;
+    background-color: #80808042;
+  }
+
+  .dt-footer {
+    border-top: 1px solid #ebe9f1;
+  }
+
+  // Работа с таблицей Datatables
+  table {
+
+
+    // Работа с Grid
+    &.dataTable {
+
+      &.collapsed {
+        tbody {
+          tr {
+
+            //&:hover {
+            //  .dtr-control:before {
+            //    color: $a-color;
+            //    background-color: white!important;
+            //
+            //    -webkit-box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+            //    -moz-box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+            //    box-shadow: 0 0 0 2px rgba($a-color-rgb, 0.5) inset;
+            //
+            //    .pris & {
+            //      color: $p-color;
+            //
+            //      -webkit-box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+            //      -moz-box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+            //      box-shadow: 0 0 0 2px rgba($p-color-rgb, 0.5) inset;
+            //    }
+            //  }
+            //}
+
+            &.parent {
+              .dtr-control:before {
+                content: "\e935" !important; // Шеврон up
+              }
+            }
+
+            td, th {
+              // Флаг вниз стрелка слева таблицы
+              &.dtr-control:hover {
+
+              }
+
+              &.dtr-control {
+
+                &:has(:before) {
+                  background-color: #0a66c2;
+                }
+
+                &:hover {
+                  &:before {
+                    background-color: #0a53be;
+                  }
+                }
+
+                &:before {
+                  top: 0;
+                  left: 0;
+                  height: 100%;
+                  display: grid;
+                  position: absolute;
+                  color: white;
+                  font-family: 'feather' !important;
+                  content: "\e932" !important; // Шеврон down
+                  align-items: center;
+                  background-color: $a-color;
+
+                  .pris & {
+                    background-color: $p-color;
+                  }
+
+                }
+
+
+              }
+            }
+          }
+        }
+      }
+
+      &.datatables-basic {
+        > :not(:first-child) {
+          border-top: 0 solid #ebe9f1;
+        }
+
+        > :not(caption) > * {
+          border-width: 0 0;
+        }
+      }
+
+      // Работа с Thead Grid
+      thead {
+        .sorting {
+
+          &:before, &:after {
+            //content: '';
+            right: 0 !important;
+          }
+
+          &:before {
+            top: 0;
+            bottom: auto;
+          }
+
+          &:after {
+            bottom: 0;
+            top: auto;
+          }
+
+          &.sorting_asc, &.sorting_desc {
+            &:before, &:after {
+            }
+          }
+
+          &.sorting_asc {
+            &:before, &:after {
+            }
+
+          }
+
+          &.sorting_desc {
+            &:before, &:after {
+            }
+
+          }
+
+        }
+
+        tr th {
+          //white-space: nowrap;
+        }
+      }
+
+      // Работа с TR Grid - Строки таблицы
+      tbody {
+        tr {
+
+          cursor: pointer;
+
+          // Если таблица пуста то растягивать ее во всю высоту
+          //&:has(tbody > tr > td.dataTables_empty) {
+          &:has(td.dataTables_empty) {
+            height: 100%;
+          }
+
+          // Наведение на строку
+          &:hover {
+            background-color: rgba($a-color-rgb, 0.1);
+
+            .pris & {
+              background-color: rgba($p-color-rgb, 0.1);
+            }
+
+            .dark-layout & {
+              background-color: #343d55;
+            }
+          }
+
+          // Выделение строки (при клике) - Смена цветов badge, btn и тд.
+          &.selected {
+            background-color: $a-color !important;
+            color: var(--white);
+
+            //
+            * {
+              box-shadow: none !important;
+            }
+
+            td {
+              input.render-class {
+                color: white;
+                box-shadow: none;
+              }
+
+              > i {
+                color: var(--white)!important;
+              }
+
+              //
+              .btn {
+                border-color: var(--white) !important;
+                color: var(--white);
+              }
+
+              //
+              .badge {
+                background-color: var(--white);
+              }
+
+              //
+              .render {
+                a:link:not(.badge) {
+                  color: var(--white);
+                }
+              }
+
+              //
+              .form-check-input {
+                border-color: white;
+              }
+
+            }
+
+            .pris & {
+              background-color: $p-color !important;
+            }
+          }
+
+          //&.odd {
+          //  background-color: #ffffff;
+          //}
+
+          //&.even {
+          //  background-color: #fafafc;
+          //}
+
+          &:last-child td:last-child {
+            border-radius: 0;
+          }
+
+          &.child {
+            .child:after {
+              top: 0;
+              left: 0;
+              height: 100%;
+              width: 1em;
+              margin-top: 0;
+              display: grid;
+              position: absolute;
+              font-family: "feather", sans-serif;
+              speak: none;
+              font-style: normal;
+              font-weight: normal;
+              font-variant: normal;
+              text-transform: none;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              content: "\e935";
+              align-items: center;
+              color: $a-color;
+
+              .pris & {
+                color: $p-color;
+              }
+            }
+          }
+
+          td {
+            input.render-class {
+              border-color: transparent;
+              background: transparent;
+              text-overflow: ellipsis;
+            }
+
+            .render-popover {
+              pointer-events: none;
+            }
+
+          }
+
+          .child span.dtr-title {
+            min-width: auto;
+          }
+
+          .badge {
+            display: block;
+            border: 1px solid transparent;
+          }
+
+        }
+      }
+
+    }
+
+    &.table-bordered.dataTable th:first-child,
+    &.table-bordered.dataTable td:first-child {
+      border-left-width: 0;
+    }
+
+    &.table-bordered.dataTable .aGrid-titles th:last-child,
+    &.table-bordered.dataTable td:last-child {
+      border-right-width: 0;
+    }
+
+  }
+
+  // Свое контекстное меню
+  .context-menu-list {
+    padding: 0 !important;
+    border-radius: 0.357rem;
+
+    li:first-child {
+      border-top-right-radius: 0.357rem;
+      border-top-left-radius: 0.357rem;
+    }
+
+    li:last-child {
+      border-bottom-right-radius: 0.357rem;
+      border-bottom-left-radius: 0.357rem;
+    }
+  }
+
+  div.dts div.dataTables_scrollBody,
+  div.dataTables_scrollFootInner table.table-bordered tr th:first-child,
+  div.dataTables_scrollHeadInner table.table-bordered tr th:first-child {
+    border-left: none !important;
+  }
+
+}
+
+.flatpickr-calendar {
+  //pointer-events: none;
+  touch-action: none;
+}
+
+// CSS render-class
+@media (max-width: 575.98px) {
+  div.dataTables_wrapper {
+    overflow: hidden !important;
+  }
+}
+
+div.dataTables_wrapper .dt-button-collection > div.dtsb-searchBuilder[role=menu] {
+  display: block;
+  transform: none;
+  box-shadow: none;
+}
+
+div.dtb-popover-close {
+  top: 2px;
+  right: 2px;
+}
+
+// Datatables Grid - "Быстрый просмотр строки"
+.qq-view {
+  width: 50%;
+  max-width: 500px;
+  pointer-events: none;
+
+  .popover-arrow {
+  }
+
+  .popover-body {
+    .qq-view-item {
+
+      display: grid;
+
+      div:first-child {
+        margin-top: 0 !important;
+      }
+
+      .more-info {
+        display: grid;
+      }
+    }
+  }
+}
+
+.dark-layout {
+  .aGrid-container {
+    table {
+
+      tbody {
+      }
+
+      tr {
+        background: #283046;
+
+        &.selected {
+          td {
+            color: #ffffff;
+          }
+        }
+
+        td {
+
+        }
+      }
+
+    }
+  }
+}
+
+@keyframes row_after {
+  from {
+    top: 0;
+  }
+
+  75% {
+    top: 10px
+  }
+
+  to {
+    top: -10px
+  }
+}
+
+.menu-pulse {
+  box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+  animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}
