@@ -1007,7 +1007,7 @@
 
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
 
-    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
-    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
+    <script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>
+    {{--<script src="{{ asset('aGrid/aGrid.js') }}"></script>--}}
 
 @endsection
