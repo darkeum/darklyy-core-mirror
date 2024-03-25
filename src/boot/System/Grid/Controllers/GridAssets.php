@@ -22,7 +22,7 @@ class GridAssets
         return $this->pretendResponseIsFile($this->generateSourceStyle(), 'text/css');
     }
 
-    //
+    // Получение ресурса по его URL
     public function assets()
     {
         $path = url()->getRequest()->path();
