@@ -948,6 +948,7 @@
     {{-- DATATABLE --}}
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/last/datatables.css') }}">
     <link rel="stylesheet" href="{{ asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('aGrid/aGrid.css') }}">
     {{-- DATATABLE --}}
 
     <link rel="stylesheet" href="{{ asset(mix('vendors/css/pickers/flatpickr/flatpickr.min.css')) }}">
@@ -988,6 +989,9 @@
     <script src="{{ asset(mix('vendors/js/tables/datatable/buttons.print.min.js')) }}"></script>
 
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.rowGroup.min.js')) }}"></script>
+
+    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
+    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
     {{-- DATATABLE --}}
 
     <script src="{{ asset(mix('vendors/js/popper/popper.min.js')) }}"></script>
@@ -1006,8 +1010,5 @@
 
 
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
-
-    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
-    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
 
 @endsection
