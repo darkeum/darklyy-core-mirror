@@ -58,7 +58,7 @@ trait RenderTrait
             $data['dom'] = $data['options']['dom'];
         }
 
-        $this->getParams($this);
+        //$this->getParams($this);
 
         return view('grid::layout', [
             'title' => $this->title ?? 'Список компонента Grid',
@@ -111,17 +111,19 @@ trait RenderTrait
 
     protected function getParams($t)
     {
-        dd($t);
+        //dd($t);
 
-        $params = collect();
+        //$params = collect();
 
-        $params->put('configs', [
-            '' => '',
-            '' => '',
-            '' => '',
-            '' => '',
-            '' => '',
-        ]);
+        //$this = $t;
+
+        //$params->put('configs', [
+        //    '' => '',
+        //    '' => '',
+        //    '' => '',
+        //    '' => '',
+        //    '' => '',
+        //]);
 
     }
 
