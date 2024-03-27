@@ -94,118 +94,125 @@
     cursor: pointer;
   }
 
-  // Зона 1 - Хеадер - Тут у нас заголовки и поля фильтрации и поиска
-  .dataTables_scrollHead {
+  .dataTables_scroll {
 
-    .dataTables_scrollHeadInner {
-      table {
-        margin-top: 0 !important;
+    // Зона 1 - Хеадер - Тут у нас заголовки и поля фильтрации и поиска
+    .dataTables_scrollHead {
 
-        // Исправление столбцов Datatables (Что бы border'ы были ровными)
-        &.table-sm-px {
-          tr {
-            th, td {
-              //padding: 5px;
+      .dataTables_scrollHeadInner {
+        table {
+          margin-top: 0 !important;
+
+          // Исправление столбцов Datatables (Что бы border'ы были ровными)
+          &.table-sm-px {
+            tr {
+              th, td {
+                //padding: 5px;
+              }
             }
           }
-        }
 
-        thead {
-          tr {
-            // Заголовки
-            &.aGrid-titles {
-              //white-space: nowrap; // Перенос заголовков таблицы
+          thead {
+            tr {
+              // Заголовки
+              &.aGrid-titles {
+                //white-space: nowrap; // Перенос заголовков таблицы
 
-              th {
-                //padding: 0.3rem 0.5rem; // Сломает столбцы
+                th {
+                  //padding: 0.3rem 0.5rem; // Сломает столбцы
 
-                // Нумерация столбцов
-                .col-number {
-                  position: absolute;
-                  left: 50%;
-                  transform: translate(-50%);
-                  top: -7px;
-                  color: var(--a-primary-color);
-                  border: 1px solid var(--a-primary-color);
-                  background: white;
-                  padding: 0 3px;
-                  font-size: 0.6rem;
-                  border-radius: 3px;
-                  line-height: normal;
-                }
-
-              }
-
-            }
-
-            // Фильтры и поиски
-            &.aGrid-filters {
-
-              th {
-                padding: 0.3rem 0.5rem;
-
-                input {
-                  padding-right: inherit;
-                  padding-left: inherit;
-                }
-
-                select {
-                  &.form-select-sm {
-                    // Уменьшеный select для grid
-                    //min-height: 2.142rem;
+                  // Нумерация столбцов
+                  .col-number {
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%);
+                    top: -7px;
+                    color: var(--a-primary-color);
+                    border: 1px solid var(--a-primary-color);
+                    background: white;
+                    padding: 0 3px;
+                    font-size: 0.6rem;
+                    border-radius: 3px;
+                    line-height: normal;
                   }
+
                 }
 
+              }
+
+              // Фильтры и поиски
+              &.aGrid-filters {
+
+                th {
+                  padding: 0.3rem 0.5rem;
+
+                  input {
+                    padding-right: inherit;
+                    padding-left: inherit;
+                  }
+
+                  select {
+                    &.form-select-sm {
+                      // Уменьшеный select для grid
+                      //min-height: 2.142rem;
+                    }
+                  }
+
+                }
               }
             }
           }
         }
       }
     }
-  }
 
-  // Зона 2 - Загружаемый Контент - Строки ROW тут
-  .dataTables_scrollBody {
-    // Фон Grid - "Шахматный фон"
-    background: repeating-conic-gradient(#fff1 0% 25%, #0001 0% 50%) 0/30px 30px !important;
+    // Зона 2 - Загружаемый Контент - Строки ROW тут
+    .dataTables_scrollBody {
+      // Фон Grid - "Шахматный фон"
+      background: repeating-conic-gradient(#fff1 0% 25%, #0001 0% 50%) 0/30px 30px !important;
 
-    table {
+      table {
 
-      &.dt-behavior {
-        overscroll-behavior: contain;
-      }
-
-      &.dataTable {
-
-        td {
-          position: relative;
-
-          .badge-render {
-            i, svg {
-              margin-left: 3px;
-            }
-          }
+        &.dt-behavior {
+          overscroll-behavior: contain;
         }
 
+        &.dataTable {
+
+          td {
+            position: relative;
+
+            .badge-render {
+              i, svg {
+                margin-left: 3px;
+              }
+            }
+          }
+
+        }
       }
+
     }
 
-  }
+    // Зона 3 - Лоадер - processing
+    .dataTables_processing {
+      position: absolute;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      //height: 100%!important; // Покроет зону с заголовками
+      margin-left: inherit;
+      margin-top: inherit;
+      text-align: center;
+      padding: inherit;
+      pointer-events: none;
+      background-color: #80808042;
+    }
 
-  // Зона 3 - Лоадер - processing
-  .dataTables_processing {
-    position: absolute;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    //height: 100%!important; // Покроет зону с заголовками
-    margin-left: inherit;
-    margin-top: inherit;
-    text-align: center;
-    padding: inherit;
-    pointer-events: none;
-    background-color: #80808042;
+    .dts_loading {
+      z-index: 2;
+    }
   }
 
   .dt-footer {
