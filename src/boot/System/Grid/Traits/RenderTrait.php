@@ -23,6 +23,7 @@ trait RenderTrait
     protected $render_filter_toolbar = false;
     protected $nav;
 
+    //
     public function render()
     {
         $data = [];
@@ -75,6 +76,7 @@ trait RenderTrait
         ]);
     }
 
+    //
     protected function renderColumn($c)
     {
         if(is_object($c['db']) and $c['db'] instanceof  \Illuminate\Database\Query\Expression)
@@ -84,16 +86,19 @@ trait RenderTrait
         return $c;
     }
 
+    //
     protected function renderPostData()
     {
         return array();
     }
 
+    //
     protected function renderOptions($opts)
     {
         return $opts;
     }
 
+    //
     protected function renderNav()
     {
         if (is_array($this->nav)) {
@@ -104,11 +109,13 @@ trait RenderTrait
         return $nav;
     }
 
+    //
     protected function renderGridUrl()
     {
         return route('grid.index', $this->grid_id);
     }
 
+    //
     protected function getParams($t)
     {
         //dd($t);
