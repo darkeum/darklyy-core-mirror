@@ -10,6 +10,7 @@ class aGrid {
 
     constructor(table) {
         this.container = $('.aGrid-container'); // Контейнер
+        this.version = '0.1.2'; // Версия
         this.module = this.container.data('moduleName'); // Название модуля
         this.table = table; // Текущая таблица всегда доступна в Классе
         this.options = {
@@ -18,14 +19,14 @@ class aGrid {
         this.store = store.namespace('aGrid'); // Система хранения в локальном кеше браузера для aGrid
         // this.dropContent = false; // Список для popover модификаторов
 
-        // ПЕРЕДЕЛАТЬ МУЛЬТИ-ВЫЗОВ класса в layout.blade
+        // ПЕРЕДЕЛАТЬ МУЛЬТИ-ВЫЗОВ класса в layout.blade !!!!!!!!!
     }
 
     // Загрузка Grid функций (Boot loader)
     boot() {
 
         // Запуск
-        console.log('aGrid: Started, version 0.1');
+        console.log('aGrid: Started, version' + this.version);
 
         // Перенос элементов управления (В новое место)
         this.appendTools();
@@ -36,14 +37,21 @@ class aGrid {
         // Инициализация aGrid-mods
         this.modsInit();
 
+
+        // TEST
         console.log(this.store.getAll())
+
     }
 
-    // LOAD GRID Callback's
-    // #1 - preDrawCallback
-    // preDrawCallback(data) {}
+    /* ************************************************************************ */
 
-    // #2 - Загрузка параметров
+    /* ЗАГРУЗКА GRID Callback's */
+    // #1 - preDrawCallback - ...
+    preDrawCallback(data) {
+        let grid = this;
+    }
+
+    // #2 - serverParams - Загрузка параметров
     serverParams(data) {
         let grid = this;
 
@@ -61,16 +69,18 @@ class aGrid {
         return data;
     }
 
-    // #3 - Создание строк в таблице
+    // #3 - createdRow - Создание строк в таблице
     createdRow(row, data, dataIndex) {
         let grid = this;
         grid.qRow(row);
     }
 
-    // #4 - Создание Header'а таблицы
-    // headerCallback(thead, data, start, end, display) {}
+    // #4 - headerCallback - Создание Header'а таблицы
+    headerCallback(thead, data, start, end, display) {
+        let grid = this;
+    }
 
-    // #5 - Отрисовка - drawCallback
+    // #5 - drawCallback - Отрисовка
     drawCallback(settings) {
         let grid = this;
 
@@ -110,17 +120,23 @@ class aGrid {
 
     }
 
-    // #6 - ...
-    // stateLoadCallback () {},
+    // #6 - stateLoadCallback - ...
+    stateLoadCallback () {
+        let grid = this;
+    }
 
-    // #7 - ...
-    // stateLoadParams (data) {},
+    // #7 - stateLoadParams - ...
+    stateLoadParams (data) {
+        let grid = this;
+    }
 
-    // #8 - Инициализация завершена
-    // initComplete(settings, json) {}
+    // #8 - initComplete - Инициализация завершена
+    initComplete(settings, json) {
+        let grid = this;
+    }
 
     /* ************************************************************************ */
-    // СОЗДАНИЕ ТАБЛИЦЫ
+    /* СОЗДАНИЕ ТАБЛИЦЫ */
     // Перенос кнопок управления в header
     appendTools() {
         let grid = $('.aGrid-container');
@@ -213,7 +229,7 @@ class aGrid {
 
     /* ************************************************************************ */
 
-    // Модификаторы таблицы - Init ###################
+    /* МОДИФИКАТОРЫ ТАБЛИЦЫ */
     // Инициализация popover modifiers
     modsInit() {
         let grid = this;
@@ -296,7 +312,7 @@ class aGrid {
 
     // modsActions(action, event = false) {}
 
-    // ### МОДИФИКАТОРЫ - МОДЫ - СПИСОК
+    // ### СПИСОК МОДОВ
     // МОД - Отключение прокрутки страницы при наведении на таблицу grid
     modsBlocked(event = false) {
         // https://jsbin.com/teqoqib/6/edit?html,js,output
@@ -385,7 +401,7 @@ class aGrid {
         });
     }
 
-    // ###############################################
+    /* ************************************************************************ */
 
     // "Быстрый просмотр строки"
     qRow(tr) {
@@ -831,6 +847,8 @@ class aGrid {
 
     }
 
+    /* ************************************************************************ */
+
     // ### Bootstrap
     // Перезагрузка всех Bootstrap элементов на странице
     bootstrapReload() {
@@ -853,7 +871,8 @@ class aGrid {
 
     // bootstrap Popover
     // bootstrapPopover() {}
-    // ###############################################
+
+    /* ************************************************************************ */
 
     // Переход по ссылкам на JS
     openUrl(t, param = false) {
@@ -967,8 +986,9 @@ class aGrid {
 
     }
 
+    /* ************************************************************************ */
 
-    /* *** Вспомогательные функции *** */
+    /* ВСПОМОГАТЕЛЬНЫЙ ФУНКЦИИ */
     // Работа с Буфером обмена
     // Пишем
     clipboardWrite(text) {
@@ -981,7 +1001,7 @@ class aGrid {
             });
     }
 
-    // Читаем
+    // Читаем текст, прочитанный из буфера обмена
     clipboardRead() {
         navigator.clipboard.readText()
             .then(text => {
@@ -1000,7 +1020,7 @@ class aGrid {
         });
     }
 
-    // ...
+    // Лог
     log(data) {
         console.log(data)
     }
