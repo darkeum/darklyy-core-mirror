@@ -2,6 +2,7 @@
 
 namespace Boot\System\Grid;
 
+use phpDocumentor\Reflection\Types\Collection;
 use Throwable;
 
 class GridView
@@ -20,6 +21,23 @@ class GridView
      */
     public static function actions(array $params): string
     {
+        // Фильтруем от false, если ЕСТЬ то убираем
+        $params['actions'] = array_filter($params['actions'], function ($elem) {
+            return $elem == true;
+        });
+
+        $params['actions_params'] = [
+            'config' => config('grid.actions'), // Переделать на мультиязычность
+            //'keys' => array_keys($params['actions']),
+            'count' => count($params['actions'])
+        ];
+
+        $params['actions_cfg'] = config('grid.actions'); // Переделать на мультиязычность
+        $params['actions_keys'] = array_keys($params['actions']);
+        $params['actions_count'] = count($params['actions']);
+        $params['destroy'] = array_search('destroy', array_keys($params['actions']));
+
+
         return view('grid::layouts.actions', $params)->render();
     }
 

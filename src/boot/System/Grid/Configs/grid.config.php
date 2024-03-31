@@ -28,8 +28,10 @@ return [
     'actions' => [
         'show' => ['Просмотр', 'eye'],
         'edit' => ['Редактировать', 'edit'],
+        'destroy' => ['Удалить', 'trash'],
+
         'print' => ['Распечатать', 'printer'],
-        'destroy' => ['Удалить', 'trash']
+        'download' => ['Скачать', 'download'],
     ],
 
     // Параметры

@@ -10,14 +10,6 @@ https://app.weeek.net/ws/288286/document/12
 {{-- Автоматический actions генератор --}}
 @php
 
-    // Конфиг
-    $actions_cfg = config('grid.actions'); // Переделать на мультиязычность
-
-    // Фильтруем от false, если ЕСТЬ то убираем
-    $actions = array_filter($actions, function ($elem) {
-        return $elem == true;
-    });
-
     // Проверка на тип данных
     $marker = function ($key) use ($actions_cfg) {
         $marker = $key;
@@ -31,24 +23,21 @@ https://app.weeek.net/ws/288286/document/12
         return $marker;
     };
 
-    $destroy = array_search('destroy', array_keys($actions));
-    $actions_keys = array_keys($actions);
-    $count = count($actions);
-
 @endphp
 
 @if($destroy ?? false)
-    <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}" method="POST"
+    <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}"
+          method="POST"
           onsubmit="return confirm('Удалить ?');"
     >
         @csrf
         @method('DELETE')
-        @endif
+@endif
 
-        <div class="btn-group {{ ($count >= 2) ? 'dropstart' : '' }}" role="group">
+        <div class="btn-group {{ ($actions_count >= 2) ? 'dropstart' : '' }}" role="group">
 
             {{-- Дроп список - Если больше чем 2 --}}
-            @if($count > 2)
+            @if($actions_count > 2)
 
                 <a class="btn btn-sm btn-outline-secondary dropdown-toggle-split"
                    data-bs-toggle="dropdown"
@@ -127,8 +116,8 @@ https://app.weeek.net/ws/288286/document/12
             {{-- Дроп список - Если больше чем 2 --}}
 
             {{-- Кнопки - Если меньше или равно 2  --}}
-            @php(($count <= 2) ? $slice = 2 : $slice = 1)
-            @if($count)
+            @php(($actions_count <= 2) ? $slice = 2 : $slice = 1)
+            @if($actions_count)
                 @foreach(array_slice($actions, 0, $slice) as $key => $action)
 
                     @switch($marker($key))
@@ -197,8 +186,10 @@ https://app.weeek.net/ws/288286/document/12
 
         </div>
 
-        @if($destroy ?? false)</form>
+@if($destroy ?? false)
+    </form>
 @endif
+
 {{-- Автоматический actions генератор --}}
 
 {{-- ЯВНО СКРИПТЫ НЕ ТУТ!!! --}}
