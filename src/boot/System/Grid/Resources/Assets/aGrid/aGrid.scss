@@ -527,6 +527,18 @@
     border-left: none !important;
   }
 
+  //
+  [class^="fa-"], [class*=" fa-"] {
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
 }
 
 .flatpickr-calendar {
