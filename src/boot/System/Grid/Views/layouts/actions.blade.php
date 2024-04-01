@@ -10,7 +10,7 @@ https://app.weeek.net/ws/288286/document/12
 {{-- Автоматический actions генератор --}}
 @php
 
-    // Проверка на тип данных
+    // Проверка на тип данных (Переделать!!!)
     $marker = function ($key) use ($actions_cfg) {
         $marker = $key;
         if (is_int($key)) {

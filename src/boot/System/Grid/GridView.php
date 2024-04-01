@@ -26,15 +26,15 @@ class GridView
             return $elem == true;
         });
 
-        $params['actions_params'] = [
-            'config' => config('grid.actions'), // Переделать на мультиязычность
-            //'keys' => array_keys($params['actions']),
-            'count' => count($params['actions'])
-        ];
-
+        //$params['actions_params'] = [
+        //    'config' => config('grid.actions'), // Переделать на мультиязычность
+        //    //'keys' => array_keys($params['actions']),
+        //    'count' => count($params['actions'])
+        //];
         $params['actions_cfg'] = config('grid.actions'); // Переделать на мультиязычность
         $params['actions_keys'] = array_keys($params['actions']);
         $params['actions_count'] = count($params['actions']);
+
         $params['destroy'] = array_search('destroy', array_keys($params['actions']));
 
 
