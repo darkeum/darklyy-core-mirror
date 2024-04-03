@@ -616,6 +616,7 @@ div.dtb-popover-close {
   }
 }
 
+//
 @keyframes row_after {
   from {
     top: 0;
@@ -627,24 +628,5 @@ div.dtb-popover-close {
 
   to {
     top: -10px
-  }
-}
-
-.menu-pulse {
-  box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
-  animation: pulse-red 1s infinite;
-}
-
-@keyframes pulse-red {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
-  }
-
-  70% {
-    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
-  }
-
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
   }
 }
