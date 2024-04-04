@@ -46,6 +46,7 @@ class aGrid {
     /* ************************************************************************ */
 
     /* ЗАГРУЗКА GRID Callback's */
+
     // #1 - preDrawCallback - ...
     preDrawCallback(data) {
         let grid = this;
@@ -121,12 +122,12 @@ class aGrid {
     }
 
     // #6 - stateLoadCallback - ...
-    stateLoadCallback () {
+    stateLoadCallback() {
         let grid = this;
     }
 
     // #7 - stateLoadParams - ...
-    stateLoadParams (data) {
+    stateLoadParams(data) {
         let grid = this;
     }
 
@@ -137,6 +138,7 @@ class aGrid {
 
     /* ************************************************************************ */
     /* СОЗДАНИЕ ТАБЛИЦЫ */
+
     // Перенос кнопок управления в header
     appendTools() {
         let grid = $('.aGrid-container');
@@ -230,6 +232,7 @@ class aGrid {
     /* ************************************************************************ */
 
     /* МОДИФИКАТОРЫ ТАБЛИЦЫ */
+
     // Инициализация popover modifiers
     modsInit() {
         let grid = this;
@@ -737,14 +740,14 @@ class aGrid {
 
         // Кастомные параметры Grid (Все кастомные параметры тут !!!)
         let configs = unit.configs;
-
-        let render = '';
+        let render;
 
         // console.log(data);
         // console.log(type);
         // console.log(row);
         // console.log(meta);
-        console.log(configs);
+
+        // console.log(configs); // было
 
         // Проверка на display
         if (type === 'display') {
@@ -754,7 +757,7 @@ class aGrid {
 
                 let col_class = unit.sClass;
                 let r_class = col_class ? col_class : '';
-                let boostrap_tools = '';
+                let boostrap_attributes = {};
 
                 // configs.popover;
                 // configs.prefix;
@@ -770,32 +773,53 @@ class aGrid {
                     // let b_t_data = (rType !== 'default') ? data.replace(/"/g, "'") : '';
                     // popover хранит в себе placement
 
-                    boostrap_tools += ' data-bs-toggle="popover"' +
-                        // ' title=""' +
-                        // ' data-bs-title=""' +
-                        ' data-bs-trigger="hover"' +
-                        ' data-bs-html="true"' +
-                        ' data-bs-custom-class="render-popover"' +
-                        ' data-bs-placement="' + configs.popover + '"' +
-                        ' data-bs-content="' + popover_data + '"';
+                    boostrap_attributes = {
+                        // 'title' : '',
+                        // 'data-bs-title' : '',
+                        'data-bs-toggle': 'popover',
+                        'data-bs-trigger': 'hover',
+                        'data-bs-html': 'true',
+                        'data-bs-custom-class': 'render-popover',
+                        'data-bs-placement': configs.popover,
+                        'data-bs-content': popover_data,
+                    };
+
                 }
+
+                let div = $('<div class="render"></div>');
 
                 // Типы render внутри DataGrid
                 switch (rType) {
 
                     // Простой блок без скрытия
                     case 'simple':
-                        render = '<div class="render render-default"' + boostrap_tools + '>' + data + '</div>'
-                        break
+                        render = div.attr(boostrap_attributes).addClass('render-default').html(data).prop('outerHTML');
+                        break;
 
                     // Вывод скрытого текста в столбце
                     case 'text':
-                        render = '<div class="d-grid render render-text"' + boostrap_tools + '><span class="d-block text-truncate">' + data + '</span></div>';
+
+                        let truncate;
+
+                        div.addClass('d-grid render-text').attr(boostrap_attributes);
+
+                        let children = $('<div></div>').html(data).children();
+                        if (children.length > 0) {
+                            truncate = children.addClass('d-block text-truncate').prop('outerHTML');
+                        } else {
+                            truncate = $('<span class="d-block text-truncate"></span>').html(data);
+                        }
+
+                        render = div.html(truncate).prop('outerHTML');
                         break;
 
                     // Вывод поля ввода с столбце (WIP)
                     case 'input' :
-                        render = '<input class="form-control render render-input ' + r_class + '"' + boostrap_tools + ' value="' + data + '" />'
+                        let input = $('<input class="form-control render render-input" />')
+                            .addClass(r_class)
+                            .attr(boostrap_attributes)
+                            .val(data);
+                        render = input.prop('outerHTML');
                         break;
 
                     // Вывод чекбокса (WIP) А надо???
@@ -805,32 +829,34 @@ class aGrid {
                     //     break;
 
                     // WIP (Тестовый вариант)
-                    case 'expand':
-                        render = '<div class="d-grid render render-expand expand"' + boostrap_tools + '>' +
-                            '<span class="d-block text-truncate">' + data + '</span>' +
-                            '</div>';
-                        break;
+                    // case 'expand':
+                    //     render = '<div class="d-grid render render-expand expand"' + boostrap_tools + '>' +
+                    //         '<span class="d-block text-truncate">' + data + '</span>' +
+                    //         '</div>';
+                    //     break;
 
 
                     default:
                         render = data;
                         break;
                 }
+            } else {
+                render = data;
             }
 
             // Если есть вложения или еще что то ... (Значки вложений) (WIP)
-            let other = unit.other;
-            if (other) {
-
-                // console.log(other.attach);
-                // console.log(other);
-
-                render += '<span class="position-absolute top-0 end-0 badge badge-render bg-transparent text-muted">' +
-                    '<i data-feather="paperclip"></i>' +
-                    '<i data-feather="image"></i>' +
-                    '<i data-feather="codepen"></i>' +
-                    '</span>';
-            }
+            // let other = unit.other;
+            // if (other) {
+            //
+            //     // console.log(other.attach);
+            //     // console.log(other);
+            //
+            //     render += '<span class="position-absolute top-0 end-0 badge badge-render bg-transparent text-muted">' +
+            //         '<i data-feather="paperclip"></i>' +
+            //         '<i data-feather="image"></i>' +
+            //         '<i data-feather="codepen"></i>' +
+            //         '</span>';
+            // }
         }
 
         // Возвращаем готовый div блок
