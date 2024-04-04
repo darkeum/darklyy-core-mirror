@@ -737,6 +737,7 @@ class aGrid {
 
         // Основные параметры
         let unit = meta.settings.aoColumns[meta.col];
+        console.log(unit)
 
         // Кастомные параметры Grid (Все кастомные параметры тут !!!)
         let configs = unit.configs;
@@ -755,6 +756,7 @@ class aGrid {
             // Проверка данных и возможности с ними работать
             if (data !== null && data !== '') {
 
+                let div = $('<div class="render"></div>');
                 let col_class = unit.sClass;
                 let r_class = col_class ? col_class : '';
                 let boostrap_attributes = {};
@@ -763,7 +765,7 @@ class aGrid {
                 // configs.prefix;
 
                 // Добавить префикс если он есть
-                data = configs.prefix + data;
+                configs.prefix && (data = configs.prefix + data);
 
                 // ### Boostrap js tools
                 // Popover
@@ -785,8 +787,6 @@ class aGrid {
                     };
 
                 }
-
-                let div = $('<div class="render"></div>');
 
                 // Типы render внутри DataGrid
                 switch (rType) {
