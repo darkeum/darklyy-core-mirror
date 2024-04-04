@@ -733,25 +733,25 @@ class aGrid {
     }
 
     // Рендер данных в таблице
-    render(data, type, row, meta, rType = null) {
-
-        // Основные параметры
-        let unit = meta.settings.aoColumns[meta.col];
-        console.log(unit)
-
-        // Кастомные параметры Grid (Все кастомные параметры тут !!!)
-        let configs = unit.configs;
-        let render;
-
-        // console.log(data);
-        // console.log(type);
-        // console.log(row);
-        // console.log(meta);
-
-        // console.log(configs); // было
+    render(data, type, row, meta) {
 
         // Проверка на display
         if (type === 'display') {
+
+            let render;
+
+            // Основные параметры
+            let unit = meta.settings.aoColumns[meta.col];
+
+            // Кастомные параметры Grid (Все кастомные параметры тут !!!)
+            let configs = unit.configs;
+
+            // console.log(data);
+            // console.log(type);
+            // console.log(row);
+            // console.log(meta);
+
+            // console.log(configs); // было
 
             // Проверка данных и возможности с ними работать
             if (data !== null && data !== '') {
@@ -772,7 +772,7 @@ class aGrid {
                 if (configs.popover) {
 
                     let popover_data = data.replace(/"/g, "'");
-                    // let b_t_data = (rType !== 'default') ? data.replace(/"/g, "'") : '';
+                    // let b_t_data = (configs.render !== 'default') ? data.replace(/"/g, "'") : '';
                     // popover хранит в себе placement
 
                     boostrap_attributes = {
@@ -789,7 +789,7 @@ class aGrid {
                 }
 
                 // Типы render внутри DataGrid
-                switch (rType) {
+                switch (configs.render) {
 
                     // Простой блок без скрытия
                     case 'simple':
@@ -857,21 +857,22 @@ class aGrid {
             //         '<i data-feather="codepen"></i>' +
             //         '</span>';
             // }
-        }
 
-        // Возвращаем готовый div блок
-        return render;
+            return render;
+        } else {
+            return data;
+        }
     }
 
     // Обработка клика по render (Response) WIP !!!
-    renderExpand(t) {
-        let table = this.table;
-        let render = $(t);
-
-        table.$('tr').not('.selected').find('.render span').addClass('text-truncate');
-        render.toggleClass("text-truncate");
-
-    }
+    // renderExpand(t) {
+    //     let table = this.table;
+    //     let render = $(t);
+    //
+    //     table.$('tr').not('.selected').find('.render span').addClass('text-truncate');
+    //     render.toggleClass("text-truncate");
+    //
+    // }
 
     /* ************************************************************************ */
 
