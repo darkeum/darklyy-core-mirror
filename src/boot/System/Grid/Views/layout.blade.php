@@ -370,7 +370,7 @@
                                 {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
-                                {{-- WIP - Кастомные параметры для колонок - ДОВЕСТИ ДО УМА !!! --}}
+                            {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
                             configs: {
                                 {!! isset($col['icon']) ? 'icon: "' . $col['icon'] . '",' : false !!}
                                     {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
@@ -381,7 +381,7 @@
                                 prefix: "{{ $col['prefix'] }}",
                                 render: "{{ $col['render'] }}",
                             }
-                            {{-- WIP - Кастомные параметры для колонок --}}
+                            {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
                             {{---}}
                             data: {
