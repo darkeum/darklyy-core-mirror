@@ -362,7 +362,7 @@
                             data: "{{ $col['name'] }}",
 
                             @if(($col['render']))render: function (data, type, row, meta) {
-                                return grid.render(data, type, row, meta, "{{ $col['render'] }}")
+                                return grid.render(data, type, row, meta)
                             },
                             @endif
 
@@ -379,6 +379,7 @@
                                     {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
                                 type: "{{ $col['type'] }}",
                                 prefix: "{{ $col['prefix'] }}",
+                                render: "{{ $col['render'] }}",
                             }
                             {{-- WIP - Кастомные параметры для колонок --}}
 
