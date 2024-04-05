@@ -1,8 +1,10 @@
 {{-- Тело главного Grid --}}
 
 @php
-    function params ($name, $value = false) {
-        return $name . ' ' . $value;
+    function params ($col, $key, $empty = false) {
+        if (isset($col[$key])) {
+            return "{$key}: '{$col[$key]}',";
+        }
     }
 @endphp
 
@@ -372,14 +374,16 @@
 
                             {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
                             configs: {
-                                {!! isset($col['icon']) ? 'icon: "' . $col['icon'] . '",' : false !!}
-                                    {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
-                                    {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
-                                    {{--displayFormat: "{{ $col['format_date'] ?? false }}",--}}
-                                    {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
-                                type: "{{ $col['type'] }}",
-                                prefix: "{{ $col['prefix'] }}",
-                                render: "{{ $col['render'] }}",
+                                {{--displayFormat: "{{ $col['format_date'] ?? false }}",--}}
+                                {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
+
+                                icon: "{{ $col['icon'] ?? null }}",
+                                type: "{{ $col['type'] ?? null }}",
+                                prefix: "{{ $col['prefix'] ?? null }}",
+                                render: "{{ $col['render'] ?? null }}",
+
+                                {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
+                                {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
                             }
                             {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
