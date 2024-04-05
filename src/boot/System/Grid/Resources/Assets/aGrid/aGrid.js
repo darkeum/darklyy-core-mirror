@@ -770,10 +770,14 @@ class aGrid {
                 // ### Boostrap js tools
                 // Popover
                 if (configs.popover) {
-
-                    let popover_data = data.replace(/"/g, "'");
-                    // let b_t_data = (configs.render !== 'default') ? data.replace(/"/g, "'") : '';
                     // popover хранит в себе placement
+                    let popover_data;
+
+                    if (data.toString().includes('"')) {
+                        popover_data = data.replace(/"/g, "'");
+                    } else {
+                        popover_data = data;
+                    }
 
                     boostrap_attributes = {
                         // 'title' : '',
