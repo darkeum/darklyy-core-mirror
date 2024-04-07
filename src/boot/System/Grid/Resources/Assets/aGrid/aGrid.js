@@ -805,7 +805,7 @@ class aGrid {
 
                         let truncate;
 
-                        div.addClass('d-grid render-text').attr(boostrap_attributes);
+                        div.addClass('d-grid').attr(boostrap_attributes);
 
                         let children = $('<div></div>').html(data).children();
                         if (children.length > 0) {
