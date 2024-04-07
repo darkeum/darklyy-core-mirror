@@ -379,6 +379,44 @@
             }
           }
 
+          & {
+            td {
+
+              &:has(.render) {
+
+                &:hover {
+                  background-color: rgba(var(--a-primary-rgb), 0.2);
+                }
+
+                &:after {
+
+                  //font-family: 'feather' !important;
+                  //speak: none;
+                  //font-style: normal;
+                  //font-weight: normal;
+                  //font-variant: normal;
+                  //text-transform: none;
+                  ///* line-height: 1; */
+                  //line-height: normal;
+                  //-webkit-font-smoothing: antialiased;
+                  //-moz-osx-font-smoothing: grayscale;
+                  //content: "\e99b";
+                  //color: rgba(var(--a-primary-rgb), 0.7);
+
+                  content: '';
+                  width: 5px;
+                  height: 5px;
+                  background-color: rgba(var(--a-primary-rgb), 0.7);
+                  position: absolute;
+                  border-radius: 50%;
+                  right: 2px;
+                  top: 2px;
+                }
+              }
+
+            }
+          }
+
           // Выделение строки (при клике) - Смена цветов badge, btn и тд.
           &.selected {
             background-color: $a-color !important;
@@ -415,39 +453,6 @@
                 a:link:not(.badge) {
                   color: var(--white);
                 }
-
-                &:has(.render) {
-
-                  &:hover {
-                    background-color: rgba(var(--a-primary-rgb), 0.2);
-                  }
-
-                  &:after {
-
-                    //font-family: 'feather' !important;
-                    //speak: none;
-                    //font-style: normal;
-                    //font-weight: normal;
-                    //font-variant: normal;
-                    //text-transform: none;
-                    ///* line-height: 1; */
-                    //line-height: normal;
-                    //-webkit-font-smoothing: antialiased;
-                    //-moz-osx-font-smoothing: grayscale;
-                    //content: "\e99b";
-                    //color: rgba(var(--a-primary-rgb), 0.7);
-
-                    content: '';
-                    width: 5px;
-                    height: 5px;
-                    background-color: rgba(var(--a-primary-rgb), 0.7);
-                    position: absolute;
-                    border-radius: 50%;
-                    right: 2px;
-                    top: 2px;
-                  }
-                }
-
               }
 
               //
