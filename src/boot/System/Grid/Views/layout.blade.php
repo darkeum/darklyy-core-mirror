@@ -729,11 +729,10 @@
 
                 }
             );
-
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
             // Создаем Grid для функций вне событий DataTable
-            const grid = new aGrid({ table : table }); // ПЕРЕДЕЛАТЬ !!!
+            const grid = new aGrid(table); // ПЕРЕДЕЛАТЬ !!!
 
             /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
             // Loader Grid JS - Загрузка одной функцией

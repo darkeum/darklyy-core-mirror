@@ -8,11 +8,11 @@
 
 class aGrid {
 
-    constructor(data) {
+    constructor(table) {
         this.container = $('.aGrid-container'); // Контейнер
         this.version = '0.1.2'; // Версия
         this.module = this.container.data('moduleName'); // Название модуля
-        this.table = data.table; // Текущая таблица всегда доступна в Классе
+        this.table = table; // Текущая таблица всегда доступна в Классе
         this.options = {
             ignore: ['actions', 'checkbox']
         };
