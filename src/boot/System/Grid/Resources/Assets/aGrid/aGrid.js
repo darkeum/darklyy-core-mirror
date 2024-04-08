@@ -817,28 +817,25 @@ class aGrid {
                         render = div.html(truncate).prop('outerHTML');
                         break;
 
-                    // Вывод поля ввода с столбце (WIP)
-                    case 'input' :
-                        let input = $('<input class="form-control render render-input" />')
-                            .addClass(r_class)
-                            .attr(boostrap_attributes)
-                            .val(data);
-                        render = input.prop('outerHTML');
+                    //
+                    case 'expand':
+                        // fit-content можно использовать... но...
                         break;
 
-                    // Вывод чекбокса (WIP) А надо???
+                    // Вывод поля ввода с столбце (WIP)
+                    case 'input' :
+                        // let input = $('<input class="form-control render render-input" />')
+                        //     .addClass(r_class)
+                        //     .attr(boostrap_attributes)
+                        //     .val(data);
+                        // render = input.prop('outerHTML');
+                        break;
+
+                    // Вывод чекбокса (WIP) - А надо ???
                     // case 'checkbox' :
                     //     // render = '<div class="form-check"><input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
                     //     render = '1313'
                     //     break;
-
-                    // WIP (Тестовый вариант)
-                    // case 'expand':
-                    //     render = '<div class="d-grid render render-expand expand"' + boostrap_tools + '>' +
-                    //         '<span class="d-block text-truncate">' + data + '</span>' +
-                    //         '</div>';
-                    //     break;
-
 
                     default:
                         render = data;
