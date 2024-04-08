@@ -1687,4 +1687,16 @@ class Str
     {
         return preg_replace('~(\s|\x{3164})+~u', ' ', preg_replace('~^[\s﻿]+|[\s﻿]+$~u', '', $value));
     }
+
+    /**
+     * Удаление из исходной строки всех HTML сущность &shy;
+     *
+     * @param  string $value Исходная строка
+     * 
+     * @return string Возвращает строку где удалены все HTML сущности &shy;
+     */
+    public static function trimShy($value)
+    {
+        return str_replace('&shy;', '', $value);
+    }
 }
