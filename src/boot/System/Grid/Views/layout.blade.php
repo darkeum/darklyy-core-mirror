@@ -977,8 +977,6 @@
     <script src="{{ asset('vendors/js/moment/moment.min.js') }}"></script>
 
     {{-- DATATABLE --}}
-    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
-
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
     {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
     <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
@@ -1001,6 +999,7 @@
 
     {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
     <script src="{{ asset('aGrid/aGrid.js') }}"></script>
+    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
     {{-- DATATABLE --}}
 
     <script src="{{ asset(mix('vendors/js/popper/popper.min.js')) }}"></script>
