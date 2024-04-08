@@ -8,11 +8,11 @@
 
 class aGrid {
 
-    constructor(table) {
+    constructor(data) {
         this.container = $('.aGrid-container'); // Контейнер
         this.version = '0.1.2'; // Версия
         this.module = this.container.data('moduleName'); // Название модуля
-        this.table = table; // Текущая таблица всегда доступна в Классе
+        this.table = data.table; // Текущая таблица всегда доступна в Классе
         this.options = {
             ignore: ['actions', 'checkbox']
         };
@@ -773,6 +773,7 @@ class aGrid {
                     // popover хранит в себе placement
                     let popover_data;
 
+                    // Проверка
                     if (data.toString().includes('"')) {
                         popover_data = data.replace(/"/g, "'");
                     } else {
@@ -831,12 +832,6 @@ class aGrid {
                         // render = input.prop('outerHTML');
                         break;
 
-                    // Вывод чекбокса (WIP) - А надо ???
-                    // case 'checkbox' :
-                    //     // render = '<div class="form-check"><input class="form-check-input dt-checkboxes" type="checkbox" value="" id="checkbox' + data + '" /><label class="form-check-label" for="checkbox' + data + '"></label></div>'
-                    //     render = '1313'
-                    //     break;
-
                     default:
                         render = data;
                         break;
@@ -864,16 +859,6 @@ class aGrid {
             return data;
         }
     }
-
-    // Обработка клика по render (Response) WIP !!!
-    // renderExpand(t) {
-    //     let table = this.table;
-    //     let render = $(t);
-    //
-    //     table.$('tr').not('.selected').find('.render span').addClass('text-truncate');
-    //     render.toggleClass("text-truncate");
-    //
-    // }
 
     /* ************************************************************************ */
 

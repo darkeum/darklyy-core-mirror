@@ -459,13 +459,15 @@
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
-                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
+                        let api = this.api();
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
                         data = grid.serverParams(data);
                     },
 
                     // #3 - Создание строк в таблице
                     createdRow: function (row, data, dataIndex) {
-                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
+                        let api = this.api();
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
                         grid.createdRow(row, data, dataIndex);
                     },
 
@@ -474,7 +476,8 @@
 
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
-                        let grid = new aGrid(this.api()); // ПЕРЕДЕЛАТЬ
+                        let api = this.api();
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
                         // $(this.api().table().header()).removeClass('d-none');
                         grid.drawCallback(settings);
                     },
@@ -488,7 +491,7 @@
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
                         let api = this.api();
-                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
 
                         // Установить css-класс заголовка таблицы
                         api.tables().header().to$().addClass('table-header');
@@ -730,7 +733,7 @@
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
             // Создаем Grid для функций вне событий DataTable
-            const grid = new aGrid(table); // ПЕРЕДЕЛАТЬ
+            const grid = new aGrid({ table : table }); // ПЕРЕДЕЛАТЬ !!!
 
             /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
             // Loader Grid JS - Загрузка одной функцией
@@ -975,6 +978,8 @@
     <script src="{{ asset('vendors/js/moment/moment.min.js') }}"></script>
 
     {{-- DATATABLE --}}
+    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
+
     {{--<script src="{{ asset(mix('vendors/js/tables/datatable/jquery.dataTables.min.js')) }}"></script>--}}
     {{--<script src="{{ asset('vendors/js/tables/datatable/default/datatables.js') }}"></script>--}}
     <script src="{{ asset('vendors/js/tables/datatable/last/datatables.js') }}"></script>
