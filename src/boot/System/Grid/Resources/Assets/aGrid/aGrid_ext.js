@@ -27,6 +27,9 @@ DataTable.Api.register('aGrid', function () {
     // Инициализация aGrid-mods
     api.aGrid.mods();
 
+    api.aGrid.dt.events();
+    api.aGrid.dt.mouse.events();
+
     // Показать версию
     // console.log('aGrid EXT: Запущен!);
 
@@ -36,6 +39,138 @@ DataTable.Api.register('aGrid', function () {
     return api;
 });
 
+/* ************************************************************************ */
+
+// События DT - https://www.datatables.net/reference/event/
+DataTable.Api.register('aGrid.dt.events', function () {
+    let api = this;
+
+    // https://datatables.net/reference/option
+    api
+        //
+        .on('init.dt', function (e, settings, column, state) {
+            console.log('init.dt');
+        })
+        // Отрисовка таблицы (Дублирующий вызов)
+        .on('draw.dt', function (e, datatable) {
+            // console.log('draw.dt')
+        })
+        // Сортировка
+        .on('order.dt', function () {
+            // let order = api.order();
+            // console.log("Ordered column " + order[0][0] + ", in direction " + order[0][1]);
+        })
+
+        // ### Select
+        // Выбор элементов (строк, столбцов или ячеек) отменен.
+        .on('deselect', function (e, dt, type, indexes) {
+            // console.log(e);
+            // if (type === 'row') {
+            //     var data = table
+            //         .rows(indexes)
+            //         .data()
+            //         .pluck('id');
+            //
+            //     // do something with the ID of the deselected items
+            // }
+        })
+        // Выбраны элементы (строки, столбцы или ячейки).
+        .on('select', function (e, dt, type, indexes) {
+            // console.log(e)
+            // if (type === 'row') {
+            //     var data = table
+            //         .rows(indexes)
+            //         .data()
+            //         .pluck('id');
+            //
+            //     // do something with the ID of the selected items
+            // }
+        })
+        // Перед размытием выбора элемента в DataTable (можно отменить).
+        .on('select-blur', function (e, dt, target, originalEvent) {
+            // console.log(e)
+            // if ($(e.target).parents('div.modal').length) {
+            //     e.preventDefault();
+            // }
+        })
+        // Выберите событие изменения типа элемента.
+        .on('selectItems', function (e, dt, items) {
+            console.log('Элементы, которые нужно выбрать, теперь доступны: ', items);
+        })
+
+        // Выберите событие изменения стиля.
+        .on('selectStyle', function (e, dt, style) {
+            console.log('Selection style is now: ', style);
+        })
+        // Действие пользователя приведет к выбору элементов в таблице.
+        .on('user-select', function (e, dt, type, cell, originalEvent) {
+            // console.log(e)
+            // if (originalEvent.target.nodeName.toLowerCase() === 'img') {
+            //     e.preventDefault();
+            // }
+        })
+
+        // Изменение ширины столбцов (Калькуляция)
+        .on('column-sizing.dt', function (e, settings) {
+            // console.log(e)
+            // console.log(settings)
+        })
+        //
+        .on('column-visibility.dt', function (e, settings, column, state) {
+            // console.log(
+            //     'Column ' + column + ' has changed to ' + (state ? 'visible' : 'hidden')
+            // );
+        })
+        // Изменение размера таблицы
+        .on("responsive-resize", function (e, datatable, columns) {
+            // Скрытие полей поиска
+            datatable.aGrid.fn.hideSearchInputs(columns);
+            // Перерисовка ширины столбцов
+            datatable.columns.adjust().responsive.recalc();
+        })
+        // Изменение размера экрана
+        .on('responsive-display', function (e, datatable, row, showHide, update) {
+            // console.log('Details for row ' + row.index() + ' ' + (showHide ? 'shown' : 'hidden'));
+
+            // Скрытие полей поиска
+            // datatable.aGrid.fn.hideSearchInputs(columns);
+            // Перерисовка ширины столбцов
+            // datatable.columns.adjust().responsive.recalc();
+        })
+        // Отрисовка processing
+        .on('processing.dt', function (e, settings, processing) {
+            api.aGrid.ui.loader(processing)
+        })
+});
+
+// События мыши DT - Обработка событий мыши
+DataTable.Api.register('aGrid.dt.mouse.events', function () {
+    let api = this;
+
+    // Клик по tr таблицы
+    api
+        .on('click', 'tr', function (e) {
+            // grid.rowSelected(this) // Временно убрано...
+        })
+        .on('mouseover', 'tr', function () {
+        })
+        .on('mouseenter', 'tr', function () {
+        })
+        .on('mouseleave', 'tr', function () {
+        })
+        // x2 Клик по tr таблицы
+        .on('dblclick', 'tr', function (event) {
+            if (event.ctrlKey) {
+                grid.openUrl(this);
+            }
+        })
+        // Клик по render для раздвижения
+        // .on('click', 'tr.selected .render span', function (event) {
+        // })
+        // Обработка события по (+) (Разворачивание скрытого)
+        .on('click', 'tr td.dtr-control', function () {
+        })
+});
 /* ************************************************************************ */
 /* ЗАГРУЗКА GRID EXT Callback's */
 
@@ -106,10 +241,10 @@ DataTable.Api.register('aGrid.callbacks.drawCallback', function (settings) {
     // log(columns[3])
 
     api.aGrid.fn.setTitles(columns);    // Установка title для столбцов // ПЕРЕДЕЛАТЬ!
-    api.aGrid.ui.emptyTable(rows);         // Работа с пустой таблицей
+    api.aGrid.ui.emptyTable(rows);      // Работа с пустой таблицей
     feather.replace();                  // Обновление иконок внутри таблицы
-    api.aGrid.ui.bootstrapReload();        // Перезагрузка всех Bootstrap элементов на странице
-    api.aGrid.ui.loader(false);            // Скрыть Loader
+    api.aGrid.ui.bootstrapReload();     // Перезагрузка всех Bootstrap элементов на странице
+    // api.aGrid.ui.loader(false);         // Скрыть Loader
 });
 
 // #6 - stateLoadCallback - ...
@@ -347,12 +482,11 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
             }
 
         }
-
-        api.aGrid.ui.loader(false); // Скрыть Loader
     });
 
     // ###
     api.aGrid.ui.select2($(".aGrid-filters th select")); // Использование select2
+    // api.aGrid.ui.loader(false); // Скрыть Loader
 });
 
 /* ************************************************************************ */
@@ -1263,3 +1397,16 @@ DataTable.Api.register('aGrid.utils.log', function (data) {
 //     'aaaaaaaaaaaaa': 'aaaaaaaaaaaaaaaaaa'
 // })
 // console.log($.fn.dataTable())
+
+
+$(document).ready(function () {
+
+    // Используем PerfectScrollbar
+    let ps = new PerfectScrollbar('.dataTables_scrollBody', {
+        // suppressScrollX: true,
+        // wheelPropagation: false, // Стандартные методы отключения прокрутки страницы вверх
+        wheelSpeed: 0.3, // от 0.2 до 0.4 нормально грузит (0.3 оптимально вроде...)
+        minScrollbarLength: 50,
+    });
+
+});

@@ -438,6 +438,7 @@
 
                     select: {
                         style: 'os', // Варианты os, single, multi # https://datatables.net/extensions/select/
+                        // blurable: true,
                         // selector: 'td:first-child > input.checkbox'
                     },
 
@@ -491,126 +492,18 @@
 
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
+                        console.log('initComplete')
                         let api = this.api();
                         this.api().aGrid.callbacks.initComplete(settings, json);
                     } //  END - fnInitComplete
 
                 }
             ).aGrid();
+            // table.aGrid();
+            // console.log(table)
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
-            // table.aGrid();
-            console.log(table)
-
-            /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
-
-            // Используем PerfectScrollbar
-            let ps = new PerfectScrollbar('.dataTables_scrollBody', {
-                // suppressScrollX: true,
-                // wheelPropagation: false, // Стандартные методы отключения прокрутки страницы вверх
-                wheelSpeed: 0.3, // от 0.2 до 0.4 нормально грузит (0.3 оптимально вроде...)
-                minScrollbarLength: 50,
-            });
-            /* *** END - КОНСТРУКТОР ТАБЛИЦЫ *** */
-
-            // table.on( 'stateLoadParams.dt', function (e, settings, data) {
-            //     log('stateLoadParams');
-            // });
-
-            // table.on( 'stateLoaded.dt', function (e, settings, data) {
-            //     log('stateLoaded');
-            // });
-
-            // table.on( 'stateSaveParams.dt', function (e, settings, data) {
-            //     // log('stateSaveParams');
-            // });
-
-            /* *** СОБЫТИЯ ТАБЛИЦЫ *** */
-            table
-                // (Дублирующий вызов)
-                // .on( 'init.dt', function ( e, settings, column, state ) {
-                //     log('init.dt');
-                // })
-
-                // Отрисовка processing
-                // .on('processing.dt', function (e, settings, processing) {})
-
-                // Отрисовка таблицы (Дублирующий вызов)
-                // .on( 'draw.dt', function (e, datatable) {
-                //     // log('draw.dt');
-                // })
-
-                // Сортировка
-                // .on( 'order.dt',  function () {
-                //     // let order = table.order();
-                //     // log("Ordered column " + order[0][0] + ", in direction " + order[0][1]);
-                // })
-
-                // Изменение ширины столбцов (Калькуляция)
-                // .on('column-sizing.dt', function (e, settings) {})
-
-                // Изменение размера таблицы
-                .on("responsive-resize", function (e, datatable, columns) {
-
-                    // log('hide');
-
-                    // Скрытие полей поиска
-                    table.aGrid.fn.hideSearchInputs(columns);
-
-                    // log(datatable)
-                    // log(columns)
-
-                    // Перерисовка ширины столбцов
-                    table.columns.adjust()
-                        .responsive.recalc();
-
-                    // feather.replace();
-                })
-
-                //
-                .on('responsive-display', function (e, datatable, row, showHide, update) {
-                    console.log('Details for row ' + row.index() + ' ' + (showHide ? 'shown' : 'hidden'));
-                })
-
-                // Не работает
-                // .on( 'column-visibility.dt', function ( e, settings, column, state ) {
-                //     console.log(
-                //         'Column '+ column +' has changed to '+ (state ? 'visible' : 'hidden')
-                //     );
-                // })
-
-
-                /* *** Обработка событий мыши *** */
-                // Клик по tr таблицы
-                .on('click', 'tr', function (e) {
-                    // grid.rowSelected(this) // Временно убрано...
-                })
-
-                //
-                // .on('mouseover', 'tr', function () {})
-
-                //
-                // .on('mouseenter', 'tr', function () {})
-
-                //
-                // .on('mouseleave', 'tr', function () {})
-
-                // x2 Клик по tr таблицы
-                .on('dblclick', 'tr', function (event) {
-                    if (event.ctrlKey) {
-                        grid.openUrl(this);
-                    }
-                })
-
-            // Клик по render для раздвижения
-            // .on('click', 'tr.selected .render span', function (event) {
-            //     // grid.renderExpand(this); WIP
-            // })
-
-            // Обработка события по (+) (Разворачивание скрытого)
-            // .on('click', 'tr td.dtr-control', function () {})
-
-            // Обработка Кликов вне блока aGrid-container
+            // Обработка Кликов вне блока aGrid-container !!! ПЕРЕРОС
             $(document).on('click', function (e) {
                 if (!$(e.target).closest(".aGrid-container, ul.context-menu-list, .toast-player-container").length) {
                     table.$('tr.selected').toggleClass('selected');
@@ -706,7 +599,6 @@
             // Запросите сервер с новыми настройками одноразового экспорта
             dt.ajax.reload();
         }
-
         // *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
     </script>
