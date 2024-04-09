@@ -49,7 +49,7 @@
 
                 </div>
 
-                <table id="{{ $data['id'] }}" data-module-name="{{ Request::segment(3) }}"
+                <table id="{{ $data['id'] }}"
                        class="table table-striped table-bordered compact table-sm table-sm-px {{--table-responsive--}} datatables-basic {{--dt-responsive--}} dt-column-search {{--dt-behavior--}} {{--display--}} {{--nowrap--}} aGrid-table"
                 >
                     {{-- Table Header --}}
@@ -347,7 +347,7 @@
                             @foreach ($cols as $key => $col){
 
                             @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
                             title: "{{ $col['title'] ?? '' }}",
                             label: "{{ $col['label'] ?? '' }}",
@@ -364,7 +364,7 @@
                             data: "{{ $col['name'] }}",
 
                             @if(($col['render']))render: function (data, type, row, meta) {
-                                return table.aGrid.fn.render(data, type, row, meta)
+                                return grid.render(data, type, row, meta)
                             },
                             @endif
 
@@ -372,10 +372,10 @@
                                 {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
-                                {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
+                            {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
                             configs: {
                                 {{--displayFormat: "{{ $col['format_date'] ?? false }}",--}}
-                                    {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
+                                {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
 
                                 icon: "{{ $col['icon'] ?? null }}",
                                 type: "{{ $col['type'] ?? null }}",
@@ -383,7 +383,7 @@
                                 render: "{{ $col['render'] ?? null }}",
 
                                 {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
-                                    {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
+                                {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
                             }
                             {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
@@ -453,24 +453,22 @@
                     {{--    },--}}
                     {{--},--}}
 
-                    /* *** СОБЫТИЯ - Callback's *** */ // https://datatables.net/reference/option/
+                    /* *** СОБЫТИЯ - Callback's *** */
                     // #1 - preDrawCallback
-                    preDrawCallback: function (data) {
-                        // this.api().aGrid.callbacks.preDrawCallback();
-                    },
+                    // preDrawCallback: function (data) {},
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
                         let api = this.api();
-                        data = this.api().aGrid.callbacks.serverParams(data);
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
+                        data = grid.serverParams(data);
                     },
 
                     // #3 - Создание строк в таблице
                     createdRow: function (row, data, dataIndex) {
                         let api = this.api();
-                        // let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
-                        // grid.createdRow(row, data, dataIndex);
-                        this.api().aGrid.callbacks.createdRow(row, data, dataIndex);
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
+                        grid.createdRow(row, data, dataIndex);
                     },
 
                     // #4 - Создание Header'а таблицы
@@ -479,8 +477,9 @@
                     // #5 - Отрисовка
                     drawCallback: function (settings) {
                         let api = this.api();
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
                         // $(this.api().table().header()).removeClass('d-none');
-                        this.api().aGrid.callbacks.drawCallback(settings);
+                        grid.drawCallback(settings);
                     },
 
                     // #6 - ...
@@ -492,17 +491,252 @@
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
                         let api = this.api();
-                        this.api().aGrid.callbacks.initComplete(settings, json);
+                        let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
+
+                        // Установить css-класс заголовка таблицы
+                        api.tables().header().to$().addClass('table-header');
+                        // Установить css-класс searchBuilder
+                        api.searchBuilder.container().addClass('search-builder-custom');
+
+                        // console.log(api.searchBuilder.container());
+
+                        // Генератор полей для поиска c фильтром исключений
+                        const filter = ['checkbox', 'actions'];
+                        let options = api.settings()[0].aoColumns.filter(
+                            (item) =>
+                                typeof (item) === 'object'
+                                && filter.includes(item.type) === false
+                                && item.visible !== false
+                        );
+                        // console.log(options)
+
+                        // WIP - ПЕРЕДЕЛАТЬ!
+                        api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) { // #3 - Новый
+                            // $('.aGrid-container table .aGrid-filters th').each(function (i) { // #2 - Рабочий
+
+                            // Все от столбца в COL
+                            let col = (options[i]) ? options[i] : false;
+                            col.placeholder = col.label; // Добавим placeholder
+                            // console.log(col);
+                            // console.log(col.type);
+
+                            // Генерация полей для поиска и сортировки
+                            if (col.searchable) {
+
+                                // Типы полей на switch - Добавление типов полей для Grid
+                                let input, select, select_options = [];
+                                switch (col.type) {
+
+                                    // Выпадающий список
+                                    case 'select' :
+
+                                        let values = JSON.parse(col.options.value);
+                                        let option = $('<option></option>');
+
+                                        option.attr({
+                                            'value': '__ALL_SELECT_GRID'
+                                        }).html('Все');
+                                        select_options.push(option);
+
+                                        $.each(values, function (index, item) {
+
+                                            // Создаем option'ы для select'а
+                                            let option = $('<option></option>');
+                                            option.attr({
+                                                'value': index, // Не ставить value если 0 КОСТЫЛЬ
+                                            }).html(item);
+                                            select_options.push(option);
+                                        });
+
+                                        // Создаем select выпадающий список
+                                        select = $('<select></select>');
+                                        select.attr({
+                                            'id': col.data,
+                                            'class': 'form-select form-select-sm'
+                                        }).html(select_options);
+                                        $(this).append(select);
+
+                                        $('select', this).on('change', function () {
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
+                                                // console.log(col.idx)
+                                                // console.log(this.value)
+                                            }
+                                        });
+
+                                        break;
+
+                                    // Выпадающий список - Select2.js // ПОКА НЕ ИСПОЛЬЗУЕТСЯ В ПРОЕКТЕ (Старый вариант данных)
+                                    /*/
+                                    case 'select2' :
+                                        // console.log(col.options.value.split(';'))
+                                        col.options.value.split(';').forEach(function (items, index) {
+                                            let item = items.split(':');
+
+                                            // Создаем option'ы для select'а
+                                            let option = $('<option></option>');
+                                            option.attr({
+                                                'value': item[0],
+                                            }).html(item[1]);
+                                            select_options.push(option);
+                                        });
+
+                                        // Создаем select выпадающий список
+                                        select = $('<select></select>');
+                                        select.attr({
+                                            'id': col.data,
+                                            'class': 'form-select form-select-sm d-table-select-sm'
+                                        }).html(select_options);
+                                        $(this).append(select);
+
+                                        $('select', this).on('change', function () {
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
+                                            }
+                                        });
+
+                                        break;
+                                    /**/
+
+                                    // Даты - WIP ПЕРЕДЕЛАТЬ !!!
+                                    case 'date_range':
+                                        // Создаём input
+                                        input = $('<input />');
+                                        input.attr({
+                                            'type': 'text',
+                                            'id': 'date-range-' + col.data,
+                                            'class': 'form-control form-control-sm flatpickr-range',
+                                            'placeholder': col.placeholder
+                                        });
+                                        $(this).append(input);
+
+                                        flatpickr.localize(flatpickr.l10ns[$('html').attr('lang')]);
+                                        let rangePicker = $('#date-range-' + col.data);
+
+                                        if (rangePicker.length) {
+                                            rangePicker.flatpickr({
+                                                mode: 'range',
+                                                enableTime: col.configs.displayFormat.includes(' '), // Проверка пробела чтобы понять нужна ли дата
+                                                // noCalendar: true,
+                                                time_24hr: true,
+                                                dateFormat: col.configs.displayFormat, // Формат даты
+                                                // positionElement: '',
+                                                locale: {
+                                                    rangeSeparator: ' - '
+                                                },
+                                                onChange: function (selectedDates, dateStr, instance) {
+                                                    if (selectedDates[0] == undefined) {
+                                                        // $(instance.input).removeClass('text-center');
+                                                    }
+                                                    if (selectedDates[1] != undefined) {
+                                                        // $(instance.input).addClass('text-center');
+                                                        // console.log(table.column(col.idx));
+                                                    }
+
+                                                    // title к полям выбора даты
+                                                    $(instance.element).attr('title', dateStr)
+
+                                                },
+                                                onOpen: function (selectedDates, dateStr, instance) {
+
+                                                    // console.log($(instance.input).val());
+                                                    if ($(instance.input).val() == '') {
+                                                        $(rangePicker).val('');
+                                                    }
+                                                    // $(rangePicker).removeClass('text-center');
+                                                },
+                                                onClose: function (selectedDates, dateStr, instance) {
+                                                    let startDate = '', endDate = new Date();
+                                                    if (selectedDates[0] != undefined) {
+                                                        startDate = selectedDates[0].getMonth() + 1
+                                                            + '/' + selectedDates[0].getDate()
+                                                            + '/' + selectedDates[0].getFullYear();
+                                                        $('.start_date').val(startDate);
+                                                    }
+                                                    if (selectedDates[1] != undefined) {
+                                                        endDate = selectedDates[1].getMonth() + 1
+                                                            + '/' + selectedDates[1].getDate()
+                                                            + '/' + selectedDates[1].getFullYear();
+                                                        $('.end_date').val(endDate);
+                                                    }
+                                                    $(rangePicker).trigger('change').trigger('keyup');
+
+                                                    // if (table.column(col.idx).search() !== this.value) {
+                                                    //     table.column(col.idx).search(this.value).draw();
+                                                    // }
+
+                                                },
+                                                onReady: function (_, __, fp) {
+                                                    // fp.calendarContainer.classList.add('flatpickr-calendar');
+                                                }
+                                            });
+                                        }
+
+                                        // $('input', this).on('keypress', function (e) {
+                                        //     if (e.which === 13) {
+                                        //         $(this).attr("disabled", "disabled");
+                                        //         if (table.column(col.idx).search() !== this.value) {
+                                        //             table.column(col.idx).search(this.value).draw();
+                                        //         }
+                                        //         $(this).removeAttr("disabled");
+                                        //     }
+                                        // });
+
+                                        $('input', this).on('change', function () {
+                                            $(this).attr('disabled', 'disabled');
+                                            if (table.column(col.idx).search() !== this.value) {
+                                                table.column(col.idx).search(this.value).draw();
+                                            }
+                                            $(this).removeAttr('disabled');
+                                        });
+
+                                        break;
+
+                                    // По умолчанию поле поиска простой input type text
+                                    default:
+                                        // Создаем input
+                                        input = $('<input />');
+                                        input.attr({
+                                            'type': 'text',
+                                            'id': col.data,
+                                            'class': 'form-control form-control-sm',
+                                            'placeholder': col.placeholder,
+                                        });
+                                        $(this).append(input);
+
+                                        $('input', this).on('keypress', function (e) {
+                                            if (e.which === 13) {
+                                                $(this).attr("disabled", "disabled");
+                                                if (table.column(col.idx).search() !== this.value) {
+                                                    table.column(col.idx).search(this.value).draw();
+                                                }
+                                                $(this).removeAttr("disabled");
+                                            }
+                                        });
+
+                                }
+
+                            }
+
+                            grid.loader(false); // Hide Loader
+                        });
+
+                        // ### LOAD
+                        grid.select2($(".aGrid-filters th select")); // Использование select2
+                        // grid.loader(false); // Hide Loader
+
                     } //  END - fnInitComplete
 
                 }
-            ).aGrid();
+            );
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
-            // table.aGrid();
-            console.log(table)
+            // Создаем Grid для функций вне событий DataTable
+            const grid = new aGrid(table); // ПЕРЕДЕЛАТЬ !!!
 
             /* *** КОНСТРУКТОР ТАБЛИЦЫ *** */
+            // Loader Grid JS - Загрузка одной функцией
+            grid.boot();
 
             // Используем PerfectScrollbar
             let ps = new PerfectScrollbar('.dataTables_scrollBody', {
@@ -555,7 +789,7 @@
                     // log('hide');
 
                     // Скрытие полей поиска
-                    table.aGrid.fn.hideSearchInputs(columns);
+                    grid.hideSearchInputs(columns);
 
                     // log(datatable)
                     // log(columns)
@@ -602,10 +836,10 @@
                     }
                 })
 
-            // Клик по render для раздвижения
-            // .on('click', 'tr.selected .render span', function (event) {
-            //     // grid.renderExpand(this); WIP
-            // })
+                // Клик по render для раздвижения
+                .on('click', 'tr.selected .render span', function (event) {
+                    // grid.renderExpand(this); WIP
+                })
 
             // Обработка события по (+) (Разворачивание скрытого)
             // .on('click', 'tr td.dtr-control', function () {})
@@ -765,6 +999,7 @@
 
     {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
     <script src="{{ asset('aGrid/aGrid.js') }}"></script>
+    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
     {{-- DATATABLE --}}
 
     <script src="{{ asset(mix('vendors/js/popper/popper.min.js')) }}"></script>
@@ -785,7 +1020,3 @@
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
 
 @endsection
-
-@push('scripts')
-    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
-@endpush
