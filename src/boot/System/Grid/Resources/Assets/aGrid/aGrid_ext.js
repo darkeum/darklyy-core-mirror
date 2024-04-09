@@ -49,7 +49,7 @@ DataTable.Api.register('aGrid.dt.events', function () {
     api
         //
         .on('init.dt', function (e, settings, column, state) {
-            console.log('init.dt');
+            // console.log('init.dt');
         })
         // Отрисовка таблицы (Дублирующий вызов)
         .on('draw.dt', function (e, datatable) {
@@ -95,12 +95,12 @@ DataTable.Api.register('aGrid.dt.events', function () {
         })
         // Выберите событие изменения типа элемента.
         .on('selectItems', function (e, dt, items) {
-            console.log('Элементы, которые нужно выбрать, теперь доступны: ', items);
+            // console.log('Элементы, которые нужно выбрать, теперь доступны: ', items);
         })
 
         // Выберите событие изменения стиля.
         .on('selectStyle', function (e, dt, style) {
-            console.log('Selection style is now: ', style);
+            // console.log('Selection style is now: ', style);
         })
         // Действие пользователя приведет к выбору элементов в таблице.
         .on('user-select', function (e, dt, type, cell, originalEvent) {

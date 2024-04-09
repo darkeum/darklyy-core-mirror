@@ -492,7 +492,6 @@
 
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
-                        console.log('initComplete')
                         let api = this.api();
                         this.api().aGrid.callbacks.initComplete(settings, json);
                     } //  END - fnInitComplete
