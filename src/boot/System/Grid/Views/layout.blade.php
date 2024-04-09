@@ -762,9 +762,6 @@
     <script src="{{ asset(mix('vendors/js/tables/datatable/buttons.print.min.js')) }}"></script>
 
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.rowGroup.min.js')) }}"></script>
-
-    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
-    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
     {{-- DATATABLE --}}
 
     <script src="{{ asset(mix('vendors/js/popper/popper.min.js')) }}"></script>
@@ -787,5 +784,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
+    <script src="{{ asset('aGrid/aGrid_ext.js') }}"></script> {{-- WIP --}}
 @endpush

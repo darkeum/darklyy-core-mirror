@@ -996,10 +996,6 @@
     <script src="{{ asset(mix('vendors/js/tables/datatable/buttons.print.min.js')) }}"></script>
 
     <script src="{{ asset(mix('vendors/js/tables/datatable/dataTables.rowGroup.min.js')) }}"></script>
-
-    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
-    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
-    <script src="{{ asset('aGrid/ext_aGrid.js') }}"></script> {{-- WIP --}}
     {{-- DATATABLE --}}
 
     <script src="{{ asset(mix('vendors/js/popper/popper.min.js')) }}"></script>
@@ -1015,8 +1011,12 @@
     <script src="{{ asset(mix('vendors/js/extensions/jquery.contextMenu.min.js')) }}"></script>
     <script src="{{ asset(mix('vendors/js/extensions/jquery.ui.position.min.js')) }}"></script>
     <script src="{{ asset(mix('vendors/js/extensions/toastr.min.js')) }}"></script>
-
-
+    
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
 
 @endsection
+
+@push('scripts')
+    {{--<script src="{{ asset('js/scripts/custom/aGrid.js') }}"></script>--}}
+    <script src="{{ asset('aGrid/aGrid.js') }}"></script>
+@endpush
