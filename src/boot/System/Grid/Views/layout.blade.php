@@ -457,13 +457,14 @@
                     /* *** СОБЫТИЯ - Callback's *** */ // https://datatables.net/reference/option/
                     // #1 - preDrawCallback
                     preDrawCallback: function (data) {
-                        // this.api().aGrid.callbacks.preDrawCallback();
+                        let api = this.api();
+                        // api.aGrid.callbacks.preDrawCallback();
                     },
 
                     // #2 - Загрузка параметров
                     serverParams: function (data) {
                         let api = this.api();
-                        data = this.api().aGrid.callbacks.serverParams(data);
+                        data = api.aGrid.callbacks.serverParams(data);
                     },
 
                     // #3 - Создание строк в таблице
@@ -471,7 +472,7 @@
                         let api = this.api();
                         // let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
                         // grid.createdRow(row, data, dataIndex);
-                        this.api().aGrid.callbacks.createdRow(row, data, dataIndex);
+                        api.aGrid.callbacks.createdRow(row, data, dataIndex);
                     },
 
                     // #4 - Создание Header'а таблицы
@@ -481,7 +482,7 @@
                     drawCallback: function (settings) {
                         let api = this.api();
                         // $(this.api().table().header()).removeClass('d-none');
-                        this.api().aGrid.callbacks.drawCallback(settings);
+                        api.aGrid.callbacks.drawCallback(settings);
                     },
 
                     // #6 - ...
@@ -493,12 +494,15 @@
                     // #8 - Инициализация завершена
                     initComplete: function (settings, json) {
                         let api = this.api();
-                        this.api().aGrid.callbacks.initComplete(settings, json);
+                        api.aGrid.callbacks.initComplete(settings, json);
                     } //  END - fnInitComplete
 
                 }
             ).aGrid();
+
             // table.aGrid();
+            // table.aGrid.dt.events();
+
             // console.log(table)
             /* *** END - ОТРИСОВКА ТАБЛИЦЫ *** */
 
@@ -555,8 +559,7 @@
 
         });
 
-
-        /* ********************* ФУНКЦИИ ********************* */
+        //
         function newexportaction(e, dt, button, config) {
             var self = this;
             var oldStart = dt.settings()[0]._iDisplayStart;
@@ -595,10 +598,10 @@
                     return false;
                 });
             });
+
             // Запросите сервер с новыми настройками одноразового экспорта
             dt.ajax.reload();
         }
-        // *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
     </script>
 @endpush
