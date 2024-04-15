@@ -103,16 +103,6 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
         return $this->container->make(Channels\MailChannel::class);
     }
 
-    /**
-     * Create an instance of the mail driver.
-     *
-     * @return \Boot\System\Notifications\Channels\TelegramChannel
-     */
-    protected function createTelegramDriver()
-    {
-        return $this->container->make(Channels\TelegramChannel::class);
-    }
-
     protected function createViberDriver()
     {
         return $this->container->make(Channels\ViberChannel::class);
