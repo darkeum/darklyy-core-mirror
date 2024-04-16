@@ -110,7 +110,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     {
         $token = $this->token()->where('platform', $platform)->first();
         if (!empty($token)) {
-            return  $token;
+            return  $token->token;
         }
         return null;
     }
