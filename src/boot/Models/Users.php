@@ -100,6 +100,51 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
         return $this->hasMany(\Boot\Models\UsersToken::class, "uid");
     }
 
+    /**
+     * Получение токена для отправке уведомлений в указанный канал
+     *
+     * @param  string $platform Имя канала (платформы)
+     * @return string|null
+     */
+    protected function getTokenByPlatform(string $platform): ?string
+    {
+        $token = $this->token()->where('platform', $platform)->first();
+        if (!empty($token)) {
+            return  $token;
+        }
+        return null;
+    }
+
+    /**
+     * Маршрут уведомлений для отправки в Telegram
+     *
+     * @return string|null
+     */
+    public function routeNotificationForTelegram()
+    {
+        return $this->getTokenByPlatform('telegram');
+    }
+
+    /**
+     * Маршрут уведомлений для отправки в Viber
+     *
+     * @return string|null
+     */
+    public function routeNotificationForViber()
+    {
+        return $this->getTokenByPlatform('viber');
+    }
+
+    /**
+     * Маршрут уведомлений для отправки в Vk
+     *
+     * @return string|null
+     */
+    public function routeNotificationForVk()
+    {
+        return $this->getTokenByPlatform('vk');
+    }
+
     public function usersPhoneId(): HasOne
     {
         return $this->hasOne(UsersPhoneid::class, 'uid')->withDefault([
@@ -113,7 +158,8 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
         return $this->hasMany(SocialAccounts::class, "user_id");
     }
 
-    public function orgs() {
+    public function orgs()
+    {
         return $this->belongsToMany(Org::class, 'users_org_relation', 'uid', 'org');
     }
 }
