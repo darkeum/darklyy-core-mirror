@@ -103,11 +103,6 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
         return $this->container->make(Channels\MailChannel::class);
     }
 
-    protected function createViberDriver()
-    {
-        return $this->container->make(Channels\ViberChannel::class);
-    }
-
     /**
      * Create a new driver instance.
      *
