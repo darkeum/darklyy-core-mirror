@@ -37,6 +37,7 @@
         "pris/darklyy-serialize": "^1.0",
         "pris/darklyy-notification-channel-telegram": "^1.0",
         "pris/darklyy-notification-channel-viber": "^1.0",
+        "pris/darklyy-notification-channel-vk": "^1.0",
         "pris/dpot": "^1.0",
         "pris/jpgraph": "^1.0",
         "doctrine/annotations": "^1.11",
