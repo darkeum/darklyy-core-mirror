@@ -148,6 +148,19 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
         return $this->getTokenByPlatform('vk');
     }
 
+    /**
+     * Маршрут уведомлений для отправки в Vk
+     *
+     * @return string|null
+     */
+    public function routeNotificationForMail()
+    {
+        if (Settings::get('notification_mail', false)) {
+            return $this->email;
+        }
+        return null;
+    }
+
     public function usersPhoneId(): HasOne
     {
         return $this->hasOne(UsersPhoneid::class, 'uid')->withDefault([
