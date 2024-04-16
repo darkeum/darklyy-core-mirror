@@ -20,6 +20,7 @@ use Organizations\Model\Organizations;
 use Boot\System\Core\Traits\HashIdTrait;
 use Boot\System\Auth\Access\Authorizable;
 use Boot\System\Notifications\Notifiable;
+use Boot\System\Settings\Facades\Settings;
 use Boot\System\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Boot\System\Auth\Passwords\CanResetPassword;
@@ -108,9 +109,11 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
      */
     protected function getTokenByPlatform(string $platform): ?string
     {
-        $token = $this->token()->where('platform', $platform)->first();
-        if (!empty($token)) {
-            return  $token->token;
+        if (Settings::get('notification_' . $platform, true)) {
+            $token = $this->token()->where('platform', $platform)->first();
+            if (!empty($token)) {
+                return  $token->token;
+            }
         }
         return null;
     }
