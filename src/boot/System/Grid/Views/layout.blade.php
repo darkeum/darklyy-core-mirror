@@ -150,12 +150,13 @@
             /* *** ОТРИСОВКА ТАБЛИЦЫ *** */
             const table = $('#{{ $data['id'] }}').DataTable(
                 {
+                    //
                     ajax: {
                         url: '{{ $url }}',
                         type: 'POST'
                     },
 
-                    dom: '{!! $data['dom'] !!}',
+                    dom: '{!! $data['dom'] !!}', // Шаблон DOM дерева DataTables
 
                     deferRender: true, // Отложенный рендеринг для дополнительной скорости инициализации
 
@@ -189,6 +190,7 @@
 
                     // Кнопки (Управления)
                     buttons: {
+
                         // Переназначение контейнера для кнопок для datatables
                         // vendors\js\tables\datatable/full\datatables.js 79273
                         dom: {
@@ -218,10 +220,13 @@
                                 }
                             }
                         },
+
+                        //
                         buttonCreated: function (config, button) {
                             return config.buttons ? $('<div class="btn-group position-relative" role="group"/>').append(button) : button;
                         },
 
+                        //
                         buttons: [
                             {
                                 extend: 'searchBuilder',
@@ -315,10 +320,9 @@
 
                     //
                     scrollY: '61vh', // Высота таблицы по умолчанию
-                    scrollX: false,
+                    scrollX: false,  //
                     // scrollXInner: false,
                     // scrollCollapse: true, // Высота таблицы будет максимальной если false даже если пуста!
-                    // stateSave: true, // Не дает использовать appendTools и PerfectScrollbar
 
                     // Обработчик прокрутки
                     scroller: {
@@ -347,7 +351,7 @@
                             @foreach ($cols as $key => $col){
 
                             @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
                             title: "{{ $col['title'] ?? '' }}",
                             label: "{{ $col['label'] ?? '' }}",
@@ -387,31 +391,30 @@
                             }
                             {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
-                            {{---}}
-                            data: {
-                                _: 'phone',
-                                filter: 'phone_filter',
-                                display: 'phone_display'
-                            },
-                            render: {
-                                _: 'plain',
-                                filter: 'filter',
-                                display: 'display'
-                            },
-                            defaultContent: '',
+                            // data: {
+                            //     _: 'phone',
+                            //     filter: 'phone_filter',
+                            //     display: 'phone_display'
+                            // },
+                            // render: {
+                            //     _: 'plain',
+                            //     filter: 'filter',
+                            //     display: 'display'
+                            // },
+                            // defaultContent: '',
+                            //
+                            // cellType: 'th',
+                            // contentPadding: 'mmm',
+                            // createdCell: 'Только в columnDefs',
+                            //
+                            // orderable: false,
+                            // orderData: 0,
+                            // orderDataType: 'dom-text'
 
-                            cellType: 'th',
-                            contentPadding: 'mmm',
-                            createdCell: 'Только в columnDefs',
-
-                            orderable: false,
-                            orderData: 0,
-                            orderDataType: 'dom-text'
-                            {{----}}
                         },@endforeach
                     ],
 
-                    // Расширенные параметры колонок
+                    // Расширенные параметры колонок - ПЕРЕДЕЛАТЬ!!!
                     columnDefs: [
                             @foreach ($cols as $key => $col)
                             @if($col['type'] == 'checkbox'){
@@ -436,6 +439,7 @@
                         @endforeach
                     ],
 
+                    //
                     select: {
                         style: 'os', // Варианты os, single, multi # https://datatables.net/extensions/select/
                         // blurable: true,
@@ -454,11 +458,44 @@
                     {{--    },--}}
                     {{--},--}}
 
-                    /* *** СОБЫТИЯ - Callback's *** */ // https://datatables.net/reference/option/
-                    // #1 - preDrawCallback
-                    preDrawCallback: function (data) {
+
+                    // stateSave - Сохранение состояния — восстановление состояния таблицы при перезагрузке страницы.
+                    // stateSave: true,
+                    // #0 - Обратный вызов, который определяет, куда и как должно быть загружено сохраненное состояние.
+                    stateLoadCallback: function (settings, callback) {
+                        // let api = this.api();
+                        // api.aGrid.callbacks.stateLoadCallback(settings, callback);
+                        // callback(); // Что бы загрузка продолжилась выполнить
+                    },
+
+                    // #0 - Обратный вызов, который определяет, как и где хранится состояние таблицы.
+                    stateSaveCallback: function (settings, data) {
+                        // Send an Ajax request to the server with the state object
+                        // $.ajax({
+                        //     url: '/state_save',
+                        //     data: data,
+                        //     dataType: 'json',
+                        //     type: 'POST',
+                        //     success: function () {}
+                        // });
+                    },
+
+                    // #0 - Состояние загружено - обратный вызов для манипулирования данными.
+                    stateLoadParams: function (settings, data) {
                         let api = this.api();
-                        // api.aGrid.callbacks.preDrawCallback();
+                        api.aGrid.callbacks.stateLoadParams(settings, data);
+                    },
+
+                    // #0 - Обратный вызов с загруженным состоянием.
+                    stateLoaded: function (settings, data) {
+                        // alert('Saved filter was: ' + data.search.search);
+                    },
+
+                    /* *** СОБЫТИЯ - Callback's *** */ // https://datatables.net/reference/option/
+                    // #1 - Обратный вызов перед отрисовкой.
+                    preDrawCallback: function (settings) {
+                        let api = this.api();
+                        api.aGrid.callbacks.preDrawCallback(settings);
                     },
 
                     // #2 - Загрузка параметров
@@ -467,35 +504,57 @@
                         data = api.aGrid.callbacks.serverParams(data);
                     },
 
-                    // #3 - Создание строк в таблице
+                    // #3 - Обратный вызов для каждого случая, когда для тела таблицы создается элемент TR.
                     createdRow: function (row, data, dataIndex) {
                         let api = this.api();
-                        // let grid = new aGrid(api); // ПЕРЕДЕЛАТЬ !!!
-                        // grid.createdRow(row, data, dataIndex);
                         api.aGrid.callbacks.createdRow(row, data, dataIndex);
                     },
 
-                    // #4 - Создание Header'а таблицы
-                    // headerCallback: function (thead, data, start, end, display) {},
+                    // #4 - Обратный вызов отрисовки строки.
+                    rowCallback: function (row, data) {
+                        // if (data.grade == 'A') {
+                        //     $('td:eq(4)', row).html('<b>A</b>');
+                        // }
+                    },
 
-                    // #5 - Отрисовка
+                    // #5 - Создание Header'а таблицы - Функция обратного вызова отображения заголовка.
+                    headerCallback: function (thead, data, start, end, display) {
+                        let api = this.api();
+                        api.aGrid.callbacks.headerCallback(thead, data, start, end, display);
+                    },
+
+                    // #6 - В нижнем колонтитуле отображается функция обратного вызова.
+                    footerCallback: function (tr, data, start, end, display) {
+                        // $(tr).find('th').eq(0).html('Starting index is ' + start);
+                    },
+
+                    // #7 - Функция обратного вызова для форматирования номера.
+                    formatNumber: function (toFormat) {
+                        // return toFormat.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+                    },
+
+                    // #8 - Обратный вызов отображает сводную информацию таблицы.
+                    infoCallback: function (settings, start, end, max, total, pre) {
+                        // return start + ' to ' + end;
+                    },
+
+                    // #9 - Сохранение состояния - обратный вызов для манипулирования данными.
+                    stateSaveParams: function (settings, data) {
+                        // data.search.search = '';
+                    },
+
+                    // #10 - Функция, которая вызывается каждый раз, когда Data Tables выполняет отрисовку.
                     drawCallback: function (settings) {
                         let api = this.api();
                         // $(this.api().table().header()).removeClass('d-none');
                         api.aGrid.callbacks.drawCallback(settings);
                     },
 
-                    // #6 - ...
-                    // stateLoadCallback: function () {},
-
-                    // #7 - ...
-                    // stateLoadParams: function (data) {},
-
-                    // #8 - Инициализация завершена
+                    // #11 - Инициализация всего DT
                     initComplete: function (settings, json) {
                         let api = this.api();
                         api.aGrid.callbacks.initComplete(settings, json);
-                    } //  END - fnInitComplete
+                    }
 
                 }
             ).aGrid();
@@ -672,11 +731,10 @@
     <script src="{{ asset(mix('vendors/js/extensions/jquery.ui.position.min.js')) }}"></script>
     <script src="{{ asset(mix('vendors/js/extensions/toastr.min.js')) }}"></script>
 
-
     {{--<script src="{{ asset('js/scripts/ui/ui-creator.js') }}"></script>--}}
 
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('aGrid/aGrid_ext.js') }}"></script> {{-- WIP --}}
+    <script type="module" src="{{ asset('aGrid/aGrid_module.js') }}"></script> {{-- WIP --}}
 @endpush

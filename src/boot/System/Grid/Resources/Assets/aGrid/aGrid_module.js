@@ -2,6 +2,9 @@ let _OPTIONS = {
     ignore: ['actions', 'checkbox'],
 };
 
+// import {} from "/aGrid/utils.js"; - WIP
+// alert(a);
+
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {
     let api = this;
@@ -47,7 +50,7 @@ DataTable.Api.register('aGrid.dt.events', function () {
 
     // https://datatables.net/reference/option
     api
-        //
+        // Инициализация DT
         .on('init.dt', function (e, settings, column, state) {
             // console.log('init.dt');
         })
@@ -55,13 +58,12 @@ DataTable.Api.register('aGrid.dt.events', function () {
         .on('draw.dt', function (e, datatable) {
             // console.log('draw.dt')
         })
-        // Сортировка
+        // Сортировка DT - Столбца
         .on('order.dt', function () {
             // let order = api.order();
             // console.log("Ordered column " + order[0][0] + ", in direction " + order[0][1]);
         })
-
-        // ### Select
+        // ### Select снять со строки
         // Выбор элементов (строк, столбцов или ячеек) отменен.
         .on('deselect', function (e, dt, type, indexes) {
             // console.log(e);
@@ -175,7 +177,7 @@ DataTable.Api.register('aGrid.dt.mouse.events', function () {
 /* ЗАГРУЗКА GRID EXT Callback's */
 
 // #1 - preDrawCallback - ...
-DataTable.Api.register('aGrid.callbacks.preDrawCallback', function (data) {
+DataTable.Api.register('aGrid.callbacks.preDrawCallback', function (settings) {
     let api = this;
 });
 
@@ -240,15 +242,15 @@ DataTable.Api.register('aGrid.callbacks.drawCallback', function (settings) {
     // log(api.columns().header().settings())
     // log(columns[3])
 
-    api.aGrid.fn.setTitles(columns);    // Установка title для столбцов // ПЕРЕДЕЛАТЬ!
-    api.aGrid.ui.emptyTable(rows);      // Работа с пустой таблицей
-    feather.replace();                  // Обновление иконок внутри таблицы
-    api.aGrid.ui.bootstrapReload();     // Перезагрузка всех Bootstrap элементов на странице
-    // api.aGrid.ui.loader(false);         // Скрыть Loader
+    api.aGrid.fn.setTitles(columns);      // Установка title для столбцов // ПЕРЕДЕЛАТЬ!
+    api.aGrid.ui.table.empty(rows);       // Работа с пустой таблицей
+    feather.replace();                    // Обновление иконок внутри таблицы
+    api.aGrid.ui.bootstrap.reload();      // Перезагрузка всех Bootstrap элементов на странице
+    // api.aGrid.ui.loader(false);        // Скрыть Loader
 });
 
 // #6 - stateLoadCallback - ...
-DataTable.Api.register('aGrid.callbacks.stateLoadCallback', function () {
+DataTable.Api.register('aGrid.callbacks.stateLoadCallback', function (settings, callback) {
     let api = this;
 });
 
@@ -487,6 +489,8 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     // ###
     api.aGrid.ui.select2($(".aGrid-filters th select")); // Использование select2
     // api.aGrid.ui.loader(false); // Скрыть Loader
+
+    api.aGrid.ui.table.scroll();
 });
 
 /* ************************************************************************ */
@@ -1215,7 +1219,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.colsNum', function (para
 
 // ### Bootstrap
 // Перезагрузка всех Bootstrap элементов на странице
-DataTable.Api.register('aGrid.ui.bootstrapReload', function () {
+DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
     // Удалить все старые tooltip'ы и popover'ы
     $('.tooltip').detach();
     $('.popover').detach();
@@ -1284,13 +1288,24 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, text = 'Нет рез
 });
 
 // Работа с пустой таблицей (Если в таблице нет данных)
-DataTable.Api.register('aGrid.ui.emptyTable', function (rows) {
+DataTable.Api.register('aGrid.ui.table.empty', function (rows) {
     // let table = $(this.table);
     // if (rows === 0) {
     //     table.addClass('h-100 overflow-hidden');
     // } else {
     //     table.removeClass('h-100 overflow-hidden');
     // }
+});
+
+// Вызываем PerfectScrollbar на dataTables_scrollBody
+DataTable.Api.register('aGrid.ui.table.scroll', function () {
+    // Используем PerfectScrollbar
+    let ps = new PerfectScrollbar('.dataTables_scrollBody', {
+        // suppressScrollX: true,
+        // wheelPropagation: false, // Стандартные методы отключения прокрутки страницы вверх
+        wheelSpeed: 0.3, // от 0.2 до 0.4 нормально грузит (0.3 оптимально вроде...)
+        minScrollbarLength: 50,
+    });
 });
 
 /* ************************************************************************ */
@@ -1400,13 +1415,5 @@ DataTable.Api.register('aGrid.utils.log', function (data) {
 
 
 $(document).ready(function () {
-
-    // Используем PerfectScrollbar
-    let ps = new PerfectScrollbar('.dataTables_scrollBody', {
-        // suppressScrollX: true,
-        // wheelPropagation: false, // Стандартные методы отключения прокрутки страницы вверх
-        wheelSpeed: 0.3, // от 0.2 до 0.4 нормально грузит (0.3 оптимально вроде...)
-        minScrollbarLength: 50,
-    });
 
 });
