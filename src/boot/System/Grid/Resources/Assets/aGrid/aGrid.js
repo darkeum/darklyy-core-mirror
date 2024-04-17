@@ -1,13 +1,13 @@
+window._OPTIONS = {
+    ignore: ['actions', 'checkbox'],
+};
+
 import {} from "/aGrid/ext/callbacks.js";
 import {} from "/aGrid/ext/dt.js";
 import {} from "/aGrid/ext/fn.js";
 import {} from "/aGrid/ext/mods.js";
 import {} from "/aGrid/ext/ui.js";
 import {} from "/aGrid/ext/utils.js";
-
-let _OPTIONS = {
-    ignore: ['actions', 'checkbox'],
-};
 
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {
@@ -19,7 +19,7 @@ DataTable.Api.register('aGrid', function () {
         table: api, // Текущая таблица всегда доступна в Классе
         module: container.data('moduleName'), // Название модуля
         options: {
-            ignore: _OPTIONS.ignore
+            ignore: window._OPTIONS.ignore
         },
         store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
         dropContent: false, // Список для popover модификаторов
@@ -45,8 +45,6 @@ DataTable.Api.register('aGrid', function () {
 
     return api;
 });
-
-/* ************************************************************************ */
 
 // DataTable.Api.register('aGrid.', function () {});
 
