@@ -52,7 +52,7 @@ DataTable.Api.register('aGrid.ui.loader', function (display = false) {
 });
 
 // Вызов контекстного меню для table tr (НЕ ПЕРЕДЕЛАНО!)
-DataTable.Api.register('aGrid.contextMenu', function () {
+DataTable.Api.register('aGrid.ui.contextMenu', function () {
     let grid = this;
     let table = this.table;
 

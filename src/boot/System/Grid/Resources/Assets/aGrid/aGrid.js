@@ -30,7 +30,7 @@ DataTable.Api.register('aGrid', function () {
     api.aGrid.fn.appendTools();
 
     // Вызов контекстного меню для table tr
-    // api.aGrid.contextMenu();
+    // api.aGrid.ui.contextMenu();
 
     // Инициализация aGrid-mods
     api.aGrid.mods();
