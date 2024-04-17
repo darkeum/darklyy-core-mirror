@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-12">
 
-            <div class="card aGrid-container" data-module-name="{{ Request::segment(3) }}">
+            <div class="card aGrid-container" data-module="{{ Request::segment(3) }}">
                 <div class="card-header py-50 pe-50">
 
                     {{-- Заголовок --}}
