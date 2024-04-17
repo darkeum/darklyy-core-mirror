@@ -25,21 +25,11 @@ DataTable.Api.register('aGrid', function () {
         store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
         dropContent: false, // Список для popover модификаторов
     };
-
-    // Перенос элементов управления (В новое место)
-    api.aGrid.fn.appendTools();
-
-    // Вызов контекстного меню для table tr
-    // api.aGrid.ui.contextMenu();
-
-    // Инициализация aGrid-mods
+    
+    api.aGrid.dt();
+    api.aGrid.fn();
+    api.aGrid.ui();
     api.aGrid.mods();
-
-    api.aGrid.dt.events();
-    api.aGrid.dt.mouse.events();
-
-    // Показать версию
-    // console.log('aGrid EXT: Запущен!);
 
     // TEST
     // console.log(this.store.getAll())

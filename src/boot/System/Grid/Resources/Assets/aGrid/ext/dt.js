@@ -1,3 +1,10 @@
+DataTable.Api.register('aGrid.dt', function () {
+    let api = this;
+
+    api.aGrid.dt.events();
+    api.aGrid.dt.mouse.events();
+});
+
 // События DT - https://www.datatables.net/reference/event/
 DataTable.Api.register('aGrid.dt.events', function () {
     let api = this;

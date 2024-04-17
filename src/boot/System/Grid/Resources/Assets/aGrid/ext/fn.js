@@ -1,4 +1,10 @@
 /* ФУНКЦИИ - fn */
+DataTable.Api.register('aGrid.fn', function () {
+    let api = this;
+
+    // Перенос элементов управления (В новое место)
+    api.aGrid.fn.appendTools();
+});
 
 // Перенос элементов управления (В новое место)
 DataTable.Api.register('aGrid.fn.appendTools', function () {

@@ -1,3 +1,10 @@
+DataTable.Api.register('aGrid.ui', function () {
+    let api = this;
+
+    // Вызов контекстного меню для table tr
+    // api.aGrid.ui.contextMenu();
+});
+
 // ### Bootstrap
 // Перезагрузка всех Bootstrap элементов на странице
 DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
