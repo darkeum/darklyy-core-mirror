@@ -1,4 +1,5 @@
-window._OPTIONS = {
+window.aGrid._OPTIONS = {
+    container: $('.aGrid-container'),
     ignore: ['actions', 'checkbox'],
 };
 
@@ -17,9 +18,9 @@ DataTable.Api.register('aGrid', function () {
     api.aGrid.$ = {
         container: container,
         table: api, // Текущая таблица всегда доступна в Классе
-        module: container.data('moduleName'), // Название модуля
+        module: container.data('module'), // Название модуля
         options: {
-            ignore: window._OPTIONS.ignore
+            ignore: window.aGrid._OPTIONS.ignore
         },
         store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
         dropContent: false, // Список для popover модификаторов

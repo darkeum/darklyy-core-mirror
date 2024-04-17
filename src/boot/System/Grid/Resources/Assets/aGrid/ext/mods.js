@@ -1,5 +1,5 @@
-// import { canvas } from "../ext/opt.js"
-// console.log(canvas)
+// import { _OPTIONS } from "../options.js"
+// console.log(_OPTIONS)
 
 /* МОДИФИКАТОРЫ - mods */
 // Инициализация popover modifiers
@@ -166,7 +166,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
     const entries = Object.entries(r_data);
 
     // Массив игнорирования (Столбцы с этими типами будут игнорироваться при создании строк карточки)
-    let ignore = window._OPTIONS.ignore;
+    let ignore = window.aGrid._OPTIONS.ignore;
 
     // Собираем блок div
     content += '<div class="qq-view-item">';
@@ -242,7 +242,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.colsNum', function (para
     let api = this;
 
     // Массив игнорирования (Столбцы с этими типами будут игнорироваться при создании строк карточки)
-    let ignore = window._OPTIONS.ignore;
+    let ignore = window.aGrid._OPTIONS.ignore;
 
     $('.dataTables_scrollHeadInner .aGrid-titles th').each(function (index, unit) {
 
