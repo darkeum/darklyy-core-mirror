@@ -736,5 +736,5 @@
 @endsection
 
 @push('scripts')
-    <script type="module" src="{{ asset('aGrid/aGrid_module.js') }}"></script> {{-- WIP --}}
+    <script type="module" src="{{ asset('aGrid/aGrid.js') }}"></script>
 @endpush
