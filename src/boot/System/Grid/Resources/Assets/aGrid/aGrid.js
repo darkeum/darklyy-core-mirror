@@ -25,7 +25,7 @@ DataTable.Api.register('aGrid', function () {
         store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
         dropContent: false, // Список для popover модификаторов
     };
-    
+
     api.aGrid.dt();
     api.aGrid.fn();
     api.aGrid.ui();
