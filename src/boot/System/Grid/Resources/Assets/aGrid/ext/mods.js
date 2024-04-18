@@ -59,7 +59,7 @@ DataTable.Api.register('aGrid.mods', function () {
         // api.aGrid.modsActions(event.currentTarget.name, event);
     });
 
-    // return api.aGrid.mods.$;
+    return api.aGrid;
 });
 
 // ### ПРОВЕРКА МОДОВ - Проверка индикаторов модифицирования и запись в локальный кеш при изменении

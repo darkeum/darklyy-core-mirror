@@ -26,10 +26,11 @@ DataTable.Api.register('aGrid', function () {
         dropContent: false, // Список для popover модификаторов
     };
 
-    api.aGrid.dt();
-    api.aGrid.fn();
-    api.aGrid.ui();
-    api.aGrid.mods();
+    // api.aGrid.dt();
+    // api.aGrid.fn();
+    // api.aGrid.ui();
+    // api.aGrid.mods();
+    api.aGrid.dt().fn().ui().mods();
 
     // TEST
     // console.log(this.store.getAll())

@@ -3,6 +3,8 @@ DataTable.Api.register('aGrid.ui', function () {
 
     // Вызов контекстного меню для table tr
     // api.aGrid.ui.contextMenu();
+
+    return api.aGrid;
 });
 
 // ### Bootstrap

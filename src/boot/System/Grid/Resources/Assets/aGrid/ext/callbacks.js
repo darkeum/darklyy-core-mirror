@@ -1,3 +1,6 @@
+
+// return api.aGrid;
+
 /* ЗАГРУЗКА GRID EXT Callback's */
 
 // #1 - preDrawCallback - ...

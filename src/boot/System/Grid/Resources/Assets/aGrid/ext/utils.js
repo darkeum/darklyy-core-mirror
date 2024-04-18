@@ -1,5 +1,8 @@
-// var a = 10;
-// export {a};
+DataTable.Api.register('aGrid.utils', function () {
+    let api = this;
+    //
+    return api.aGrid;
+});
 
 /* УТИЛИТЫ - utils */
 // config - ПЕРЕДЕЛАТЬ!

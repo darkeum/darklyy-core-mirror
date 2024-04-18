@@ -3,6 +3,8 @@ DataTable.Api.register('aGrid.dt', function () {
 
     api.aGrid.dt.events();
     api.aGrid.dt.mouse.events();
+
+    return api.aGrid;
 });
 
 // События DT - https://www.datatables.net/reference/event/

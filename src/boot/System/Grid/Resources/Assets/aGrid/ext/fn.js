@@ -4,6 +4,8 @@ DataTable.Api.register('aGrid.fn', function () {
 
     // Перенос элементов управления (В новое место)
     api.aGrid.fn.appendTools();
+
+    return api.aGrid;
 });
 
 // Перенос элементов управления (В новое место)
