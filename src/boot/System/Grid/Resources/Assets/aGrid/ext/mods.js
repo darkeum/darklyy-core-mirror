@@ -154,13 +154,13 @@ DataTable.Api.register('aGrid.mods.list.visible', function (event = false) {
 // ### ДЕЙСТВИЯ МОДОВ
 // ДЕЙСТВИЕ - "Быстрый просмотр строки"
 DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr) {
-    let table = this;
-    let row = table.row(tr);
+    let api = this;
+    let row = api.row(tr);
 
-    let r_data = row.data(); // table.row( this ).data()
-    let r_index = (r_data.id) ? r_data.id : row.index(); // table.row( this ).index()
+    let r_data = row.data(); // api.row( this ).data()
+    let r_index = (r_data.id) ? r_data.id : row.index(); // api.row( this ).index()
 
-    let columns = table.settings().init().columns; // Более гибкий вариант получения колонок
+    let columns = api.settings().init().columns; // Более гибкий вариант получения колонок
     let content = '';
     const entries = Object.entries(r_data);
 

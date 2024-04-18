@@ -9,18 +9,7 @@ import { _OPTIONS } from "./options.js";
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {
     let api = this;
-    let container = $('.aGrid-container');
-
-    api.aGrid.$ = {
-        container: container,
-        table: api, // Текущая таблица всегда доступна в Классе
-        module: container.data('module'), // Название модуля
-        options: {
-            ignore: _OPTIONS.ignore
-        },
-        store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
-        dropContent: false, // Список для popover модификаторов
-    };
+    // api.aGrid.$ = _OPTIONS;
 
     // api.aGrid.dt();
     // api.aGrid.fn();
@@ -31,13 +20,13 @@ DataTable.Api.register('aGrid', function () {
     // TEST
     // console.log(this.store.getAll())
 
-    return api;
+    return api; // или api.aGrid
 });
-
-// DataTable.Api.register('aGrid.', function () {});
 
 // DataTable.Api.register();
 // DataTable.Api.extend();
+
+// DataTable.Api.register('aGrid.', function () {});
 
 // Параметры до загрузки Grid
 // $.extend(true, $.fn.dataTable.defaults, {});
