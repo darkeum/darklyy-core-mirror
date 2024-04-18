@@ -1,5 +1,4 @@
-
-// return api.aGrid;
+import { _OPTIONS } from "../options.js";
 
 /* ЗАГРУЗКА GRID EXT Callback's */
 
@@ -95,7 +94,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     // console.log(api.searchBuilder.container());
 
     // Генератор полей для поиска c фильтром исключений
-    let ignore = window._OPTIONS.ignore;
+    let ignore = _OPTIONS.ignore;
     let options = api.settings()[0].aoColumns.filter(
         (item) =>
             typeof (item) === 'object'

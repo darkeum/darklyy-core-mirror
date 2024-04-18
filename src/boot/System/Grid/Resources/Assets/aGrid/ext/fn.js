@@ -1,3 +1,5 @@
+import { _OPTIONS } from "../options.js";
+
 /* ФУНКЦИИ - fn */
 DataTable.Api.register('aGrid.fn', function () {
     let api = this;

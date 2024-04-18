@@ -1,3 +1,5 @@
+import { _OPTIONS } from "../options.js";
+
 DataTable.Api.register('aGrid.ui', function () {
     let api = this;
 
