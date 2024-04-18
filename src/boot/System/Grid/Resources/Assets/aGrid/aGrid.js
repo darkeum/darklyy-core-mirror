@@ -9,6 +9,7 @@ import { _OPTIONS } from "./options.js";
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {
     let api = this;
+
     api.aGrid.$ = _OPTIONS;
 
     // api.aGrid.dt();
