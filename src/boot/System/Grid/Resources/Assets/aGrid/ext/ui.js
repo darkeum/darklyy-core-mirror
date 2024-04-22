@@ -6,6 +6,8 @@ DataTable.Api.register('aGrid.ui', function () {
     // Вызов контекстного меню для table tr
     // api.aGrid.ui.contextMenu();
 
+    api.aGrid.ui.table.scroll();
+
     return api.aGrid;
 });
 
