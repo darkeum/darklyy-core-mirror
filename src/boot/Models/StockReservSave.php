@@ -11,6 +11,10 @@
 
 namespace Boot\Models;
 
+
+/**
+ @deprecated Используйте Reserve\Support\StockReserveSave
+ */
 class StockReservSave extends Model
 {
     protected $fillable = ["receipts_detail_id", "module", "pid", "count", "uid", "stock_id"];

@@ -13,6 +13,9 @@ namespace Boot\Models;
 
 use \Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ @deprecated Используйте Reserve\Support\StockReserve
+ */
 class StockReserv extends Model
 {
     use SoftDeletes;
