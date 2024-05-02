@@ -2,9 +2,14 @@
 
 namespace Boot\Support\Facades;
 
+use Boot\Support\Str;
+use Boot\Models\Model;
+use Boot\Support\Numb;
+use Illuminate\Support\Js;
+use Illuminate\Support\Arr;
 use Boot\Support\Facades\Mail;
+use Illuminate\Support\Number;
 use Illuminate\Support\Facades\Facade as LaravelFacade;
-
 
 abstract class Facade extends LaravelFacade
 {
@@ -13,7 +18,6 @@ abstract class Facade extends LaravelFacade
         return collect([
             'App' => App::class,
             'Arr' => Arr::class,
-            'Artisan' => Artisan::class,
             'Auth' => Auth::class,
             'Blade' => Blade::class,
             'Broadcast' => Broadcast::class,
@@ -35,9 +39,9 @@ abstract class Facade extends LaravelFacade
             'Log' => Log::class,
             'Mail' => Mail::class,
             'Notification' => Notification::class,
+            'Numb' => Numb::class,
             'Number' => Number::class,
             'Password' => Password::class,
-            'Process' => Process::class,
             'Queue' => Queue::class,
             'RateLimiter' => RateLimiter::class,
             'Redirect' => Redirect::class,
@@ -51,7 +55,6 @@ abstract class Facade extends LaravelFacade
             'URL' => URL::class,
             'Validator' => Validator::class,
             'View' => View::class,
-            'Vite' => Vite::class,
         ]);
     }
 }
