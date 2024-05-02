@@ -136,7 +136,7 @@
         "telegram-bot/api": "^2.3",
         "twig/extra-bundle": "^3.3",
         "twig/string-extra": "^3.3",
-        "twig/twig": "^3.8",
+        "twig/twig": "3.8",
         "typesense/typesense-php": "^4.8",
         "verot/class.upload.php": "^2.1",
         "vinkla/hashids": "^11.0",
