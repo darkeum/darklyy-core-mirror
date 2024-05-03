@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2024 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -16,52 +25,52 @@ class SendQueuedNotifications implements ShouldQueue
     use InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The notifiable entities that should receive the notification.
+     * Уведомляемые субъекты, которые должны получить уведомление.
      *
      * @var \Illuminate\Support\Collection
      */
     public $notifiables;
 
     /**
-     * The notification to be sent.
+     * Уведомление для отправки.
      *
-     * @var \Illuminate\Notifications\Notification
+     * @var \Boot\System\Notifications\Notification
      */
     public $notification;
 
     /**
-     * All of the channels to send the notification to.
+     * Все каналы для отправки уведомления.
      *
      * @var array
      */
     public $channels;
 
     /**
-     * The number of times the job may be attempted.
+     * Сколько раз можно попытаться выполнить задание.
      *
      * @var int
      */
     public $tries;
 
     /**
-     * The number of seconds the job can run before timing out.
+     * Количество секунд, в течение которых задание может выполняться до истечения времени ожидания.
      *
      * @var int
      */
     public $timeout;
 
     /**
-     * Indicates if the job should be encrypted.
+     *Указывает, должно ли задание быть зашифровано.
      *
      * @var bool
      */
     public $shouldBeEncrypted = false;
 
     /**
-     * Create a new job instance.
+     * Создания нового экземпляра задания.
      *
-     * @param  \Illuminate\Notifications\Notifiable|\Illuminate\Support\Collection  $notifiables
-     * @param  \Illuminate\Notifications\Notification  $notification
+     * @param  \Boot\System\Notifications\Notifiable|\Illuminate\Support\Collection  $notifiables
+     * @param  \Boot\System\Notifications\Notification  $notification
      * @param  array|null  $channels
      * @return void
      */
@@ -77,9 +86,9 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Wrap the notifiable(s) in a collection.
+     * Оберните уведомляемые объекты в коллекцию.
      *
-     * @param  \Illuminate\Notifications\Notifiable|\Illuminate\Support\Collection  $notifiables
+     * @param  \Boot\Syeytem\Notifications\Notifiable|\Illuminate\Support\Collection  $notifiables
      * @return \Illuminate\Support\Collection
      */
     protected function wrapNotifiables($notifiables)
@@ -94,9 +103,9 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Send the notifications.
+     * Отправить уведомления.
      *
-     * @param  \Illuminate\Notifications\ChannelManager  $manager
+     * @param  \Boot\System\Notifications\ChannelManager  $manager
      * @return void
      */
     public function handle(ChannelManager $manager)
@@ -105,7 +114,7 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Get the display name for the queued job.
+     * Получить отображаемое имя задания в очереди.
      *
      * @return string
      */
@@ -115,7 +124,7 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Call the failed method on the notification instance.
+     * Вызовите неудачный метод в экземпляре уведомления.
      *
      * @param  \Throwable  $e
      * @return void
@@ -128,7 +137,7 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Get the number of seconds before a released notification will be available.
+     * Получите количество секунд до того, как будет доступно выпущенное уведомление.
      *
      * @return mixed
      */
@@ -142,7 +151,7 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Get the expiration for the notification.
+     * Получите срок действия уведомления.
      *
      * @return mixed
      */
@@ -156,7 +165,7 @@ class SendQueuedNotifications implements ShouldQueue
     }
 
     /**
-     * Prepare the instance for cloning.
+     * Подготовьте экземпляр к клонированию.
      *
      * @return void
      */

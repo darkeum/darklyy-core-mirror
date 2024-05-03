@@ -14,11 +14,12 @@ namespace Boot\System\Notifications;
 use Boot\Support\Str;
 use Illuminate\Support\Collection;
 use Boot\System\Database\Model\Model;
+use Boot\System\Settings\Facades\Settings;
 use Illuminate\Support\Traits\Localizable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Boot\System\Notifications\Events\NotificationSent;
-use Illuminate\Contracts\Translation\HasLocalePreference;
 use Boot\System\Notifications\Events\NotificationSending;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
 
 class NotificationSender
@@ -106,10 +107,15 @@ class NotificationSender
             }
             $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
                 $notificationId = Str::uuid()->toString();
-
                 foreach ((array) $viaChannels as $channel) {
-                    if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
-                        $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
+                    $eneble_chanel = Settings::get('notification_' . $channel, true);
+                    if ($channel == 'mail') {
+                        Settings::get('notification_' . $channel, false);
+                    }
+                    if ($eneble_chanel) {
+                        if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
+                            $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
+                        }
                     }
                 }
             });
