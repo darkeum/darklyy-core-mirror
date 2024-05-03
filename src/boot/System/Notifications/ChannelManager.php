@@ -23,7 +23,6 @@ use Illuminate\Contracts\Notifications\Dispatcher as DispatcherContract;
 use Illuminate\Database\Eloquent\Collection as ModelCollection;
 use Illuminate\Support\Collection;
 use Boot\System\Database\Model\Model;
-use Boot\System\Settings\Facades\Settings;
 
 class ChannelManager extends Manager implements DispatcherContract, FactoryContract
 {

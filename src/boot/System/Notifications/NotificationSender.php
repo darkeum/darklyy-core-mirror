@@ -217,23 +217,28 @@ class NotificationSender
                 if (method_exists($notification, 'viaQueues')) {
                     $queue = $notification->viaQueues()[$channel] ?? null;
                 }
-
-                $this->bus->dispatch(
-                    (new SendQueuedNotifications($notifiable, $notification, [$channel]))
-                        ->onConnection($notification->connection)
-                        ->onQueue($queue)
-                        ->delay(
-                            is_array($notification->delay) ?
-                                ($notification->delay[$channel] ?? null)
-                                : $notification->delay
-                        )
-                        ->through(
-                            array_merge(
-                                method_exists($notification, 'middleware') ? $notification->middleware() : [],
-                                $notification->middleware ?? []
+                $eneble_chanel = Settings::get('notification_' . $channel, true);
+                if ($channel == 'mail') {
+                    Settings::get('notification_' . $channel, false);
+                }
+                if ($eneble_chanel) {
+                    $this->bus->dispatch(
+                        (new SendQueuedNotifications($notifiable, $notification, [$channel]))
+                            ->onConnection($notification->connection)
+                            ->onQueue($queue)
+                            ->delay(
+                                is_array($notification->delay) ?
+                                    ($notification->delay[$channel] ?? null)
+                                    : $notification->delay
                             )
-                        )
-                );
+                            ->through(
+                                array_merge(
+                                    method_exists($notification, 'middleware') ? $notification->middleware() : [],
+                                    $notification->middleware ?? []
+                                )
+                            )
+                    );
+                }
             }
         }
     }
