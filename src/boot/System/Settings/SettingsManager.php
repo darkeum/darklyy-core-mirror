@@ -11,6 +11,7 @@
 
 namespace Boot\System\Settings;
 
+use Boot\Models\Users;
 use Boot\Support\Facades\Auth;
 
 class SettingsManager
@@ -26,6 +27,20 @@ class SettingsManager
     {
 
         return Auth::check() ? Auth::user()->settings($key, $default) : $default;
+    }
+
+    /**
+     * Получить настройки указанного пользователя по ключу
+     *
+     * @param  mixed $uid Идетификатор пользователя
+     * @param  mixed $key Ключ настроек
+     * @param  mixed $default Значение по умолчанию
+     * @return void
+     */
+    public function getByUser($uid, $key, $default = null)
+    {
+        $user = Users::find($uid);
+        return !empty($user) ? $user->settings($key, $default) : $default;
     }
 
     /**

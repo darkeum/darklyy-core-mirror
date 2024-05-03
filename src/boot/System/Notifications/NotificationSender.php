@@ -108,9 +108,9 @@ class NotificationSender
             $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
                 $notificationId = Str::uuid()->toString();
                 foreach ((array) $viaChannels as $channel) {
-                    $eneble_chanel = Settings::get('notification_' . $channel, true);
+                    $eneble_chanel = Settings::getByUser($notifiable->id,'notification_' . $channel, true);
                     if ($channel == 'mail') {
-                        Settings::get('notification_' . $channel, false);
+                        Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
                     }
                     if ($eneble_chanel) {
                         if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
@@ -217,9 +217,9 @@ class NotificationSender
                 if (method_exists($notification, 'viaQueues')) {
                     $queue = $notification->viaQueues()[$channel] ?? null;
                 }
-                $eneble_chanel = Settings::get('notification_' . $channel, true);
+                $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
                 if ($channel == 'mail') {
-                    Settings::get('notification_' . $channel, false);
+                    Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
                 }
                 if ($eneble_chanel) {
                     $this->bus->dispatch(
