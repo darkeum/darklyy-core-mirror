@@ -147,22 +147,14 @@ class ChannelManager extends Manager implements DispatcherContract, FactoryContr
     public function sendNow($notifiables, $notification, array $channels = null)
     {
         $notification = $this->createDatabeseNotification($notifiables, $notification);
-        foreach ($channels as $value) {
-            $eneble_chanel = Settings::get('notification_' . $value, true);
-            if ($value == 'mail') {
-                Settings::get('notification_' . $value, false);
-            }
-            if ($eneble_chanel) {
-                (
-                    new NotificationSender(
-                        $this,
-                        $this->container->make(Bus::class),
-                        $this->container->make(Dispatcher::class),
-                        $this->locale
-                    )
-                )->sendNow($notifiables, $notification, $channels);
-            }
-        }
+        (
+            new NotificationSender(
+                $this,
+                $this->container->make(Bus::class),
+                $this->container->make(Dispatcher::class),
+                $this->locale
+            )
+        )->sendNow($notifiables, $notification, $channels);
     }
 
     /**
