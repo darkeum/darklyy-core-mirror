@@ -1,9 +1,9 @@
 <?php
 
-/**
-* @name        JMY CMS
-* @link        http://jmy.su/
-* @copyright   Copyright (C) 2012-2022 JMY LTD
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2024 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -11,15 +11,15 @@
 
 namespace Boot\System\Notifications;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Contracts\Translation\HasLocalePreference;
-use Illuminate\Database\Eloquent\Collection as ModelCollection;
-use \Boot\System\Database\Model\Model;
-use \Boot\System\Notifications\Events\NotificationSending;
-use \Boot\System\Notifications\Events\NotificationSent;
+use Boot\Support\Str;
 use Illuminate\Support\Collection;
-use \Boot\Support\Str;
+use Boot\System\Database\Model\Model;
 use Illuminate\Support\Traits\Localizable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Boot\System\Notifications\Events\NotificationSent;
+use Illuminate\Contracts\Translation\HasLocalePreference;
+use Boot\System\Notifications\Events\NotificationSending;
+use Illuminate\Database\Eloquent\Collection as ModelCollection;
 
 class NotificationSender
 {
@@ -99,25 +99,23 @@ class NotificationSender
     public function sendNow($notifiables, $notification, array $channels = null)
     {
         $notifiables = $this->formatNotifiables($notifiables);
-
         $original = clone $notification;
-
         foreach ($notifiables as $notifiable) {
             if (empty($viaChannels = $channels ?: $notification->via($notifiable))) {
                 continue;
             }
-
             $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
                 $notificationId = Str::uuid()->toString();
 
                 foreach ((array) $viaChannels as $channel) {
-                    if (! ($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
+                    if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
                         $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
                     }
                 }
             });
         }
     }
+
 
     /**
      * Get the notifiable's preferred locale for the notification.
@@ -146,11 +144,11 @@ class NotificationSender
      */
     protected function sendToNotifiable($notifiable, $id, $notification, $channel)
     {
-        if (! $notification->id) {
+        if (!$notification->id) {
             $notification->id = $id;
         }
 
-        if (! $this->shouldSendNotification($notifiable, $notification, $channel)) {
+        if (!$this->shouldSendNotification($notifiable, $notification, $channel)) {
             return;
         }
 
@@ -171,8 +169,10 @@ class NotificationSender
      */
     protected function shouldSendNotification($notifiable, $notification, $channel)
     {
-        if (method_exists($notification, 'shouldSend') &&
-            $notification->shouldSend($notifiable, $channel) === false) {
+        if (
+            method_exists($notification, 'shouldSend') &&
+            $notification->shouldSend($notifiable, $channel) === false
+        ) {
             return false;
         }
 
@@ -201,9 +201,8 @@ class NotificationSender
                 $notification = clone $original;
 
                 $notification->id = $notificationId;
-                $notification->url = config('app.url').'/administration/module/notif/redirect/'.$notification->id;
 
-                if (! is_null($this->locale)) {
+                if (!is_null($this->locale)) {
                     $notification->locale = $this->locale;
                 }
 
@@ -215,18 +214,19 @@ class NotificationSender
 
                 $this->bus->dispatch(
                     (new SendQueuedNotifications($notifiable, $notification, [$channel]))
-                            ->onConnection($notification->connection)
-                            ->onQueue($queue)
-                            ->delay(is_array($notification->delay) ?
-                                    ($notification->delay[$channel] ?? null)
-                                    : $notification->delay
+                        ->onConnection($notification->connection)
+                        ->onQueue($queue)
+                        ->delay(
+                            is_array($notification->delay) ?
+                                ($notification->delay[$channel] ?? null)
+                                : $notification->delay
+                        )
+                        ->through(
+                            array_merge(
+                                method_exists($notification, 'middleware') ? $notification->middleware() : [],
+                                $notification->middleware ?? []
                             )
-                            ->through(
-                                array_merge(
-                                    method_exists($notification, 'middleware') ? $notification->middleware() : [],
-                                    $notification->middleware ?? []
-                                )
-                            )
+                        )
                 );
             }
         }
@@ -240,9 +240,9 @@ class NotificationSender
      */
     protected function formatNotifiables($notifiables)
     {
-        if (! $notifiables instanceof Collection && ! is_array($notifiables)) {
+        if (!$notifiables instanceof Collection && !is_array($notifiables)) {
             return $notifiables instanceof Model
-                            ? new ModelCollection([$notifiables]) : [$notifiables];
+                ? new ModelCollection([$notifiables]) : [$notifiables];
         }
 
         return $notifiables;
