@@ -35,8 +35,10 @@ class GridView
         $params['actions_keys'] = array_keys($params['actions']);
         $params['actions_count'] = count($params['actions']);
 
-        $params['destroy'] = array_search('destroy', array_keys($params['actions']));
-
+        //$params['destroy'] = array_search('destroy', array_keys($params['actions']), true);
+        if (array_key_exists('destroy', $params['actions'])) {
+            $params['destroy'] = $params['actions']['destroy'];
+        }
 
         return view('grid::layouts.actions', $params)->render();
     }
