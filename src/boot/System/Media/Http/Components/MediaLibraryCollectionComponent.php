@@ -53,14 +53,20 @@ class MediaLibraryCollectionComponent extends Component
         $this->media = $this->getMedia($name, $model, $this->collection);
 
         $this->componentView = $view;
-        $this->listView = $listView ?? 'media-library::livewire.partials.collection.list';
-        $this->itemView = $itemView ?? 'media-library::livewire.partials.collection.item';
-        $this->propertiesView = $propertiesView ?? 'media-library::livewire.partials.collection.properties';
-        $this->fieldsView = $fieldsView ?? 'media-library::livewire.partials.collection.fields';
+        //$this->listView = $listView ?? 'media-library::livewire.partials.collection.list';
+        //$this->itemView = $itemView ?? 'media-library::livewire.partials.collection.item';
+        //$this->propertiesView = $propertiesView ?? 'media-library::livewire.partials.collection.properties';
+        //$this->fieldsView = $fieldsView ?? 'media-library::livewire.partials.collection.fields';
+
+        $this->listView = $listView ?? 'livewire.partials.collection.list';
+        $this->itemView = $itemView ?? 'livewire.partials.collection.item';
+        $this->propertiesView = $propertiesView ?? 'livewire.partials.collection.properties';
+        $this->fieldsView = $fieldsView ?? 'livewire.partials.collection.fields';
     }
 
     public function render()
     {
-        return view('media-library::components.media-library-collection');
+        //return view('media-library::components.media-library-collection');
+        return view('components.media-library-collection');
     }
 }
