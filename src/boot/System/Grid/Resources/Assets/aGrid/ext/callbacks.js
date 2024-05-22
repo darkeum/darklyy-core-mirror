@@ -123,6 +123,9 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                 // Выпадающий список
                 case 'select' :
 
+                    // console.log(col);
+                    // console.log(col.options.hasOwnProperty('value'));
+
                     // А есть ли "options" ?
                     if (col.options) {
 

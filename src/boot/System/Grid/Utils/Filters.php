@@ -7,9 +7,14 @@ $cols = $this->default['cols'];
 $t = $c['type'] ?? $cols['type'];
 
 # Фильтрация - Функция
-$filter = function ($t, $f, $def = null) {
+$aGridFilter = function ($t, $f, $def = null) {
     return array_key_exists($t, $f) ? $f[$t] : $def;
 };
+
+# Генерация параметра
+$aGridParams = function ($name, $data) {
+//    return $name . ': ' . $data . ',';
+//};
 
 # Что фильтруем?
 $filters = $this->default['filters'];
@@ -17,7 +22,7 @@ $filters = $this->default['filters'];
 foreach ($filters as $fi) {
     if (!isset($c[$fi])) {
         $x = $cols[$fi];
-        $c[$fi] = $filter($t, $x, current($x));
+        $c[$fi] = $aGridFilter($t, $x, current($x));
     }
 }
 ####################################################################
@@ -27,7 +32,7 @@ foreach ($filters as $fi) {
 if (!isset($c['render'])) {
     $f = $cols['render'];
     $tt = $c['render'] ?? ''; // Исправить !!!
-    $c['render'] = $filter($tt, $f, current($f));
+    $c['render'] = $aGridFilter($tt, $f, current($f));
 }
 ####################################################################
 
@@ -37,8 +42,8 @@ $c['width'] = is_int($c['width']) ? $c['width'] . '%' : $c['width'];
 
 #icon - Иконка вместо заголовка столбца
 if (isset($c['icon'])) {
-   $f = $cols['icon'];
-   $c['icon'] = $filter($t, $f);
+    $f = $cols['icon'];
+    $c['icon'] = $aGridFilter($t, $f);
 }
 ####################################################################
 
