@@ -252,8 +252,11 @@ abstract class GridModern
         $c['name'] = $k;
         $c['index'] = $k;
 
-        # Начало фильтрации
-        include('Utils/Filters.php');
+        # ***********************************************************************
+        # Начало фильтрации *****************************************************
+        include('layouts/initColumnsFilters.php'); // Переделать в Trait (ColumnsFiltersTrait)
+        # Конец фильтрации ******************************************************
+        # ***********************************************************************
 
         #Merge with defaults
         //$c = array_merge($this->default['cols'], $this->cols_default, $c);
