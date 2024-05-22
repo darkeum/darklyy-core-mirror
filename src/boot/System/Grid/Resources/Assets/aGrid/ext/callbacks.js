@@ -172,6 +172,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 }).html(item);
                                 select_options.push(option);
                             });
+                            // console.log(select_options)
 
                             // Создаем select выпадающий список
                             select = $('<select></select>');
