@@ -266,7 +266,7 @@ abstract class GridModern
         return $c;
     }
 
-    // Задание значений в select для Grid
+    // Задание значений в select2 для Grid
     protected function setValue($data, $first = null)
     {
         // Старый вариант
@@ -275,15 +275,18 @@ abstract class GridModern
         // Новый вариант
         $data = collect($data);
 
-        // if (is_bool($first)) {
-        //     $data->prepend(__('grid.all'), "__ALL_SELECT_GRID");
-        // }
+        // Задание первого значения в select2 для Grid
+        if (is_bool($first)) {
+            $data->prepend(__('grid.all'), "__ALL_SELECT_GRID");
+        }
 
-        // if (is_string($first)) {
-        //     $data->prepend($first, "__ALL_SELECT_GRID");
-        // }
+        if (is_string($first)) {
+            $data->prepend($first, "__ALL_SELECT_GRID");
+        }
 
-        //$data->prepend( ($first) ? $first : __('grid.all'), 0);
+        if (is_array($first)) {
+            $data->prepend($first[1], $first[0]);
+        }
 
         return $data->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
     }

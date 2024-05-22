@@ -134,10 +134,18 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             let values = JSON.parse(col.options.value);
                             let option = $('<option></option>');
 
-                            option.attr({
-                                'value': '__ALL_SELECT_GRID'
-                            }).html('Все');
-                            select_options.push(option);
+                            // console.log(values)
+
+                            // Если есть пункт "ВСЕ" то он первый
+                            if (values.hasOwnProperty('__ALL_SELECT_GRID')) {
+                                let all = values.__ALL_SELECT_GRID;
+                                delete values.__ALL_SELECT_GRID;
+
+                                option.attr({
+                                    'value': '__ALL_SELECT_GRID'
+                                }).html(all);
+                                select_options.push(option);
+                            }
 
                             $.each(values, function (index, item) {
 
