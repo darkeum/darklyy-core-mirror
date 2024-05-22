@@ -1,7 +1,6 @@
 <?php
-### ПЕРЕДЕЛАТЬ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-# Фильтрация
+# ФИЛЬТРАЦИЯ
 
 $cols = $this->default['cols'];
 $t = $c['type'] ?? $cols['type'];
@@ -13,12 +12,11 @@ $FILTER = function ($t, $f, $def = null) {
 
 # Генерация параметра
 $PARAM = function ($name, $data) {
-//    return $name . ': ' . $data . ',';
+    return $name . ': ' . $data . ',';
 };
 
 # Что фильтруем?
 $filters = $this->default['filters'];
-
 foreach ($filters as $fi) {
     if (!isset($c[$fi])) {
         $x = $cols[$fi];
