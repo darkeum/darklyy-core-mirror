@@ -59,5 +59,20 @@ if (isset($c['excel_only']) && $c['excel_only'] == true) {
 }
 ####################################################################
 
+#options - Опции для select2
+if (isset($c['options'])) {
+    $c['options'] = \Boot\System\Grid\Utils\Utils::jsonEncode($c['options']);
+} else {
+    $c['options'] = [];
+}
+####################################################################
+#other -
+if (isset($c['other'])) {
+    $c['other'] = \Boot\System\Grid\Utils\Utils::jsonEncode($c['options']);
+} else {
+    $c['other'] = [];
+}
+####################################################################
+
 //$c['configs'] = json_encode($configs, JSON_UNESCAPED_UNICODE);
 ####################################################################

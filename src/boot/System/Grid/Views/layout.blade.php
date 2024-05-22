@@ -364,7 +364,7 @@
                             sortable: {{ isset($col['sortable']) ? ($col['sortable'] ? 'true' : 'false') : 'true' }},
                             searchable: {{ isset($col['search']) ? ($col['search'] === false ? 'false' : 'true') : 'false' }},
 
-                            {!! isset($col['other']) ? 'other: ' . \Boot\System\Grid\Utils\Utils::jsonEncode($col['other']) . ',' : false !!}
+                            {!! isset($col['other']) ? 'other: ' . $col['other'] . ',' : false !!}
                             data: "{{ $col['name'] }}",
 
                             @if(($col['render']))render: function (data, type, row, meta) {
@@ -372,7 +372,7 @@
                             },
                             @endif
 
-                                {!! isset($col['options']) ? 'options: ' . \Boot\System\Grid\Utils\Utils::jsonEncode($col['options']) . ',' : false !!}
+                                {!! isset($col['options']) ? 'options: ' . $col['options'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
 
