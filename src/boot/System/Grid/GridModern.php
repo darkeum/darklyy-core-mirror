@@ -276,15 +276,18 @@ abstract class GridModern
         $data = collect($data);
 
         // Задание первого значения в select2 для Grid
+        // Автоматом ставим по умолчанию
         if (is_bool($first)) {
             $data->prepend(__('grid.all'), "__ALL_SELECT_GRID");
         }
 
+        // Если строка (Просто замена текста ВСЕ на что то еще)
         if (is_string($first)) {
             $data->prepend($first, "__ALL_SELECT_GRID");
         }
 
-        if (is_array($first)) {
+        // Если массив
+        if (is_array($first) and !empty($first)) {
             $data->prepend($first[1], $first[0]);
         }
 
