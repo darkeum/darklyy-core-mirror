@@ -14,7 +14,7 @@ $FILTER = function ($t, $f, $def = null) {
 # Генерация параметра
 $PARAM = function ($name, $data) {
 //    return $name . ': ' . $data . ',';
-//};
+};
 
 # Что фильтруем?
 $filters = $this->default['filters'];
