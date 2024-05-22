@@ -147,6 +147,22 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 select_options.push(option);
                             }
 
+                            // Кастомный первым будет
+                            if (values.hasOwnProperty('__CUSTOM_SELECT_GRID')) {
+                                let custom = values.__CUSTOM_SELECT_GRID;
+                                custom = JSON.parse(custom);
+                                delete values.__CUSTOM_SELECT_GRID;
+
+                                let firstKey = Object.keys(custom)[0];
+                                let firstValue = Object.values(custom)[0];
+
+                                option.attr({
+                                    'value': firstKey
+                                }).html(firstValue);
+                                select_options.push(option);
+                            }
+
+                            // Переберем остальное
                             $.each(values, function (index, item) {
 
                                 // Создаем option'ы для select'а
