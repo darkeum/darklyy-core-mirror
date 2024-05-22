@@ -125,40 +125,48 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                     // А есть ли "options" ?
                     if (col.options) {
-                        let values = JSON.parse(col.options.value);
-                        let option = $('<option></option>');
 
-                        option.attr({
-                            'value': '__ALL_SELECT_GRID'
-                        }).html('Все');
-                        select_options.push(option);
-
-                        $.each(values, function (index, item) {
-
-                            // Создаем option'ы для select'а
+                        // Если есть "value" - Строки в список поданы
+                        if (col.options.hasOwnProperty('value')) {
+                            let values = JSON.parse(col.options.value);
                             let option = $('<option></option>');
+
                             option.attr({
-                                'value': index, // Не ставить value если 0 КОСТЫЛЬ
-                            }).html(item);
+                                'value': '__ALL_SELECT_GRID'
+                            }).html('Все');
                             select_options.push(option);
-                        });
 
-                        // Создаем select выпадающий список
-                        select = $('<select></select>');
-                        select.attr({
-                            'id': col.data,
-                            'class': 'form-select form-select-sm'
-                        }).html(select_options);
-                        $(this).append(select);
+                            $.each(values, function (index, item) {
 
-                        $('select', this).on('change', function () {
-                            if (api.column(col.idx).search() !== this.value) {
-                                api.column(col.idx).search(this.value).draw();
-                                // console.log(col.idx)
-                                // console.log(this.value)
-                            }
-                        });
-                    } else {
+                                // Создаем option'ы для select'а
+                                let option = $('<option></option>');
+                                option.attr({
+                                    'value': index, // Не ставить value если 0 КОСТЫЛЬ
+                                }).html(item);
+                                select_options.push(option);
+                            });
+
+                            // Создаем select выпадающий список
+                            select = $('<select></select>');
+                            select.attr({
+                                'id': col.data,
+                                'class': 'form-select form-select-sm'
+                            }).html(select_options);
+                            $(this).append(select);
+
+                            $('select', this).on('change', function () {
+                                if (api.column(col.idx).search() !== this.value) {
+                                    api.column(col.idx).search(this.value).draw();
+                                    // console.log(col.idx)
+                                    // console.log(this.value)
+                                }
+                            });
+                        }
+
+                        // Если есть "url" - Строки в список не поданы и нужен AJAX запрос списка строк
+                        if (col.options.hasOwnProperty('url')) {
+                            // console.log('url')
+                        }
 
                     }
 
