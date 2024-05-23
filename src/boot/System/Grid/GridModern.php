@@ -268,7 +268,7 @@ abstract class GridModern
     }
 
     // Задание значений в select2 для Grid
-    protected function setValue($data, $first = false, $ajax = false)
+    protected function setValue($data, $first = false, $column = false)
     {
         // Старый вариант
         //return new Value($data, $first);
@@ -281,7 +281,7 @@ abstract class GridModern
         }
 
         if (is_string($data)) {
-            $data = route('grid.ui.select2', ['model' => $data, 'col' => $ajax]);
+            $data = route('grid.ui.select2', ['model' => $data, 'col' => $column]);
             $result->prepend($data, "__AJAX_SELECT_GRID");
         }
 
