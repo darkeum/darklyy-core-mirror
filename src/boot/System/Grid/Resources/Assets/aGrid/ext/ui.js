@@ -314,7 +314,8 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                         })
                     };
                 },
-            }
+            },
+            minimumInputLength: 3,
         };
         options = {...options, ...ajax};
         // console.log(options);
@@ -327,7 +328,6 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
         // placeholder: "Нажмите чтобы выбрать",
         containerCssClass: 'form-select2-sm',
         dropdownCssClass: '',
-        minimumInputLength: 3,
         dropdownAutoWidth: true, // Автоматическая ширина выпадающего списка
         language: {
             inputTooShort: function(args) {
