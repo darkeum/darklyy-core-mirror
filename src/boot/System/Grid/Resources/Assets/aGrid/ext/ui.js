@@ -302,7 +302,6 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                 },
                 processResults: function (data) {
                     return {
-                        // results: data
                         results: $.map(data, function (item) {
                             // console.log(item)
                             return {
@@ -324,7 +323,9 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
     // Параметры По умолчанию
     let $default = {
         text: 'Нет результатов',
-        containerCssClass: 'select-sm',
+        width: "100%",
+        // placeholder: "Нажмите чтобы выбрать",
+        // containerCssClass: 'select-sm',
         dropdownCssClass: '',
         minimumInputLength: 3,
         dropdownAutoWidth: true, // Автоматическая ширина выпадающего списка
