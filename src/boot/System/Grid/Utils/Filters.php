@@ -65,6 +65,7 @@ if (isset($c['excel_only']) && $c['excel_only'] == true) {
 #options - Опции для select2
 if (isset($c['options'])) {
     $c['options'] = \Boot\System\Grid\Utils\Utils::jsonEncode($c['options']);
+    //$c['options'] = json_encode($c['options'], JSON_UNESCAPED_UNICODE);
 }
 ####################################################################
 #other -

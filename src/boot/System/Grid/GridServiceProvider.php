@@ -96,7 +96,7 @@ class GridServiceProvider extends ServiceProvider
     }
 
     /**
-     * Регистрация 
+     * Регистрация
      *
      * @return void
      */
@@ -142,6 +142,7 @@ class GridServiceProvider extends ServiceProvider
 
         // Модификаторы
         Route::get('grid/views/mods', [GridView::class, 'mods'])->name('grid.view.mods');
+        Route::get('grid/ui/select2', [GridView::class, 'select2'])->name('grid.ui.select2'); // params: model, col, query
     }
 
     /**
@@ -152,7 +153,7 @@ class GridServiceProvider extends ServiceProvider
     public function getRouteGroup(): array
     {
         return [
-            'middleware' => ['web'],           
+            'middleware' => ['web'],
         ];
     }
 }

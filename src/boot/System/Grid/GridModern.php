@@ -28,6 +28,7 @@ use Boot\System\Grid\Repositories\DBRepository;
 use Boot\System\Grid\Repositories\ModelRepository;
 use Boot\System\Grid\Repositories\QueryRepository;
 use Boot\System\Database\Model\Builder as ModelBuilder;
+use ReflectionClass;
 
 abstract class GridModern
 {
@@ -267,21 +268,30 @@ abstract class GridModern
     }
 
     // Задание значений в select2 для Grid
-    protected function setValue($data, $first = null)
+    protected function setValue($data, $first = false, $ajax = false)
     {
         // Старый вариант
         //return new Value($data, $first);
 
+        $result = collect([]);
+
         // Новый вариант
-        $data = collect($data);
+        if (is_array($data)) {
+            $result = collect($data);
+        }
+
+        if (is_string($data)) {
+            $data = route('grid.ui.select2', ['model' => $data, 'col' => $ajax]);
+            $result->prepend($data, "__AJAX_SELECT_GRID");
+        }
 
         // Задание первого значения в select2 для Grid
         if (is_bool($first) and $first) {
-            $data->prepend(__('grid.all'), "__ALL_SELECT_GRID");
+            $result->prepend(__('grid.all'), "__ALL_SELECT_GRID");
         }
 
         if (is_string($first)) {
-            $data->prepend($first, "__ALL_SELECT_GRID");
+            $result->prepend($first, "__ALL_SELECT_GRID");
         }
 
         // Если массив
@@ -289,11 +299,14 @@ abstract class GridModern
             $first = collect($first);
 
             $custom = $first->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
-            $data->prepend($custom, "__CUSTOM_SELECT_GRID");
-            $data->prepend($first->take(1)->keys()->first(), $first->take(1)->values()->first());
+            //$custom = $first->toJson();
+            $result->prepend($custom, "__CUSTOM_SELECT_GRID");
+            $result->prepend($first->take(1)->keys()->first(), $first->take(1)->values()->first());
         }
 
-        return $data->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
+        //dd($result);
+
+        return $result->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
     }
 
     //

@@ -2,8 +2,10 @@
 
 namespace Boot\System\Grid;
 
-use phpDocumentor\Reflection\Types\Collection;
+use Boot\System\Http\Request;
 use Throwable;
+//use phpDocumentor\Reflection\Types\Collection;
+//use ReflectionClass;
 
 class GridView
 {
@@ -15,7 +17,7 @@ class GridView
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return string
      * # Вывод автоматической генерации Actions в Grid
      */
@@ -44,7 +46,7 @@ class GridView
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return string
      * # Вывод автоматической генерации Img в Grid
      */
@@ -55,7 +57,7 @@ class GridView
 
     /**
      * @param $path
-     * @param array $params
+     * @param  array  $params
      * @return string
      */
     public static function view($path, array $params = []): string
@@ -73,14 +75,31 @@ class GridView
         return view('grid::layouts.toolbar.mods.list')->render();
     }
 
+    //
+    public static function select2(Request $request)
+    {
+        $model = $request->query('model');
+        $col = $request->query('col');
+        $query = $request->query('query');
+
+        $result = $model::query()
+            ->where([])
+            ->where($col, 'LIKE', "%{$query}%")
+            //->orWhere('or_desc', 'LIKE', "%{$text}%")
+            ->get();
+
+        //dd($result->pluck($col, $col)->toJson(JSON_UNESCAPED_UNICODE));
+        return $result->pluck($col, $col)->toArray();
+    }
+
     public static function icon($type, $css, $title = false)
     {
         switch ($type) {
             case 'fe':
-                $css = '<i class="feather-' . $css . '" title="' . $title . '"></i>';
+                $css = '<i class="feather-'.$css.'" title="'.$title.'"></i>';
                 break;
             case 'fa':
-                $css = '<i class="' . $css . '" title="' . $title . '"></i>';
+                $css = '<i class="'.$css.'" title="'.$title.'"></i>';
                 break;
 
             // case 'badge':
@@ -88,7 +107,7 @@ class GridView
             //     break;
 
             default:
-                $css = '<i class="' . $css . '" title="' . $title . '"></i>';
+                $css = '<i class="'.$css.'" title="'.$title.'"></i>';
                 break;
         }
 

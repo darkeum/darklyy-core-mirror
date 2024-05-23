@@ -133,8 +133,15 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         if (col.options.hasOwnProperty('value')) {
                             let values = JSON.parse(col.options.value);
                             let option = $('<option></option>');
-
+                            let ajax = false;
                             // console.log(values)
+
+                            // Если есть пункт для работы с AJAX
+                            if (values.hasOwnProperty('__AJAX_SELECT_GRID')) {
+                                ajax = values.__AJAX_SELECT_GRID;
+                                delete values.__AJAX_SELECT_GRID;
+                                // console.log(ajax);
+                            }
 
                             // Если есть пункт "ВСЕ" то он первый
                             if (values.hasOwnProperty('__ALL_SELECT_GRID')) {
@@ -179,21 +186,26 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             select.attr({
                                 'id': col.data,
                                 'class': 'form-select form-select-sm'
+                                // 'class': 'form-select'
                             }).html(select_options);
                             $(this).append(select);
 
+                            //
                             $('select', this).on('change', function () {
                                 if (api.column(col.idx).search() !== this.value) {
                                     api.column(col.idx).search(this.value).draw();
                                     // console.log(col.idx)
-                                    // console.log(this.value)
+                                    // console.log(this.value);
                                 }
                             });
-                        }
 
-                        // Если есть "url" - Строки в список не поданы и нужен AJAX запрос списка строк
-                        if (col.options.hasOwnProperty('url')) {
-                            // console.log('url')
+                            // Использовать Select2 если нужно
+                            if (col.options.hasOwnProperty('select2') && typeof col.options.select2 == 'boolean' && col.options.select2 == true) {
+                                api.aGrid.ui.select2(select, {
+                                    ajax: ajax
+                                    // minimumInputLength: 999,
+                                });
+                            }
                         }
 
                     }
@@ -354,7 +366,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     });
 
     // ###
-    api.aGrid.ui.select2($(".aGrid-filters th select")); // Использование select2
+    // api.aGrid.ui.select2($(".aGrid-filters th select")); // Использование select2
     // api.aGrid.ui.loader(false); // Скрыть Loader
 
     api.aGrid.ui.table.scroll();

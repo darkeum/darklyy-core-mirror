@@ -284,20 +284,87 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
 });
 
 // Управление select2'ом
-DataTable.Api.register('aGrid.ui.select2', function (unit, text = 'Нет результатов') {
-    unit.select2({
+DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
+
+    // Если есть Ajax ссылка
+    if (options.hasOwnProperty('ajax') && options.ajax) {
+        let ajax = {
+            ajax: {
+                url: options.ajax,
+                dataType: 'json',
+                type: "GET",
+                // delay: 250,
+                // quietMillis: 50,
+                data: function (query) {
+                    return {
+                        query: query.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        // results: data
+                        results: $.map(data, function (item) {
+                            // console.log(item)
+                            return {
+                                // text: item.text,
+                                // id: item.id,
+                                text: item,
+                                id: item,
+                                value: item,
+                            }
+                        })
+                    };
+                },
+            }
+        };
+        options = {...options, ...ajax};
+        // console.log(options);
+    }
+
+    // Параметры По умолчанию
+    let $default = {
+        text: 'Нет результатов',
         containerCssClass: 'select-sm',
         dropdownCssClass: '',
+        minimumInputLength: 3,
         dropdownAutoWidth: true, // Автоматическая ширина выпадающего списка
         language: {
-            noResults: function () {
-                return '<div class="alert alert-danger" role="alert"><div class="alert-body text-center">' + text + '</div></div>';
+            inputTooShort: function(args) {
+                // args.minimum is the minimum required length
+                // args.input is the user-typed text
+                return "Type more stuff";
+            },
+            inputTooLong: function(args) {
+                // args.maximum is the maximum allowed length
+                // args.input is the user-typed text
+                return "You typed too much";
+            },
+            errorLoading: function() {
+                return "Error loading results";
+            },
+            loadingMore: function() {
+                return "Loading more results";
+            },
+            noResults: function() {
+                return "No results found";
+                // return '<div class="alert alert-danger" role="alert"><div class="alert-body text-center">' + text + '</div></div>';
+            },
+            searching: function() {
+                return "Searching...";
+            },
+            maximumSelected: function(args) {
+                // args.maximum is the maximum number of items the user may select
+                return "Error loading results";
             }
         },
         escapeMarkup: function (markup) {
             return markup;
         }
-    });
+    }
+    options = {...$default, ...options};
+    // console.log(options);
+
+    unit.select2(options);
 });
 
 // Работа с пустой таблицей (Если в таблице нет данных)
