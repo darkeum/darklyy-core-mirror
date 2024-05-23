@@ -287,10 +287,10 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
 DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
 
     // Если есть Ajax ссылка
-    if (options.hasOwnProperty('ajax') && options.ajax) {
+    if (options.hasOwnProperty('url') && options.url) {
         let ajax = {
             ajax: {
-                url: options.ajax,
+                url: options.url,
                 dataType: 'json',
                 type: "GET",
                 // delay: 250,
