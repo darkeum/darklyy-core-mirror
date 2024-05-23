@@ -120,7 +120,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
             let input, select, select_options = [];
             switch (col.type) {
 
-                // Выпадающий список
+                // Выпадающий список и Выпадающий список - Select2.js
                 case 'select' :
 
                     // console.log(col);
@@ -210,38 +210,6 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                     }
 
                     break;
-
-                // Выпадающий список - Select2.js // ПОКА НЕ ИСПОЛЬЗУЕТСЯ В ПРОЕКТЕ (Старый вариант данных)
-                /*/
-                case 'select2' :
-                    // console.log(col.options.value.split(';'))
-                    col.options.value.split(';').forEach(function (items, index) {
-                        let item = items.split(':');
-
-                        // Создаем option'ы для select'а
-                        let option = $('<option></option>');
-                        option.attr({
-                            'value': item[0],
-                        }).html(item[1]);
-                        select_options.push(option);
-                    });
-
-                    // Создаем select выпадающий список
-                    select = $('<select></select>');
-                    select.attr({
-                        'id': col.data,
-                        'class': 'form-select form-select-sm d-table-select-sm'
-                    }).html(select_options);
-                    $(this).append(select);
-
-                    $('select', this).on('change', function () {
-                        if (api.column(col.idx).search() !== this.value) {
-                            api.column(col.idx).search(this.value).draw();
-                        }
-                    });
-
-                    break;
-                /**/
 
                 // Даты - WIP ПЕРЕДЕЛАТЬ !!!
                 case 'date_range':
