@@ -351,7 +351,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                 // return '<div class="alert alert-danger" role="alert"><div class="alert-body text-center">' + text + '</div></div>';
             },
             searching: function() {
-                return "Searching...";
+                return "Поиск...";
             },
             maximumSelected: function(args) {
                 // args.maximum is the maximum number of items the user may select
