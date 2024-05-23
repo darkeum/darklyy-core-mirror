@@ -185,7 +185,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             select = $('<select></select>');
                             select.attr({
                                 'id': col.data,
-                                'class': 'form-select form-select-sm form-control-sm'
+                                'class': 'form-select form-select-sm'
                                 // 'class': 'form-select'
                             }).html(select_options);
                             $(this).append(select);
