@@ -325,7 +325,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
         text: 'Нет результатов',
         width: "100%",
         // placeholder: "Нажмите чтобы выбрать",
-        // containerCssClass: 'select-sm',
+        containerCssClass: 'form-select2-sm',
         dropdownCssClass: '',
         minimumInputLength: 3,
         dropdownAutoWidth: true, // Автоматическая ширина выпадающего списка
