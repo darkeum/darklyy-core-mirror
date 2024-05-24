@@ -89,7 +89,11 @@ class GridView
             ->get();
 
         //dd($result->pluck($col, $col)->toJson(JSON_UNESCAPED_UNICODE));
-        return $result->pluck($col, $col)->toArray();
+        $result = $result->pluck($col, $col);
+        //$result->prepend(__('grid.all'), "__ALL_SELECT_GRID");
+        //dd($result);
+
+        return $result->toArray();
     }
 
     public static function icon($type, $css, $title = false)
