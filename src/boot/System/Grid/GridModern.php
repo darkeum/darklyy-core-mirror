@@ -95,7 +95,7 @@ abstract class GridModern
     /**
      * Установка идентификатора
      *
-     * @param mixed $grid_id
+     * @param  mixed  $grid_id
      * @return void
      */
     public function setGridId($grid_id)
@@ -119,7 +119,7 @@ abstract class GridModern
     /**
      * Вывод ответа на запрос
      *
-     * @param mixed $request
+     * @param  mixed  $request
      * @return void
      */
     public function output($request)
@@ -189,7 +189,7 @@ abstract class GridModern
     /**
      * Подготовка строк
      *
-     * @param mixed $raw
+     * @param  mixed  $raw
      * @return void
      */
     public function parseRowGrid($raw)
@@ -200,7 +200,7 @@ abstract class GridModern
     /**
      * Подготовка строк
      *
-     * @param mixed $raw
+     * @param  mixed  $raw
      * @return void
      */
     protected function parseRow($raw)
@@ -233,8 +233,8 @@ abstract class GridModern
     /**
      * Инициализация колонок
      *
-     * @param mixed $k
-     * @param mixed $c
+     * @param  mixed  $k
+     * @param  mixed  $c
      * @return array
      * @throws ExceptionGrid
      */
@@ -273,11 +273,18 @@ abstract class GridModern
         // Старый вариант
         //return new Value($data, $first);
 
+        //dd($data);
+
         $result = collect([]);
 
         // Новый вариант
         if (is_array($data)) {
             $result = collect($data);
+        }
+
+        // Если уже подана коллекция из класса
+        if ($data instanceof Collection) {
+            $result = $data;
         }
 
         if (is_string($data)) {
@@ -351,37 +358,40 @@ abstract class GridModern
     //
     public function dateRangeSearch()
     {
-        return array('dataInit' => $this->initDateRangePicker(array(
-            'dateFormat' => 'dd.mm.yy',
-            'onChange' => new Raw('dateRangePicker_onChange'),
-            'presetRanges' => array(
-                array('text' => 'За 2016 год', 'dateStart' => '2016-01-01', 'dateEnd' => '2016-12-31'),
-                array('text' => 'За 2017 год', 'dateStart' => '2017-01-01', 'dateEnd' => '2017-12-31'),
-                array('text' => 'За 2018 год', 'dateStart' => '2018-01-01', 'dateEnd' => '2018-12-31'),
-                array('text' => 'За 2019 год', 'dateStart' => '2019-01-01', 'dateEnd' => '2019-12-31'),
-                array('text' => 'За 2020 год', 'dateStart' => '2020-01-01', 'dateEnd' => '2020-12-31'),
-                array('text' => 'За 2021 год', 'dateStart' => '2021-01-01', 'dateEnd' => '2021-12-31'),
-            ),
-            'datepickerOptions' => array(
-                'changeMonth' => true,
-                'changeYear' => true,
+        return array(
+            'dataInit' => $this->initDateRangePicker(array(
                 'dateFormat' => 'dd.mm.yy',
-            ),
-        )));
+                'onChange' => new Raw('dateRangePicker_onChange'),
+                'presetRanges' => array(
+                    array('text' => 'За 2016 год', 'dateStart' => '2016-01-01', 'dateEnd' => '2016-12-31'),
+                    array('text' => 'За 2017 год', 'dateStart' => '2017-01-01', 'dateEnd' => '2017-12-31'),
+                    array('text' => 'За 2018 год', 'dateStart' => '2018-01-01', 'dateEnd' => '2018-12-31'),
+                    array('text' => 'За 2019 год', 'dateStart' => '2019-01-01', 'dateEnd' => '2019-12-31'),
+                    array('text' => 'За 2020 год', 'dateStart' => '2020-01-01', 'dateEnd' => '2020-12-31'),
+                    array('text' => 'За 2021 год', 'dateStart' => '2021-01-01', 'dateEnd' => '2021-12-31'),
+                ),
+                'datepickerOptions' => array(
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'dateFormat' => 'dd.mm.yy',
+                ),
+            ))
+        );
     }
 
     //
     protected function initDateRangePicker($options = null)
     {
         $options = is_array($options) ? $options : array();
-        return new Raw('function(el){$(el).daterangepicker(' . Utils::jsonEncode($options) . ');}');
+        return new Raw('function(el){$(el).daterangepicker('.Utils::jsonEncode($options).');}');
     }
 
     //
     protected function getOrg($table, $column = 'org')
     {
         $rows = [];
-        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table . '.' . $column)->leftJoin('organizations', 'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
+        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table.'.'.$column)->leftJoin('organizations',
+            'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
         foreach ($org as $k => $v) {
             $rows[$v->org_id] = $v->name;
         }
@@ -392,7 +402,8 @@ abstract class GridModern
     protected function getManufacture($table, $column)
     {
         $rows = [];
-        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=', $table . '.' . $column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
+        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=',
+            $table.'.'.$column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
         foreach ($org as $k => $v) {
             $rows[$v->id] = $v->name;
         }
@@ -450,7 +461,8 @@ abstract class GridModern
         $rows = array();
         $rows["0"] = "Гость";
         if (!empty($table)) {
-            $users = DB::table($table)->leftJoin('users', 'users.id', '=', $table . '.' . $column)->distinct()->orderBy("users.surname")->select($table . '.' . $column)->get();
+            $users = DB::table($table)->leftJoin('users', 'users.id', '=',
+                $table.'.'.$column)->distinct()->orderBy("users.surname")->select($table.'.'.$column)->get();
             foreach ($users as $k => $v) {
                 $rows[$v->$column] = shortUserName($v->$column);
             }
@@ -464,24 +476,24 @@ abstract class GridModern
     }
 
     /**
-     * @param string $table
-     * @param string $column
-     * @param string $orderBy
+     * @param  string  $table
+     * @param  string  $column
+     * @param  string  $orderBy
      * @return array
      */
     protected function getValues(string $table, string $column = 'numb', string $orderBy = 'id'): array
     {
         $rows = [];
         if ($table) {
-            $numbs = DB::table($table . ' as t')
-                ->select('t.' . $column)
-                ->orderBy('t.' . $orderBy, 'desc')
+            $numbs = DB::table($table.' as t')
+                ->select('t.'.$column)
+                ->orderBy('t.'.$orderBy, 'desc')
                 ->distinct()
                 ->get();
 
             foreach ($numbs as $v) {
                 $str = Str::replace($v->$column, '"', '\"');
-                $rows[$str] = (string)$v->$column;
+                $rows[$str] = (string) $v->$column;
             }
         }
         return $rows;
@@ -509,9 +521,9 @@ abstract class GridModern
     /**
      * Получение данных пользователя
      *
-     * @param Collection $collection
-     * @param string $groupBy
-     * @param null $key
+     * @param  Collection  $collection
+     * @param  string  $groupBy
+     * @param  null  $key
      * @return Collection
      */
     protected function getFilterParam(Collection $collection, string $groupBy = 'id', $key = null): Collection
