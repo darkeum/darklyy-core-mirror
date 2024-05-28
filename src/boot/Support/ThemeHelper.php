@@ -14,9 +14,9 @@ class ThemeHelper
         $fullURL = request()->fullurl();
         if (App()->environment() === 'production') {
             for ($i = 1; $i < 7; $i++) {
-                $contains = Str::contains($fullURL, 'demo-' . $i);
+                $contains = Str::contains($fullURL, 'demo-'.$i);
                 if ($contains === true) {
-                    $data = config('custom.' . 'demo-' . $i);
+                    $data = config('custom.'.'demo-'.$i);
                 }
             }
         } else {
@@ -49,21 +49,55 @@ class ThemeHelper
         // All options available in the template
         $allOptions = [
             'mainLayoutType' => array('vertical', 'horizontal'),
-            'theme' => array('light' => 'light', 'dark' => 'dark-layout', 'bordered' => 'bordered-layout', 'semi-dark' => 'semi-dark-layout'),
+            'theme' => array(
+                'light' => 'light', 'dark' => 'dark-layout', 'bordered' => 'bordered-layout',
+                'semi-dark' => 'semi-dark-layout'
+            ),
             'sidebarCollapsed' => array(true, false),
             'showMenu' => array(true, false),
             'layoutWidth' => array('full', 'boxed'),
             'navbarColor' => array('bg-primary', 'bg-info', 'bg-warning', 'bg-success', 'bg-danger', 'bg-dark'),
-            'horizontalMenuType' => array('floating' => 'navbar-floating', 'static' => 'navbar-static', 'sticky' => 'navbar-sticky'),
+            'horizontalMenuType' => array(
+                'floating' => 'navbar-floating', 'static' => 'navbar-static', 'sticky' => 'navbar-sticky'
+            ),
             'horizontalMenuClass' => array('static' => '', 'sticky' => 'fixed-top', 'floating' => 'floating-nav'),
-            'verticalMenuNavbarType' => array('floating' => 'navbar-floating', 'static' => 'navbar-static', 'sticky' => 'navbar-sticky', 'hidden' => 'navbar-hidden'),
-            'navbarClass' => array('floating' => 'floating-nav', 'static' => 'navbar-static-top', 'sticky' => 'fixed-top', 'hidden' => 'd-none'),
+            'verticalMenuNavbarType' => array(
+                'floating' => 'navbar-floating', 'static' => 'navbar-static', 'sticky' => 'navbar-sticky',
+                'hidden' => 'navbar-hidden'
+            ),
+            'navbarClass' => array(
+                'floating' => 'floating-nav', 'static' => 'navbar-static-top', 'sticky' => 'fixed-top',
+                'hidden' => 'd-none'
+            ),
             'footerType' => array('static' => 'footer-static', 'sticky' => 'footer-fixed', 'hidden' => 'footer-hidden'),
             'pageHeader' => array(true, false),
-            'contentLayout' => array('default', 'content-left-sidebar', 'content-right-sidebar', 'content-detached-left-sidebar', 'content-detached-right-sidebar'),
+
+            //
+            'contentLayout' => array(
+                'default',
+                'content-only',
+                'content-left-sidebar',
+                'content-right-sidebar',
+                'content-detached-left-sidebar',
+                'content-detached-right-sidebar'
+            ),
             'blankPage' => array(false, true),
-            'sidebarPositionClass' => array('content-left-sidebar' => 'sidebar-left', 'content-right-sidebar' => 'sidebar-right', 'content-detached-left-sidebar' => 'sidebar-detached sidebar-left', 'content-detached-right-sidebar' => 'sidebar-detached sidebar-right', 'default' => 'default-sidebar-position'),
-            'contentsidebarClass' => array('content-left-sidebar' => 'content-right', 'content-right-sidebar' => 'content-left', 'content-detached-left-sidebar' => 'content-detached content-right', 'content-detached-right-sidebar' => 'content-detached content-left', 'default' => 'default-sidebar'),
+            'sidebarPositionClass' => array(
+                'content-only' => 'sidebar-no',
+                'content-left-sidebar' => 'sidebar-left',
+                'content-right-sidebar' => 'sidebar-right',
+                'content-detached-left-sidebar' => 'sidebar-detached sidebar-left',
+                'content-detached-right-sidebar' => 'sidebar-detached sidebar-right',
+                'default' => 'default-sidebar-position'
+            ),
+            'contentSidebarClass' => array(
+                'content-only' => 'content-only w-100',
+                'content-left-sidebar' => 'content-right',
+                'content-right-sidebar' => 'content-left',
+                'content-detached-left-sidebar' => 'content-detached content-right',
+                'content-detached-right-sidebar' => 'content-detached content-left',
+                'default' => 'default-sidebar'
+            ),
             'defaultLanguage' => array('en' => 'en', 'ru' => 'ru', 'de' => 'de', 'pt' => 'pt'),
             'direction' => array('ltr', 'rtl'),
         ];
@@ -116,7 +150,7 @@ class ThemeHelper
             'blankPageClass' => '',
             'contentLayout' => $data['contentLayout'],
             'sidebarPositionClass' => $allOptions['sidebarPositionClass'][$data['contentLayout']],
-            'contentsidebarClass' => $allOptions['contentsidebarClass'][$data['contentLayout']],
+            'contentSidebarClass' => $allOptions['contentSidebarClass'][$data['contentLayout']],
             'mainLayoutType' => $data['mainLayoutType'],
             'defaultLanguage' => $allOptions['defaultLanguage'][$data['defaultLanguage']],
             'direction' => $data['direction'],
@@ -145,16 +179,16 @@ class ThemeHelper
         $fullURL = request()->fullurl();
         if (App()->environment() === 'production') {
             for ($i = 1; $i < 7; $i++) {
-                $contains = Str::contains($fullURL, 'demo-' . $i);
+                $contains = Str::contains($fullURL, 'demo-'.$i);
                 if ($contains === true) {
-                    $demo = 'demo-' . $i;
+                    $demo = 'demo-'.$i;
                 }
             }
         }
         if (isset($pageConfigs)) {
             if (count($pageConfigs) > 0) {
                 foreach ($pageConfigs as $config => $val) {
-                    Config::set('custom.' . $demo . '.' . $config, $val);
+                    Config::set('custom.'.$demo.'.'.$config, $val);
                 }
             }
         }
