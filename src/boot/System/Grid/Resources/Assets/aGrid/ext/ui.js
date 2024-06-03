@@ -589,23 +589,22 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                 // args.input is the user-typed text
                 var remainingChars = args.minimum - args.input.length;
                 var message = 'Пожалуйста введите ' + remainingChars + ' или больше символов';
-
                 // return "Введите больше символов";
                 return message;
             },
             inputTooLong: function(args) {
                 // args.maximum is the maximum allowed length
                 // args.input is the user-typed text
-                return "You typed too much";
+                return "Вы набрали слишком много";
             },
             errorLoading: function() {
-                return "Error loading results";
+                return "Ошибка загрузки результатов";
             },
             loadingMore: function() {
-                return "Loading more results";
+                return "Загрузка дополнительных результатов";
             },
             noResults: function() {
-                return "No results found";
+                return "Результаты не найдены";
                 // return '<div class="alert alert-danger" role="alert"><div class="alert-body text-center">' + text + '</div></div>';
             },
             searching: function() {
@@ -613,7 +612,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
             },
             maximumSelected: function(args) {
                 // args.maximum is the maximum number of items the user may select
-                return "Error loading results";
+                return "Ошибка загрузки результатов.";
             }
         },
         escapeMarkup: function (markup) {
