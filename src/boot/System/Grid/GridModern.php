@@ -454,7 +454,6 @@ abstract class GridModern
      * @param $table
      * @param $column
      * @return array
-     * @deprecated Используйте getUserParam
      */
     protected function getUid($table = null, $column = 'uid')
     {
