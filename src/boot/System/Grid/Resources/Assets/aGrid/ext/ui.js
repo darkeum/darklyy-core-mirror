@@ -588,7 +588,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                 // args.minimum is the minimum required length
                 // args.input is the user-typed text
                 var remainingChars = args.minimum - args.input.length;
-                var message = 'Пожалуйста введите ' + remainingChars + ' или несколько символов';
+                var message = 'Пожалуйста введите ' + remainingChars + ' или больше символов';
 
                 // return "Введите больше символов";
                 return message;
