@@ -1,4 +1,4 @@
-import { _OPTIONS } from "../options.js";
+import {_OPTIONS} from "../options.js";
 
 /* ЗАГРУЗКА GRID EXT Callback's */
 
@@ -120,7 +120,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
             let input, select, select_options = [];
             switch (col.type) {
 
-                // Выпадающий список и Выпадающий список - Select2.js
+                // Выпадающий список select и Выпадающий список - Select2.js
                 case 'select' :
 
                     // console.log(col);
@@ -171,7 +171,6 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // Переберем остальное
                             $.each(values, function (index, item) {
-
                                 // Создаем option'ы для select'а
                                 let option = $('<option></option>');
                                 option.attr({
