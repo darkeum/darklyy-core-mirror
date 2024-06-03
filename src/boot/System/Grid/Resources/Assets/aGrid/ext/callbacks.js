@@ -199,7 +199,9 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             });
 
                             // Использовать Select2 если нужно
-                            if (col.options.hasOwnProperty('select2') && typeof col.options.select2 == 'boolean' && col.options.select2 == true) {
+                            if (col.options.hasOwnProperty('select2')
+                                && typeof col.options.select2 == 'boolean'
+                                && col.options.select2 == true) {
                                 api.aGrid.ui.select2(select, {
                                     url: ajax
                                 });

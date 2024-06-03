@@ -344,12 +344,10 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
 
     ], function (
         Utils,
-
         Dropdown,
         attachBody,
         search,
         results,
-
         Sbase,
         Ssingle,
         Smultiple,
@@ -409,7 +407,6 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
 
         return Utils.Decorate(
             Utils.Decorate(
-
                 // Dropdown,
                 // attachBody,
                 // search,
@@ -429,7 +426,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
 
     });
 
-    $.fn.select2.amd.define('select2/selectAllAdapter2',[
+    $.fn.select2.amd.define('select2/selectAllAdapter2', [
         'jquery',
         // 'fmjs/amd/src/fm.timer',
         'select2/utils',
@@ -440,7 +437,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
         'select2/dropdown/search',
         'select2/dropdown/minimumResultsForSearch',
         // 'select2/src/js/jquery.select2',
-    ], function($, Utils, DropdownAdapter, AttachBody, AttachContainer, CloseOnSelect, DropdownSearch, MinimumResultsForSearch) {
+    ], function ($, Utils, DropdownAdapter, AttachBody, AttachContainer, CloseOnSelect, DropdownSearch, MinimumResultsForSearch) {
 
         // var $selects = $('select');
         // var fm = new FM();
@@ -572,7 +569,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
     // Параметры По умолчанию
     let $default = {
         text: 'Нет результатов',
-        width: "100%",
+        width: '100%',
         // dropdownParent: $('body'),
         // theme: 'custom',
         // tags: true,
@@ -584,7 +581,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
         dropdownCssClass: '',
         dropdownAutoWidth: true, // Автоматическая ширина выпадающего списка
         language: {
-            inputTooShort: function(args) {
+            inputTooShort: function (args) {
                 // args.minimum is the minimum required length
                 // args.input is the user-typed text
                 var remainingChars = args.minimum - args.input.length;
@@ -592,29 +589,30 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
                 // return "Введите больше символов";
                 return message;
             },
-            inputTooLong: function(args) {
+            inputTooLong: function (args) {
                 // args.maximum is the maximum allowed length
                 // args.input is the user-typed text
                 return "Вы набрали слишком много";
             },
-            errorLoading: function() {
+            errorLoading: function () {
                 return "Ошибка загрузки результатов";
             },
-            loadingMore: function() {
+            loadingMore: function () {
                 return "Загрузка дополнительных результатов";
             },
-            noResults: function() {
+            noResults: function () {
                 return "Результаты не найдены";
                 // return '<div class="alert alert-danger" role="alert"><div class="alert-body text-center">' + text + '</div></div>';
             },
-            searching: function() {
+            searching: function () {
                 return "Поиск...";
             },
-            maximumSelected: function(args) {
+            maximumSelected: function (args) {
                 // args.maximum is the maximum number of items the user may select
                 return "Ошибка загрузки результатов.";
             }
         },
+
         escapeMarkup: function (markup) {
             return markup;
         }
