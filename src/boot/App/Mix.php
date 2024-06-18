@@ -45,7 +45,8 @@ class Mix
             return new HtmlString("//localhost:8080{$path}");
         }
 
-        $manifestPath = public_path($manifestDirectory.'/mix-manifest.json');
+        //$manifestPath = public_path($manifestDirectory.'/mix-manifest.json');
+        $manifestPath = base_path($manifestDirectory.'/mix-manifest.json');
 
         if (! isset($manifests[$manifestPath])) {
             if (! is_file($manifestPath)) {
