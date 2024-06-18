@@ -58,7 +58,8 @@ class Mix
 
         $manifest = $manifests[$manifestPath];
 
-        if (! isset($manifest[$path])) {
+        //if (! isset($manifest[$path])) {
+        if (! isset($manifest["/public{$path}"])) {
             $exception = new Exception("Unable to locate Mix file: {$path}.");
 
             if (! app('config')->get('app.debug')) {
@@ -70,6 +71,7 @@ class Mix
             }
         }
 
-        return new HtmlString(app('config')->get('app.mix_url').$manifestDirectory.$manifest[$path]);
+        //return new HtmlString(app('config')->get('app.mix_url').$manifestDirectory.$manifest[$path]);
+        return new HtmlString(app('config')->get('app.mix_url').$manifestDirectory.$path);
     }
 }
