@@ -140,7 +140,7 @@ abstract class Grid
 
         'db_driver' => 'Pdo',
         'clear' => false,
-        'client' => PLUGINS . '/phpgrid/client/vendor',
+        'client' => PLUGINS.'/phpgrid/client/vendor',
 
         'pdo_dsn' => null,
         'pdo_user' => 'root',
@@ -158,19 +158,22 @@ abstract class Grid
 
     public function __construct()
     {
-        //Установка базовых параметров
+        // Установка базовых параметров
         $this->setBaseParam();
-        //Инициализация
+
+        // Инициализация
         $this->beforeInit();
         $this->init();
         $this->afterInit();
-        //Установка Primary key      
+
+        // Установка Primary key
         reset($this->cols);
-        $this->primary_key = $this->primary_key ? (array)$this->primary_key : array(key($this->cols));
+        $this->primary_key = $this->primary_key ? (array) $this->primary_key : array(key($this->cols));
         if (is_null($this->primary_key_auto_increment)) {
             $this->primary_key_auto_increment = count($this->primary_key) == 1;
         }
-        //Подготовка колонок
+
+        // Подготовка колонок
         $this->reserved_col_names = $this->getReservedColNames();
         foreach ($this->cols as $k => &$c) {
             $c = $this->initColumn($k, $c);
@@ -179,7 +182,7 @@ abstract class Grid
 
     /**
      * Получение основных данных по имени класса
-     *     
+     *
      * @return void
      */
     protected function setBaseParam()
@@ -188,14 +191,14 @@ abstract class Grid
         $this->grid_id = $reflect->getShortName();
         $this->patch = $reflect->getName();
         $this->input = $this->getInput();
-        $this->base_url = '/' . \Boot\Support\Facades\Request::path() . '/grid';
+        $this->base_url = '/'.\Boot\Support\Facades\Request::path().'/grid';
     }
 
     /**
      * Метод автоматического запуска который при наличии запроса на выполнение операции выполняет ее,
-     * а при отсутствии выводит данные для формирования таблицы, 
+     * а при отсутствии выводит данные для формирования таблицы,
      * если не указан input_grid (grid_id) прекращает выполнение
-     *     
+     *
      * @return void
      */
     public function autorun()
@@ -223,18 +226,18 @@ abstract class Grid
     /**
      * Метод вывода данных
      *
-     * @throws ExceptionGrid
      * @return void
+     * @throws ExceptionGrid
      */
     public function output()
     {
         //Получение и валидация параметров требующихся для вывода данных
         $this->getOutputParams();
-        //выполнение стандартной фильтрации       
+        //выполнение стандартной фильтрации
         if ($this->do_search) {
             $this->search();
         }
-        //выполнение расширенной фильтрации       
+        //выполнение расширенной фильтрации
         if ($this->do_search_advanced) {
             $this->searchAdvanced();
         }
@@ -277,12 +280,12 @@ abstract class Grid
             $this->setRowCount();
         }
 
-        // 
+        //
         //----------------
         // Do output
         //----------------
 
-        $callback = array($this,  Utils::uscore2camel('out', $this->out));
+        $callback = array($this, Utils::uscore2camel('out', $this->out));
 
         if (!is_callable($callback)) {
             throw new ExceptionGrid("Output type '{$this->out}' is not defined");
@@ -294,7 +297,7 @@ abstract class Grid
     /**
      * MAIN ACTION (2): Perform operation to change data is any way
      *
-     * @param $oper - operation name
+     * @param $oper  - operation name
      * @return void
      */
     public function oper($oper)
@@ -361,7 +364,7 @@ abstract class Grid
      *
      * $jq_loader->render('jq_example');
      *
-     * @param array $render_data
+     * @param  array  $render_data
      * @return string
      */
     public function render($render_data = array(), $type = 'html')
@@ -385,15 +388,17 @@ abstract class Grid
         // Render ids
         //------------------
 
-        $data['id'] = $this->grid_id . $data['suffix'];
-        $data['pager_id'] = $this->grid_id . $data['suffix'] . '_p';
+        $data['id'] = $this->grid_id.$data['suffix'];
+        $data['pager_id'] = $this->grid_id.$data['suffix'].'_p';
 
         //-----------------
         // Render colModel
         //-----------------
 
         foreach ($this->cols as $k => $c) {
-            if (isset($c['unset']) and $c['unset']) continue;
+            if (isset($c['unset']) and $c['unset']) {
+                continue;
+            }
 
             #Remove internal column properties
             $c = array_diff_key($c, array_flip($this->internal_col_prop));
@@ -407,7 +412,7 @@ abstract class Grid
 
         $options = array(
             'colModel' => $colModel,
-            'pager' => '#' . $data['pager_id'],
+            'pager' => '#'.$data['pager_id'],
         );
 
         #URL's
@@ -442,7 +447,7 @@ abstract class Grid
         //-----------------
         // Compile the final string
         //-----------------
-   
+
         return $this->renderComplete($data, $type);
     }
 
@@ -450,7 +455,7 @@ abstract class Grid
      * All exceptions comes here
      * Override this method for custom exception handling
      *
-     * @param ExceptionGrid $e
+     * @param  ExceptionGrid  $e
      * @return mixed
      */
     public function catchException(ExceptionGrid $e)
@@ -467,7 +472,7 @@ abstract class Grid
                 );
 
                 if ($this->Loader->get('debug_output')) {
-                    $r['error_string'] = (string)$e;
+                    $r['error_string'] = (string) $e;
                 } else {
                     if ($e instanceof ExceptionDB) {
                         unset($r['error_data']['query']);
@@ -489,7 +494,7 @@ abstract class Grid
      * (Output) Add new row to result set
      * And also do related stuff
      *
-     * @param array $row - raw data from database
+     * @param  array  $row  - raw data from database
      * @return void
      */
     protected function addRow($row)
@@ -506,7 +511,9 @@ abstract class Grid
 
         foreach ($this->cols as $k => $c) {
             #Discard this column in output?
-            if ($c['unset']) continue;
+            if ($c['unset']) {
+                continue;
+            }
             if (!empty($c['format_date'])) {
                 $row[$k] = empty($row[$k]) ? ($row["null"] ?? $row[$k]) : date($c['format_date'], strtotime($row[$k]));
             }
@@ -523,8 +530,8 @@ abstract class Grid
     /**
      * (Output) Populate cell
      *
-     * @param array $c - column options
-     * @param array $row - data row
+     * @param  array  $c  - column options
+     * @param  array  $row  - data row
      * @return mixed - final cell value
      */
     protected function addRowCell($c, $row)
@@ -532,13 +539,19 @@ abstract class Grid
         $val = isset($row[$c['name']]) ? $row[$c['name']] : null;
 
         #Handle nulls
-        if ($val === null and $c['null'] !== null) $val = $c['null'];
+        if ($val === null and $c['null'] !== null) {
+            $val = $c['null'];
+        }
 
         #Easy replace values
-        if ($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+        if ($c['replace']) {
+            $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+        }
 
         #Encode before output
-        if ($c['encode']) $val = $this->outputEncodeValue($c, $val);
+        if ($c['encode']) {
+            $val = $this->outputEncodeValue($c, $val);
+        }
 
         return $val;
     }
@@ -546,9 +559,9 @@ abstract class Grid
     /**
      * (Output) Per-row result modification
      *
-     * @param integer $id row_id
-     * @param array $cell - parsed cells
-     * @param array $row - data row
+     * @param  integer  $id  row_id
+     * @param  array  $cell  - parsed cells
+     * @param  array  $row  - data row
      * @return array - modified $cell
      */
     protected function addRowComplete($id, $cell, $row)
@@ -580,7 +593,7 @@ abstract class Grid
         $data = $this->nav;
         //echo $_COOKIE[$this->grid_id.'Trash'];
         if (isset($data['trash']) && $data['trash']) {
-            if (isset($_COOKIE[$this->grid_id . 'Trash']) && !empty($_COOKIE[$this->grid_id . 'Trash']) && $_COOKIE[$this->grid_id . 'Trash'] == '1') {
+            if (isset($_COOKIE[$this->grid_id.'Trash']) && !empty($_COOKIE[$this->grid_id.'Trash']) && $_COOKIE[$this->grid_id.'Trash'] == '1') {
                 $trash_field = explode(".", $data["trashfield"]);
                 $trash_field = $trash_field[1] ?? $trash_field[0];
                 if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
@@ -607,13 +620,17 @@ abstract class Grid
         return $cell;
     }
 
+    /**
+     * Custom actions after 'init'
+     * Place your singletons init here
+     */
     protected function afterInit()
     {
         $data = $this->nav;
         //echo $_COOKIE[$this->grid_id.'Trash'];
         if (isset($data['trash']) && $data['trash']) {
 
-            if (isset($_COOKIE[$this->grid_id . 'Trash']) && !empty($_COOKIE[$this->grid_id . 'Trash']) && $_COOKIE[$this->grid_id . 'Trash'] == '1') {
+            if (isset($_COOKIE[$this->grid_id.'Trash']) && !empty($_COOKIE[$this->grid_id.'Trash']) && $_COOKIE[$this->grid_id.'Trash'] == '1') {
                 if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
                     if ($this->db_type == 'db') {
                         $this->where['trash'] = [
@@ -621,10 +638,10 @@ abstract class Grid
                             'column' => $data['trashfield'],
                         ];
                     } else {
-                        $this->where['trash'] = $data['trashfield'] . " IS NOT NULL";
+                        $this->where['trash'] = $data['trashfield']." IS NOT NULL";
                     }
                 } else {
-                    $this->where['trash'] = $data['trashfield'] . " != '0'";
+                    $this->where['trash'] = $data['trashfield']." != '0'";
                 }
             } else {
                 if (isset($data['trashtype']) && $data['trashtype'] == 'null') {
@@ -634,13 +651,16 @@ abstract class Grid
                             'column' => $data['trashfield'],
                         ];
                     } else {
-                        $this->where['trash'] = $data['trashfield'] . " IS NULL";
+                        $this->where['trash'] = $data['trashfield']." IS NULL";
                     }
                 } else {
-                    $this->where['trash'] = $data['trashfield'] . " != '1'";
+                    $this->where['trash'] = $data['trashfield']." != '1'";
                 }
             }
-            $this->cols[$data['trashfield']] = array('label' => 'Корзина', 'db' => $data['trashfield'], 'hidden' => 'true', 'excel_hidden' => true, 'name' => $data['trashfield'], 'index' => $data['trashfield']);
+            $this->cols[$data['trashfield']] = array(
+                'label' => 'Корзина', 'db' => $data['trashfield'], 'hidden' => 'true', 'excel_hidden' => true,
+                'name' => $data['trashfield'], 'index' => $data['trashfield']
+            );
             //print_r($this->cols);
         }
     }
@@ -652,7 +672,6 @@ abstract class Grid
     protected function beforeInit()
     {
         //empty
-
     }
 
     //-----------------
@@ -662,7 +681,7 @@ abstract class Grid
     /**
      * (Output) Build complete AGG-query
      *
-     * @param  string $q - base query
+     * @param  string  $q  - base query
      * @return string - final query
      */
     protected function buildQueryAgg($q)
@@ -670,7 +689,7 @@ abstract class Grid
 
         //-----------------
         // Placeholders
-        //-----------------		
+        //-----------------
         $replace = array(
             $this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'agg'),
             $this->query_placeholders['fields'] => $this->buildFieldsAgg($this->cols),
@@ -684,7 +703,7 @@ abstract class Grid
     /**
      * (Output) Build complete ROWS-query
      *
-     * @param  string $q - base query
+     * @param  string  $q  - base query
      * @return string - final query
      */
     protected function buildQueryRows($q)
@@ -704,8 +723,12 @@ abstract class Grid
         // ORDER BY, LIMIT, OFFSET
         //-----------------
 
-        if ($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
-        if ($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
+        if ($this->do_sort) {
+            $q .= $this->buildOrderBy($this->sidx, $this->sord)."\n";
+        }
+        if ($this->do_limit) {
+            $q .= $this->buildLimitOffset($this->limit, $this->page)."\n";
+        }
 
         return $q;
     }
@@ -713,7 +736,7 @@ abstract class Grid
     /**
      * (Output) Implode {fields} for ROWS-query using 'db' property
      *
-     * @param  array $cols - grid columns
+     * @param  array  $cols  - grid columns
      * @return string - imploded list
      */
     protected function buildFields($cols)
@@ -721,9 +744,11 @@ abstract class Grid
         $fields = array();
 
         foreach ($cols as $k => &$c) {
-            if ($c['manual']) continue;
+            if ($c['manual']) {
+                continue;
+            }
 
-            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'].' AS '.$k);
         }
 
         return implode(', ', $fields);
@@ -732,7 +757,7 @@ abstract class Grid
     /**
      * (Output) Implode {fields} for AGG-query using 'db_agg' property
      *
-     * @param  array $cols - grid columns
+     * @param  array  $cols  - grid columns
      * @return string - imploded list
      */
     protected function buildFieldsAgg($cols)
@@ -741,21 +766,23 @@ abstract class Grid
         $fields = array('count(*) AS _count');
 
         foreach ($cols as $k => $c) {
-            if (!$c['db_agg']) continue;
+            if (!$c['db_agg']) {
+                continue;
+            }
 
             switch ($c['db_agg']) {
-                    #Common
+                #Common
                 case 'sum':
                 case 'avg':
                 case 'count':
                 case 'min':
                 case 'max':
-                    $fields[] = $c['db_agg'] . '(' . $c['db'] . ') AS ' . $k;
+                    $fields[] = $c['db_agg'].'('.$c['db'].') AS '.$k;
                     break;
 
-                    #Custom
+                #Custom
                 default:
-                    $fields[] = $c['db_agg'] . ' AS ' . $k;
+                    $fields[] = $c['db_agg'].' AS '.$k;
                     break;
             }
         }
@@ -769,8 +796,8 @@ abstract class Grid
      *
      * Alter this if your database requires other syntax
      *
-     * @param  integer $limit
-     * @param  integer $page
+     * @param  integer  $limit
+     * @param  integer  $page
      * @return string
      */
     protected function buildLimitOffset($limit, $page)
@@ -792,8 +819,8 @@ abstract class Grid
      *
      * Input is checked in 'getOutputParams', so we trust it
      *
-     * @param  string $sidx - field name
-     * @param  string $sord - order (asc, desc)
+     * @param  string  $sidx  - field name
+     * @param  string  $sord  - order (asc, desc)
      * @return string
      */
     protected function buildOrderBy($sidx, $sord)
@@ -808,9 +835,9 @@ abstract class Grid
     /**
      * (Output) Builds {where} both for ROWS and AGG queries
      *
-     * @param array $where - array with conditions
-     * @param string $glue - glue string (' AND ', ' OR ')
-     * @param string $type - query type ('agg', 'rows')
+     * @param  array  $where  - array with conditions
+     * @param  string  $glue  - glue string (' AND ', ' OR ')
+     * @param  string  $type  - query type ('agg', 'rows')
      * @return string - imploded condition string
      */
     protected function buildWhere($where, $glue, $type)
@@ -863,6 +890,7 @@ abstract class Grid
     {
         $settings[$key] = $value;
     }
+
     /**
      * (Output) Get AGG data - over the whole result set
      * Save it to $this->agg
@@ -871,14 +899,14 @@ abstract class Grid
     {
         if ($this->db_type == 'db') {
             $db = $this->buildDBWhere($this->db);
-            $result = ['_count' =>  $db->count()];
+            $result = ['_count' => $db->count()];
         } elseif ($this->db_type == 'model') {
         } else {
             $query = $this->buildQueryAgg($this->query_agg ? $this->query_agg : $this->query);
             // dd($query);
             $result = DB::select($query);
             if (count($result) == 1) {
-                $result = (array)  $result[0];
+                $result = (array) $result[0];
             }
             $this->debug['query_agg'] = $query;
         }
@@ -895,7 +923,7 @@ abstract class Grid
         $db = $this->buildDBWhere($db);
         $limit = intval($this->limit);
         $page = intval($this->page);
-        //Установка сортировки 
+        //Установка сортировки
         if ($this->sidx && $this->sord) {
             $db->orderBy($this->sidx, $this->sord);
         }
@@ -914,8 +942,10 @@ abstract class Grid
         //выборка полей для вывода
         $fields = array();
         foreach ($this->cols as $k => &$c) {
-            if ($c['manual']) continue;
-            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+            if ($c['manual']) {
+                continue;
+            }
+            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'].' AS '.$k);
         }
         $db->select($fields);
 
@@ -967,7 +997,7 @@ abstract class Grid
     /**
      * (Output) Build 'userdata'
      *
-     * @param array $userdata - orignal value
+     * @param  array  $userdata  - orignal value
      * @return array - final value
      */
     protected function getDataUser($userdata)
@@ -1033,10 +1063,10 @@ abstract class Grid
         $where = array();
 
         foreach ($this->explodePrimaryKey($primary_key) as $k => $v) {
-            $where[] = "$k = " . $this->DB->quote($v);
+            $where[] = "$k = ".$this->DB->quote($v);
         }
 
-        $result = $this->DB->query("SELECT * FROM {$this->table} WHERE " . implode(' AND ', $where));
+        $result = $this->DB->query("SELECT * FROM {$this->table} WHERE ".implode(' AND ', $where));
         return $this->DB->fetch($result);
     }
 
@@ -1044,8 +1074,8 @@ abstract class Grid
      * Init one column
      * Apply defaults, check name etc.
      *
-     * @param string $k - column name
-     * @param array $c - non-default column params
+     * @param  string  $k  - column name
+     * @param  array  $c  - non-default column params
      * @return array - complete column
      */
     protected function initColumn($k, $c)
@@ -1064,7 +1094,9 @@ abstract class Grid
         $c['index'] = $k;
 
         #Label = column key if not set
-        if (!isset($c['label'])) $c['label'] = $k;
+        if (!isset($c['label'])) {
+            $c['label'] = $k;
+        }
 
         #Merge with defaults
         $c = array_merge($this->default['cols'], $this->cols_default, $c);
@@ -1084,7 +1116,7 @@ abstract class Grid
      *
      * Please note: this is the only "Oper" function, which must return new row id
      *
-     * @param  array $ins - form data
+     * @param  array  $ins  - form data
      * @return integer - new_id
      */
     protected function opAdd($ins)
@@ -1099,8 +1131,8 @@ abstract class Grid
     /**
      * (Oper) Update
      *
-     * @param  integer $id - id to update
-     * @param  array $upd - form data
+     * @param  integer  $id  - id to update
+     * @param  array  $upd  - form data
      * @return void
      */
     protected function opEdit($id, $upd)
@@ -1115,7 +1147,7 @@ abstract class Grid
     /**
      * (Oper) Delete
      *
-     * @param  integer|string $id - one or multiple id's to delete
+     * @param  integer|string  $id  - one or multiple id's to delete
      * @return void
      */
     protected function opDel($id)
@@ -1130,10 +1162,10 @@ abstract class Grid
             $wh = array();
 
             foreach ($this->explodePrimaryKey($pk) as $kk => $vv) {
-                $wh[] = "$kk = " . $this->DB->quote($vv);
+                $wh[] = "$kk = ".$this->DB->quote($vv);
             }
 
-            $where[] = '(' . implode(' AND ', $wh) . ')';
+            $where[] = '('.implode(' AND ', $wh).')';
         }
 
         $this->DB->delete($this->table, implode(' OR ', $where));
@@ -1147,7 +1179,7 @@ abstract class Grid
      * (Oper) Modify form data for opAdd and opEdit only
      * These operations usually need the same modifications, so i made a stand-alone hook for them
      *
-     * @param  array $r - form data
+     * @param  array  $r  - form data
      * @return array - modified form data
      */
     protected function operData($r)
@@ -1159,7 +1191,7 @@ abstract class Grid
      * (Oper) Hook after opAdd and opEdit
      * Useful for uploading images after processing other data etc.
      *
-     * @param $id - id of updated or inserted row
+     * @param $id  - id of updated or inserted row
      * @return void
      */
     protected function operAfterAddEdit($id)
@@ -1171,7 +1203,7 @@ abstract class Grid
      * (Oper) Hook after ALL oper's
      * Useful for cleanup and dropping caches
      *
-     * @param  $oper - operation name
+     * @param  $oper  - operation name
      * @return void
      */
     protected function operComplete($oper)
@@ -1218,7 +1250,7 @@ abstract class Grid
     {
         $type = Utils::checkAlphanum($this->input('export'));
 
-        $class = '\Boot\System\Grid\Export\\' . ucfirst($type);
+        $class = '\Boot\System\Grid\Export\\'.ucfirst($type);
 
         if (!class_exists($class)) {
             throw new ExceptionGrid("Export type $type does not exist");
@@ -1233,8 +1265,8 @@ abstract class Grid
     /**
      * (Output) Encode each row value before output
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string - encoded value
      */
     protected function outputEncodeValue($c, $val)
@@ -1245,7 +1277,7 @@ abstract class Grid
     /**
      * (Output) Modify row data before output
      *
-     * @param  array $r - row data
+     * @param  array  $r  - row data
      * @return array - modified row data
      */
     protected function parseRow($r)
@@ -1262,7 +1294,7 @@ abstract class Grid
     /**
      * (Render) Render single column
      *
-     * @param array $c - col properties
+     * @param  array  $c  - col properties
      * @return array - modified col properties
      */
     protected function renderColumn($c)
@@ -1303,7 +1335,7 @@ abstract class Grid
         }
 
 
-        return $this->base_url . '?'  . http_build_query($params);
+        return $this->base_url.'?'.http_build_query($params);
     }
 
     protected function getOpenUrl()
@@ -1314,12 +1346,12 @@ abstract class Grid
      * (Render) There are few ways to create basic html markup for jqGrid
      * You may alter this if you want yours
      *
-     * @param $data - render data
+     * @param $data  - render data
      * @return string - string to be added before .jqGrid call
      */
     protected function renderHtml($data, $type)
     {
-        return $type == 'html' ? '<div id="content" class="animated fadeIn"><div id="' . $data['pager_id'] . '"></div><div class="row"><form id="table_form_' . $data['id'] . '"><table id="' . $data['id'] . '"  class="table ' . ($atribut['table_class'] ?? 'table-striped table-hover') . '" style="min-width: 800px;"></table></form></div></div>' : '<form id="table_form_' . $data['id'] . '"><table id="' . $data['id'] . '"  class="table table-striped table-hover" style="min-width: 800px;"></table></form>';
+        return $type == 'html' ? '<div id="content" class="animated fadeIn"><div id="'.$data['pager_id'].'"></div><div class="row"><form id="table_form_'.$data['id'].'"><table id="'.$data['id'].'"  class="table '.($atribut['table_class'] ?? 'table-striped table-hover').'" style="min-width: 800px;"></table></form></div></div>' : '<form id="table_form_'.$data['id'].'"><table id="'.$data['id'].'"  class="table table-striped table-hover" style="min-width: 800px;"></table></form>';
     }
 
     protected function renderHtmlClear($data)
@@ -1333,17 +1365,17 @@ abstract class Grid
         $opts = [];
         if ($this->opts_type == "open") {
             $opts[] = 'ondblClickRow: id => {
-                const url = `' . $this->getOpenUrl() . '`.replace(`' . $this->open_url_id . '`, id);
+                const url = `'.$this->getOpenUrl().'`.replace(`'.$this->open_url_id.'`, id);
                 window.open(url)
             },';
         }
         $opts = implode("", $opts);
-        return ' <script type="text/javascript">	
+        return ' <script type="text/javascript" data-info="Darklyy Grid Table - renderJs">	
 		var loadFirst = 0;
 		$(window).on("unload", function () {	
 			saveGrid();
         });	
-        $("#' . $grid_name . '").on("destroy", function () {
+        $("#'.$grid_name.'").on("destroy", function () {
            saveGrid();
         })
 		
@@ -1361,18 +1393,13 @@ abstract class Grid
                         alert("Add Row Command Selected");
                     },
                     \'del\': function (t) {
-                       
-					   
-					   
 					 removeModal(1);
-					   
-					   
                     }
                 },
                 onContextMenu: function (event, menu) {
                     var rowId = $(event.target).parent("tr").attr("id")
                     
-                   $("#' . $grid_name . '").setSelection(rowId);
+                   $("#'.$grid_name.'").setSelection(rowId);
 
                     return true;
                 }
@@ -1382,7 +1409,7 @@ abstract class Grid
    var lastSelection;
 		  function editRow(id) {
                 if (id && id !== lastSelection) {
-                    var grid = $("#' . $grid_name . '");
+                    var grid = $("#'.$grid_name.'");
                     grid.jqGrid(\'restoreRow\',lastSelection);
                     grid.jqGrid(\'editRow\',id, {keys: true} );
                     lastSelection = id;
@@ -1393,7 +1420,7 @@ abstract class Grid
 			if(loadFirst == 0)
 			{
 				loadFirst++;
-				if( $.jgrid.isGridInStorage("' . $grid_name . '", {storageType:\'localStorage\'}) ) 
+				if( $.jgrid.isGridInStorage("'.$grid_name.'", {storageType:\'localStorage\'}) ) 
 				{
 					const options = {
 						useStorage : true,
@@ -1407,11 +1434,11 @@ abstract class Grid
 						restoreData : false
 					};
 					setTimeout(function () {
-					//$.jgrid.loadState("' . $grid_name . '", "", options);
+					//$.jgrid.loadState("'.$grid_name.'", "", options);
 					//$("#idGrid").clearGridData();
-					//$("#' . $grid_name . '").trigger("reloadGrid");
+					//$("#'.$grid_name.'").trigger("reloadGrid");
 					//initGrid();
-					 $("#' . $grid_name . '").jqGrid("bindKeys");
+					 $("#'.$grid_name.'").jqGrid("bindKeys");
 					
 					
 					
@@ -1442,11 +1469,11 @@ abstract class Grid
 				  debug : false,
 				  saveData : false
 				}
-				$.jgrid.saveState("' . $grid_name . '", options);
+				$.jgrid.saveState("'.$grid_name.'", options);
 			}
 			else
 			{
-				if( $.jgrid.isGridInStorage("' . $grid_name . '", {storageType:\'localStorage\'}) ) 
+				if( $.jgrid.isGridInStorage("'.$grid_name.'", {storageType:\'localStorage\'}) ) 
 				{
 					var options = {
 						useStorage : true,
@@ -1459,9 +1486,9 @@ abstract class Grid
 						decompressionMethod : \'decompressFromUTF16\',
 						restoreData : true
 					}
-					$.jgrid.loadState("' . $grid_name . '", false, options);
+					$.jgrid.loadState("'.$grid_name.'", false, options);
 					//$("#idGrid").clearGridData();
-					$("#' . $grid_name . '").trigger("reloadGrid");
+					$("#'.$grid_name.'").trigger("reloadGrid");
 				} 
 				else 
 				{
@@ -1505,7 +1532,7 @@ abstract class Grid
 		});		
 
         var opts = {
-            ' . $opts . '
+            '.$opts.'
         };
 				
 	</script>';
@@ -1526,7 +1553,7 @@ abstract class Grid
     /**
      * (Render) Alter 'options'
      *
-     * @param  array $opts original options
+     * @param  array  $opts  original options
      * @return array modified options
      */
     protected function renderOptions($opts)
@@ -1545,21 +1572,21 @@ abstract class Grid
         return array();
     }
 
-    protected function setValue($data,  $first = null)
+    protected function setValue($data, $first = null)
     {
-        return  new Value($data, $first);
+        return new Value($data, $first);
     }
 
-    protected function setRaw($data,  $first = null)
+    protected function setRaw($data, $first = null)
     {
-        return  new Raw($data);
+        return new Raw($data);
     }
 
     /**
      * (Render) Takes all previously generated parts and combine them into general output string
      * You can completely override the rendering strategy here
      *
-     * @param array $data
+     * @param  array  $data
      * @return string
      */
     protected function renderComplete($data, $type)
@@ -1569,7 +1596,7 @@ abstract class Grid
         $client = $this->getSetting('client');
 
         $script = function ($path) use ($client) {
-            return '<script src="' . $client . $path . '"></script>';
+            return '<script src="'.$client.$path.'"></script>';
         };
 
         #Плагин Multiselect для jQuery UI необходим для выбора колонок
@@ -1584,9 +1611,9 @@ abstract class Grid
         $return['javascript']['jqGridExt'] = $script('/js/jquery.jqGrid.ext.js');
         $return['javascript']['context'] = $script('/js/context-menu.js');
         #Стиль для плагина multiselect
-        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="' . $client . '/css/ui.multiselect.css" />';
+        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="'.$client.'/css/ui.multiselect.css" />';
         #Стиль для jqGrid
-        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="' . $client . '/css/trirand/ui.jqgrid-bootstrap.css" />';
+        $return['css'][] = '<link rel="stylesheet" type="text/css" media="screen" href="'.$client.'/css/trirand/ui.jqgrid-bootstrap.css" />';
         $return['css'][] = '<link href="/usr/tpl/corp/assets/css/ui.daterangepicker.css" rel="stylesheet" type="text/css"/>';
         $return['css'][] = '<link href="/usr/plugins/phpgrid/client/jqgrid-ext.css" rel="stylesheet" type="text/css"/>';
 
@@ -1594,7 +1621,7 @@ abstract class Grid
         $code = '';
 
 
-        $code .=  '
+        $code .= '
 
        <script type="text/javascript">	
         function dateRangePicker_onChange() {
@@ -1613,13 +1640,12 @@ abstract class Grid
 
         
         <script type="text/javascript">
-var pager = "#' . $data['pager_id'] . '";
+var pager = "#'.$data['pager_id'].'";
 
-var $grid = $("#' . $data['id'] . '");
-var $' . $data['id'] . ' = $grid;
+var $grid = $("#'.$data['id'].'");
+var $'.$data['id'].' = $grid;
 
-$grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "undefined" ? {} : ' . $data['extend'] . "));\n";
-
+$grid.jqGrid($.extend('.$options.', typeof('.$data['extend'].') == "undefined" ? {} : '.$data['extend']."));\n";
 
 
         #Event binder
@@ -1628,12 +1654,13 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         #NavGrid
         if (isset($data['nav'])) {
             $nav_special = array('prmEdit', 'prmAdd', 'prmDel', 'prmSearch', 'prmView');
-            $code .= "\$grid.jqGrid('navGrid', pager, " . Utils::jsonEncode(array_diff_key($data['nav'], array_flip($nav_special)));
+            $code .= "\$grid.jqGrid('navGrid', pager, ".Utils::jsonEncode(array_diff_key($data['nav'],
+                    array_flip($nav_special)));
 
             #Respect the argument order
             foreach ($nav_special as $k) {
                 if (isset($data['nav'][$k])) {
-                    $code .= ', ' . Utils::jsonEncode($data['nav'][$k]);
+                    $code .= ', '.Utils::jsonEncode($data['nav'][$k]);
                 } else {
                     $code .= ', null';
                 }
@@ -1655,22 +1682,22 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
 
             #Trash button
             if (isset($data['nav']['trash']) and $data['nav']['trash']) {
-                if (isset($_COOKIE[$data['id'] . 'Trash']) && !empty($_COOKIE[$data['id'] . 'Trash']) && $_COOKIE[$data['id'] . 'Trash'] == '1') {
+                if (isset($_COOKIE[$data['id'].'Trash']) && !empty($_COOKIE[$data['id'].'Trash']) && $_COOKIE[$data['id'].'Trash'] == '1') {
 
                     $trashColor = 'text-danger';
                 } else {
                     $trashColor = '';
                 }
                 $code .= "				
-				\$grid.jqGrid('navButtonAdd', pager, {caption: '', title: '{$data['nav']['trashtext']}', buttonicon: 'glyphicon-trash " . $trashColor . " cookTrash', onClickButton: function(){
-					if(\$.cookie('" . $data['id'] . "Trash') == '1')
+				\$grid.jqGrid('navButtonAdd', pager, {caption: '', title: '{$data['nav']['trashtext']}', buttonicon: 'glyphicon-trash ".$trashColor." cookTrash', onClickButton: function(){
+					if(\$.cookie('".$data['id']."Trash') == '1')
 					{
-						\$.cookie('" . $data['id'] . "Trash', '0', {expires: 7, path: '/'}); 
+						\$.cookie('".$data['id']."Trash', '0', {expires: 7, path: '/'}); 
 						
 					}
 					else
 					{
-						\$.cookie('" . $data['id'] . "Trash', '1', {expires: 7, path: '/'}); 
+						\$.cookie('".$data['id']."Trash', '1', {expires: 7, path: '/'}); 
 						
 					}
 					\$('.cookTrash').toggleClass('text-danger');
@@ -1680,7 +1707,6 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
 				
 				\n";
             }
-
 
 
             #Action button
@@ -1694,12 +1720,12 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
                     $icon = '';
                     $onclick = '';
                     if (isset($value['onclick']) && !empty($value['onclick'])) {
-                        $onclick = "onclick='" . $value['onclick'] . "'";
+                        $onclick = "onclick='".$value['onclick']."'";
                     }
                     if (isset($value['icon']) && !empty($value['icon'])) {
-                        $icon = "<span class='" . $value['icon'] . "'></span>";
+                        $icon = "<span class='".$value['icon']."'></span>";
                     }
-                    $code .= "  <li id='" . $value['id'] . "' " . $onclick . "><div>" . $icon . " " . $value['title'] . "</div></li>";
+                    $code .= "  <li id='".$value['id']."' ".$onclick."><div>".$icon." ".$value['title']."</div></li>";
                 }
                 $code .= "</ul>`);
  $( \"#menuAction\" ).menu();
@@ -1717,18 +1743,18 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         if ($this->render_filter_toolbar) {
             $code .= "\$grid.jqGrid('filterToolbar');\n";
         }
-        $code .=  '</script>';
-        if($type == 'html'){
-            return implode(' ', $return['css']) . ' ' . implode(' ', $return['javascript']) . $data['html'] .   $data['js'] . $code;
+        $code .= '</script>';
+        if ($type == 'html') {
+            return implode(' ', $return['css']).' '.implode(' ', $return['javascript']).$data['html'].$data['js'].$code;
         } else {
-            
+
             return [
-                'html' =>  $data['html'],
+                'html' => $data['html'],
                 'styles' => implode(' ', $return['css']),
-                'js' =>  implode(' ', $return['javascript']) .$data['js'] . $code
+                'js' => implode(' ', $return['javascript']).$data['js'].$code
             ];
         }
-       
+
     }
 
 
@@ -1737,7 +1763,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         $rows = array();
         $rows["0"] = "Гость";
         if (!empty($table)) {
-            $users = DB::table($table)->leftJoin('users', 'users.id', '=', $table . '.' . $column)->distinct()->orderBy("users.surname")->select($table . '.' . $column)->get();
+            $users = DB::table($table)->leftJoin('users', 'users.id', '=',
+                $table.'.'.$column)->distinct()->orderBy("users.surname")->select($table.'.'.$column)->get();
             foreach ($users as $k => $v) {
                 $rows[$v->$column] = shortUserName($v->$column);
             }
@@ -1753,7 +1780,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     protected function getOrg($table, $column = 'org')
     {
         $rows = [];
-        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table . '.' . $column)->leftJoin('organizations', 'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
+        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table.'.'.$column)->leftJoin('organizations',
+            'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
         foreach ($org as $k => $v) {
             $rows[$v->org_id] = $v->name;
         }
@@ -1763,7 +1791,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     protected function getManufacture($table, $column)
     {
         $rows = [];
-        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=', $table . '.' . $column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
+        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=',
+            $table.'.'.$column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
         foreach ($org as $k => $v) {
             $rows[$v->id] = $v->name;
         }
@@ -1826,11 +1855,13 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
 
             // dd( $c['search_op']);
             if (!is_callable($callback)) {
-                throw new ExceptionGrid('Search operation ' . $c['search_op'] . ' is not defined');
+                throw new ExceptionGrid('Search operation '.$c['search_op'].' is not defined');
             }
 
             $wh = call_user_func($callback, $c, $val);
-            if ($wh) $this->where[] = $wh;
+            if ($wh) {
+                $this->where[] = $wh;
+            }
         }
     }
 
@@ -1940,29 +1971,29 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
             //-------------
 
             if (array_key_exists($op, $basic_ops)) {
-                $wh[] = $c['db'] . ' ' . $basic_ops[$op] . " '$data'";
+                $wh[] = $c['db'].' '.$basic_ops[$op]." '$data'";
             } elseif (array_key_exists($op, $like_ops)) {
-                $wh[] = $c['db'] . ' ' . str_replace('{data}', addcslashes($data, '%_'), $like_ops[$op]);
+                $wh[] = $c['db'].' '.str_replace('{data}', addcslashes($data, '%_'), $like_ops[$op]);
             } else {
                 switch ($op) {
                     case 'nu':
-                        $wh[] = $c['db'] . ' IS NULL';
+                        $wh[] = $c['db'].' IS NULL';
                         break;
 
                     case 'nn':
-                        $wh[] = $c['db'] . ' IS NOT NULL';
+                        $wh[] = $c['db'].' IS NOT NULL';
                         break;
 
                     case 'in':
-                        $wh[] = $c['db'] . " IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        $wh[] = $c['db']." IN ('".implode("','", array_map('trim', explode(',', $data)))."')";
                         break;
 
                     case 'ni':
-                        $wh[] = $c['db'] . " NOT IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        $wh[] = $c['db']." NOT IN ('".implode("','", array_map('trim', explode(',', $data)))."')";
                         break;
 
                     case 'ne':
-                        $wh[] = $c['db'] . " NOT IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+                        $wh[] = $c['db']." NOT IN ('".implode("','", array_map('trim', explode(',', $data)))."')";
                         break;
                 }
             }
@@ -1981,20 +2012,20 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         //------------
 
         $wh = array_filter($wh);
-        return $wh ? ('(' . implode(' ' . $row['groupOp'] . ' ', $wh) . ')') : $this->where_empty;
+        return $wh ? ('('.implode(' '.$row['groupOp'].' ', $wh).')') : $this->where_empty;
     }
 
     /**
      * (Output) Clean each search value before sending it to other functions
      * Returns clean, but UNQUOTED value!!
      *
-     * @param $val - value
+     * @param $val  - value
      * @return string - clean value
      */
     protected function searchCleanVal($val)
     {
         $val = trim($val);
-        $val = "'" . $val . "'";
+        $val = "'".$val."'";
         // $val = $this->DB->quote($val);
 
         #Strip quotes for easier values handling
@@ -2007,8 +2038,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Auto detect of searchOp
      *
-     * @param  $c - column settings
-     * @param  $val - "clean" value. If you need original value - use $this->input
+     * @param  $c  - column settings
+     * @param  $val  - "clean" value. If you need original value - use $this->input
      * @return string - SQL-expression -> goes directly to WHERE. Set false to skip search.
      */
     protected function searchOpAuto($c, $val)
@@ -2035,8 +2066,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Disable search
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return bool
      */
     protected function searchOpIgnore($c, $val)
@@ -2047,8 +2078,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Look for EXACT match
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpEqual($c, $val)
@@ -2059,8 +2090,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Look for similar text
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpLike($c, $val)
@@ -2068,14 +2099,14 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         #Escape wildcards
         $val = addcslashes($val, '%_');
         $op = 'LIKE';
-        return ['column' => $c['db'], 'operator' => $op, 'value' => '%' . $val . '%'];
+        return ['column' => $c['db'], 'operator' => $op, 'value' => '%'.$val.'%'];
     }
 
     /**
      * (Output) Look for list of values
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpIn($c, $val)
@@ -2088,8 +2119,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
      * (Output) Look for numeric value
      * Supports prefixes to search for range of numeric values
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpNumeric($c, $val)
@@ -2112,7 +2143,7 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Send data to export library
      *
-     * @param jqGrid_Export $lib
+     * @param  jqGrid_Export  $lib
      * @return void
      */
     protected function setExportData(Export $lib)
@@ -2134,9 +2165,9 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * (Output) Set total row count and calc related vars
      *
-     * @throws ExceptionGrid
-     * @param integer $count - set this argument to override auto-detection
+     * @param  integer  $count  - set this argument to override auto-detection
      * @return void
+     * @throws ExceptionGrid
      */
     protected function setRowCount($count = null)
     {
@@ -2144,8 +2175,7 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
             #Retrieve count from agg data
             if (isset($this->agg['_count'])) {
                 $count = $this->agg['_count'];
-            }
-            #Simply count 'rows'
+            } #Simply count 'rows'
             else {
                 $count = count($this->rows);
             }
@@ -2188,8 +2218,8 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
      * Get input var(s) by key(s)
      * Nice shortcut against repeating "isset" everywhere
      *
-     * @param string|array $key - single key or set of keys
-     * @param mixed $default - default value in case key does not exist
+     * @param  string|array  $key  - single key or set of keys
+     * @param  mixed  $default  - default value in case key does not exist
      * @return mixed
      */
     protected function input($key, $default = null)
@@ -2221,12 +2251,10 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
         #Mode preset
         if ($this->json_mode) {
             $mode = $this->json_mode;
-        }
-        #Common jQuery request
+        } #Common jQuery request
         elseif (isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
             $mode = 'json';
-        }
-        #Probably ajaxForm iframe
+        } #Probably ajaxForm iframe
         else {
             $mode = 'ajaxForm';
         }
@@ -2248,7 +2276,7 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * Extract primary key from string
      *
-     * @param string $primary_key
+     * @param  string  $primary_key
      * @return array
      * @throws ExceptionGrid
      */
@@ -2266,7 +2294,7 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     /**
      * Build primary key string
      *
-     * @param array $row
+     * @param  array  $row
      * @return string
      */
     protected function implodePrimaryKey($row)
@@ -2332,33 +2360,35 @@ $grid.jqGrid($.extend(' . $options . ', typeof(' . $data['extend'] . ') == "unde
     protected function initDatepicker($options = null)
     {
         $options = is_array($options) ? $options : array();
-        return new Raw('function(el){$(el).datepicker(' . Utils::jsonEncode($options) . ');}');
+        return new Raw('function(el){$(el).datepicker('.Utils::jsonEncode($options).');}');
     }
 
     protected function initDateRangePicker($options = null)
     {
         $options = is_array($options) ? $options : array();
-        return new Raw('function(el){$(el).daterangepicker(' . Utils::jsonEncode($options) . ');}');
+        return new Raw('function(el){$(el).daterangepicker('.Utils::jsonEncode($options).');}');
     }
 
     public function dateRangeSearch()
     {
-        return array('dataInit' => $this->initDateRangePicker(array(
-            'dateFormat' => 'dd.mm.yy',
-            'onChange' => new Raw('dateRangePicker_onChange'),
-            'presetRanges' => array(
-                array('text' => 'За 2016 год', 'dateStart' => '2016-01-01', 'dateEnd' => '2016-12-31'),
-                array('text' => 'За 2017 год', 'dateStart' => '2017-01-01', 'dateEnd' => '2017-12-31'),
-                array('text' => 'За 2018 год', 'dateStart' => '2018-01-01', 'dateEnd' => '2018-12-31'),
-                array('text' => 'За 2019 год', 'dateStart' => '2019-01-01', 'dateEnd' => '2019-12-31'),
-                array('text' => 'За 2020 год', 'dateStart' => '2020-01-01', 'dateEnd' => '2020-12-31'),
-                array('text' => 'За 2021 год', 'dateStart' => '2021-01-01', 'dateEnd' => '2021-12-31'),
-            ),
-            'datepickerOptions' => array(
-                'changeMonth' => true,
-                'changeYear' => true,
+        return array(
+            'dataInit' => $this->initDateRangePicker(array(
                 'dateFormat' => 'dd.mm.yy',
-            ),
-        )));
+                'onChange' => new Raw('dateRangePicker_onChange'),
+                'presetRanges' => array(
+                    array('text' => 'За 2016 год', 'dateStart' => '2016-01-01', 'dateEnd' => '2016-12-31'),
+                    array('text' => 'За 2017 год', 'dateStart' => '2017-01-01', 'dateEnd' => '2017-12-31'),
+                    array('text' => 'За 2018 год', 'dateStart' => '2018-01-01', 'dateEnd' => '2018-12-31'),
+                    array('text' => 'За 2019 год', 'dateStart' => '2019-01-01', 'dateEnd' => '2019-12-31'),
+                    array('text' => 'За 2020 год', 'dateStart' => '2020-01-01', 'dateEnd' => '2020-12-31'),
+                    array('text' => 'За 2021 год', 'dateStart' => '2021-01-01', 'dateEnd' => '2021-12-31'),
+                ),
+                'datepickerOptions' => array(
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'dateFormat' => 'dd.mm.yy',
+                ),
+            ))
+        );
     }
 }
