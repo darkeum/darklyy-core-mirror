@@ -1370,7 +1370,7 @@ abstract class Grid
             },';
         }
         $opts = implode("", $opts);
-        return ' <script type="text/javascript" data-info="Darklyy Grid Table - renderJs">	
+        return ' <script type="text/javascript" data-info="Grid Table - renderJs">	
 		var loadFirst = 0;
 		$(window).on("unload", function () {	
 			saveGrid();
