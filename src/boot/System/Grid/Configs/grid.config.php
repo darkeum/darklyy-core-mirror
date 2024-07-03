@@ -75,21 +75,21 @@ return [
                 'actions' => 'Действия',
             ],
 
+            //
             'render' => [
                 false,
                 // '_' => true,
                 'text' => 'text',
                 'input' => 'input',
             ],
-            'popover' => 'top',         // Использование Bootstrap popover - Позиция по умолчанию
-            'popover2' => [
-                'place' => 'top',
-            ],
 
-            // 'db' => '',                 //
-            // 'db_agg' => '',             //
+            //
+            'popover' => 'top',         // Использование Bootstrap popover - Позиция по умолчанию
+
+            // 'db' => '',              //
+            // 'db_agg' => '',          //
             'unset' => false,           //
-            'replace' => null,          // Замена в строке
+            'replace' => null,          // Замена значения в строке если нужно
             'formatter' => null,        //
 
             // Для flatpickr
@@ -98,6 +98,7 @@ return [
                 'date_range' => 'd.m.Y',
             ],
 
+            //
             'manual' => [
                 '_' => false,
                 'actions' => true
@@ -129,7 +130,7 @@ return [
 
             'width' => [                // Ширина столбца по умолчанию (Если не указывать то будет ширина auto)
                 '_' => 'auto',
-                'actions' => 1,
+                'actions' => 1,         // Ширина столбца для actions (Действия)
             ],
 
             // 'classes' => '',            // Css Классы по умолчанию ? я хз что это. Было это. Не понятно...
