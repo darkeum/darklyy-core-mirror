@@ -12,7 +12,6 @@
 namespace Boot\System\Grid;
 
 use Boot\Support\Str;
-use Boot\System\Grid\Traits\ColumnsFiltersTrait;
 use Boot\System\Media\Downloaders\DefaultDownloader;
 use Exception;
 use Boot\Support\Facades\DB;
@@ -33,7 +32,6 @@ use ReflectionClass;
 abstract class GridModern
 {
     use RenderTrait;
-    use ColumnsFiltersTrait;
 
     protected Repository $repository;
     protected
@@ -49,7 +47,6 @@ abstract class GridModern
         $default;
 
     public $options, $cols;
-
 
     /**
      * Конструктор класса
@@ -165,26 +162,29 @@ abstract class GridModern
         ]);
     }
 
+    //
     protected function getRepositoryRows()
     {
         $this->rows = $this->repository->getDataRows();
     }
 
+    //
     protected function getRepositoryUserData()
     {
         $this->userdata = $this->repository->getUserData();
     }
 
+    //
     protected function getRepositoryRecords()
     {
         $this->records = $this->repository->getRecords();
     }
 
+    //
     protected function getRepositoryTotal()
     {
         $this->total = $this->repository->getTotal();
     }
-
 
     /**
      * Подготовка строк
@@ -447,7 +447,6 @@ abstract class GridModern
         return $rows;
     }
 
-
     /**
      * WIP Потом надо будет переделать (Пока пользователей мало это работает +- нормально но потом может тянуть время загрузки)
      *
@@ -498,7 +497,6 @@ abstract class GridModern
         return $rows;
     }
 
-
     // WIP Получение данных из БД
     protected function getIDs($table = null, $column = 'id', $ids = false, $order = 'id')
     {
@@ -533,4 +531,5 @@ abstract class GridModern
                 : $u->first();
         });
     }
+
 }
