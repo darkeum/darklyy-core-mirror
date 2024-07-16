@@ -216,6 +216,12 @@
     .dts_loading {
       z-index: 2;
     }
+
+    //
+    .ps__thumb-y {
+      cursor: pointer;
+    }
+
   }
 
   .dt-footer {
@@ -546,8 +552,8 @@
     &.table-bordered.dataTable .aGrid-titles th:last-child,
     &.table-bordered.dataTable td:last-child {
       border-right-width: 0;
-      padding-left: 15px;
-      padding-right: 15px;
+      padding-left: 10px; // 15px
+      padding-right: 10px; // 15px
     }
 
   }
