@@ -4,6 +4,7 @@ namespace Boot\System\Grid\Controllers;
 
 trait CanPretendToBeAFile
 {
+    #
     public function pretendResponseIsFile($file, $mimeType = 'application/javascript')
     {
         $expires = strtotime('+1 year');
@@ -25,6 +26,7 @@ trait CanPretendToBeAFile
         ]);
     }
 
+    #
     protected function matchesCache($lastModified)
     {
         $ifModifiedSince = $_SERVER['HTTP_IF_MODIFIED_SINCE'] ?? '';
@@ -32,8 +34,10 @@ trait CanPretendToBeAFile
         return @strtotime($ifModifiedSince) === $lastModified;
     }
 
+    #
     protected function httpDate($timestamp)
     {
         return sprintf('%s GMT', gmdate('D, d M Y H:i:s', $timestamp));
     }
+
 }

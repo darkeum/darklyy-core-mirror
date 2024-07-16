@@ -52,6 +52,7 @@ abstract class GridModern
      * Конструктор класса
      *
      * @return void
+     * @throws ExceptionGrid
      */
     public function __construct()
     {
@@ -104,6 +105,7 @@ abstract class GridModern
      * Подготовка колонок
      *
      * @return void
+     * @throws ExceptionGrid
      */
     protected function prepareColumn()
     {
@@ -117,22 +119,18 @@ abstract class GridModern
      * Вывод ответа на запрос
      *
      * @param  mixed  $request
-     * @return void
+     * @return array
+     * @throws Exception
      */
     public function output($request)
     {
         $this->request = $request;
 
         $this->getOutputParams();
-
         $this->getRepository();
-
         $this->getRepositoryRows();
-
         $this->getRepositoryUserData();
-
         $this->getRepositoryRecords();
-
         $this->getRepositoryTotal();
 
         return $this->outDataTable();
@@ -142,6 +140,7 @@ abstract class GridModern
      * Получение построителя запросов
      *
      * @return void
+     * @throws Exception
      */
     protected function getRepository()
     {
@@ -154,33 +153,35 @@ abstract class GridModern
         } else {
             throw new Exception("Неизвестный тип построения запросов");
         }
+
         $this->repository->setParameters([
             'db' => $this->db,
             'cols' => $this->cols,
             'request' => $this->request,
             'grid' => $this,
         ]);
+
     }
 
-    //
+    #
     protected function getRepositoryRows()
     {
         $this->rows = $this->repository->getDataRows();
     }
 
-    //
+    #
     protected function getRepositoryUserData()
     {
         $this->userdata = $this->repository->getUserData();
     }
 
-    //
+    #
     protected function getRepositoryRecords()
     {
         $this->records = $this->repository->getRecords();
     }
 
-    //
+    #
     protected function getRepositoryTotal()
     {
         $this->total = $this->repository->getTotal();
@@ -267,7 +268,7 @@ abstract class GridModern
         return $c;
     }
 
-    // Задание значений в select2 для Grid
+    # Задание значений в select2 для Grid
     protected function setValue($data, $first = false, $column = false)
     {
         // Старый вариант
@@ -316,13 +317,13 @@ abstract class GridModern
         return $result->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
     }
 
-    //
+    #
     protected function setRaw($data)
     {
         return new Raw($data);
     }
 
-    //
+    #
     protected function outJson()
     {
         $data = array(
@@ -339,7 +340,7 @@ abstract class GridModern
         return $data;
     }
 
-    //
+    #
     protected function outDataTable()
     {
         $data = array(
@@ -352,10 +353,11 @@ abstract class GridModern
         if (config('grid.debug_output')) {
             $data['debug'] = $this->debug ?? 0;
         }
+
         return $data;
     }
 
-    //
+    #
     public function dateRangeSearch()
     {
         return array(
@@ -379,14 +381,14 @@ abstract class GridModern
         );
     }
 
-    //
+    #
     protected function initDateRangePicker($options = null)
     {
         $options = is_array($options) ? $options : array();
         return new Raw('function(el){$(el).daterangepicker('.Utils::jsonEncode($options).');}');
     }
 
-    //
+    #
     protected function getOrg($table, $column = 'org')
     {
         $rows = [];
@@ -398,7 +400,7 @@ abstract class GridModern
         return $rows;
     }
 
-    //
+    #
     protected function getManufacture($table, $column)
     {
         $rows = [];
@@ -410,7 +412,7 @@ abstract class GridModern
         return $rows;
     }
 
-    //
+    #
     protected function getCategories($func_id = null)
     {
         $rows = [];
@@ -427,7 +429,7 @@ abstract class GridModern
         return $rows;
     }
 
-    //
+    #
     protected function getCategoriesOrigin($func_id = null)
     {
         $rows = [];
@@ -497,7 +499,7 @@ abstract class GridModern
         return $rows;
     }
 
-    // WIP Получение данных из БД
+    # WIP Получение данных из БД
     protected function getIDs($table = null, $column = 'id', $ids = false, $order = 'id')
     {
         if ($table) {

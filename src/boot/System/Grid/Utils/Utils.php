@@ -23,7 +23,7 @@ class Utils
      * Based on original 'php2js' function of Dmitry Koterov
      *
      * @static
-     * @param  mixed $a
+     * @param  mixed  $a
      * @return string
      */
     public static function jsonEncode($a = false)
@@ -33,37 +33,37 @@ class Utils
             array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"')
         );
 
-        if(is_null($a)) return 'null';
-        if($a === false) return 'false';
-        if($a === true) return 'true';
+        if (is_null($a)) {
+            return 'null';
+        }
+        if ($a === false) {
+            return 'false';
+        }
+        if ($a === true) {
+            return 'true';
+        }
 
-        if(is_scalar($a))
-        {
-            if(is_float($a))
-            {
+        if (is_scalar($a)) {
+            if (is_float($a)) {
                 $a = str_replace(",", ".", strval($a));
             }
 
-            return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
+            return '"'.str_replace($jsonReplaces[0], $jsonReplaces[1], $a).'"';
         }
 
         #Special internal data structure - no escaping
-        if(is_object($a) and $a instanceof  \Boot\System\Grid\Data\Data)
-        {
+        if (is_object($a) and $a instanceof \Boot\System\Grid\Data\Data) {
             return strval($a);
         }
 
-        if(is_object($a) and $a instanceof  \Illuminate\Database\Query\Expression)
-        {
+        if (is_object($a) and $a instanceof \Illuminate\Database\Query\Expression) {
             return strval($a->getValue(DB::connection()->getQueryGrammar()));
         }
 
         $isList = true;
 
-        for($i = 0, reset($a); $i < count($a); $i++, next($a))
-        {
-            if(key($a) !== $i)
-            {
+        for ($i = 0, reset($a); $i < count($a); $i++, next($a)) {
+            if (key($a) !== $i) {
                 $isList = false;
                 break;
             }
@@ -71,23 +71,18 @@ class Utils
 
         $result = array();
 
-        if($isList)
-        {
-            foreach($a as $v)
-            {
+        if ($isList) {
+            foreach ($a as $v) {
                 $result[] = self::jsonEncode($v);
             }
 
-            return '[ ' . implode(', ', $result) . ' ]';
-        }
-        else
-        {
-            foreach($a as $k => $v)
-            {
-                $result[] = self::jsonEncode($k) . ': ' . self::jsonEncode($v);
+            return '[ '.implode(', ', $result).' ]';
+        } else {
+            foreach ($a as $k => $v) {
+                $result[] = self::jsonEncode($k).': '.self::jsonEncode($v);
             }
 
-            return '{ ' . implode(', ', $result) . ' }';
+            return '{ '.implode(', ', $result).' }';
         }
     }
 
@@ -96,18 +91,17 @@ class Utils
      * The list of allowed characters might be extended
      *
      * @static
-     * @throws jqGrid_Exception
-     * @param $val - input string
-     * @param string $additional - additional allowed characters
+     * @param $val  - input string
+     * @param  string  $additional  - additional allowed characters
      * @return string
+     * @throws jqGrid_Exception
      */
     public static function checkAlphanum($val, $additional = '')
     {
         static $mask = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
 
-        if($val and strspn($val, $mask . $additional) != strlen($val))
-        {
-            throw new ExceptionGrid('Alphanum check failed on value: ' . $val);
+        if ($val and strspn($val, $mask.$additional) != strlen($val)) {
+            throw new ExceptionGrid('Alphanum check failed on value: '.$val);
         }
 
         return $val;
@@ -128,7 +122,7 @@ class Utils
         $parts = explode('_', $name);
         $parts = array_map('ucfirst', $parts);
 
-        return self::checkAlphanum($prefix . implode('', $parts));
+        return self::checkAlphanum($prefix.implode('', $parts));
     }
 
     /**
@@ -143,11 +137,11 @@ class Utils
      */
     public static function arrayIconv($arr, $enc_from, $enc_to)
     {
-        foreach($arr as $k => &$v)
-        {
+        foreach ($arr as $k => &$v) {
             $v = iconv($enc_from, $enc_to, $v);
         }
 
         return $arr;
     }
+
 }

@@ -20,6 +20,7 @@ class GridView
      * @param  array  $params
      * @return string
      * # Вывод автоматической генерации Actions в Grid
+     * @throws Throwable
      */
     public static function actions(array $params): string
     {
@@ -49,6 +50,7 @@ class GridView
      * @param  array  $params
      * @return string
      * # Вывод автоматической генерации Img в Grid
+     * @throws Throwable
      */
     public static function img(array $params): string
     {
@@ -59,6 +61,7 @@ class GridView
      * @param $path
      * @param  array  $params
      * @return string
+     * @throws Throwable
      */
     public static function view($path, array $params = []): string
     {
@@ -75,7 +78,7 @@ class GridView
         return view('grid::layouts.toolbar.mods.list')->render();
     }
 
-    //
+    #
     public static function select2(Request $request)
     {
         $model = $request->query('model');
@@ -96,6 +99,7 @@ class GridView
         return $result->toArray();
     }
 
+    # Генерация иконки в Grid
     public static function icon($type, $css, $title = false)
     {
         switch ($type) {

@@ -16,6 +16,7 @@ class ExceptionRender extends ExceptionGrid
     protected $exception_type = 'render';
     protected $output_type = 'trigger_error';
 
+    #
     public function __toString()
     {
         return $this->getMessage();

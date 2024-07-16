@@ -154,4 +154,5 @@ trait RenderTrait
     {
         return array_key_exists($type, $filters) ? $filters[$type] : $default;
     }
+
 }

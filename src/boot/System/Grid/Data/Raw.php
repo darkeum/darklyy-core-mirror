@@ -13,8 +13,10 @@ namespace Boot\System\Grid\Data;
 
 class Raw extends Data
 {
+    #
     public function __toString()
     {
         return $this->data;
     }
+
 }

@@ -10,19 +10,19 @@ class GridAssets
 {
     use CanPretendToBeAFile;
 
-    //
+    #
     public function script()
     {
         return $this->pretendResponseIsFile($this->generateSourceJavaScripts());
     }
 
-    //
+    #
     public function style()
     {
         return $this->pretendResponseIsFile($this->generateSourceStyle(), 'text/css');
     }
 
-    // Получение ресурса по его URL
+    # Получение ресурса по его URL
     public function assets()
     {
         $path = url()->getRequest()->path();
@@ -32,7 +32,7 @@ class GridAssets
         return $this->pretendResponseIsFile($source);
     }
 
-    //
+    #
     protected function generateSourceJavaScripts()
     {
         $source = __DIR__ . '/../Resources/dist/grid.js';
@@ -47,9 +47,11 @@ class GridAssets
             }
             $minify->minify($source);
         }
+
         return $source;
     }
 
+    #
     protected function generateSourceStyle()
     {
         $source = __DIR__ . '/../Resources/dist/grid.css';
@@ -66,4 +68,5 @@ class GridAssets
         // }
         return $source;
     }
+
 }

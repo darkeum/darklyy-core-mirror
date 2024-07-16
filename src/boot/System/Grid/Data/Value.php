@@ -13,6 +13,7 @@ namespace Boot\System\Grid\Data;
 
 class Value extends Data
 {
+    #
     public function __construct(array $data, $first = null)
     {
         if(!is_null($first))
@@ -23,6 +24,7 @@ class Value extends Data
         parent::__construct($data);
     }
 
+    #
     public function __toString()
     {
         $base = array();
@@ -34,4 +36,5 @@ class Value extends Data
 
         return '"' . implode(';', $base) . '"';
     }
+
 }
