@@ -545,6 +545,8 @@
     &.table-bordered.dataTable .aGrid-titles th:last-child,
     &.table-bordered.dataTable td:last-child {
       border-right-width: 0;
+      padding-left: 10px;
+      padding-right: 10px;
     }
 
   }
