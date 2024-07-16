@@ -44,6 +44,7 @@ return [
 
     // Значения по умолчанию Grid
     'default' => [
+
         // Поля которые необходимо фильтровать
         'filters' => [
             'label',
@@ -59,6 +60,9 @@ return [
             'icon',
             'priority'
         ],
+
+        // ignored
+        'ignored' => ['actions', 'checkbox'],
 
         'cols' => [
             'title' => '',              // Заголовок столбца по умолчанию
