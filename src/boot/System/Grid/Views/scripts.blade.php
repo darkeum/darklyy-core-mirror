@@ -1,29 +1,37 @@
+{{--  --}}
 <script type="text/javascript">
+
+    //
     var loadFirst = 0;
-    $(window).on("unload", function() {
+    $(window).on("unload", function () {
         saveGrid();
     });
-    $("#{{ $data['id'] }}").on("destroy", function() {
+
+    //
+    $("#{{ $data['id'] }}").on("destroy", function () {
         saveGrid();
     })
 
+    //
     function initGrid() {
+        //
         $(this).contextMenu('contextMenu', {
             menuStyle: {
                 width: "150px"
             },
             bindings: {
-                'edit': function(t) {
+                'edit': function (t) {
                     alert("Edit Row Command Selected");
                 },
-                'add': function(t) {
+                'add': function (t) {
                     alert("Add Row Command Selected");
                 },
-                'del': function(t) {
-                    removeModal(1);
+                'del': function (t) {
+                    // removeModal(1);
+                    alert("removeModal");
                 }
             },
-            onContextMenu: function(event, menu) {
+            onContextMenu: function (event, menu) {
                 var rowId = $(event.target).parent("tr").attr("id")
                 $("#{{ $data['id'] }}").setSelection(rowId);
                 return true;
@@ -31,8 +39,9 @@
         });
 
     }
-    var lastSelection;
 
+    //
+    var lastSelection;
     function editRow(id) {
         if (id && id !== lastSelection) {
             var grid = $("#{{ $data['id'] }}");
@@ -44,12 +53,13 @@
         }
     }
 
+    //
     function loadGrid() {
         if (loadFirst == 0) {
             loadFirst++;
             if ($.jgrid.isGridInStorage("{{ $data['id'] }}", {
-                    storageType: 'localStorage'
-                })) {
+                storageType: 'localStorage'
+            })) {
                 const options = {
                     useStorage: true,
                     storageType: "localStorage",
@@ -61,7 +71,7 @@
                     decompressionMethod: "decompressFromUTF16",
                     restoreData: false
                 };
-                setTimeout(function() {
+                setTimeout(function () {
                     //$.jgrid.loadState("' . $grid_name . '", "", options);
                     //$("#idGrid").clearGridData();
                     //$("#' . $grid_name . '").trigger("reloadGrid");
@@ -74,7 +84,7 @@
         }
     };
 
-
+    //
     function saveGrid() {
         if (loadFirst != 0) {
             var options = {
@@ -90,8 +100,8 @@
             $.jgrid.saveState("{{ $data['id'] }}", options);
         } else {
             if ($.jgrid.isGridInStorage("{{ $data['id'] }}", {
-                    storageType: 'localStorage'
-                })) {
+                storageType: 'localStorage'
+            })) {
                 var options = {
                     useStorage: true,
                     storageType: "localStorage",
@@ -107,13 +117,14 @@
                 //$("#idGrid").clearGridData();
                 $("#{{ $data['id'] }}").trigger("reloadGrid");
             } else {
-                alert('grid is not in session storage');
+                alert('сетка не находится в хранилище сеанса');
             }
 
         }
         loadFirst++;
         console.log(loadFirst);
-    };
+    }
+
     let myRow = 30;
     if (Cookies.get("rowNum")) {
         myRow = Cookies.get("rowNum");
@@ -127,7 +138,7 @@
         scrollOffset: 21,
         width: null,
         shrinkToFit: true,
-        autowidth: true, 
+        autowidth: true,
         rowNum: myRow,
         rowList: [30, 50, 100],
         height: 490,
@@ -140,8 +151,8 @@
         scrollPopUp: true,
         scrollLeftOffset: "100%",
         viewrecords: true,
-        scroll: 1, // set the scroll property to 1 to enable paging with scrollbar - virtual loading of records
-        emptyrecords: "Scroll to bottom to retrieve new page", // the message will be displayed at the bottom 
+        scroll: 1, // установите для свойства scroll значение 1, чтобы включить подкачку с помощью полосы прокрутки - виртуальную загрузку записей
+        emptyrecords: "Scroll to bottom to retrieve new page", // сообщение будет отображено в нижней части экрана
         storeNavOptions: true,
         pager: "#{{ $data['pager_id'] }}",
         multipleSearch: true,
@@ -152,57 +163,60 @@
         editData: {
             "_token": "{{ csrf_token() }}"
         },
-        loadBeforeSend: function(jqXHR) {
+        loadBeforeSend: function (jqXHR) {
             jqXHR.setRequestHeader('X-XSRF-TOKEN', "{{ csrf_token() }}");
         }
     });
+
     {{-- $.jgrid.defaults. = ''; --}}
     {{-- var opts = {
         ' . $opts . '
     }; --}}
 
-
     function dateRangePicker_onChange() {
         var $input = $('#gs_date_view');
         var old_val = $input.val();
-        setTimeout(function() {
+        setTimeout(function () {
             if ($input.val() == old_val) {
                 $grid[0].triggerToolbar();
 
             }
         }, 50);
     }
+
     var pager = "#{{ $data['pager_id'] }}";
     var $grid = $("#{{ $data['id'] }}");
     var ${{ $data['id'] }} = $grid;
 
-    $grid.jqGrid($.extend({!! $options !!}, typeof({{ $data['extend'] }}) == "undefined" ? {} : {{ $data['extend'] }}));
+    $grid.jqGrid($.extend({!! $options !!}, typeof ({{ $data['extend'] }}) == "undefined" ? {} : {{ $data['extend'] }}));
     $grid.jqGrid('extBindEvents');
     @if ($render_filter_toolbar)
-        $grid.jqGrid('filterToolbar');
+    $grid.jqGrid('filterToolbar');
     @endif
-    {!! $nav !!}
 
+        {!! $nav !!}
 
-    {{-- $grid.jqGrid('navGrid', pager); --}}
-    {{-- $grid.jqGrid({}); --}}
+        {{-- $grid.jqGrid('navGrid', pager); --}}
+        {{-- $grid.jqGrid({}); --}}
 
-    {{-- $.extend($.jgrid.defaults, {
-    ajaxGridOptions : {
-        beforeSend: function(xhr) {
-            $("#{{ $data['id'] }}").block();
-        },
-        complete: function(xhr) {
-            $("#{{ $data['id'] }}").unblock();
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            $("#{{ $data['id'] }}").unblock();
-        }
-    }
-}); --}}
-    var sp = new PerfectScrollbar('.ui-jqgrid-bdiv', {
-        suppressScrollX: true,
-        wheelPropagation: false,
-        minScrollbarLength: 30,
+        {{--
+        $.extend($.jgrid.defaults, {
+            ajaxGridOptions : {
+                beforeSend: function(xhr) {
+                    $("#{{ $data['id'] }}").block();
+                },
+                complete: function(xhr) {
+                    $("#{{ $data['id'] }}").unblock();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $("#{{ $data['id'] }}").unblock();
+                }
+            }
+        });
+        --}}
+        var sp = new PerfectScrollbar('.ui-jqgrid-bdiv', {
+            suppressScrollX: true,
+            wheelPropagation: false,
+            minScrollbarLength: 30,
     });
 </script>
