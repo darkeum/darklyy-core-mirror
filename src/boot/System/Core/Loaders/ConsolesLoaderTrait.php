@@ -38,8 +38,9 @@ trait ConsolesLoaderTrait
     public function loadConsolesFromShip(): void
     {
         $commandsFoldersPaths = [
-            // ship commands
+
             base_path('boot/App/Commands'),
+            base_path('usr/App/Commands'),
             // core commands
             __DIR__ . '/../Commands'
         ];
