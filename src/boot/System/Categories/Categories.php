@@ -11,8 +11,8 @@
 
 namespace Boot\System\Categories;
 
-use \Boot\Support\Cache;
-use \Boot\Models\Categories as CategoryModel;
+use Boot\Support\Cache;
+use Boot\Models\Categories as CategoryModel;
 
 class Categories
 {
@@ -41,7 +41,7 @@ class Categories
   {
     $category = $this->categoriesClearList->where('module', $module)->all();
     if (!empty($category)) {
-    
+
       foreach ($category  as $k => $v) {
         $category[$k]['url'] = '/'.$module.'/'.$this->getCategoryFullUrl($k);
       }
@@ -102,7 +102,7 @@ class Categories
 
    return $this->categoriesList;
   }
-    
+
   /**
    * getFullTree - Список категорий в форме дерева
    *
@@ -110,7 +110,7 @@ class Categories
    * @return Array
    */
   public function getFullTree(String $module):Array{
-      $items = \Catalog_v2\Model\Categories::where("status", 1)->where("module", $module)->get();
+      $items = CategoryModel::where("status", 1)->where("module", $module)->get();
 			foreach($items as $item){
         $cat_get[ $item->id ] = [ $item->name, $item->parent_id ];
       }
@@ -130,7 +130,7 @@ class Categories
   }
   /*
    * хлебные крошки
-   * $id - ID категории в которой мы находимся 
+   * $id - ID категории в которой мы находимся
    */
   public function breadcrumbs($id)
   {
