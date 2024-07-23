@@ -40,7 +40,7 @@ trait ConsolesLoaderTrait
         $commandsFoldersPaths = [
 
             base_path('boot/App/Commands'),
-            base_path('usr/App/Commands'),
+            base_path('usr/app/Commands'),
             // core commands
             __DIR__ . '/../Commands'
         ];
