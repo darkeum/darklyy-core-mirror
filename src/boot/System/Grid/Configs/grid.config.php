@@ -168,13 +168,14 @@ return [
         ],
 
         'nav' => [
-            'export' => [
-                'excel' => true,
-                'pdf' => true,
-                'print' => true,
-                'copy' => true,
-                'csv' => true,
-            ],
+            'export' => false,
+            //'export' => [
+            //    'excel' => true,
+            //    'pdf' => true,
+            //    'print' => true,
+            //    'copy' => true,
+            //    'csv' => true,
+            //],
         ],
 
         // Список действий мыши по умолчанию (select, open, 'opennt', 'opennw')
