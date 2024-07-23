@@ -35,6 +35,9 @@ return [
         'download' => ['Скачать', 'download'],
     ],
 
+    // ignored
+    'ignored' => ['actions', 'checkbox'],
+
     // Параметры
     'params' => [
         'configs' => [
@@ -60,9 +63,6 @@ return [
             'icon',
             'priority'
         ],
-
-        // ignored
-        'ignored' => ['actions', 'checkbox'],
 
         'cols' => [
             'title' => '',              // Заголовок столбца по умолчанию
@@ -168,8 +168,7 @@ return [
         ],
 
         'nav' => [
-            'export' => true,
-            'export.detail' => [
+            'export' => [
                 'excel' => true,
                 'pdf' => true,
                 'print' => true,
