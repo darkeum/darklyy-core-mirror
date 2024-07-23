@@ -17,7 +17,7 @@
 
                     {{-- Заголовок --}}
                     <div class="col-12 col-xl-6">
-                        <h4 class="card-title aGrid-container-title">{{ $title }}</h4>
+                        <h4 class="card-title">{{ $title }}</h4>
                     </div>
                     {{-- Заголовок --}}
 
