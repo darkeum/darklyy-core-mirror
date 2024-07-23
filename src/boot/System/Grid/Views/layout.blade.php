@@ -26,7 +26,7 @@
                         <div class="btn-toolbar justify-content-end aGrid-toolbar">
 
                             {{-- Поле поиска --}}
-                            @if ($nav['search'])
+                            @if (!empty($nav['search']) and $nav['search'])
                                 @include('grid::layouts.toolbar.search')
                             @endif
                             {{-- Поле поиска --}}
@@ -240,6 +240,7 @@
                                 background: false,
                             },
                                 @endif
+
                                 @if ($nav['export'])
                             {
                                 extend: 'collection',
