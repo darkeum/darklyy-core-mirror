@@ -23,4 +23,22 @@ class GridParams
         return $columns->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT | JSON_NUMERIC_CHECK);
     }
 
+    public static function exportOptions($cols) {
+        $result = [];
+
+        foreach ($cols as $key => $col) {
+            if ($col['visible'] || $col['visible'] == 'true') {
+                if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true') {
+                    $result[] = $key;
+                 }
+            } else {
+                if($col['excel_only'] == true || $col['excel_only'] == 'true') {
+                    $result[] = $key;
+                }
+            }
+        }
+
+        return implode(', ', $result);
+
+    }
 }
