@@ -286,14 +286,14 @@
                                             columns: [
                                                 @foreach ($cols as $key => $col)
                                                     @if($col['visible'] == true || $col['visible'] == 'true')
-                                                    @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
-                                                    {{$key}},
-                                                @endif
+                                                        @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
+                                                            {{ $key }},
+                                                        @endif
                                                     @else
-                                                    @if($col['excel_only'] == true || $col['excel_only'] == 'true')
-                                                    {{$key}},
-                                                @endif
-                                                @endif
+                                                        @if($col['excel_only'] == true || $col['excel_only'] == 'true')
+                                                            {{ $key }},
+                                                        @endif
+                                                    @endif
                                                 @endforeach
                                             ]
                                         }
@@ -328,6 +328,7 @@
                                     //     n.closest('.dt-buttons').removeClass('btn-group').addClass('d-inline-flex');
                                     // }, 50);
                                 }
+
                             }
                             @endif
                         ],
