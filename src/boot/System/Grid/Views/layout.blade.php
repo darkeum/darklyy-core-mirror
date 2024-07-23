@@ -26,7 +26,9 @@
                         <div class="btn-toolbar justify-content-end aGrid-toolbar">
 
                             {{-- Поле поиска --}}
-                            @include('grid::layouts.toolbar.search')
+                            @if ($nav['search'])
+                                @include('grid::layouts.toolbar.search')
+                            @endif
                             {{-- Поле поиска --}}
 
                             {{-- Кнопки управления --}}
@@ -57,7 +59,7 @@
 
                     @php
                         function ignored ($type):bool {
-                            $arr = ['actions', 'checkbox'];
+                            $arr = config('grid.ignored');
                             return in_array($type, $arr);
                         };
                     @endphp
@@ -228,6 +230,7 @@
 
                         //
                         buttons: [
+                                @if ($nav['search']['builder'])
                             {
                                 extend: 'searchBuilder',
                                 // text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
@@ -236,6 +239,7 @@
                                 align: 'button-right',
                                 background: false,
                             },
+                                @endif
                                 @if ($nav['export'])
                             {
                                 extend: 'collection',
@@ -248,7 +252,7 @@
                                 },
                                 // background: false,
                                 buttons: [
-                                        @if ($nav['export.detail']['print'])
+                                        @if ($nav['export']['print'])
                                     {
                                         extend: 'print',
                                         text: feather.icons['printer'].toSvg({class: 'font-small-4 me-50'}) + 'Распечатать',
@@ -256,7 +260,7 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export.detail']['csv'])
+                                        @if ($nav['export']['csv'])
                                     {
                                         extend: 'csv',
                                         text: feather.icons['file-text'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в CSV',
@@ -264,7 +268,7 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export.detail']['excel'])
+                                        @if ($nav['export']['excel'])
                                     {
                                         extend: 'excel',
                                         text: feather.icons['file'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в Excel',
@@ -287,7 +291,7 @@
                                         }
                                     },
                                         @endif
-                                        @if ($nav['export.detail']['pdf'])
+                                        @if ($nav['export']['pdf'])
                                     {
                                         extend: 'pdf',
                                         text: feather.icons['clipboard'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в PDF',
@@ -295,7 +299,7 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export.detail']['copy'])
+                                        @if ($nav['export']['copy'])
                                     {
                                         extend: 'copy',
                                         text: feather.icons['copy'].toSvg({class: 'font-small-4 me-50'}) + 'Скопировать',
@@ -351,7 +355,7 @@
                             @foreach ($cols as $key => $col){
 
                             @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                            {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
 
                             title: "{{ $col['title'] ?? '' }}",
                             label: "{{ $col['label'] ?? '' }}",
