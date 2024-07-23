@@ -17,7 +17,9 @@
 
                     {{-- Заголовок --}}
                     <div class="col-12 col-xl-6">
-                        <h4 class="card-title">{{ $title }}</h4>
+                        <h4 class="card-title p-25">
+                            {{ $title }}
+                        </h4>
                     </div>
                     {{-- Заголовок --}}
 
@@ -26,7 +28,7 @@
                         <div class="btn-toolbar justify-content-end aGrid-toolbar">
 
                             {{-- Поле поиска --}}
-                            @if (!empty($nav['search']) and $nav['search'])
+                            @if (isset($nav['search']) and $nav['search'])
                                 @include('grid::layouts.toolbar.search')
                             @endif
                             {{-- Поле поиска --}}
@@ -42,7 +44,7 @@
                             {{-- Место под свои кнопки --}}
 
                             {{-- Модификаторы таблицы --}}
-                            @if (!empty($nav['mods']) and $nav['mods'])
+                            @if (isset($nav['mods']) and $nav['mods'])
                                 @include('grid::layouts.toolbar.mods.button')
                             @endif
                             {{-- Модификаторы таблицы --}}
@@ -110,7 +112,7 @@
 </section>
 {{-- Тело главного Grid --}}
 
-{{-- WIP Идея по переносу конструктора поиска в модальное окно --}}
+{{-- WIP WIP WIP Идея по переносу конструктора поиска в модальное окно --}}
 {{-- Modal --}}
 {{--<div--}}
 {{--        class="modal fade"--}}
@@ -142,17 +144,17 @@
 @push('scripts')
     <script type="text/javascript" data-info="Darklyy Grid Table - DataTable JS">
 
-        // const g_gen = new UiCreator(); // UI либа
+        // const g_gen = new UiCreator(); // UI класс
         // console.log(store.getAll())
 
-        // Параметры до загрузки Grid
+        // Параметры до загрузки dataTable
         // $.extend(true, $.fn.dataTable.defaults, {});
 
         // Главный скрипт DataTable
         $(document).ready(function () {
 
-            /* *** ОТРИСОВКА ТАБЛИЦЫ *** */
-            const table = $('#{{ $data['id'] }}').DataTable(
+            {{-- ОТРИСОВКА ТАБЛИЦЫ --}}
+            const table = $('#{!! $data['id'] !!}').DataTable(
                 {
                     //
                     ajax: {
@@ -196,7 +198,7 @@
                     buttons: {
 
                         // Переназначение контейнера для кнопок для datatables
-                        // vendors\js\tables\datatable/full\datatables.js 79273
+                        // vendors\js\tables\datatable\full\datatables.js 79273
                         dom: {
                             container: {
                                 // className: 'dt-buttons btn-group flex-wrap ms-1'
@@ -225,14 +227,14 @@
                             }
                         },
 
-                        //
+                        // Создание кнопки
                         buttonCreated: function (config, button) {
                             return config.buttons ? $('<div class="btn-group position-relative" role="group"/>').append(button) : button;
                         },
 
                         //
                         buttons: [
-                                @if (!empty($nav['builder']) and $nav['builder'])
+                                @if (isset($nav['builder']) and $nav['builder'])
                             {
                                 extend: 'searchBuilder',
                                 // text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
@@ -243,7 +245,7 @@
                             },
                                 @endif
 
-                                @if ($nav['export'])
+                                @if (isset($nav['export']) and $nav['export'])
                             {
                                 extend: 'collection',
                                 // text: feather.icons['share'].toSvg({class: 'font-small-4 me-50'}) + 'Экспорт',
@@ -255,7 +257,8 @@
                                 },
                                 // background: false,
                                 buttons: [
-                                        @if ($nav['export']['print'])
+
+                                        @if (isset($nav['export']['print']) and $nav['export']['print'])
                                     {
                                         extend: 'print',
                                         text: feather.icons['printer'].toSvg({class: 'font-small-4 me-50'}) + 'Распечатать',
@@ -263,7 +266,8 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export']['csv'])
+
+                                        @if (isset($nav['export']['csv']) and $nav['export']['csv'])
                                     {
                                         extend: 'csv',
                                         text: feather.icons['file-text'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в CSV',
@@ -271,7 +275,8 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export']['excel'])
+
+                                        @if (isset($nav['export']['excel']) and $nav['export']['excel'])
                                     {
                                         extend: 'excel',
                                         text: feather.icons['file'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в Excel',
@@ -294,7 +299,8 @@
                                         }
                                     },
                                         @endif
-                                        @if ($nav['export']['pdf'])
+
+                                        @if (isset($nav['export']['pdf']) and $nav['export']['pdf'])
                                     {
                                         extend: 'pdf',
                                         text: feather.icons['clipboard'].toSvg({class: 'font-small-4 me-50'}) + 'Сохранить в PDF',
@@ -302,7 +308,8 @@
                                         action: newexportaction
                                     },
                                         @endif
-                                        @if ($nav['export']['copy'])
+
+                                        @if (isset($nav['export']['copy']) and $nav['export']['copy'])
                                     {
                                         extend: 'copy',
                                         text: feather.icons['copy'].toSvg({class: 'font-small-4 me-50'}) + 'Скопировать',
@@ -310,7 +317,9 @@
                                         action: newexportaction
                                     }
                                     @endif
+
                                 ],
+
                                 init: function (api, node, config) {
                                     // let n = $(node);
                                     // n.removeClass('btn-secondary');
