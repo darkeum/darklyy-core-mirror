@@ -232,7 +232,7 @@
 
                         //
                         buttons: [
-                                @if (!empty($nav['search']['builder']) and $nav['search']['builder'])
+                                @if (!empty($nav['builder']) and $nav['builder'])
                             {
                                 extend: 'searchBuilder',
                                 // text: feather.icons['plus'].toSvg({class: 'me-50 font-small-4'}) + 'Расширенный поиск',
