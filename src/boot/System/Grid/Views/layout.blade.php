@@ -1,13 +1,8 @@
-{{-- Тело главного Grid --}}
-
 @php
-    function params ($col, $key, $empty = false) {
-        if (isset($col[$key])) {
-            return "{$key}: '{$col[$key]}',";
-        }
-    }
+    use Boot\System\Grid\GridParams;
 @endphp
 
+{{-- Тело главного Grid --}}
 <section>
     <div class="row">
         <div class="col-12">
@@ -61,19 +56,12 @@
                     {{-- Table Header --}}
                     <thead class="{{--d-none--}}">
 
-                    @php
-                        function ignored ($type):bool {
-                            $arr = config('grid.ignored');
-                            return in_array($type, $arr);
-                        };
-                    @endphp
-
                     {{-- Заголовки столбцов --}}
                     <tr class="aGrid-titles">
                         @foreach ($cols as $k => $col)
 
                             {{--<th rowspan="{{ (array_key_last($cols) == $k and $col['type'] == 'actions' and $col['type'] == 'checkbox') ? 2 : 1 }}"--}}
-                            <th rowspan="{{ ignored($col['type']) ? 2 : 1 }}"
+                            <th rowspan="{{ GridParams::ignored($col['type']) ? 2 : 1 }}"
                                 data-visible="{{ $k }}"
                                 data-db="{{ $col['db'] }}"
                                 data-type="{{ $col['type'] }}"
@@ -286,14 +274,14 @@
                                             columns: [
                                                 @foreach ($cols as $key => $col)
                                                     @if($col['visible'] == true || $col['visible'] == 'true')
-                                                        @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
-                                                            {{ $key }},
-                                                        @endif
+                                                    @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
+                                                    {{ $key }},
+                                                @endif
                                                     @else
-                                                        @if($col['excel_only'] == true || $col['excel_only'] == 'true')
-                                                            {{ $key }},
-                                                        @endif
-                                                    @endif
+                                                    @if($col['excel_only'] == true || $col['excel_only'] == 'true')
+                                                    {{ $key }},
+                                                @endif
+                                                @endif
                                                 @endforeach
                                             ]
                                         }
