@@ -42,7 +42,9 @@
                             {{-- Место под свои кнопки --}}
 
                             {{-- Модификаторы таблицы --}}
-                            @include('grid::layouts.toolbar.mods.button')
+                            @if (!empty($nav['mods']) and $nav['mods'])
+                                @include('grid::layouts.toolbar.mods.button')
+                            @endif
                             {{-- Модификаторы таблицы --}}
 
                         </div>
