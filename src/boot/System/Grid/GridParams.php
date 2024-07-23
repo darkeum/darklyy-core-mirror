@@ -4,7 +4,6 @@ namespace Boot\System\Grid;
 
 class GridParams
 {
-
     // WIP - Придумать как лучше всего сделать на PHP
     public static function columns($cols)
     {
@@ -23,11 +22,26 @@ class GridParams
         return $columns->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT | JSON_NUMERIC_CHECK);
     }
 
+    // WIP -
+    public function ignored ($type):bool {
+        $arr = config('grid.ignored');
+        return in_array($type, $arr);
+    }
+
+    // WIP -
+    public function params ($col, $key, $empty = false) {
+        if (isset($col[$key])) {
+            return "{$key}: '{$col[$key]}',";
+        }
+
+        //return false;
+    }
+
+    // WIP -
     public static function exportOptions($cols) {
         $result = [];
-
         foreach ($cols as $key => $col) {
-            if ($col['visible'] || $col['visible'] == 'true') {
+            if ($col['visible'] == true || $col['visible'] == 'true') {
                 if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true') {
                     $result[] = $key;
                  }
@@ -41,4 +55,5 @@ class GridParams
         return implode(', ', $result);
 
     }
+
 }
