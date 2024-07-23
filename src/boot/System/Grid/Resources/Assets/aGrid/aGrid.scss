@@ -8,47 +8,6 @@
 
 @import '~/resources/assets/scss/variables/variables';
 
-// Панель инструментов
-.aGrid-toolbar {
-  gap: 8px;
-
-  // Элементы управления
-  .aGrid-controls {
-    position: inherit;
-
-    // Обратимся хитро к родителю dtsb-searchBuilder через has()
-    :has(.search-builder-custom) {
-      position: absolute;
-      max-width: 50%;
-      right: 8px;
-      left: initial !important;
-
-      // Обратимся к dtsb-searchBuilder он же search-builder-custom
-      .search-builder-custom {
-        .dtsb-inputCont {
-          select, input {
-            height: 100%;
-          }
-        }
-      }
-
-    }
-
-    .dt-button-collection.dtb-collection-closeable {
-      // Обратимся хитро к родителю dtsb-searchBuilder через has()
-      //&:has(.search-builder-custom) {
-      //  //width: 50% !important;
-      //  //left: auto !important;
-      //  //right: 0;
-      //}
-    }
-  }
-
-  .dt-button-background {
-    background-color: #80808042;
-  }
-}
-
 // Main container Datatables aGrid
 .aGrid-container {
   //margin-bottom: 0;
@@ -94,7 +53,48 @@
     cursor: pointer;
   }
 
-  //
+  // Панель инструментов
+  .aGrid-toolbar {
+    gap: 8px;
+
+    // Элементы управления
+    .aGrid-controls {
+      position: inherit;
+
+      // Обратимся хитро к родителю dtsb-searchBuilder через has()
+      :has(.search-builder-custom) {
+        position: absolute;
+        max-width: 50%;
+        right: 8px;
+        left: initial !important;
+
+        // Обратимся к dtsb-searchBuilder он же search-builder-custom
+        .search-builder-custom {
+          .dtsb-inputCont {
+            select, input {
+              height: 100%;
+            }
+          }
+        }
+
+      }
+
+      .dt-button-collection.dtb-collection-closeable {
+        // Обратимся хитро к родителю dtsb-searchBuilder через has()
+        //&:has(.search-builder-custom) {
+        //  //width: 50% !important;
+        //  //left: auto !important;
+        //  //right: 0;
+        //}
+      }
+    }
+
+    .dt-button-background {
+      background-color: #80808042;
+    }
+  }
+
+  // Зоны DataTables
   .dataTables_scroll {
 
     // Зона 1 - Хеадер - Тут у нас заголовки и поля фильтрации и поиска
