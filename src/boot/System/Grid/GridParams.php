@@ -23,13 +23,13 @@ class GridParams
     }
 
     // WIP -
-    public function ignored ($type):bool {
+    public static function ignored ($type):bool {
         $arr = config('grid.ignored');
         return in_array($type, $arr);
     }
 
     // WIP -
-    public function params ($col, $key, $empty = false) {
+    public static function params ($col, $key, $empty = false) {
         if (isset($col[$key])) {
             return "{$key}: '{$col[$key]}',";
         }
