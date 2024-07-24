@@ -1,11 +1,16 @@
-import { _OPTIONS } from "../options.js";
+import {_OPTIONS} from "../options.js";
 
 /* МОДИФИКАТОРЫ - mods */
 // Инициализация popover modifiers
 DataTable.Api.register('aGrid.mods', function () {
+    let button = $('.aGrid-mods-button');
+    if (!button.length) {
+        return false
+    }
+
     let api = this;
     api.aGrid.mods.$ = {
-        button: $('.aGrid-mods-button'), // Кнопка
+        button: button
     };
 
     // Список для popover модификаторов
