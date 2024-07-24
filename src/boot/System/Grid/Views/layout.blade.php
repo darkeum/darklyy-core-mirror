@@ -40,9 +40,8 @@
 
                             {{-- Модификаторы таблицы --}}
                             @if (isset($nav['mods']) and $nav['mods'])
-                                {{--@include('grid::layouts.toolbar.mods.button')--}}
+                                @include('grid::layouts.toolbar.mods.button')
                             @endif
-                            @include('grid::layouts.toolbar.mods.button')
                             {{-- Модификаторы таблицы --}}
 
                         </div>
