@@ -76,7 +76,7 @@
                     <tr class="aGrid-filters">
                         @foreach ($cols as $k => $col)
                             {{--@if(array_key_last($cols) !== $k or $col['type'] !== 'actions' or $col['type'] !== 'checkbox')--}}
-                            @if(!ignored($col['type']))
+                            @if(!GridParams::ignored($col['type']))
                                 <th
                                     data-db="{{ $col['db'] }}"
                                     data-type="{{ $col['type'] }}"
