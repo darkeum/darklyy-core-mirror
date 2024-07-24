@@ -11,6 +11,12 @@
 // Main container Datatables aGrid
 .aGrid-container {
 
+  //
+  button.aGrid-mods-button {
+    &[aria-describedby="*"] {
+    }
+  }
+
   // Модификаторы (Активность кнопки модификаторов)
   &.mods {
     button.aGrid-mods-button {
