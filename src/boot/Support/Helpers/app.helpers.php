@@ -51,48 +51,52 @@ if (!function_exists('app')) {
 
         return Container::getInstance()->make($abstract, $parameters);
     }
+}
 
-    if (!function_exists('resource_path')) {
-        /**
-         * Get the path to the resources folder.
-         *
-         * @param  string  $path
-         * @return string
-         */
-        function resource_path($path = '')
-        {
-            return app()->resourcePath($path);
-        }
-    }
-
-    if (!function_exists('storage_path')) {
-        /**
-         * Get the path to the storage folder.
-         *
-         * @param  string  $path
-         * @return string
-         */
-        function storage_path($path = '')
-        {
-            return app('path.storage') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-        }
-    }
-
-    if (!function_exists('tmp_path')) {
-        /**
-         * Get the path to the storage folder.
-         *
-         * @param  string  $path
-         * @return string
-         */
-        function tmp_path($path = '')
-        {
-            return app('path.tmp') . ($path ? DIRECTORY_SEPARATOR . $path : $path);
-        }
+#
+if (!function_exists('resource_path')) {
+    /**
+     * Get the path to the resources folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function resource_path($path = '')
+    {
+        return app()->resourcePath($path);
     }
 }
 
-if (! function_exists('precognitive')) {
+#
+if (!function_exists('storage_path')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function storage_path($path = '')
+    {
+        return app('path.storage').($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+}
+
+#
+if (!function_exists('tmp_path')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function tmp_path($path = '')
+    {
+        return app('path.tmp').($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+}
+
+#
+if (!function_exists('precognitive')) {
     /**
      * Handle a Precognition controller hook.
      *
@@ -121,6 +125,7 @@ if (! function_exists('precognitive')) {
     }
 }
 
+#
 if (!function_exists('view')) {
     /**
      * Get the evaluated view contents for the given view.
@@ -142,6 +147,7 @@ if (!function_exists('view')) {
     }
 }
 
+#
 if (!function_exists('response')) {
     /**
      * Return a new response from the application.
@@ -185,7 +191,7 @@ if (!function_exists('usr_path')) {
      */
     function usr_path($path = '')
     {
-        return app()->basePath('usr' . DIRECTORY_SEPARATOR . $path);
+        return app()->basePath('usr'.DIRECTORY_SEPARATOR.$path);
     }
 }
 
@@ -262,6 +268,7 @@ if (!function_exists('redirect')) {
     }
 }
 
+#
 if (!function_exists('csrf_field')) {
     /**
      * Generate a CSRF token form field.
@@ -270,10 +277,11 @@ if (!function_exists('csrf_field')) {
      */
     function csrf_field()
     {
-        return new HtmlString('<input type="hidden" name="_token" value="' . csrf_token() . '">');
+        return new HtmlString('<input type="hidden" name="_token" value="'.csrf_token().'">');
     }
 }
 
+#
 if (!function_exists('csrf_token')) {
     /**
      * Get the CSRF token value.
@@ -293,6 +301,7 @@ if (!function_exists('csrf_token')) {
     }
 }
 
+#
 if (!function_exists('route')) {
     /**
      * Generate the URL to a named route.
@@ -308,7 +317,7 @@ if (!function_exists('route')) {
     }
 }
 
-
+#
 if (!function_exists('validator')) {
     /**
      * Create a new Validator instance.
@@ -331,6 +340,7 @@ if (!function_exists('validator')) {
     }
 }
 
+#
 if (!function_exists('trans')) {
     /**
      * Translate the given message.
@@ -351,9 +361,10 @@ if (!function_exists('trans')) {
     }
 }
 
+#
 if (!function_exists('url')) {
     /**
-     * Generate a url for the application.
+     * Generate url for the application.
      *
      * @param  string|null  $path
      * @param  mixed  $parameters
@@ -370,6 +381,7 @@ if (!function_exists('url')) {
     }
 }
 
+#
 if (!function_exists('tap')) {
     /**
      * Call the given Closure with the given value then return the value.
@@ -390,6 +402,7 @@ if (!function_exists('tap')) {
     }
 }
 
+#
 if (!function_exists('public_path')) {
     /**
      * Get the path to the public folder.
@@ -399,10 +412,11 @@ if (!function_exists('public_path')) {
      */
     function public_path($path = '')
     {
-        return app()->make('path.public') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
+        return app()->make('path.public').($path ? DIRECTORY_SEPARATOR.ltrim($path, DIRECTORY_SEPARATOR) : $path);
     }
 }
 
+#
 if (!function_exists('trans_choice')) {
     /**
      * Translates the given message based on a count.
@@ -419,6 +433,7 @@ if (!function_exists('trans_choice')) {
     }
 }
 
+#
 if (!function_exists('__')) {
     /**
      * Translate the given message.
@@ -438,6 +453,7 @@ if (!function_exists('__')) {
     }
 }
 
+#
 if (!function_exists('e')) {
     /**
      * Encode HTML special characters in a string.
@@ -460,6 +476,7 @@ if (!function_exists('e')) {
     }
 }
 
+#
 if (!function_exists('resolve')) {
     /**
      * Resolve a service from the container.
@@ -474,6 +491,7 @@ if (!function_exists('resolve')) {
     }
 }
 
+#
 if (!function_exists('rescue')) {
     /**
      * Catch a potential exception and return a default value.
@@ -497,6 +515,7 @@ if (!function_exists('rescue')) {
     }
 }
 
+#
 if (!function_exists('request')) {
     /**
      * Get an instance of the current request or an input item from the request.
@@ -521,7 +540,7 @@ if (!function_exists('request')) {
     }
 }
 
-
+#
 if (!function_exists('report')) {
     /**
      * Report an exception.
@@ -559,7 +578,7 @@ if (!function_exists('redirect')) {
     }
 }
 
-
+#
 if (!function_exists('cookie')) {
     /**
      * Create a new cookie instance.
@@ -575,8 +594,17 @@ if (!function_exists('cookie')) {
      * @param  string|null  $sameSite
      * @return \Illuminate\Cookie\CookieJar|\Symfony\Component\HttpFoundation\Cookie
      */
-    function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null)
-    {
+    function cookie(
+        $name = null,
+        $value = null,
+        $minutes = 0,
+        $path = null,
+        $domain = null,
+        $secure = null,
+        $httpOnly = true,
+        $raw = false,
+        $sameSite = null
+    ) {
         $cookie = app(CookieFactory::class);
 
         if (is_null($name)) {
@@ -587,7 +615,7 @@ if (!function_exists('cookie')) {
     }
 }
 
-
+#
 if (!function_exists('to_route')) {
     /**
      * Create a new redirect response to a named route.
@@ -604,6 +632,7 @@ if (!function_exists('to_route')) {
     }
 }
 
+#
 if (!function_exists('today')) {
     /**
      * Create a new Carbon instance for the current date.
@@ -617,6 +646,7 @@ if (!function_exists('today')) {
     }
 }
 
+#
 if (!function_exists('session')) {
     /**
      * Get / set the specified session value.
@@ -656,7 +686,7 @@ if (!function_exists('secure_asset')) {
 
 if (!function_exists('secure_url')) {
     /**
-     * Generate a HTTPS url for the application.
+     * Generate HTTPS url for the application.
      *
      * @param  string  $path
      * @param  mixed  $parameters
@@ -732,7 +762,7 @@ if (!function_exists('method_field')) {
      */
     function method_field($method)
     {
-        return new HtmlString('<input type="hidden" name="_method" value="' . $method . '">');
+        return new HtmlString('<input type="hidden" name="_method" value="'.$method.'">');
     }
 }
 
@@ -1117,8 +1147,8 @@ if (!function_exists('action')) {
 if (!function_exists('uncamelize')) {
     /**
      * @param $word
-     * @param string $splitter
-     * @param bool $uppercase
+     * @param  string  $splitter
+     * @param  bool  $uppercase
      * @return string|string[]|null
      */
     function uncamelize($word, $splitter = " ", $uppercase = true)
@@ -1126,7 +1156,7 @@ if (!function_exists('uncamelize')) {
         $word = preg_replace(
             '/(?!^)[[:upper:]][[:lower:]]/',
             '$0',
-            preg_replace('/(?!^)[[:upper:]]+/', $splitter . '$0', $word)
+            preg_replace('/(?!^)[[:upper:]]+/', $splitter.'$0', $word)
         );
 
         return $uppercase ? ucwords($word) : $word;
