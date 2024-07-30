@@ -168,9 +168,9 @@ return [
         ],
 
         'nav' => [
-            'search' => false, // Поле поиска
-            'builder' => false, // Конструктор поиска
-            'mods' => false, // Модификаторы таблицы
+            'search' => false,         // Поле поиска
+            'builder' => true,         // Конструктор поиска
+            'mods' => true,            // Модификаторы таблицы
 
             'export' => [
                 'excel' => true,
