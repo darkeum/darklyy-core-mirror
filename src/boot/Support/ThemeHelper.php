@@ -8,6 +8,7 @@ use Boot\System\Settings\Facades\Settings;
 
 class ThemeHelper
 {
+    #
     public static function applClasses()
     {
         // Demo
@@ -173,6 +174,7 @@ class ThemeHelper
         return $layoutClasses;
     }
 
+    #
     public static function updatePageConfig($pageConfigs)
     {
         $demo = 'custom';
@@ -192,5 +194,11 @@ class ThemeHelper
                 }
             }
         }
+    }
+
+    #
+    public static function headerRequestHas($url) {
+        //dd('ThemeHelper::headerRequestHas');
+        return request()->routeIs($url) || request()->url() == $url;
     }
 }

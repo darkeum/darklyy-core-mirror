@@ -168,14 +168,17 @@ return [
         ],
 
         'nav' => [
-            'export' => false,
-            //'export' => [
-            //    'excel' => true,
-            //    'pdf' => true,
-            //    'print' => true,
-            //    'copy' => true,
-            //    'csv' => true,
-            //],
+            'search' => false,         // Поле поиска
+            'builder' => true,         // Конструктор поиска
+            'mods' => true,            // Модификаторы таблицы
+
+            'export' => [
+                'excel' => true,
+                'pdf' => true,
+                'print' => true,
+                'copy' => true,
+                'csv' => true,
+            ],
         ],
 
         // Список действий мыши по умолчанию (select, open, 'opennt', 'opennw')
