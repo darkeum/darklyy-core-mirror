@@ -43,6 +43,7 @@ class FilesystemLoader  implements LoaderInterface
         $module = ['news', 'support', 'feedback', 'catalog', 'job', 'organizations', 'scan', 'portfolio', 'order', 'service', 'cashbox', 'reviews', 'project', 'promotions', 'certificates', 'bank', 'home', 'partner', 'control', 'scada', 'victoria', 'task2', 'selection', 'sales2', 'dev', 'warranty_card', 'users', 'chat', 'away', 'org', 'calculation', 'report', 'profile', 'price2'];
         foreach ($module as $key => $value) {
             $view = ROOT . 'usr/modules/' . $value . '/resources/views/';
+            $view_upper = ROOT . 'usr/modules/' . $value . '/Resources/views/';
             $viewWEB = ROOT . 'usr/modules/' . $value . '/UI/WEB/Resources/Views/';
             $viewWEBNew = ROOT . 'usr/modules/' . $value . '/UI/WEB/Views/';
             $resources = ROOT . 'usr/modules/' . $value . '/';
@@ -51,7 +52,7 @@ class FilesystemLoader  implements LoaderInterface
             $lang = ROOT . 'usr/modules/' . $value . '/resources/langs/' . $value . '.ru.lang.php';
 
             if (is_dir($viewWEBNew)) {
-                $this->addPath($viewWEBNew, $value. '__');
+                $this->addPath($viewWEBNew, $value . '__');
             }
 
 
@@ -60,6 +61,8 @@ class FilesystemLoader  implements LoaderInterface
                 $this->addPath($viewWEB, $value);
             } elseif (is_dir($view)) {
                 $this->addPath($view, $value);
+            } elseif (is_dir($view_upper)) {
+                $this->addPath($view_upper, $value);
             } else {
                 if (is_dir($viewWEBNew)) {
                     $this->addPath($viewWEBNew, $value);
