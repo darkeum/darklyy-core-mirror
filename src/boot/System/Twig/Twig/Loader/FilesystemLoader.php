@@ -40,56 +40,41 @@ class FilesystemLoader  implements LoaderInterface
             $this->setPaths($paths);
         }
 
-        $module = ['news', 'support', 'feedback', 'catalog', 'job', 'organizations', 'scan', 'portfolio', 'order', 'service', 'cashbox', 'reviews', 'project', 'promotions', 'certificates', 'bank', 'home', 'partner', 'control', 'scada', 'victoria', 'task2', 'selection', 'sales2', 'dev', 'warranty_card', 'users', 'chat', 'away', 'org', 'calculation', 'report', 'profile', 'price2'];
+        $module = ['news', 'support', 'feedback', 'catalog', 'job', 'organizations', 'scan', 'portfolio', 'order', 'service', 'cashbox', 'reviews', 'project', 'promotions', 'certificates', 'bank', 'home',  'control', 'scada', 'victoria', 'selection', 'sales2',  'users', 'chat', 'calculation', 'report', 'profile'];
         foreach ($module as $key => $value) {
             $view = ROOT . 'usr/modules/' . $value . '/resources/views/';
-            $view_upper = ROOT . 'usr/modules/' . $value . '/Resources/views/';
             $viewWEB = ROOT . 'usr/modules/' . $value . '/UI/WEB/Resources/Views/';
             $viewWEBNew = ROOT . 'usr/modules/' . $value . '/UI/WEB/Views/';
             $resources = ROOT . 'usr/modules/' . $value . '/';
-            $router = ROOT . 'usr/modules/' . $value . '/Router.php';
 
-            $lang = ROOT . 'usr/modules/' . $value . '/resources/langs/' . $value . '.ru.lang.php';
-
+            $skip = array('.', '..');
+            $files = scandir($resources);
+            foreach ($files as $file) {
+                if (!in_array($file, $skip)) {
+                    if ($file === 'Resources') {
+                        $view = ROOT . 'usr/modules/' . $value . '/Resources/views/';
+                    }
+                }
+            }
             if (is_dir($viewWEBNew)) {
                 $this->addPath($viewWEBNew, $value . '__');
             }
 
 
             if (is_dir($viewWEB)) {
-                // dump($viewWEB);
                 $this->addPath($viewWEB, $value);
             } elseif (is_dir($view)) {
                 $this->addPath($view, $value);
-            } elseif (is_dir($view_upper)) {
-                $this->addPath($view_upper, $value);
             } else {
                 if (is_dir($viewWEBNew)) {
                     $this->addPath($viewWEBNew, $value);
                 }
             }
             if (is_dir($resources)) {
-                // dd($resources);
                 $this->addPath($resources, $value . '_');
             }
-            // dump($this);
-            // if (file_exists($lang)) {
-            //     $translator->addResource('php', $lang, 'ru');
-            // }
-            // $translator->addResource('php', ROOT . 'resources/langs/ru.grid.lang.php', 'ru');
-
-            // $dirLng = ROOT . 'usr/modules/' . $value . '/Languages/ru';
-            // if (is_dir($dirLng . '/')) {
-            //     $filesLng = glob($dirLng . '/*.lang.php');
-            //     foreach ($filesLng as $fileLng) {
-            //         if (file_exists($fileLng)) {
-            //             $translator->addResource('php', $fileLng, 'ru');
-            //         }
-            //     }
-            // }
 
         }
-        // dd($this);
     }
 
     /**
