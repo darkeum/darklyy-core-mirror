@@ -12,6 +12,7 @@ use Spatie\Sun\Sun;
 
 class DashboardServiceProvider extends ServiceProvider
 {
+    #
     public function boot()
     {
         $dashboard = $this->app->make(Dashboard::class);
@@ -33,6 +34,7 @@ class DashboardServiceProvider extends ServiceProvider
             ->registerLivewireComponents();
     }
 
+    #
     public function register()
     {
               $this->app->singleton(Dashboard::class);
@@ -50,7 +52,7 @@ class DashboardServiceProvider extends ServiceProvider
             ->give(config('dashboard.theme'));
     }
 
-
+    #
     protected function registerBladeComponents(): self
     {
         Blade::component('dashboard', DashboardComponent::class);
@@ -59,6 +61,7 @@ class DashboardServiceProvider extends ServiceProvider
         return $this;
     }
 
+    #
     protected function registerLivewireComponents(): self
     {
         Livewire::component('dashboard-update-mode', UpdateModeComponent::class);
