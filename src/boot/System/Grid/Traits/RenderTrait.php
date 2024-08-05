@@ -32,7 +32,9 @@ trait RenderTrait
 
         $index = 0;
         foreach ($this->cols as $k => $c) {
-            if (isset($c['unset']) && $c['unset']) continue;
+            if (isset($c['unset']) && $c['unset']) {
+                continue;
+            }
             $colModel[] = $this->renderColumn($c);
             $colIndex[$k] = $index;
             $index++;
@@ -49,7 +51,8 @@ trait RenderTrait
         // Сортировка по умолчанию
         if (isset($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
             $data['short']['index'] = $colIndex[$data['options']['sort']['name']];
-            $data['short']['order'] = in_array(Str::lower(($data['options']['sort']['order'] ?? 'asc')), array('asc', 'desc')) ? Str::lower(($data['options']['sort']['order'] ?? 'asc')) : 'asc';
+            $data['short']['order'] = in_array(Str::lower(($data['options']['sort']['order'] ?? 'asc')),
+                array('asc', 'desc')) ? Str::lower(($data['options']['sort']['order'] ?? 'asc')) : 'asc';
         }
 
         // Структура элементов DOM
@@ -79,8 +82,7 @@ trait RenderTrait
     #
     protected function renderColumn($c)
     {
-        if(is_object($c['db']) and $c['db'] instanceof  \Illuminate\Database\Query\Expression)
-        {
+        if (is_object($c['db']) and $c['db'] instanceof \Illuminate\Database\Query\Expression) {
             $c['db'] = strval($c['db']->getValue(DB::connection()->getQueryGrammar()));
         }
         return $c;
@@ -135,7 +137,8 @@ trait RenderTrait
     }
 
     # Языковой файл для Grid
-    protected function getLanguage() {
+    protected function getLanguage()
+    {
         $language = trans('grid::lang');
 
         //
