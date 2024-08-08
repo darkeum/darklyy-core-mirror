@@ -136,11 +136,13 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             let ajax = false;
                             // console.log(values)
 
-                            // Если есть пункт для работы с AJAX
+                            // WIP - Если есть пункт для работы с AJAX
                             if (values.hasOwnProperty('__AJAX_SELECT_GRID')) {
                                 ajax = values.__AJAX_SELECT_GRID;
                                 delete values.__AJAX_SELECT_GRID;
                                 // console.log(ajax);
+
+                                // ...
                             }
 
                             // Если есть пункт "ВСЕ" то он первый
@@ -151,25 +153,25 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 first.attr({
                                     'value': '__ALL_SELECT_GRID'
                                 }).html(all);
-                                // select_options.push(first);
                             }
 
-                            // Кастомный первым будет
+                            // WIP - Кастомный первым будет
                             if (values.hasOwnProperty('__CUSTOM_SELECT_GRID')) {
-                                let custom = values.__CUSTOM_SELECT_GRID;
-                                custom = JSON.parse(custom);
+                                // let custom = values.__CUSTOM_SELECT_GRID;
+                                // custom = JSON.parse(custom);
+
+                                let custom = JSON.parse(values.__CUSTOM_SELECT_GRID);
                                 delete values.__CUSTOM_SELECT_GRID;
 
-                                let firstKey = Object.keys(custom)[0];
-                                let firstValue = Object.values(custom)[0];
+                                // let firstKey = Object.keys(custom)[0];
+                                // let firstValue = Object.values(custom)[0];
 
                                 first.attr({
-                                    'value': firstKey
-                                }).html(firstValue);
-                                // select_options.push(first);
+                                    'value': Object.keys(custom)[0]
+                                }).html(Object.values(custom)[0]);
                             }
 
-                            // Переберем остальное
+                            // Переберем пункты Select
                             $.each(values, function (index, item) {
                                 // Создаем option'ы для select'а
                                 let option = $('<option></option>');
@@ -181,8 +183,9 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // console.log(select_options)
 
                             // Сортируем по алфавиту пункты в Select
-                            select_options.sort(function(x, y) {
+                            select_options.sort(function (x, y) {
                                 // для перехода к порядку убывания переключите "<" на ">"
+                                // ASC и DESC тут можно реализовать
                                 if (true) {
                                     return $(x).text() > $(y).text() ? 1 : -1;
                                 } else {
@@ -193,7 +196,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // Добавляем первый элемент в select (Всё)
                             select_options.unshift(first);
 
-                            // Создаем select выпадающий список
+                            // Создаем select выпадающий список и добавляем в него option'ы
                             select = $('<select></select>');
                             select.attr({
                                 'id': col.data,
@@ -202,7 +205,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             }).html(select_options);
                             $(this).append(select);
 
-                            //
+                            // Событие изменения Select
                             $('select', this).on('change', function () {
                                 if (api.column(col.idx).search() !== this.value) {
                                     api.column(col.idx).search(this.value).draw();
@@ -211,7 +214,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 }
                             });
 
-                            // Использовать Select2 если нужно
+                            // WIP - Добавить Select2.js к Select если нужно
                             if (col.options.hasOwnProperty('select2')
                                 // && typeof col.options.select2 == 'boolean' //
                                 && col.options.select2 == true) {
@@ -220,7 +223,6 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 });
                             }
                         }
-
                     }
 
                     break;
