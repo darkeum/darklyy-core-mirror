@@ -132,7 +132,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         // Если есть "value" - Строки в список поданы
                         if (col.options.hasOwnProperty('value')) {
                             let values = JSON.parse(col.options.value);
-                            let option = $('<option></option>');
+                            let first = $('<option></option>');
                             let ajax = false;
                             // console.log(values)
 
@@ -145,13 +145,13 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // Если есть пункт "ВСЕ" то он первый
                             if (values.hasOwnProperty('__ALL_SELECT_GRID')) {
-                                let all = values.__ALL_SELECT_GRID;
-                                delete values.__ALL_SELECT_GRID;
+                                let all = values.__ALL_SELECT_GRID; // Сохраняем в переменной
+                                delete values.__ALL_SELECT_GRID; // Удаляем из объекта
 
-                                option.attr({
+                                first.attr({
                                     'value': '__ALL_SELECT_GRID'
                                 }).html(all);
-                                select_options.push(option);
+                                // select_options.push(first);
                             }
 
                             // Кастомный первым будет
@@ -163,10 +163,10 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 let firstKey = Object.keys(custom)[0];
                                 let firstValue = Object.values(custom)[0];
 
-                                option.attr({
+                                first.attr({
                                     'value': firstKey
                                 }).html(firstValue);
-                                select_options.push(option);
+                                // select_options.push(first);
                             }
 
                             // Переберем остальное
@@ -179,6 +179,19 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 select_options.push(option);
                             });
                             // console.log(select_options)
+
+                            // Сортируем по алфавиту пункты в Select
+                            select_options.sort(function(x, y) {
+                                // для перехода к порядку убывания переключите "<" на ">"
+                                if (true) {
+                                    return $(x).text() > $(y).text() ? 1 : -1;
+                                } else {
+                                    return $(x).text() < $(y).text() ? 1 : -1;
+                                }
+                            });
+
+                            // Добавляем первый элемент в select (Всё)
+                            select_options.unshift(first);
 
                             // Создаем select выпадающий список
                             select = $('<select></select>');
