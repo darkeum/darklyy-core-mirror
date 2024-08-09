@@ -157,14 +157,8 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // WIP - Кастомный первым будет
                             if (values.hasOwnProperty('__CUSTOM_SELECT_GRID')) {
-                                // let custom = values.__CUSTOM_SELECT_GRID;
-                                // custom = JSON.parse(custom);
-
                                 let custom = JSON.parse(values.__CUSTOM_SELECT_GRID);
                                 delete values.__CUSTOM_SELECT_GRID;
-
-                                // let firstKey = Object.keys(custom)[0];
-                                // let firstValue = Object.values(custom)[0];
 
                                 first.attr({
                                     'value': Object.keys(custom)[0]
@@ -209,8 +203,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             $('select', this).on('change', function () {
                                 if (api.column(col.idx).search() !== this.value) {
                                     api.column(col.idx).search(this.value).draw();
-                                    // console.log(col.idx)
-                                    // console.log(this.value);
+                                    // console.log(col.idx, this.value)
                                 }
                             });
 
