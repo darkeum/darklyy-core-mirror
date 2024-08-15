@@ -176,16 +176,17 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             });
                             // console.log(select_options)
 
-                            // Сортируем по алфавиту пункты в Select
-                            select_options.sort(function (x, y) {
-                                // для перехода к порядку убывания переключите "<" на ">"
-                                // ASC и DESC тут можно реализовать
-                                if (true) {
-                                    return $(x).text() > $(y).text() ? 1 : -1;
-                                } else {
-                                    return $(x).text() < $(y).text() ? 1 : -1;
-                                }
-                            });
+                            // Сортируем по алфавиту пункты в Select если нужно (order - true/false)
+                            if (col.options.hasOwnProperty('order')) {
+                                select_options.sort(function (x, y) {
+                                    // order - true/false
+                                    if (col.options.order == true) {
+                                        return $(x).text() > $(y).text() ? 1 : -1;
+                                    } else {
+                                        return $(x).text() < $(y).text() ? 1 : -1;
+                                    }
+                                });
+                            }
 
                             // Добавляем первый элемент в select (Всё)
                             select_options.unshift(first);

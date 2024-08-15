@@ -100,7 +100,7 @@ class GridView
     }
 
     # Генерация иконки в Grid
-    public static function icon($type, $css, $title = false)
+    public static function icon($type, $css, $title = '')
     {
         switch ($type) {
             case 'fe':
