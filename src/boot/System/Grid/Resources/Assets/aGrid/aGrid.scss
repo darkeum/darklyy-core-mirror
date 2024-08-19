@@ -238,7 +238,9 @@
   table {
 
     // Работа с Grid
-    &.dataTable {
+    &.aGrid-table {
+
+      position: relative;
 
       &.collapsed {
         tbody {
