@@ -11,6 +11,8 @@
 // Main container Datatables aGrid
 .aGrid-container {
 
+  margin: 0!important;
+
   //
   button.aGrid-mods-button {
     &[aria-describedby="*"] {
@@ -236,7 +238,9 @@
   table {
 
     // Работа с Grid
-    &.dataTable {
+    &.aGrid-table {
+
+      position: relative;
 
       &.collapsed {
         tbody {
