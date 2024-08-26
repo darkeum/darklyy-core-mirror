@@ -2,7 +2,7 @@
 
 namespace Boot\ServiceProviders;
 
-use Illuminate\Contracts\Validation\ValidatesWhenResolved;
+use Boot\Contracts\Validation\ValidatesWhenResolved;
 use Boot\System\Http\FormRequest;
 use Boot\System\Routing\Redirector;
 use Boot\Support\ServiceProvider;
@@ -29,9 +29,9 @@ class FormRequestServiceProvider extends ServiceProvider
         $this->app->afterResolving(ValidatesWhenResolved::class, function ($resolved) {
             $resolved->validateResolved();
         });
-       
+
         $this->app->resolving(FormRequest::class, function ($request, $app) {
-           
+
             $request = FormRequest::createFrom($app['request'], $request);
 
             $request->setContainer($app)->setRedirector($app->make(Redirector::class));

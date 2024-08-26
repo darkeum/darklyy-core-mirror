@@ -2,20 +2,20 @@
 
 namespace Boot\System\Http;
 
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
-use Illuminate\Contracts\Validation\ValidatesWhenResolved;
-use Illuminate\Contracts\Validation\Validator;
 use Boot\System\Http\Request;
 use Boot\System\Routing\Redirector;
-use Illuminate\Validation\ValidatesWhenResolvedTrait;
+use Illuminate\Auth\Access\Response;
+use Boot\Contracts\Validation\Validator;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Boot\Contracts\Validation\ValidatesWhenResolved;
+use Boot\Contracts\Validation\Factory as ValidationFactory;
+use Boot\System\Validation\Traits\ValidatesWhenResolvedTrait;
 
 class FormRequest extends Request implements ValidatesWhenResolved
 {
-   
+
     use ValidatesWhenResolvedTrait;
     /**
      * The container instance.
@@ -84,7 +84,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
             return $this->validator;
         }
 
+
         $factory = $this->container->make(ValidationFactory::class);
+        // dd(method_exists($this, 'validator') );
 
         if (method_exists($this, 'validator')) {
             $validator = $this->container->call([$this, 'validator'], compact('factory'));
@@ -95,7 +97,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
         if (method_exists($this, 'withValidator')) {
             $this->withValidator($validator);
         }
-
+// dd($validator);
         $this->setValidator($validator);
 
         return $this->validator;
@@ -114,6 +116,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
         if ($this->isPrecognitive()) {
             $rules = $this->filterPrecognitiveRules($rules);
         }
+        // dd($this->validationData(), $rules,
+        // $this->messages(), $this->attributes());
 
         return $factory->make(
             $this->validationData(), $rules,

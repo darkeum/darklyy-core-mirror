@@ -2,7 +2,8 @@
 
 namespace Boot\System\Validation\Traits;
 
-use \Boot\System\Validation\Validation;
+use Illuminate\Foundation\Precognition;
+
 /**
  * Provides default implementation of ValidatesWhenResolved contract.
  */
@@ -22,7 +23,10 @@ trait ValidatesWhenResolvedTrait
         }
 
         $instance = $this->getValidatorInstance();
-        $instance->validate();
+
+        if ($this->isPrecognitive()) {
+            $instance->after(Precognition::afterValidationHook($this));
+        }
 
         if ($instance->fails()) {
             $this->failedValidation($instance);
@@ -44,11 +48,11 @@ trait ValidatesWhenResolvedTrait
     /**
      * Get the validator instance for the request.
      *
-     * @return \Boot\System\Validation\Validation
+     * @return \Illuminate\Validation\Validator
      */
     protected function getValidatorInstance()
     {
-        return $this->validation();
+        return $this->validator();
     }
 
     /**
@@ -64,16 +68,16 @@ trait ValidatesWhenResolvedTrait
     /**
      * Handle a failed validation attempt.
      *
-     * @param \Boot\System\Validation\Validation  $validation
+     * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    protected function failedValidation(Validation $validation)
+    protected function failedValidation(Validator $validator)
     {
-        $error = $validation->errors();
-        // throw new \Exception( $error->firstOfAll());
-        throw new \Exception(json_encode($error->firstOfAll()));
+        $exception = $validator->getException();
+
+        throw new $exception($validator);
     }
 
     /**
@@ -99,6 +103,6 @@ trait ValidatesWhenResolvedTrait
      */
     protected function failedAuthorization()
     {
-        // throw new UnauthorizedException;
+        throw new UnauthorizedException;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Boot\System\Validation;
 
-use Illuminate\Contracts\Validation\Factory;
+use Boot\Contracts\Validation\Factory;
 use Boot\System\Http\Request;
 use Illuminate\Validation\ValidationException;
 

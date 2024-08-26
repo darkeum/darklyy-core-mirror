@@ -32,7 +32,7 @@ use Boot\System\Bus\PendingClosureDispatch;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Cookie\Factory as CookieFactory;
 use Illuminate\Contracts\Support\DeferringDisplayableValue;
-use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Boot\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastFactory;
 
 if (!function_exists('app')) {

@@ -2,7 +2,7 @@
 
 namespace Boot\System\Validation;
 
-use Illuminate\Validation\Factory;
+use Boot\System\Validation\Factory;
 use Boot\Support\ServiceProvider;
 use Illuminate\Validation\NotPwnedVerifier;
 use Boot\Contracts\Support\DeferrableProvider;

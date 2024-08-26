@@ -1503,7 +1503,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
             'session' => [\Boot\System\Session\SessionManager::class],
             'session.store' => [\Boot\System\Session\Store::class, \Illuminate\Contracts\Session\Session::class],
             'url' => [\Boot\System\Routing\UrlGenerator::class, \Illuminate\Contracts\Routing\UrlGenerator::class],
-            'validator' => [\Illuminate\Validation\Factory::class, \Illuminate\Contracts\Validation\Factory::class],
+            'validator' => [\Boot\System\Validation\Factory::class, \Boot\Contracts\Validation\Factory::class],
             'view' => [\Illuminate\View\Factory::class, \Illuminate\Contracts\View\Factory::class],
         ] as $key => $aliases) {
             foreach ($aliases as $alias) {

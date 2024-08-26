@@ -10,7 +10,7 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Database\Eloquent\Factory as ModelFactory;
 use Illuminate\View\Compilers\BladeCompiler;
 
-abstract class ServiceProvider 
+abstract class ServiceProvider
 {
     /**
      * The application instance.
@@ -134,7 +134,7 @@ abstract class ServiceProvider
         if (! ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
             $config = $this->app->make('config');
             $cc = $config->get($key, []);
-            
+
             $config->set($key, array_merge(
                 require $path, $cc
             ));
@@ -162,14 +162,14 @@ abstract class ServiceProvider
      * @return void
      */
     protected function loadViewsFrom($path, $namespace)
-    {      
-        $this->callAfterResolving('view', function ($view) use ($path, $namespace) {          
+    {
+        $this->callAfterResolving('view', function ($view) use ($path, $namespace) {
             if (isset($this->app->config['view']['paths']) &&
                 is_array($this->app->config['view']['paths'])) {
                 foreach ($this->app->config['view']['paths'] as $viewPath) {
                     if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
                         $view->addNamespace($namespace, $appPath);
-									 
+
                     }
                 }
             }
