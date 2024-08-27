@@ -11,55 +11,31 @@
 
 namespace Boot\System\Validation;
 
-use Boot\Support\Str;
 use Illuminate\Validation\Validator as LaravelValidator;
 use Boot\Contracts\Validation\Validator as ValidatorContract;
 
 class Validator extends LaravelValidator implements ValidatorContract
 {
-    protected $modifedData;
+    protected $modified_data;
 
-    public function getModifidData()
+    public function getModifiedData()
     {
-        return $this->modifedData;
+        return $this->modified_data;
     }
 
-    public function getModifidField(string $key)
+    public function getModifiedField(string $key)
     {
-        return isset($this->modifedData[$key]) ? $this->modifedData[$key] : (isset($this->data[$key]) ? $this->data[$key] : null);
+        return isset($this->modified_data[$key]) ? $this->modified_data[$key] : (isset($this->data[$key]) ? $this->data[$key] : null);
     }
 
-    public function setModifidField($key, $value)
+    public function setModifiedField($key, $value)
     {
-        $this->modifedData[$key] = $value;
+        $this->modified_data[$key] = $value;
     }
 
-    public function setModifidData($modifedData)
+    public function setModifiedData($modified_data)
     {
-        $this->modifedData = $modifedData;
+        $this->modified_data = $modified_data;
     }
 
-    /**
-     * Call a class based validator extension.
-     *
-     * @param  string  $callback
-     * @param  array  $parameters
-     * @return bool
-     */
-    protected function callClassBasedExtension($callback, $parameters)
-    {
-        [$class, $method] = Str::parseCallback($callback, 'validate');
-
-        $container = $this->container->make($class);
-        $result = $container->{$method}(...array_values($parameters));
-        // dd($parameters);
-        // if (method_exists($container, 'modifi')) {
-        //     dd('d');
-        // } else {
-        //     dd('s');
-        // }
-        // dd($container);
-        // dd($result);
-        return $result;
-    }
 }
