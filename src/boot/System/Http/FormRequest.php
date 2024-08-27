@@ -67,9 +67,9 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected $stopOnFirstFailure = false;
 
     /**
-     * The validator instance.
+     * Экземпляр валидатора
      *
-     * @var \Illuminate\Contracts\Validation\Validator
+     * @var \Boot\Contracts\Validation\Validator
      */
     protected $validator;
 
@@ -97,7 +97,7 @@ class FormRequest extends Request implements ValidatesWhenResolved
         if (method_exists($this, 'withValidator')) {
             $this->withValidator($validator);
         }
-// dd($validator);
+        // dd($validator);
         $this->setValidator($validator);
 
         return $this->validator;
@@ -120,8 +120,10 @@ class FormRequest extends Request implements ValidatesWhenResolved
         // $this->messages(), $this->attributes());
 
         return $factory->make(
-            $this->validationData(), $rules,
-            $this->messages(), $this->attributes()
+            $this->validationData(),
+            $rules,
+            $this->messages(),
+            $this->attributes()
         )->stopOnFirstFailure($this->stopOnFirstFailure);
     }
     /**
@@ -145,8 +147,8 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function failedValidation(Validator $validator)
     {
         throw (new ValidationException($validator))
-                    ->errorBag($this->errorBag)
-                    ->redirectTo($this->getRedirectUrl());
+            ->errorBag($this->errorBag)
+            ->redirectTo($this->getRedirectUrl());
     }
 
     /**
@@ -208,8 +210,19 @@ class FormRequest extends Request implements ValidatesWhenResolved
     public function safe(array $keys = null)
     {
         return is_array($keys)
-                    ? $this->validator->safe()->only($keys)
-                    : $this->validator->safe();
+            ? $this->validator->safe()->only($keys)
+            : $this->validator->safe();
+    }
+
+
+    public function validationModifiedData()
+    {
+        return $this->validator->getModifiedData();
+    }
+
+    public function validationModifiedField($key)
+    {
+        return $this->validator->getModifiedField($key);
     }
 
     /**

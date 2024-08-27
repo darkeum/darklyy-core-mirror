@@ -62,4 +62,18 @@ interface Validator extends MessageProvider
      * @return \Illuminate\Support\MessageBag
      */
     public function errors();
+
+    /**
+     * Получение модифицированных данных после проверки
+     *
+     * @return void
+     */
+    public function getModifiedData();
+
+    /**
+     * Получение модифицированного поля после проверки
+     *
+     * @return void
+     */
+    public function getModifiedField(string $key);
 }
