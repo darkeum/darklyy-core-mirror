@@ -85,7 +85,7 @@ class ThemeHelper
             ),
             'blankPage' => array(false, true),
             'sidebarPositionClass' => array(
-                'content-area' => 'sidebar-no',
+                'content-area' => '',
                 'content-left-sidebar' => 'sidebar-left',
                 'content-right-sidebar' => 'sidebar-right',
                 'content-detached-left-sidebar' => 'sidebar-detached sidebar-left',
@@ -93,6 +93,7 @@ class ThemeHelper
                 'default' => 'default-sidebar-position'
             ),
             'contentSidebarClass' => array(
+                'content-area' => '',
                 'content-left-sidebar' => 'content-right',
                 'content-right-sidebar' => 'content-left',
                 'content-detached-left-sidebar' => 'content-detached content-right',
