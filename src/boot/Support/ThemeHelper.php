@@ -34,6 +34,7 @@ class ThemeHelper
             'verticalMenuNavbarType' => 'floating',
             'footerType' => 'static', // footer
             'layoutWidth' => 'boxed',
+            'layoutClass' => '',
             'showMenu' => true,
             'bodyClass' => '',
             'pageClass' => '',
@@ -76,7 +77,7 @@ class ThemeHelper
             //
             'contentLayout' => array(
                 'default',
-                'content-only',
+                'content-area',
                 'content-left-sidebar',
                 'content-right-sidebar',
                 'content-detached-left-sidebar',
@@ -84,7 +85,7 @@ class ThemeHelper
             ),
             'blankPage' => array(false, true),
             'sidebarPositionClass' => array(
-                'content-only' => 'sidebar-no',
+                'content-area' => 'sidebar-no',
                 'content-left-sidebar' => 'sidebar-left',
                 'content-right-sidebar' => 'sidebar-right',
                 'content-detached-left-sidebar' => 'sidebar-detached sidebar-left',
@@ -92,7 +93,6 @@ class ThemeHelper
                 'default' => 'default-sidebar-position'
             ),
             'contentSidebarClass' => array(
-                'content-only' => 'content-only w-100',
                 'content-left-sidebar' => 'content-right',
                 'content-right-sidebar' => 'content-left',
                 'content-detached-left-sidebar' => 'content-detached content-right',
@@ -137,6 +137,7 @@ class ThemeHelper
             'sidebarCollapsed' => $data['sidebarCollapsed'],
             'showMenu' => $data['showMenu'],
             'layoutWidth' => $data['layoutWidth'],
+            'layoutClass' => $data['layoutClass'],
             'verticalMenuNavbarType' => $allOptions['verticalMenuNavbarType'][$data['verticalMenuNavbarType']],
             'navbarClass' => $allOptions['navbarClass'][$data['verticalMenuNavbarType']],
             'navbarColor' => $data['navbarColor'],
