@@ -18,9 +18,9 @@ class MediaUiServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'media-library');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'media-library');
-        $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang/');
+        // $this->loadViewsFrom(__DIR__ . '/../resources/views', 'media-library');
+        // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang/', 'media-library');
+        // $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang/');
 
         $this
             ->registerPublishables()

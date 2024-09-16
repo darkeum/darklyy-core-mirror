@@ -29,7 +29,6 @@ class UrlGeneratorFactory
 
             $urlGenerator->setConversion($conversion);
         }
-
         return $urlGenerator;
     }
 

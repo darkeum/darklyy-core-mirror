@@ -2,12 +2,12 @@
 
 namespace Boot\System\Media\MediaCollections;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Boot\System\Media\MediaCollections\Exceptions\RequestDoesNotHaveFile;
+use Illuminate\Database\Eloquent\Model;
 use Boot\System\Media\Support\RemoteFile;
-use Boot\System\Media\Dto\PendingMediaItem;
+use Darkeum\MediaLibraryUI\Dto\PendingMediaItem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Boot\System\Media\MediaCollections\Exceptions\RequestDoesNotHaveFile;
 
 class FileAdderFactory
 {

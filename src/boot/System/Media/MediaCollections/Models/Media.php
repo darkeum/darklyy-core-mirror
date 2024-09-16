@@ -3,34 +3,34 @@
 namespace Boot\System\Media\MediaCollections\Models;
 
 use DateTimeInterface;
-use Illuminate\Contracts\Mail\Attachable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Mail\Attachment;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Boot\System\Media\Conversions\Conversion;
-use Boot\System\Media\Conversions\ConversionCollection;
-use Boot\System\Media\Conversions\ImageGenerators\ImageGeneratorFactory;
 use Boot\System\Media\HasMedia;
-use Boot\System\Media\MediaCollections\Filesystem;
-use Boot\System\Media\MediaCollections\HtmlableMedia;
-use Boot\System\Media\MediaCollections\Models\Collections\MediaCollection;
-use Boot\System\Media\MediaCollections\Models\Concerns\CustomMediaProperties;
-use Boot\System\Media\MediaCollections\Models\Concerns\HasUuid;
-use Boot\System\Media\MediaCollections\Models\Concerns\IsSorted;
-use Boot\System\Media\ResponsiveImages\RegisteredResponsiveImages;
+use Illuminate\Mail\Attachment;
+use Illuminate\Support\Collection;
 use Boot\System\Media\Support\File;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Mail\Attachable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Support\Htmlable;
+use Boot\System\Media\Conversions\Conversion;
+use Illuminate\Contracts\Support\Responsable;
 use Boot\System\Media\Support\MediaLibraryPro;
 use Boot\System\Media\Support\TemporaryDirectory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Boot\System\Media\MediaCollections\Filesystem;
+use Darkeum\MediaLibraryUI\Models\TemporaryUpload;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Boot\System\Media\MediaCollections\HtmlableMedia;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Boot\System\Media\Conversions\ConversionCollection;
 use Boot\System\Media\Support\UrlGenerator\UrlGenerator;
+use Boot\System\Media\MediaCollections\Models\Concerns\HasUuid;
 use Boot\System\Media\Support\UrlGenerator\UrlGeneratorFactory;
-use Boot\System\Media\Models\TemporaryUpload;
+use Boot\System\Media\MediaCollections\Models\Concerns\IsSorted;
+use Boot\System\Media\ResponsiveImages\RegisteredResponsiveImages;
+use Boot\System\Media\Conversions\ImageGenerators\ImageGeneratorFactory;
+use Boot\System\Media\MediaCollections\Models\Collections\MediaCollection;
+use Boot\System\Media\MediaCollections\Models\Concerns\CustomMediaProperties;
 
 /**
  * @property-read string $type
@@ -316,7 +316,7 @@ class Media extends Model implements Responsable, Htmlable, Attachable
         $downloadHeaders = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-Type' => $mime_type,
-            
+
             'Content-Disposition' => $contentDispositionType . '; filename="' . $file_name . '"',
             'Pragma' => 'public',
         ];

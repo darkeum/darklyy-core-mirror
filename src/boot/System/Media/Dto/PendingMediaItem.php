@@ -5,7 +5,7 @@ namespace Boot\System\Media\Dto;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Boot\System\Media\Models\TemporaryUpload;
+use Darkeum\MediaLibraryUI\Models\TemporaryUpload;
 
 class PendingMediaItem
 {

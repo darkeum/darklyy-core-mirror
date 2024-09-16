@@ -3,28 +3,28 @@
 namespace Boot\System\Media;
 
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\File;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Boot\System\Media\Conversions\Conversion;
-use Boot\System\Media\Downloaders\DefaultDownloader;
-use Boot\System\Media\MediaCollections\Events\CollectionHasBeenCleared;
-use Boot\System\Media\MediaCollections\Exceptions\InvalidBase64Data;
-use Boot\System\Media\MediaCollections\Exceptions\InvalidUrl;
-use Boot\System\Media\MediaCollections\Exceptions\MediaCannotBeDeleted;
-use Boot\System\Media\MediaCollections\Exceptions\MediaCannotBeUpdated;
-use Boot\System\Media\MediaCollections\Exceptions\MimeTypeNotAllowed;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Boot\System\Media\Support\MediaLibraryPro;
 use Boot\System\Media\MediaCollections\FileAdder;
-use Boot\System\Media\MediaCollections\FileAdderFactory;
+use Boot\System\Media\Downloaders\DefaultDownloader;
+use Boot\System\Media\MediaCollections\Models\Media;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Boot\System\Media\MediaCollections\MediaCollection;
 use Boot\System\Media\MediaCollections\MediaRepository;
-use Boot\System\Media\MediaCollections\Models\Media;
-use Boot\System\Media\Support\MediaLibraryPro;
-use Boot\System\Media\PendingMediaLibraryRequestHandler;
+use Boot\System\Media\MediaCollections\FileAdderFactory;
+use Boot\System\Media\MediaCollections\Exceptions\InvalidUrl;
+use Darkeum\MediaLibraryUI\PendingMediaLibraryRequestHandler;
+use Boot\System\Media\MediaCollections\Exceptions\InvalidBase64Data;
+use Boot\System\Media\MediaCollections\Exceptions\MimeTypeNotAllowed;
+use Boot\System\Media\MediaCollections\Events\CollectionHasBeenCleared;
+use Boot\System\Media\MediaCollections\Exceptions\MediaCannotBeDeleted;
+use Boot\System\Media\MediaCollections\Exceptions\MediaCannotBeUpdated;
 
 trait InteractsWithMedia
 {

@@ -2,8 +2,8 @@
 
 namespace Boot\System\Media\Support;
 
+use Darkeum\MediaLibraryUI\Models\TemporaryUpload;
 use Boot\System\Media\MediaCollections\Exceptions\FunctionalityNotAvailable;
-use Boot\System\Media\Models\TemporaryUpload;
 
 class MediaLibraryPro
 {

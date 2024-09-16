@@ -2,14 +2,14 @@
 
 namespace Boot\System\Media\Actions;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Boot\System\Livewire\FileUploadConfiguration;
 use Boot\System\Livewire\TemporaryUploadedFile;
+use Boot\System\Livewire\FileUploadConfiguration;
 use Boot\System\Media\Conversions\FileManipulator;
+use Darkeum\MediaLibraryUI\Models\TemporaryUpload;
 use Boot\System\Media\MediaCollections\Models\Media;
-use Boot\System\Media\Models\TemporaryUpload;
 
 class ConvertLivewireUploadToMediaAction
 {

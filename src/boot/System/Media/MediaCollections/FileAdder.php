@@ -3,24 +3,24 @@
 namespace Boot\System\Media\MediaCollections;
 
 use Closure;
+use Boot\System\Media\HasMedia;
+use Boot\System\Media\Support\File;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Traits\Macroable;
-use Boot\System\Media\Conversions\ImageGenerators\Image as ImageGenerator;
-use Boot\System\Media\HasMedia;
+use Boot\System\Media\Support\RemoteFile;
+use Darkeum\MediaLibraryUI\Models\TemporaryUpload;
+use Boot\System\Media\MediaCollections\Models\Media;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Boot\System\Media\MediaCollections\File as PendingFile;
+use Boot\System\Media\MediaCollections\Exceptions\UnknownType;
+use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
+use Boot\System\Media\MediaCollections\Exceptions\FileIsTooBig;
 use Boot\System\Media\MediaCollections\Exceptions\DiskDoesNotExist;
 use Boot\System\Media\MediaCollections\Exceptions\FileDoesNotExist;
-use Boot\System\Media\MediaCollections\Exceptions\FileIsTooBig;
-use Boot\System\Media\MediaCollections\Exceptions\FileUnacceptableForCollection;
-use Boot\System\Media\MediaCollections\Exceptions\UnknownType;
-use Boot\System\Media\MediaCollections\File as PendingFile;
-use Boot\System\Media\MediaCollections\Models\Media;
 use Boot\System\Media\ResponsiveImages\Jobs\GenerateResponsiveImagesJob;
-use Boot\System\Media\Support\File;
-use Boot\System\Media\Support\RemoteFile;
-use Boot\System\Media\Models\TemporaryUpload;
-use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Boot\System\Media\Conversions\ImageGenerators\Image as ImageGenerator;
+use Boot\System\Media\MediaCollections\Exceptions\FileUnacceptableForCollection;
 
 /**
  * @template TModel of \Boot\System\Media\MediaCollections\Models\Media
