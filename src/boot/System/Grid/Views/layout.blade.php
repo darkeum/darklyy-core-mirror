@@ -324,7 +324,7 @@
                     },
 
                     //
-                    scrollY: '70vh', // Высота таблицы по умолчанию
+                    scrollY: '61vh', // Высота таблицы по умолчанию // 61 - 64 - 70
                     scrollX: false,  //
                     // scrollXInner: false,
                     // scrollCollapse: true, // Высота таблицы будет максимальной если false даже если пуста!
