@@ -42,7 +42,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     protected $fillable = ["nick", "password", "tail", "hash", "email", "provider", "social_id", "status", "oid", "icq", "phone", "phone2", "skype", "surname", "name", "ochestvo", "place", "age", "sex", "birthday", "hobby", "signature", "points", "carma", "user_comments", "user_news", "group", "exgroup", "last_visit", "regdate", "active", "ip", "hidden", "fields", "regId", "utm_source", "inn", 'remember_token'];
 
-    protected $appends = ["short_user_name", "full_user_name"];
+    protected $appends = ["short_user_name", "full_user_name",  "short_user_name_public"];
 
     protected $hidden = [
         'password',
@@ -88,6 +88,14 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
         $shortName .= $this->name != null ? ' ' . mb_substr($this->name, 0, 1) . '.' : '';
         $shortName .= $this->ochestvo != null ? ' ' . mb_substr($this->ochestvo, 0, 1) . '.' : '';
 
+        return $shortName;
+    }
+
+    public function getShortUserNamePublicAttribute()
+    {
+        $shortName = $this->name != null ?  mb_substr($this->name, 0, 1) . '.' : '';
+        $shortName .= $this->ochestvo != null ? ' ' . mb_substr($this->ochestvo, 0, 1) . '.' : '';
+        $shortName .= ' ' . $this->surname;
         return $shortName;
     }
 
