@@ -16,6 +16,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\MustVerifyEmail;
 use Boot\System\Sanctum\HasApiTokens;
 use Boot\System\Settings\HasSettings;
+use Darkeum\DaData\Facades\DaDataName;
 use Organizations\Model\Organizations;
 use Boot\System\Core\Traits\HashIdTrait;
 use Boot\System\Auth\Access\Authorizable;
@@ -40,7 +41,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     use HashIdTrait, HasResourceKeyTrait, SoftDeletes;
 
-    protected $fillable = ["nick", "password", "tail", "hash", "email", "provider", "social_id", "status", "oid", "icq", "phone", "phone2", "skype", "surname", "name", "ochestvo", "place", "age", "sex", "birthday", "hobby", "signature", "points", "carma", "user_comments", "user_news", "group", "exgroup", "last_visit", "regdate", "active", "ip", "hidden", "fields", "regId", "utm_source", "inn", 'remember_token'];
+    protected $fillable = ["nick", "password", "tail", "hash", "email", "provider", "social_id", "status", "oid", "icq", "phone", "phone2", "skype", "surname", "name", "ochestvo", "name_source","place", "age", "sex", "birthday", "hobby", "signature", "points", "carma", "user_comments", "user_news", "group", "exgroup", "last_visit", "regdate", "active", "ip", "hidden", "fields", "regId", "utm_source", "inn", 'remember_token'];
 
     protected $appends = ["short_user_name", "full_user_name",  "short_user_name_public"];
 
@@ -51,6 +52,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'name_source' => 'object',
     ];
 
     static public function boot()
@@ -185,5 +187,33 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     public function orgs()
     {
         return $this->belongsToMany(Org::class, 'users_org_relation', 'uid', 'org');
+    }
+
+    /**
+     * Получение массива с ФИО
+     *
+     * @return array
+     */
+    public function getNameDetailAttribute()
+    {
+        if (!empty($this->name_source) && is_object($this->name_source)) {
+            return $this->name_source;
+        } else {
+
+            if (!empty($this->surname) && !empty($this->name) && !empty($this->ochestvo)) {
+
+                try {
+                    $source_name = DaDataName::standardization($this->surname . ' ' . $this->name . ' ' . $this->ochestvo)[0];
+                    $this->name_source = $source_name;
+                    $this->save();
+
+                    return $this->name_source;
+                } catch (\Exception $e) {
+                    return (object)[];
+                }
+            } else {
+                return (object)[];
+            }
+        }
     }
 }

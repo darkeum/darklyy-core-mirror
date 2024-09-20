@@ -13,7 +13,7 @@ namespace Boot\Models;
 
 class UsersOrg extends Model
 {
-    protected $fillable = ["uid", "oid", "post", "comment", "writ", "type", "owner", "choose", "status"];
+    protected $fillable = ["uid", "oid", "post", "post_genitive", "comment", "writ", "type", "owner", "choose", "status"];
 
     public function user()
     {
