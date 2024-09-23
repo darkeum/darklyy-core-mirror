@@ -5,7 +5,7 @@ namespace Boot\System\Queue;
 use Boot\System\Queue\Worker;
 use Boot\Support\Facades\Facade;
 use Boot\Support\ServiceProvider;
-use Boot\System\Queue\QueueManager;
+use Illuminate\Queue\QueueManager;
 use Boot\Contracts\Debug\ExceptionHandler;
 use Illuminate\Queue\Connectors\SqsConnector;
 use Boot\Contracts\Support\DeferrableProvider;
