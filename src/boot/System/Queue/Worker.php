@@ -7,7 +7,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Throwable;
 use Illuminate\Queue\Worker as LaravelWorker;
 use Illuminate\Queue\WorkerOptions;
-use Illuminate\Queue\QueueManager;
+use Boot\System\Queue\QueueManager;
 
 class Worker extends LaravelWorker
 {
