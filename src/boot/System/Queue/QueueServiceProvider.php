@@ -1,17 +1,19 @@
 <?php
 
 namespace Boot\System\Queue;
+
 use Boot\System\Queue\Worker;
+use Boot\Support\Facades\Facade;
 use Boot\Support\ServiceProvider;
 use Boot\System\Queue\QueueManager;
 use Boot\Contracts\Debug\ExceptionHandler;
-use Boot\System\Queue\Console\ListenCommand;
 use Illuminate\Queue\Connectors\SqsConnector;
 use Boot\Contracts\Support\DeferrableProvider;
 use Illuminate\Queue\Connectors\NullConnector;
 use Illuminate\Queue\Connectors\SyncConnector;
 use Illuminate\Queue\Connectors\RedisConnector;
 use Illuminate\Queue\Connectors\DatabaseConnector;
+use Illuminate\Queue\Failed\FileFailedJobProvider;
 use Illuminate\Queue\Failed\NullFailedJobProvider;
 use Illuminate\Queue\Connectors\BeanstalkdConnector;
 use Laravel\SerializableClosure\SerializableClosure;
@@ -19,7 +21,6 @@ use Illuminate\Queue\Failed\DatabaseFailedJobProvider;
 use Illuminate\Queue\Failed\DynamoDbFailedJobProvider;
 use Illuminate\Queue\Failed\DatabaseUuidFailedJobProvider;
 use Illuminate\Queue\SerializesAndRestoresModelIdentifiers;
-use Illuminate\Queue\QueueServiceProvider as LaravelQueueServiceProvider;
 
 class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
 {
@@ -168,7 +169,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             return new SqsConnector;
         });
     }
-    
+
     /**
      * Register the queue listener.
      *
@@ -180,8 +181,8 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             return new Listener($app->basePath());
         });
     }
-    
-  
+
+
       /**
      * Register the queue manager.
      *
@@ -212,11 +213,22 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             };
 
             $resetScope = function () use ($app) {
-                if (method_exists($app['log']->driver(), 'withoutContext')) {
+                $app['log']->flushSharedContext();
+
+                if (method_exists($app['log'], 'withoutContext')) {
                     $app['log']->withoutContext();
                 }
 
-                return $app->forgetScopedInstances();
+                if (method_exists($app['db'], 'getConnections')) {
+                    foreach ($app['db']->getConnections() as $connection) {
+                        $connection->resetTotalQueryDuration();
+                        $connection->allowQueryDurationHandlersToRunAgain();
+                    }
+                }
+
+                $app->forgetScopedInstances();
+
+                Facade::clearResolvedInstances();
             };
 
             return new Worker(
@@ -244,7 +256,13 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
                 return new NullFailedJobProvider;
             }
 
-            if (isset($config['driver']) && $config['driver'] === 'dynamodb') {
+            if (isset($config['driver']) && $config['driver'] === 'file') {
+                return new FileFailedJobProvider(
+                    $config['path'] ?? $this->app->storagePath('framework/cache/failed-jobs.json'),
+                    $config['limit'] ?? 100,
+                    fn () => $app['cache']->store('file'),
+                );
+            } elseif (isset($config['driver']) && $config['driver'] === 'dynamodb') {
                 return $this->dynamoFailedJobProvider($config);
             } elseif (isset($config['driver']) && $config['driver'] === 'database-uuids') {
                 return $this->databaseUuidFailedJobProvider($config);
@@ -308,6 +326,7 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
             $config['table']
         );
     }
+
 
     /**
      * Get the services provided by the provider.

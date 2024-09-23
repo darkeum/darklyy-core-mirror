@@ -2,20 +2,11 @@
 
 namespace Boot\System\Queue;
 
-use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Boot\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher;
-// use Illuminate\Contracts\Queue\Factory as QueueManager;
-use Illuminate\Database\DetectsLostConnections;
-use Illuminate\Queue\Events\JobExceptionOccurred;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Queue\Events\Looping;
-use Illuminate\Queue\Events\WorkerStopping;
-use Illuminate\Support\Carbon;
 use Throwable;
-use \Illuminate\Queue\Worker as LaravelWorker;
-use \Illuminate\Queue\WorkerOptions;
+use Illuminate\Queue\Worker as LaravelWorker;
+use Illuminate\Queue\WorkerOptions;
 use Boot\System\Queue\QueueManager;
 
 class Worker extends LaravelWorker
@@ -44,11 +35,9 @@ class Worker extends LaravelWorker
      */
     protected function runJob($job, $connectionName, WorkerOptions $options)
     {
-        // dump($connectionName, $job, $options);
         try {
             return $this->process($connectionName, $job, $options);
-        } catch (\Throwable $e) {
-            dump($e);
+        } catch (Throwable $e) {
             $this->exceptions->report($e);
 
             $this->stopWorkerIfLostConnection($e);
