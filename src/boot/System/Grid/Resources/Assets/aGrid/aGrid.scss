@@ -107,6 +107,11 @@
     .dataTables_scrollHead {
 
       .dataTables_scrollHeadInner {
+
+        // КОСТЫЛЬ
+        padding-right: 0!important;
+        width: 100%!important;
+
         table {
           margin-top: 0 !important;
 
