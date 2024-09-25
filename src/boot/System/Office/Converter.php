@@ -13,23 +13,24 @@ namespace Boot\System\Office;
 
 use Boot\Support\Facades\Config;
 use Boot\Support\Facades\Process;
+use Boot\System\Process\Exceptions\ProcessTimedOutException;
 
 class Converter
 {
-       
+
     /**
      * Исходный файл
      *
      * @var string
      */
-    private $file;  
+    private $file;
 
     /**
      * Бинарный файл libreoffice
      *
      * @var string
      */
-    private $bin; 
+    private $bin;
 
     /**
      * Путь до директории для временного хранения
@@ -43,7 +44,7 @@ class Converter
      *
      * @var string
      */
-    private $extension; 
+    private $extension;
 
     /**
      * Имя входного файла
@@ -73,7 +74,7 @@ class Converter
             $this->setup($tempPath, $bin, $prefixExecWithExportHome);
         }
     }
-   
+
     /**
      * Конвертация файла
      *
@@ -99,15 +100,11 @@ class Converter
             $python = Config::get('app.python');
             exec("{$python} {$dir}\WordConverter.py 2>&1 {$input_dir} {$output_dir}", $output);
         } else {
-          
-            $shell = $this->exec($this->makeCommand($out_dir, $outputExtension));
-            if (0 != $shell['return']) {
-                throw new ConverterException('Ошибка конвертации! Свяжитесь с администратором сервера.');
-            }
+            $this->exec($this->makeCommand($out_dir, $outputExtension));
         }
         return $this->prepOutput($out_dir, $filename, $outputExtension);
     }
-   
+
     /**
      * Открытие исходного файла
      *
@@ -126,7 +123,7 @@ class Converter
 
         return true;
     }
-  
+
     /**
      * Установка параметров конвертации
      *
@@ -298,29 +295,18 @@ class Converter
                 $cmd = 'export HOME=/tmp && ' . $cmd;
             }
         }
-        // try(
-                
-        //     )
-        $result = Process::timeout(15)->run($cmd);
-        dd($result);
-        $process = proc_open($cmd, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        try {
+            $process = Process::timeout(15)->run($cmd);
 
-        if (false === $process) {
-            throw new ConverterException('Не удается получить ресурс для процесса преобразования файла');
+            if ($process->failed()) {
+                throw new ConverterException('Ошибка конвертации! Свяжитесь с администратором сервера.');
+            }
+        } catch (ProcessTimedOutException $th) {
+            throw new ConverterException('Ошибка конвертации! Свяжитесь с администратором сервера.');
         }
 
-        fwrite($pipes[0], $input);
-        fclose($pipes[0]);
-        $stdout = stream_get_contents($pipes[1]);
-        fclose($pipes[1]);
-        $stderr = stream_get_contents($pipes[2]);
-        fclose($pipes[2]);
-        $rtn = proc_close($process);
-
         return [
-            'stdout' => $stdout,
-            'stderr' => $stderr,
-            'return' => $rtn,
+            'return' => $process->output(),
         ];
     }
 }
