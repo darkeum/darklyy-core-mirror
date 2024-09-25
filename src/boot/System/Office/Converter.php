@@ -12,6 +12,7 @@
 namespace Boot\System\Office;
 
 use Boot\Support\Facades\Config;
+use Boot\Support\Facades\Process;
 
 class Converter
 {
@@ -98,6 +99,7 @@ class Converter
             $python = Config::get('app.python');
             exec("{$python} {$dir}\WordConverter.py 2>&1 {$input_dir} {$output_dir}", $output);
         } else {
+          
             $shell = $this->exec($this->makeCommand($out_dir, $outputExtension));
             if (0 != $shell['return']) {
                 throw new ConverterException('Ошибка конвертации! Свяжитесь с администратором сервера.');
@@ -296,6 +298,11 @@ class Converter
                 $cmd = 'export HOME=/tmp && ' . $cmd;
             }
         }
+        // try(
+                
+        //     )
+        $result = Process::timeout(15)->run($cmd);
+        dd($result);
         $process = proc_open($cmd, [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
 
         if (false === $process) {
