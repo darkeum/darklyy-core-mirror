@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Foundation\Events;
+namespace Boot\App\Events;
 
 trait Dispatchable
 {
