@@ -55,7 +55,7 @@ class template
 	var $description =  '';
 	var $showMenu =  false;
 	var $openMenu =  false;
-	var $preview =  '/usr/tpl/dev2/assest/images/og_default.png';
+	var $preview =  'usr/tpl/dev2/assest/images/og_default.png';
 
 
 	function __construct()
