@@ -95,7 +95,7 @@ if (!function_exists('tmp_path')) {
     }
 }
 
-# Генерация патча внутри временной директории с созданием папок
+# Генерация патча внутри временной директории с созданием папок (Любой сложности с рекурсией)
 if (!function_exists('tmp_path_generate')) {
     /**
      * Get the path to the storage folder.
@@ -103,12 +103,17 @@ if (!function_exists('tmp_path_generate')) {
      * @param  string  $path
      * @return string
      */
-    function tmp_path_generate($path = '')
+    function tmp_path_generate($path = '', $slash = true, $mode = 0777, $recursive = true)
     {
         $path = tmp_path($path);
 
+        // Создать папку/папки
         if (! File::exists($path)) {
-            File::makeDirectory($path);
+            File::makeDirectory($path, $mode, $recursive);
+        }
+
+        if ($slash) {
+            $path = $path.DIRECTORY_SEPARATOR;
         }
 
         return $path;
