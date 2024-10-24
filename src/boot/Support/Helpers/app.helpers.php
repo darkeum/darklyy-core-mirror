@@ -81,7 +81,7 @@ if (!function_exists('storage_path')) {
     }
 }
 
-#
+# Получение патча временной директории
 if (!function_exists('tmp_path')) {
     /**
      * Get the path to the storage folder.
@@ -92,6 +92,26 @@ if (!function_exists('tmp_path')) {
     function tmp_path($path = '')
     {
         return app('path.tmp').($path ? DIRECTORY_SEPARATOR.$path : $path);
+    }
+}
+
+# Генерация патча внутри временной директории с созданием папок
+if (!function_exists('tmp_path_generate')) {
+    /**
+     * Get the path to the storage folder.
+     *
+     * @param  string  $path
+     * @return string
+     */
+    function tmp_path_generate($path = '')
+    {
+        $path = tmp_path($path);
+
+        if (! File::exists($path)) {
+            File::makeDirectory($path);
+        }
+
+        return $path;
     }
 }
 
