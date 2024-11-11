@@ -64,7 +64,7 @@ class SpreadsheetSupport extends OfficeSupport
         if ($file instanceof UploadedFile) {
             $tmp_name = $file->getPathName();
         } else {
-            if (!isset($file["tmp_name"])) throw new Exception("Отсутствует `tmp_name` в истонике файла!");
+            if (!isset($file["tmp_name"])) throw new Exception("Отсутствует `tmp_name` в истопнике файла!");
             $tmp_name = $file["tmp_name"];
         }
         if (!file_exists($tmp_name)) throw new Exception("Файл `{$tmp_name}` не найден!");
