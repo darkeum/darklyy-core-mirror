@@ -279,9 +279,7 @@ class SpreadsheetSupport extends OfficeSupport
         }
 
         $objWriter = IOFactory::createWriter($document, 'Xlsx');
-        if (isset($charts)) {
-            $objWriter->setIncludeCharts(true);
-        }
+        $objWriter->setIncludeCharts(true);
         $objWriter->save($file);
         return $file;
     }
