@@ -239,20 +239,25 @@ class SpreadsheetSupport extends OfficeSupport
             $startLine = self::$startLine;
 
             foreach ($head as $item) {
-                $sheet->setCellValue([$startLine, $columnPosition], $item['value']);
-
-                if (isset($item['style']['code'])) {
-                    $sheet->getStyle([$startLine, $columnPosition])->getNumberFormat()->setFormatCode($item['style']['code']);
-                }
-                if (isset($item['style']['auto-size'])) {
-                    if ($item['style']['auto-size']) {
-                        $sheet->getColumnDimensionByColumn($startLine)->setAutoSize($item['style']['auto-size']);
-                    } else {
-                        $sheet->getColumnDimensionByColumn($startLine)->setAutoSize($item['style']['auto-size']);
-                        $sheet->getColumnDimensionByColumn($startLine)->setWidth(50);
+                if (is_array($item)) {
+                    $sheet->setCellValue([$startLine, $columnPosition], $item['value']);
+                    if (isset($item['style']['code'])) {
+                        $sheet->getStyle([$startLine, $columnPosition])->getNumberFormat()->setFormatCode($item['style']['code']);
                     }
+                    if (isset($item['style']['auto-size'])) {
+                        if ($item['style']['auto-size']) {
+                            $sheet->getColumnDimensionByColumn($startLine)->setAutoSize($item['style']['auto-size']);
+                        } else {
+                            $sheet->getColumnDimensionByColumn($startLine)->setAutoSize($item['style']['auto-size']);
+                            $sheet->getColumnDimensionByColumn($startLine)->setWidth(50);
+                        }
+                    }
+                    if (isset($item['style'])) {
+                        $sheet->getStyle([$startLine, $columnPosition])->applyFromArray($item['style']);
+                    }
+                } else {
+                    $sheet->setCellValue([$startLine, $columnPosition], $item);
                 }
-                $sheet->getStyle([$startLine, $columnPosition])->applyFromArray($item['style']);
                 $startLine++;
             }
 
@@ -260,12 +265,16 @@ class SpreadsheetSupport extends OfficeSupport
                 $startLine = self::$startLine;
                 $columnPosition++;
                 foreach ($line as $item) {
-                    $sheet->setCellValue([$startLine, $columnPosition], $item['value']);
-                    $sheet->getStyle([$startLine, $columnPosition])->applyFromArray($item['style']);
-                    if (isset($item['style']['code'])) {
-                        $sheet->getStyle([$startLine, $columnPosition])->getNumberFormat()->setFormatCode($item['style']['code']);
+                    if (is_array($item)) {
+                        $sheet->setCellValue([$startLine, $columnPosition], $item['value']);
+                        $sheet->getStyle([$startLine, $columnPosition])->applyFromArray($item['style']);
+                        if (isset($item['style']['code'])) {
+                            $sheet->getStyle([$startLine, $columnPosition])->getNumberFormat()->setFormatCode($item['style']['code']);
+                        }
+                        if (isset($item['style']['auto-size'])) $sheet->getStyle([$startLine, $columnPosition])->getAlignment()->setWrapText(true);
+                    } else {
+                        $sheet->setCellValue([$startLine, $columnPosition], $item);
                     }
-                    if (isset($item['style']['auto-size'])) $sheet->getStyle([$startLine, $columnPosition])->getAlignment()->setWrapText(true);
                     $startLine++;
                 }
             }
@@ -279,7 +288,9 @@ class SpreadsheetSupport extends OfficeSupport
         }
 
         $objWriter = IOFactory::createWriter($document, 'Xlsx');
-        $objWriter->setIncludeCharts(true);
+        if (isset($charts)) {
+            $objWriter->setIncludeCharts(true);
+        }
         $objWriter->save($file);
         return $file;
     }
