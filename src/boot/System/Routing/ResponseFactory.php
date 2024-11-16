@@ -12,7 +12,7 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Routing\Exceptions\StreamedResponseException;
-use Illuminate\Contracts\Routing\ResponseFactory as FactoryContract;
+use Boot\Contracts\Routing\ResponseFactory as FactoryContract;
 
 class ResponseFactory implements FactoryContract
 {
