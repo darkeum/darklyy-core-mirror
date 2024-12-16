@@ -73,6 +73,7 @@
         max-width: 50%;
         right: 8px;
         left: initial !important;
+        transform: scale(1, 1);
 
         // Обратимся к dtsb-searchBuilder он же search-builder-custom
         .search-builder-custom {
