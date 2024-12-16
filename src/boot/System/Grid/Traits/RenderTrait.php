@@ -49,10 +49,15 @@ trait RenderTrait
         $data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
 
         // Сортировка по умолчанию
-        if (isset($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
+        //if (isset($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
+        //    $data['short']['index'] = $colIndex[$data['options']['sort']['name']];
+        //    $data['short']['order'] = in_array(Str::lower(($data['options']['sort']['order'] ?? 'asc')),
+        //        array('asc', 'desc')) ? Str::lower(($data['options']['sort']['order'] ?? 'asc')) : 'asc';
+        //}
+
+        if (!empty($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
             $data['short']['index'] = $colIndex[$data['options']['sort']['name']];
-            $data['short']['order'] = in_array(Str::lower(($data['options']['sort']['order'] ?? 'asc')),
-                array('asc', 'desc')) ? Str::lower(($data['options']['sort']['order'] ?? 'asc')) : 'asc';
+            $data['short']['order'] = strtolower($data['options']['sort']['order'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
         }
 
         // Структура элементов DOM
