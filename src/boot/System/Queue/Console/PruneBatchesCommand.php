@@ -1,44 +1,43 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Queue\Console;
 
+use Boot\Support\Carbon;
+use Boot\System\Console\Command;
 use Illuminate\Bus\BatchRepository;
 use Illuminate\Bus\DatabaseBatchRepository;
 use Illuminate\Bus\PrunableBatchRepository;
-use Boot\System\Console\Command;
-use Illuminate\Support\Carbon;
 
 class PruneBatchesCommand extends Command
 {
     /**
-     * The console command signature.
+     * Имя и параметры консольной команды
      *
      * @var string
      */
     protected $signature = 'queue:prune-batches
-                {--hours=24 : The number of hours to retain batch data}
-                {--unfinished= : The number of hours to retain unfinished batch data }';
+                {--hours=24 : Количество часов для хранения пакетов }
+                {--unfinished= : Количество часов для хранения незавершенных пакетов }
+                {--cancelled= : Количество часов для хранения отмененных пакетов }';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'queue:prune-batches';
-
-    /**
-     * The console command description.
+     * Описание консольной команды
      *
      * @var string
      */
     protected $description = 'Удаление устаревших записей из базы данных пакетов';
 
     /**
-     * Execute the console command.
+     * Выполнение консольной команды.
      *
      * @return void
      */
@@ -52,16 +51,26 @@ class PruneBatchesCommand extends Command
             $count = $repository->prune(Carbon::now()->subHours($this->option('hours')));
         }
 
-        $this->info("{$count} entries deleted!");
+        $this->components->info("{$count} entries deleted.");
 
-        if ($this->option('unfinished')) {
+        if ($this->option('unfinished') !== null) {
             $count = 0;
 
             if ($repository instanceof DatabaseBatchRepository) {
                 $count = $repository->pruneUnfinished(Carbon::now()->subHours($this->option('unfinished')));
             }
 
-            $this->info("{$count} unfinished entries deleted!");
+            $this->components->info("{$count} незавершенных пакетов удалено.");
+        }
+
+        if ($this->option('cancelled') !== null) {
+            $count = 0;
+
+            if ($repository instanceof DatabaseBatchRepository) {
+                $count = $repository->pruneCancelled(Carbon::now()->subHours($this->option('cancelled')));
+            }
+
+            $this->components->info("{$count} отмененных пакетов удалено.");
         }
     }
 }
