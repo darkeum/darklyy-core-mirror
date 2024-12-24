@@ -412,11 +412,14 @@ abstract class GridModern
         return $rows;
     }
 
-    #
-    protected function getCategories($func_id = null)
+    # Получаем список категорий
+    protected function getCategories($func_id = null, $empty = false)
     {
         $rows = [];
         $cats_arr = \Boot\Support\Facades\Categories::getFullTree('catalog_v2');
+        //if ($empty) {
+        //    $rows[''] = 'Без категории';
+        //}
         $rows[''] = 'Без категории';
         foreach ($cats_arr as $cid => $name) {
             $id = $cid;
