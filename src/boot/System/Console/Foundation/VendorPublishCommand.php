@@ -1,13 +1,22 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Foundation;
 
 use Boot\System\Console\Command;
 use Boot\System\Filesystem\Filesystem;
-use Illuminate\Foundation\Events\VendorTagPublished;
+use Boot\Events\VendorTagPublished;
 use Illuminate\Support\Arr;
 use Boot\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use Boot\Support\Str;
 use League\Flysystem\Filesystem as Flysystem;
 use League\Flysystem\Local\LocalFilesystemAdapter as LocalAdapter;
 use League\Flysystem\MountManager;
@@ -17,54 +26,62 @@ use League\Flysystem\Visibility;
 class VendorPublishCommand extends Command
 {
     /**
-     * The filesystem instance.
+     * Экземпляр файловой системы.
      *
      * @var \Boot\System\Filesystem\Filesystem
      */
     protected $files;
 
     /**
-     * The provider to publish.
+     * Поставщик для публикации.
      *
      * @var string
      */
     protected $provider = null;
 
     /**
-     * The tags to publish.
+     * Теги для публикации.
      *
      * @var array
      */
     protected $tags = [];
 
     /**
-     * The console command signature.
+     * Время начала выполнения команды.
+     *
+     * @var \Boot\Support\Carbon|null
+     */
+    protected $publishedAt;
+
+    /**
+     * Сигнатура консольной команды.
      *
      * @var string
      */
-    protected $signature = 'vendor:publish {--force : Перезаписать любые существующие файлы}
+
+    protected $signature = 'vendor:publish
+                    {--existing : Публиковать и перезаписывать только те файлы, которые уже были опубликованы}
+                    {--force : Перезаписать любые существующие файлы}
                     {--all : Публикуйте активы для всех поставщиков услуг без запроса}
                     {--provider= : Поставщик услуг, у которого есть активы, которые вы хотите опубликовать}
-                    {--tag=* : Один или несколько тегов с активами, которые вы хотите опубликовать.}';
+                    {--tag=* : Один или несколько тегов с активами, которые вы хотите опубликовать}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     */
-    protected static $defaultName = 'vendor:publish';
-
-    /**
-     * The console command description.
+     * Описание консольной команды.
      *
      * @var string
      */
     protected $description = 'Публикуйте любые публикуемые активы из пакетов поставщиков';
 
     /**
-     * Create a new command instance.
+     * Указывает, следует ли обновлять даты миграции при публикации.
+     *
+     * @var bool
+     */
+    protected static $updateMigrationDates = true;
+
+    /**
+     * Создайте новый экземпляр команды.
      *
      * @param  \Illuminate\Filesystem\Filesystem  $files
      * @return void
@@ -77,23 +94,23 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * Выполнение консольной команды.
      *
      * @return void
      */
     public function handle()
     {
+        $this->publishedAt = now();
+
         $this->determineWhatShouldBePublished();
 
         foreach ($this->tags ?: [null] as $tag) {
             $this->publishTag($tag);
         }
-
-        $this->info('Публикация завершена.');
     }
 
     /**
-     * Determine the provider or tag(s) to publish.
+     * Определите поставщика или теги для публикации.
      *
      * @return void
      */
@@ -113,16 +130,29 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Prompt for which provider or tag to publish.
+     * Запросить поставщика или тег для публикации.
      *
      * @return void
      */
     protected function promptForProviderOrTag()
     {
-        $choice = $this->choice(
-            "Файлы какого провайдера или тега вы хотите опубликовать?",
-            $choices = $this->publishableChoices()
-        );
+        $choices = $this->publishableChoices();
+
+        $choice = windows_os()
+            ? select(
+                "Файлы какого поставщика или тега вы хотели бы опубликовать?",
+                $choices,
+                scroll: 15,
+            )
+            : search(
+                label: "Файлы какого поставщика или тега вы хотели бы опубликовать?",
+                placeholder: 'Поиск...',
+                options: fn ($search) => array_values(array_filter(
+                    $choices,
+                    fn ($choice) => str_contains(strtolower($choice), strtolower($search))
+                )),
+                scroll: 15,
+            );
 
         if ($choice == $choices[0] || is_null($choice)) {
             return;
@@ -132,21 +162,21 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * The choices available via the prompt.
+     * Варианты выбора, доступные через подсказку.
      *
      * @return array
      */
     protected function publishableChoices()
     {
         return array_merge(
-            ['<comment>Публикуйте файлы от всех провайдеров и тегов, перечисленных ниже</comment>'],
-            preg_filter('/^/', '<comment>Провайдер: </comment>', Arr::sort(ServiceProvider::publishableProviders())),
-            preg_filter('/^/', '<comment>Тэг: </comment>', Arr::sort(ServiceProvider::publishableGroups()))
+            ['Все поставщики и теги'],
+            preg_filter('/^/', '<fg=gray>Провайдер:</> ', Arr::sort(ServiceProvider::publishableProviders())),
+            preg_filter('/^/', '<fg=gray>Тэг:</> ', Arr::sort(ServiceProvider::publishableGroups()))
         );
     }
 
     /**
-     * Parse the answer that was given via the prompt.
+     * Проанализируйте ответ, полученный в подсказке.
      *
      * @param  string  $choice
      * @return void
@@ -163,32 +193,37 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Publishes the assets for a tag.
+     * Публикует активы для тега.
      *
      * @param  string  $tag
      * @return mixed
      */
     protected function publishTag($tag)
     {
-        $published = false;
-
         $pathsToPublish = $this->pathsToPublish($tag);
+
+        if ($publishing = count($pathsToPublish) > 0) {
+            $this->components->info(sprintf(
+                'Публикация %sassets',
+                $tag ? "[$tag] " : '',
+            ));
+        }
 
         foreach ($pathsToPublish as $from => $to) {
             $this->publishItem($from, $to);
-
-            $published = true;
         }
 
-        if ($published === false) {
-            $this->comment('Нет доступных для публикации ресурсов для тега ['.$tag.'].');
+        if ($publishing === false) {
+            $this->components->info('Нет доступных для публикации ресурсов для тега [' . $tag . '].');
         } else {
-            $this->laravel['events']->dispatch(new VendorTagPublished($tag, $pathsToPublish));
+            $this->darklyy['events']->dispatch(new VendorTagPublished($tag, $pathsToPublish));
+
+            $this->newLine();
         }
     }
 
     /**
-     * Get all of the paths to publish.
+     * Получите все пути для публикации.
      *
      * @param  string  $tag
      * @return array
@@ -196,12 +231,13 @@ class VendorPublishCommand extends Command
     protected function pathsToPublish($tag)
     {
         return ServiceProvider::pathsToPublish(
-            $this->provider, $tag
+            $this->provider,
+            $tag
         );
     }
 
     /**
-     * Publish the given item from and to the given location.
+     * Опубликовать указанный элемент из указанного места и в указанном месте.
      *
      * @param  string  $from
      * @param  string  $to
@@ -219,7 +255,7 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Publish the file to the given path.
+     * Опубликовать файл по указанному пути.
      *
      * @param  string  $from
      * @param  string  $to
@@ -227,17 +263,33 @@ class VendorPublishCommand extends Command
      */
     protected function publishFile($from, $to)
     {
-        if (! $this->files->exists($to) || $this->option('force')) {
+        if ((! $this->option('existing') && (! $this->files->exists($to) || $this->option('force')))
+            || ($this->option('existing') && $this->files->exists($to))
+        ) {
+            $to = $this->ensureMigrationNameIsUpToDate($from, $to);
+
             $this->createParentDirectory(dirname($to));
 
             $this->files->copy($from, $to);
 
-            $this->status($from, $to, 'файла');
+            $this->status($from, $to, 'file');
+        } else {
+            if ($this->option('existing')) {
+                $this->components->twoColumnDetail(sprintf(
+                    'Файл [%s] не найден',
+                    str_replace(base_path() . '/', '', $to),
+                ), '<fg=yellow;options=bold>ПРОПУЩЕНО</>');
+            } else {
+                $this->components->twoColumnDetail(sprintf(
+                    'файл [%s] уже существует',
+                    str_replace(base_path() . '/', '', realpath($to)),
+                ), '<fg=yellow;options=bold>ПРОПУЩЕНО</>');
+            }
         }
     }
 
     /**
-     * Publish the directory to the given directory.
+     * Опубликовать каталог в указанном каталоге.
      *
      * @param  string  $from
      * @param  string  $to
@@ -247,7 +299,7 @@ class VendorPublishCommand extends Command
     {
         $visibility = PortableVisibilityConverter::fromArray([], Visibility::PUBLIC);
 
-        $this->moveManagedFiles(new MountManager([
+        $this->moveManagedFiles($from, new MountManager([
             'from' => new Flysystem(new LocalAdapter($from)),
             'to' => new Flysystem(new LocalAdapter($to, $visibility)),
         ]));
@@ -256,24 +308,33 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Move all the files in the given MountManager.
+     * Переместить все файлы в указанный MountManager.
      *
+     * @param  string  $from
      * @param  \League\Flysystem\MountManager  $manager
      * @return void
      */
-    protected function moveManagedFiles($manager)
+    protected function moveManagedFiles($from, $manager)
     {
-        foreach ($manager->listContents('from://', true) as $file) {
+        foreach ($manager->listContents('from://', true)->sortByPath() as $file) {
             $path = Str::after($file['path'], 'from://');
 
-            if ($file['type'] === 'file' && (! $manager->fileExists('to://'.$path) || $this->option('force'))) {
-                $manager->write('to://'.$path, $manager->read($file['path']));
+            if (
+                $file['type'] === 'file'
+                && (
+                    (! $this->option('existing') && (! $manager->fileExists('to://' . $path) || $this->option('force')))
+                    || ($this->option('existing') && $manager->fileExists('to://' . $path))
+                )
+            ) {
+                $path = $this->ensureMigrationNameIsUpToDate($from, $path);
+
+                $manager->write('to://' . $path, $manager->read($file['path']));
             }
         }
     }
 
     /**
-     * Create the directory to house the published files if needed.
+     * При необходимости создайте каталог для размещения опубликованных файлов.
      *
      * @param  string  $directory
      * @return void
@@ -286,7 +347,39 @@ class VendorPublishCommand extends Command
     }
 
     /**
-     * Write a status message to the console.
+     * Ensure the given migration name is up-to-date.
+     *
+     * @param  string  $from
+     * @param  string  $to
+     * @return string
+     */
+    protected function ensureMigrationNameIsUpToDate($from, $to)
+    {
+        if (static::$updateMigrationDates === false) {
+            return $to;
+        }
+
+        $from = realpath($from);
+
+        foreach (ServiceProvider::publishableMigrationPaths() as $path) {
+            $path = realpath($path);
+
+            if ($from === $path && preg_match('/\d{4}_(\d{2})_(\d{2})_(\d{6})_/', $to)) {
+                $this->publishedAt->addSecond();
+
+                return preg_replace(
+                    '/\d{4}_(\d{2})_(\d{2})_(\d{6})_/',
+                    $this->publishedAt->format('Y_m_d_His') . '_',
+                    $to,
+                );
+            }
+        }
+
+        return $to;
+    }
+
+    /**
+     * Вывести сообщение о состоянии в консоль.
      *
      * @param  string  $from
      * @param  string  $to
@@ -295,10 +388,25 @@ class VendorPublishCommand extends Command
      */
     protected function status($from, $to, $type)
     {
-        $from = str_replace(base_path(), '', realpath($from));
+        $from = str_replace(base_path() . '/', '', realpath($from));
 
-        $to = str_replace(base_path(), '', realpath($to));
+        $to = str_replace(base_path() . '/', '', realpath($to));
 
-        $this->line('<info>Копирование '.$type.' завершено</info> <comment>['.$from.']</comment> <info>To</info> <comment>['.$to.']</comment>');
+        $this->components->task(sprintf(
+            'Копирование %s [%s] в [%s]',
+            $type,
+            $from,
+            $to,
+        ));
+    }
+
+    /**
+     * Instruct the command to not update the dates on migrations when publishing.
+     *
+     * @return void
+     */
+    public static function dontUpdateMigrationDates()
+    {
+        static::$updateMigrationDates = false;
     }
 }

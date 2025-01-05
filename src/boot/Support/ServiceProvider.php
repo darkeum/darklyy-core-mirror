@@ -48,6 +48,13 @@ abstract class ServiceProvider
     public static $publishGroups = [];
 
     /**
+     * The migration paths available for publishing.
+     *
+     * @var array
+     */
+    protected static $publishableMigrationPaths = [];
+
+    /**
      * Create a new service provider instance.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
@@ -136,7 +143,8 @@ abstract class ServiceProvider
             $cc = $config->get($key, []);
 
             $config->set($key, array_merge(
-                require $path, $cc
+                require $path,
+                $cc
             ));
         }
     }
@@ -164,12 +172,13 @@ abstract class ServiceProvider
     protected function loadViewsFrom($path, $namespace)
     {
         $this->callAfterResolving('view', function ($view) use ($path, $namespace) {
-            if (isset($this->app->config['view']['paths']) &&
-                is_array($this->app->config['view']['paths'])) {
+            if (
+                isset($this->app->config['view']['paths']) &&
+                is_array($this->app->config['view']['paths'])
+            ) {
                 foreach ($this->app->config['view']['paths'] as $viewPath) {
-                    if (is_dir($appPath = $viewPath.'/vendor/'.$namespace)) {
+                    if (is_dir($appPath = $viewPath . '/vendor/' . $namespace)) {
                         $view->addNamespace($namespace, $appPath);
-
                     }
                 }
             }
@@ -313,7 +322,8 @@ abstract class ServiceProvider
         }
 
         static::$publishGroups[$group] = array_merge(
-            static::$publishGroups[$group], $paths
+            static::$publishGroups[$group],
+            $paths
         );
     }
 
@@ -434,5 +444,15 @@ abstract class ServiceProvider
     public function isDeferred()
     {
         return $this instanceof DeferrableProvider;
+    }
+
+    /**
+     * Get the migration paths available for publishing.
+     *
+     * @return array
+     */
+    public static function publishableMigrationPaths()
+    {
+        return static::$publishableMigrationPaths;
     }
 }
