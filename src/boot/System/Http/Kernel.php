@@ -2,18 +2,24 @@
 
 namespace Boot\System\Http;
 
+use Throwable;
+use DateTimeInterface;
+use Carbon\CarbonInterval;
+use InvalidArgumentException;
+use Boot\System\Routing\Router;
+use Boot\System\Routing\Pipeline;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\InteractsWithTime;
 use Boot\Contracts\Debug\ExceptionHandler;
+use Boot\System\Http\Events\RequestHandled;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel as KernelContract;
-use Boot\System\Http\Events\RequestHandled;
-use Boot\System\Routing\Pipeline;
-use Boot\System\Routing\Router;
-use Illuminate\Support\Facades\Facade;
-use InvalidArgumentException;
-use Throwable;
 
 class Kernel implements KernelContract
 {
+
+    use InteractsWithTime;
+
     /**
      * The application implementation.
      *
@@ -35,8 +41,8 @@ class Kernel implements KernelContract
      */
     protected $bootstrappers = [
         \Boot\App\Loaders\LoadEnvironmentVariables::class,
-        \Boot\App\Loaders\LoadConfiguration::class,      
-        \Boot\App\HandleExceptions::class, 
+        \Boot\App\Loaders\LoadConfiguration::class,
+        \Boot\App\HandleExceptions::class,
         \Boot\App\RegisterFacades::class,
         \Boot\App\RegisterProviders::class,
         \Boot\App\BootProviders::class,
@@ -62,6 +68,8 @@ class Kernel implements KernelContract
      * @var array
      */
     protected $routeMiddleware = [];
+
+    protected $requestLifecycleDurationHandlers = [];
 
     /**
      * The priority-sorted list of middleware.
@@ -124,6 +132,29 @@ class Kernel implements KernelContract
     }
 
     /**
+     * Register a callback to be invoked when the requests lifecycle duration exceeds a given amount of time.
+     *
+     * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
+     * @param  callable  $handler
+     * @return void
+     */
+    public function whenRequestLifecycleIsLongerThan($threshold, $handler)
+    {
+        $threshold = $threshold instanceof DateTimeInterface
+            ? $this->secondsUntil($threshold) * 1000
+            : $threshold;
+
+        $threshold = $threshold instanceof CarbonInterval
+            ? $threshold->totalMilliseconds
+            : $threshold;
+
+        $this->requestLifecycleDurationHandlers[] = [
+            'threshold' => $threshold,
+            'handler' => $handler,
+        ];
+    }
+
+    /**
      * Send the given request through the middleware / router.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -138,9 +169,9 @@ class Kernel implements KernelContract
         $this->bootstrap();
 
         return (new Pipeline($this->app))
-                    ->send($request)
-                    ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-                    ->then($this->dispatchToRouter());
+            ->send($request)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->then($this->dispatchToRouter());
     }
 
     /**

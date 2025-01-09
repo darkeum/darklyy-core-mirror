@@ -3,22 +3,28 @@
 namespace Boot\System\Console;
 
 use Closure;
-use Boot\System\Console\Application as Artisan;
-use Boot\System\Console\Command;
-use Boot\System\Console\Scheduling\Schedule;
-use \Boot\Contracts\Console\Kernel as KernelContract;
-use \Boot\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
+use Throwable;
+use ReflectionClass;
+use DateTimeInterface;
+use Carbon\CarbonInterval;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Env;
 use Illuminate\Support\Str;
-use ReflectionClass;
+use Boot\System\Console\Command;
 use Symfony\Component\Finder\Finder;
-use Throwable;
+use Illuminate\Support\InteractsWithTime;
+use \Boot\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Events\Dispatcher;
+use Boot\System\Console\Scheduling\Schedule;
+use Boot\System\Console\Application as Artisan;
+use Illuminate\Contracts\Foundation\Application;
+use \Boot\Contracts\Console\Kernel as KernelContract;
 
 class Kernel implements KernelContract
 {
+
+    use InteractsWithTime;
+    
     /**
      * The application implementation.
      *
@@ -53,6 +59,8 @@ class Kernel implements KernelContract
      * @var bool
      */
     protected $commandsLoaded = false;
+
+    protected $commandLifecycleDurationHandlers = [];
 
     /**
      * The bootstrap classes for the application.
@@ -108,6 +116,30 @@ class Kernel implements KernelContract
         });
     }
 
+
+     /**
+     * Register a callback to be invoked when the command lifecycle duration exceeds a given amount of time.
+     *
+     * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
+     * @param  callable  $handler
+     * @return void
+     */
+    public function whenCommandLifecycleIsLongerThan($threshold, $handler)
+    {
+        $threshold = $threshold instanceof DateTimeInterface
+            ? $this->secondsUntil($threshold) * 1000
+            : $threshold;
+
+        $threshold = $threshold instanceof CarbonInterval
+            ? $threshold->totalMilliseconds
+            : $threshold;
+
+        $this->commandLifecycleDurationHandlers[] = [
+            'threshold' => $threshold,
+            'handler' => $handler,
+        ];
+    }
+    
     /**
      * Get the name of the cache store that should manage scheduling mutexes.
      *
