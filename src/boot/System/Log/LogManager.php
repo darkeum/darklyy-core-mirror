@@ -19,7 +19,7 @@ use Monolog\Logger as Monolog;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class LogManager 
+class LogManager  implements  LoggerInterface
 {
 
 
@@ -716,5 +716,5 @@ class LogManager
         return $this->driver()->$method(...$parameters);
     }
 
-   
+
 }

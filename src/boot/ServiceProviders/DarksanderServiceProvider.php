@@ -5,9 +5,9 @@ namespace Boot\ServiceProviders;
 use Boot\Support\ServiceProvider;
 use Boot\System\Database\Console\DbCommand;
 use Boot\System\Queue\Console\TableCommand;
+use Boot\System\Console\Foundation\UpCommand;
 use Boot\System\Database\Console\DumpCommand;
 use Boot\System\Database\Console\WipeCommand;
-use Boot\System\Console\Foundation\UpCommand;
 use Boot\System\Database\Console\PruneCommand;
 use Boot\System\Console\Foundation\DownCommand;
 use Boot\System\Auth\Console\ClearResetsCommand;
@@ -17,13 +17,12 @@ use Boot\System\Console\Foundation\ServeCommand;
 use Boot\System\Queue\Console\FailedTableCommand;
 use Boot\System\Console\Foundation\JobMakeCommand;
 use Boot\System\Queue\Console\BatchesTableCommand;
-use Boot\System\Database\Console\Seeds\SeedCommand;
 use Boot\System\Console\Foundation\CastMakeCommand;
 use Boot\System\Console\Foundation\MailMakeCommand;
 use Boot\System\Console\Foundation\OptimizeCommand;
 use Boot\System\Console\Foundation\RuleMakeCommand;
 use Boot\System\Console\Foundation\TestMakeCommand;
-use Boot\System\Session\Console\SessionTableCommand;
+use Boot\System\Database\Console\Seeds\SeedCommand;
 use Boot\System\Console\Foundation\EventListCommand;
 use Boot\System\Console\Foundation\EventMakeCommand;
 use Boot\System\Console\Foundation\ModelMakeCommand;
@@ -32,14 +31,14 @@ use Boot\System\Console\Foundation\ScopeMakeCommand;
 use Boot\System\Console\Foundation\ViewCacheCommand;
 use Boot\System\Console\Foundation\ViewClearCommand;
 use Boot\System\Console\Foundation\WebSocketCommand;
+use Boot\System\Session\Console\SessionTableCommand;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Boot\System\Console\Foundation\EventCacheCommand;
 use Boot\System\Console\Foundation\EventClearCommand;
 use Boot\System\Console\Foundation\PolicyMakeCommand;
 use Boot\System\Console\Foundation\RouteCacheCommand;
 use Boot\System\Console\Foundation\RouteClearCommand;
-use Boot\System\Routing\Console\ControllerMakeCommand;
-use Boot\System\Routing\Console\MiddlewareMakeCommand;
+use Boot\System\Console\Foundation\ChannelListCommand;
 use Boot\System\Console\Foundation\ChannelMakeCommand;
 use Boot\System\Console\Foundation\ConfigCacheCommand;
 use Boot\System\Console\Foundation\ConfigClearCommand;
@@ -50,6 +49,8 @@ use Boot\System\Console\Foundation\RequestMakeCommand;
 use Boot\System\Console\Foundation\StorageLinkCommand;
 use Boot\System\Console\Foundation\StubPublishCommand;
 use Boot\System\Console\Scheduling\ScheduleRunCommand;
+use Boot\System\Routing\Console\ControllerMakeCommand;
+use Boot\System\Routing\Console\MiddlewareMakeCommand;
 use Boot\System\Console\Foundation\ListenerMakeCommand;
 use Boot\System\Console\Foundation\ObserverMakeCommand;
 use Boot\System\Console\Foundation\ProviderMakeCommand;
@@ -63,8 +64,8 @@ use Boot\System\Console\Foundation\EventGenerateCommand;
 use Boot\System\Console\Foundation\ExceptionMakeCommand;
 use Boot\System\Console\Foundation\OptimizeClearCommand;
 use Boot\System\Console\Foundation\VendorPublishCommand;
-use Boot\System\Database\Console\Seeds\SeederMakeCommand;
 use Boot\System\Console\Scheduling\ScheduleFinishCommand;
+use Boot\System\Database\Console\Seeds\SeederMakeCommand;
 use Boot\System\Console\Foundation\PackageDiscoverCommand;
 use Boot\System\Console\Foundation\NotificationMakeCommand;
 use Boot\System\Console\Scheduling\ScheduleClearCacheCommand;
@@ -150,6 +151,7 @@ class DarksanderServiceProvider extends ServiceProvider implements DeferrablePro
     protected $devCommands = [
         'CacheTable' => CacheTableCommand::class,
         'CastMake' => CastMakeCommand::class,
+        'ChannelList' => ChannelListCommand::class,
         'ChannelMake' => ChannelMakeCommand::class,
         'ComponentMake' => ComponentMakeCommand::class,
         'ConsoleMake' => ConsoleMakeCommand::class,
@@ -290,6 +292,14 @@ class DarksanderServiceProvider extends ServiceProvider implements DeferrablePro
         $this->app->singleton(ChannelMakeCommand::class, function ($app) {
             return new ChannelMakeCommand($app['files']);
         });
+    }    /**
+     * Register the command.
+     *
+     * @return void
+     */
+    protected function registerChannelListCommand()
+    {
+        $this->app->singleton(ChannelListCommand::class);
     }
 
     /**
