@@ -1,8 +1,17 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Broadcasting;
 
-use Illuminate\Broadcasting\BroadcastManager;
+use Boot\System\Broadcasting\BroadcastManager;
 use Illuminate\Contracts\Broadcasting\Broadcaster as BroadcasterContract;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactory;
 use Boot\Contracts\Support\DeferrableProvider;
@@ -11,7 +20,7 @@ use Boot\Support\ServiceProvider;
 class BroadcastServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
-     * Register the service provider.
+     * Регистрация сервис провайдера
      *
      * @return void
      */
@@ -26,12 +35,13 @@ class BroadcastServiceProvider extends ServiceProvider implements DeferrableProv
         });
 
         $this->app->alias(
-            BroadcastManager::class, BroadcastingFactory::class
+            BroadcastManager::class,
+            BroadcastingFactory::class
         );
     }
 
     /**
-     * Get the services provided by the provider.
+     * Получение услуг, предоставляемые поставщиком.
      *
      * @return array
      */
