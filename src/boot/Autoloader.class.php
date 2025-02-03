@@ -38,11 +38,19 @@ class AutoloaderFramework
 				$correctPatch = implode('/', array_merge($classArray, $classNameClear));
 				break;
 			case "module":
-				$moduleName = array(mb_strtolower(array_shift($classArray)), 'sub_classes');
+				$moduleNamePrepare = array_shift($classArray);
+				$moduleName = [$moduleNamePrepare, 'sub_classes'];
+				if (!empty($moduleNamePrepare)) {
+					$moduleName = [mb_strtolower($moduleNamePrepare), 'sub_classes'];
+				}
 				$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
 				break;
 			case "moduleShift":
-				$moduleName = array(mb_strtolower(array_shift($classArray)));
+				$moduleNamePrepare = array_shift($classArray);
+				$moduleName = [$moduleNamePrepare];
+				if (!empty($moduleNamePrepare)) {
+					$moduleName = [mb_strtolower($moduleNamePrepare)];
+				}
 				$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
 				break;
 		}
