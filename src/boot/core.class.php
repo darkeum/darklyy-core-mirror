@@ -8,8 +8,8 @@
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
 */
- 
-if (!defined('ACCESS')) 
+
+if (!defined('ACCESS'))
 {
 	header('Location: /');
 	exit;
@@ -43,13 +43,14 @@ class core
 	public $aCatArray = '';
 	public $html_editor = 0;
 	public $routeMode = false;
+	public $auth;
 
-	
+
 	function __construct()
 	{
 		$this->InitLang();
 	}
-	
+
 	function initCore()
 	{
 		$this->auth = new auth();
@@ -73,7 +74,7 @@ class core
 	global $url, $lang;
 		if($module == true && $admin == false)
 		{
-			
+
 			if(file_exists(ROOT . 'langs/'.$this->langs.'/modules/'.$url[0].'/'.$this->langs.'.site.lng'))
 			{
 				include(ROOT . 'langs/'.$this->langs.'/modules/'.$url[0].'/'.$this->langs.'.site.lng');
@@ -82,7 +83,7 @@ class core
 			{
 				include(ROOT . 'langs/ru/modules/'.$url[0].'/ru.site.lng');
 			}
-			
+
 			//подключение старых языковых файлов
 			if(file_exists(ROOT . 'usr/modules/' . $url[0] . '/lang/'. $this->langs . '.module.php'))
 			{
@@ -92,11 +93,11 @@ class core
 			{
 				include(ROOT . 'usr/modules/' . $url[0] . '/lang/ru.module.php');
 			}
-			
+
 		}
 		elseif($system == true)
 		{
-			
+
 			if(file_exists(ROOT . 'langs/'.$this->langs.'/'.$this->langs.'.site.lng'))
 			{
 				include(ROOT . 'langs/'.$this->langs.'/'.$this->langs.'.site.lng');
@@ -105,7 +106,7 @@ class core
 			{
 				include(ROOT . 'langs/ru/ru.site.lng');
 			}
-			
+
 			//подключение старых языковых файлов
 			if(file_exists(ROOT . 'usr/langs/' . $this->langs . '.system.php'))
 			{
@@ -126,7 +127,7 @@ class core
 			{
 				include(ROOT.'langs/ru/ru.admin.lng');
 			}
-			
+
 			//подключение старых языковых файлов
 			if(file_exists(ROOT . 'root/langs/' . $this->langs . '.root.php'))
 			{
@@ -139,7 +140,7 @@ class core
 		}
 		elseif($module == true && $admin == true)
 		{
-			
+
 			if(isset($url[1]) && $url[1] == 'module' && isset($url[2]))
 			{
 				if(file_exists(ROOT . 'langs/'.$this->langs.'/modules/'.$url[2].'/'.$this->langs.'.admin.lng'))
@@ -147,7 +148,7 @@ class core
 					include(ROOT . 'langs/'.$this->langs.'/modules/'.$url[2].'/'.$this->langs.'.admin.lng');
 				}
 			}
-			
+
 			//подключение старых языковых файлов
 			if(isset($url[1]) && $url[1] == 'module' && isset($url[2]))
 			{
@@ -158,7 +159,7 @@ class core
 			}
 		}
 	}
-	
+
 	function loadLangFile($str)
 	{
 		global $lang;
@@ -169,13 +170,13 @@ class core
 		}
 		else
 		{
-			if(file_exists(ROOT . str_replace('{lang}', 'ru', $str))) 
+			if(file_exists(ROOT . str_replace('{lang}', 'ru', $str)))
 			{
 				require_once(ROOT . str_replace('{lang}', 'ru', $str));
 			}
 		}
 	}
-	
+
 	function loadModLang($mod)
 	{
 		global $lang;
@@ -191,7 +192,7 @@ class core
 			require_once(ROOT . 'usr/modules/' . $mod . '/lang/'. $this->langs . '.module.php');
 		}
 	}
-	
+
 	function loadModLangADM($mod)
 	{
 		global $lang;
@@ -207,7 +208,7 @@ class core
 			require_once(ROOT . 'usr/modules/' . $mod . '/admin/lang/'. $this->langs . '.admin.php');
 		}
 	}
-	
+
 	function loadblockLang($block)
 	{
 		global $lang;
@@ -217,12 +218,12 @@ class core
 			require_once(ROOT.'langs/'.$this->langs.'/blocks/'.$this->langs.'.'.$block.'.lng');
 		}
 	}
-	
+
 	function getLang($const)
 	{
 		return constant($const);
 	}
-	
+
 	function getLangList($force = false)
 	{
 		if($force == false)
@@ -241,12 +242,12 @@ class core
 			foreach($this->langsLang as $key => $val)
 			{
 				$lang[] = array($key, $val);
-			}			
+			}
 		}
-			
+
 		return $lang;
 	}
-	
+
 	function getModList()
 	{
 		if(empty($this->modArray))
@@ -257,17 +258,17 @@ class core
 				$this->modArray[] = $dir_arr[count($dir_arr)-2];
 			}
 		}
-		
+
 		return $this->modArray;
 	}
-	
+
 	function InitLang()
 	{
 	global $url, $config, $lang;
-	
+
 		$config_multiLang = 1;
 		if($config_multiLang == 0) return $this->langs = $config['lang'];
-		
+
 		if((isset($url[0]) && $url[0] != ADMIN) OR !isset($url[0]))
 		{
 			if(empty($this->langs))
@@ -285,7 +286,7 @@ class core
 					$this->langs = 'ru';
 				}
 			}
-			
+
 			return $this->langs;
 		}
 		else
@@ -293,43 +294,43 @@ class core
 			return $this->langs = $config['lang'];
 		}
 	}
-	
+
 	function setLang($langs)
 	{
 		$this->langs = $langs;
 	}
-	
+
 	function fullURL()
-		
+
 	{
 		global $url, $config;
 		$full_lnk = $config['url'].(!empty($url[0]) ? '/'.$url[0] : '').(!empty($url[1]) ? '/'.$url[1] : '').(!empty($url[2]) ? '/'.$url[2] : '').(!empty($url[3]) ? '/'.$url[3] : '').(!empty($url[4]) ? '/'.$url[4] : '');
 		return $full_lnk;
 	}
-	
+
 	function checkModule($name='')
-		
+
 	{
 		global $db;
 		$query = $db->query("SELECT * FROM ".DB_PREFIX."_plugins WHERE title='".$name."' LIMIT 1");
-		if($db->numRows($query) > 0) 
+		if($db->numRows($query) > 0)
 		{
-			$module = $db->getRow($query);		
-			return $module['active'];	
+			$module = $db->getRow($query);
+			return $module['active'];
 		}
 		else
 		{
 			return false;
 		}
-				
+
 	}
-	
+
 	function isOnline($uid='')
-		
+
 	{
 		global $db;
 		$query = $db->query("SELECT * FROM " . DB_PREFIX . "_online WHERE uid='".$uid."'");
-		if($db->numRows($query) > 0) 
+		if($db->numRows($query) > 0)
 		{
 			return true;
 		}
@@ -337,21 +338,21 @@ class core
 		{
 			return false;
 		}
-	}		
-	
-	function sum_row($module='', $where = '')		
+	}
+
+	function sum_row($module='', $where = '')
 	{
 		global $db;
 		$module = $db->safesql($module);
 		$where_compl  = '';
 		if (!empty($where))
-		{	
+		{
 			$where_compl = " WHERE ". $where;
 		}
-		$query = $db->query("SELECT * FROM " . DB_PREFIX . "_".$module.$where_compl);		
+		$query = $db->query("SELECT * FROM " . DB_PREFIX . "_".$module.$where_compl);
 		return $db->numRows($query);;
-	}	
-	
+	}
+
 	function getMod($allowTemp = false)
 	{
 	global $url;
@@ -364,7 +365,7 @@ class core
 			return empty($this->tempModule) ? $url[0] : $this->tempModule;
 		}
 	}
-	
+
 	function urlLang()
 	{
 	global $url, $config;
@@ -380,7 +381,7 @@ class core
 			}
 			unset($url);
 			$GLOBALS['url'] = $s;
-			
+
 			setcookie('lang', $l, time() + 86400, '/');
 		}
 	}
@@ -390,11 +391,11 @@ class core
 		unset($GLOBALS['url']);
 		$GLOBALS['url'] = array();
 		$urlString = '';
-		if($this->routeMode) {	
-			$urlString = $_SERVER['REQUEST_URI'];							
+		if($this->routeMode) {
+			$urlString = $_SERVER['REQUEST_URI'];
 		} else {
 			if(!empty($_GET['url'])) {
-				$urlString = $_GET['url'];	
+				$urlString = $_GET['url'];
 			}
 		}
 		if(!empty($urlString)) {
@@ -402,51 +403,51 @@ class core
 		} else {
 			$getLink = $config['mainModule'];
 			define('INDEX_NOW', true);
-		}			
+		}
 		$tempLink = explode($this->urlSeparator, $getLink);
 		foreach($tempLink as $path) {
 			if(!empty($path)) {
 				$GLOBALS['url'][] = escape($path);
 			}
-		}	
+		}
 	}
-	
-	public function bbDecode($text, $pubId = 0, $html = false) 
+
+	public function bbDecode($text, $pubId = 0, $html = false)
 	{
 	global $smileRepl, $smiles;
 		$new_bb = new bb;
 		return $new_bb->bbSite($text, $pubId);
 	}
-	
 
-	function getCat($module, $pid = null, $type = 'short', $limit = 99) 
+
+	function getCat($module, $pid = null, $type = 'short', $limit = 99)
 	{
 	    $cats = array();
-	    if($pid) 
+	    if($pid)
 	    {
 	        if(empty($this->catArray))
 	        {
 				$this->catArray = getcache('categories');
 	        }
-			
+
 			if(isset($this->catArray[$module]))
 			{
-				$cat_get = $this->catArray[$module];	
-			
-			
+				$cat_get = $this->catArray[$module];
+
+
 	        $stop = ($type == 'short') ? true : false;
 	        $carr = explode(',', $pid);
 
-	        foreach ($cat_get as $cid => $parseArr) 
+	        foreach ($cat_get as $cid => $parseArr)
 	        {
-	            if(in_array($cid, $carr)) 
+	            if(in_array($cid, $carr))
 	            {
 	                $catsNewArr[$cid] = array('title' => $parseArr['title'], 'altname' => $parseArr['altname']);
 	                $sub = $parseArr['parent'];
-	                
-	                if($stop == true) 
+
+	                if($stop == true)
 	                {
-	                    while ($sub) 
+	                    while ($sub)
 	                    {
 	                        $adress[] = $cat_get[$sub]['altname'];
 	                        $sub = $cat_get[$sub]['parent'];
@@ -454,8 +455,8 @@ class core
 	                    }
 	                }
 	                else
-	                { 
-	                    while ($sub) 
+	                {
+	                    while ($sub)
 	                    {
 	                        $adress[] = $cat_get[$sub]['altname'];
 							$breadCrumb[] = array($cat_get[$sub]['title'], $cat_get[$sub]['altname']);
@@ -464,26 +465,26 @@ class core
 	                        $catsNewArr[$cid] = array('title' => $catsNewArr[$cid], 'altname' => $parseArr['altname'], 'adress' => array_reverse($adress));
 	                    }
 	                }
-	                
+
 	                unset($adress);
 	            }
 	        }
-	       
+
 	        $catNum = 0;
-	           
+
 			if(!empty($catsNewArr))
 			{
-				foreach ($catsNewArr as $cid => $catInfo) 
+				foreach ($catsNewArr as $cid => $catInfo)
 				{
 					$catNum++;
 					switch($type)
 					{
 						case 'full':
 						case 'short':
-							if($catNum <= $limit) 
+							if($catNum <= $limit)
 							{
 								$subAdress = false;
-								
+
 								if(isset($catInfo['adress']))
 								{
 									foreach($catInfo['adress'] as $url)
@@ -491,22 +492,22 @@ class core
 										$subAdress .= $url . '/';
 									}
 								}
-								
+
 								$cats[] = '<a class="'.$module.'-wrap-cat" href="' . $module . '/' . $subAdress . $catInfo['altname'] . '" title="' . $catInfo['title'] . '">' . $catInfo['title'] . '</a>';
 								$implodeBy = ', ';
 								//unset($subAdress);
 							}
 							break;
-						
+
 						case 'altname':
 							return $catInfo['altname'];
 							break;
-							
+
 						case 'url':
-							if($catNum <= $limit) 
+							if($catNum <= $limit)
 							{
 								$subAdress = false;
-								
+
 								if(isset($catInfo['adress']))
 								{
 									foreach($catInfo['adress'] as $url)
@@ -514,15 +515,15 @@ class core
 										$subAdress .= $url . '/';
 									}
 								}
-								
+
 								$cats[] = '<a href="' . $module . '/' . $subAdress . $catInfo['altname'] . '" title="' . $catInfo['title'] . '">' . $catInfo['title'] . '</a>';
 								$implodeBy = ', ';
 								//unset($subAdress);
 							}
 							return $module . '/' . $subAdress . $catInfo['altname'];
 							break;
-							
-							
+
+
 						case 'development':
 							if($catNum < 2)
 							{
@@ -535,12 +536,12 @@ class core
 										$adress .= $url . '/';
 									}
 								}
-								
+
 								return $adress . $catInfo['altname'];
 								unset($adress);
 							}
 							break;
-							
+
 						case 'breadcrumb':
 							if(isset($breadCrumb))
 							{
@@ -588,11 +589,11 @@ class core
 		{
 			$this->catArray = getcache('categories');
 		}
-		
+
 		if(isset($this->catArray[$module]))
 		{
 			$cat_get = $this->catArray[$module];
-			
+
 			$count = 0;
 			$cols = 1;
 			$content = '<table border="0" cellspacing="0" cellpadding="7" align="center" width="100%"><tr>';
@@ -606,11 +607,11 @@ class core
 				$count++;
 			}
 			$content .= '</tr></table>';
-			
+
 			if($count > 0)
 			{
 				$core->tpl->open();
-				echo $content;	
+				echo $content;
 				$core->tpl->close();
 			}
 		}
@@ -631,9 +632,9 @@ class core
 		{
 			$this->catArray = getcache('categories');
 		}
-		
-		
-		
+
+
+
 		if(isset($this->catArray[$module]))
 		{
 			$cat_get = $this->catArray[$module];
@@ -641,33 +642,33 @@ class core
 			return $cat_get[$cArr[1]];
 		}
 	}
-	
+
 	function aCatList($module = '')
 	{
 	global $db;
 		if(empty($this->aCatArray))
 		{
 			$where = '';
-			
+
 			if(!empty($module))
 			{
 				$where = "AND module='" . $db->safesql($module) . "'";
 			}
-			
+
 			$query = $db->query("SELECT id, name, parent_id as pid FROM ".DB_PREFIX."_categories WHERE status='1' " . $where);
 			//echo "SELECT id, name, parent_id as pid FROM ".DB_PREFIX."_categories WHERE status='1' " . $where;
 			//exit;
-			while($rows = $db->getRow($query)) 
+			while($rows = $db->getRow($query))
 			{
 				$cat_get[$rows['id']] = array($rows['name'], $rows['pid']);
 			}
 			if(isset($cat_get))
 			{
-				foreach ($cat_get as $cid => $sub_arr) 
+				foreach ($cat_get as $cid => $sub_arr)
 				{
 					$cats_arr[$cid] = $sub_arr[0];
 					$flag = $sub_arr[1];
-					while ($flag != "0") 
+					while ($flag != "0")
 					{
 						$cats_arr[$cid] = $cat_get[$flag][0]." / ".$cats_arr[$cid];
 						$flag = $cat_get[$flag][1];
@@ -677,9 +678,9 @@ class core
 				$this->aCatArray = $cats_arr;
 			}
 		}
-		
+
 		if(empty($this->aCatArray)) $this->aCatArray = array();
-		
+
 		return $this->aCatArray;
 	}
 

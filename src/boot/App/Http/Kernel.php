@@ -45,7 +45,6 @@ class Kernel extends \Boot\System\Http\Kernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\App\Http\Middleware\LocaleMiddleware::class,
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
-            // \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
 
         ],
 
@@ -54,7 +53,6 @@ class Kernel extends \Boot\System\Http\Kernel
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\System\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            // \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
 
         ],
     ];

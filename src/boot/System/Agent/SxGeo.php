@@ -52,6 +52,13 @@ class SxGeo {
 
 	public $batch_mode  = false;
 	public $memory_mode = false;
+	public $b_idx_len;
+	public $id_len;
+	public $block_len;
+	public $max_region;
+	public $max_city;
+	public $max_country;
+	public $pack;
 
 	public function __construct($db_file = 'SxGeo.dat', $type = SXGEO_FILE){
 		$this->fh = fopen($db_file, 'rb');
