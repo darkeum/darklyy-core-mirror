@@ -38,19 +38,15 @@ class AutoloaderFramework
 				$correctPatch = implode('/', array_merge($classArray, $classNameClear));
 				break;
 			case "module":
-				if (!empty(array_shift($classArray))) {
-					$moduleName = array(mb_strtolower(array_shift($classArray)), 'sub_classes');
-					$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
-				}
+				$moduleName = array(mb_strtolower(array_shift($classArray)), 'sub_classes');
+				$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
 				break;
 			case "moduleShift":
-				if (!empty(array_shift($classArray))) {
-					$moduleName = array(mb_strtolower(array_shift($classArray)));
-					$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
-				}
+				$moduleName = array(mb_strtolower(array_shift($classArray)));
+				$correctPatch = implode('/', array_merge($patchArray, $moduleName, $classArray, $classNameClear));
 				break;
 		}
-		if (isset($correctPatch) && !in_array($correctPatch, $this->ignorePathArray())) {
+		if (!in_array($correctPatch, $this->ignorePathArray())) {
 			if ($type == 'noFirstBoot' || $type ==  'boot') {
 				$correctPatch = __DIR__ . '/' . $correctPatch;
 			} else {
