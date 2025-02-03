@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -14,7 +14,7 @@ namespace Boot\System\Office\Word;
 use PhpOffice\PhpWord\TemplateProcessor as PhpWordTemplateProcessor;
 
 class TemplateProcessor extends PhpWordTemplateProcessor
-{    
+{
     /**
      * Добавление ссылок
      *
@@ -32,7 +32,7 @@ class TemplateProcessor extends PhpWordTemplateProcessor
         $ridLink = 'rId' . $linkIndex;
         $this->addLinkToRelations($this->getMainPartName(),  $ridLink, $link->getSource());
     }
-    
+
     /**
      * Добавления ссылок в структуру файла
      *
@@ -56,7 +56,7 @@ class TemplateProcessor extends PhpWordTemplateProcessor
         }
         $this->tempDocumentRelations[$partFileName] = str_replace('</Relationships>', $xmlLinkRelation, $this->tempDocumentRelations[$partFileName]) . '</Relationships>';
     }
-    
+
     /**
      * Доработка стандартного метода клонирования строки с возможностью добавления ссылок
      *
@@ -73,13 +73,27 @@ class TemplateProcessor extends PhpWordTemplateProcessor
             foreach ($rowData as $macro => $replace) {
                 if (is_array($replace)) {
                     $oTextRun = new \PhpOffice\PhpWord\Element\TextRun();
-                    $oLink = $oTextRun->addLink($replace['link'], $replace['text'], $replace['style']);
+                    $oLink = $oTextRun->addLink($replace['link'], $this->prepareSetValue($replace['text']), $replace['style']);
                     $this->addLink($oLink);
                     $this->setComplexValue($macro . '#' . $rowNumber, $oLink);
                 } else {
-                    $this->setValue($macro . '#' . $rowNumber, $replace);
+                    $this->setValue($macro . '#' . $rowNumber, $this->prepareSetValue($replace));
                 }
             }
         }
+    }
+
+    /**
+     * Экранирование зарещервированных символов
+     *
+     * @param  string $value
+     * @return string
+     */
+    public function prepareSetValue(string $value): string
+    {
+        $value = str_replace("&", "&amp;", $value);
+        $value = str_replace("<", "&lt;", $value);
+        $value = str_replace(">", "&gt;", $value);
+        return  $value;
     }
 }
