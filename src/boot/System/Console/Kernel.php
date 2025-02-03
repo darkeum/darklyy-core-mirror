@@ -1,11 +1,22 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console;
 
 use Closure;
 use Throwable;
+use SplFileInfo;
 use ReflectionClass;
 use DateTimeInterface;
+use Boot\Support\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Env;
@@ -13,64 +24,96 @@ use Illuminate\Support\Str;
 use Boot\System\Console\Command;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Support\InteractsWithTime;
-use \Boot\Contracts\Debug\ExceptionHandler;
-use Illuminate\Contracts\Events\Dispatcher;
+use Boot\Contracts\Debug\ExceptionHandler;
 use Boot\System\Console\Scheduling\Schedule;
+use Symfony\Component\Console\ConsoleEvents;
 use Boot\System\Console\Application as Artisan;
+use Boot\System\Console\Events\CommandFinished;
+use Boot\System\Console\Events\CommandStarting;
 use Illuminate\Contracts\Foundation\Application;
-use \Boot\Contracts\Console\Kernel as KernelContract;
+use Boot\Contracts\Console\Kernel as KernelContract;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Event\ConsoleTerminateEvent;
+use Illuminate\Contracts\Events\Dispatcher;
 
 class Kernel implements KernelContract
 {
 
     use InteractsWithTime;
-    
+
     /**
-     * The application implementation.
+     * Экзкмпляр приложения.
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
 
     /**
-     * The event dispatcher implementation.
+     * Реализация диспетчера событий.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $events;
 
     /**
-     * The Artisan application instance.
+     * Реализация диспетчера событий Symfony.
+     *
+     * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface|null
+     */
+    protected $symfonyDispatcher;
+
+    /**
+     * Экземпляр приложения Artisan.
      *
      * @var \Boot\System\Application|null
      */
     protected $artisan;
 
     /**
-     * The Artisan commands provided by the application.
+     * Экземпляр приложения Darksander.
+     *
+     * @var \Boot\System\Application|null
+     */
+    protected $darksander;
+
+    /**
+     * Команды Darksander, предоставляемые приложением.
      *
      * @var array
      */
     protected $commands = [];
 
     /**
-     * Indicates if the Closure commands have been loaded.
+     * Указывает, загружены ли команды закрытия.
      *
      * @var bool
      */
     protected $commandsLoaded = false;
 
+    /**
+     * Все зарегистрированные обработчики длительности команд.
+     *
+     * @var array
+     */
     protected $commandLifecycleDurationHandlers = [];
 
     /**
-     * The bootstrap classes for the application.
+     * Когда началась текущая обрабатываемая команда.
+     *
+     * @var \Boot\Support\Carbon|null
+     */
+    protected $commandStartedAt;
+
+    /**
+     * Классы начальной загрузки для приложения.
      *
      * @var string[]
      */
     protected $bootstrappers = [
         \Boot\App\Loaders\LoadEnvironmentVariables::class,
-        \Boot\App\Loaders\LoadConfiguration::class,      
-        \Boot\App\HandleExceptions::class, 
+        \Boot\App\Loaders\LoadConfiguration::class,
+        \Boot\App\HandleExceptions::class,
         \Boot\App\RegisterFacades::class,
         \Boot\App\SetRequestForConsole::class,
         \Boot\App\RegisterProviders::class,
@@ -78,7 +121,7 @@ class Kernel implements KernelContract
     ];
 
     /**
-     * Create a new console kernel instance.
+     * Создайте новый экземпляр ядра консоли.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
@@ -98,12 +141,44 @@ class Kernel implements KernelContract
         $this->events = $events;
 
         $this->app->booted(function () {
+            if (! $this->app->runningUnitTests()) {
+                $this->rerouteSymfonyCommandEvents();
+            }
             $this->defineConsoleSchedule();
         });
     }
 
     /**
-     * Define the application's command schedule.
+     * Перенаправьте события команд Symfony на их аналоги Darklyy.
+     *
+     * @internal
+     *
+     * @return $this
+     */
+    public function rerouteSymfonyCommandEvents()
+    {
+        if (is_null($this->symfonyDispatcher)) {
+            $this->symfonyDispatcher = new EventDispatcher;
+
+            $this->symfonyDispatcher->addListener(ConsoleEvents::COMMAND, function (ConsoleCommandEvent $event) {
+                $this->events->dispatch(
+                    new CommandStarting($event->getCommand()->getName(), $event->getInput(), $event->getOutput())
+                );
+            });
+
+            $this->symfonyDispatcher->addListener(ConsoleEvents::TERMINATE, function (ConsoleTerminateEvent $event) {
+                $this->events->dispatch(
+                    new CommandFinished($event->getCommand()->getName(), $event->getInput(), $event->getOutput(), $event->getExitCode())
+                );
+            });
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * Определите расписание команд приложения.
      *
      * @return void
      */
@@ -116,9 +191,74 @@ class Kernel implements KernelContract
         });
     }
 
+    /**
+     * Получите имя хранилища кэша, которое должно управлять планированием.
+     *
+     * @return string
+     */
+    protected function scheduleCache()
+    {
+        return $this->app['config']->get('cache.schedule_store', Env::get('SCHEDULE_CACHE_DRIVER'));
+    }
 
-     /**
-     * Register a callback to be invoked when the command lifecycle duration exceeds a given amount of time.
+    /**
+     * Запустите консольное приложение.
+     *
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
+     * @return int
+     */
+    public function handle($input, $output = null)
+    {
+        $this->commandStartedAt = Carbon::now();
+
+        try {
+            if (in_array($input->getFirstArgument(), ['env:encrypt', 'env:decrypt'], true)) {
+                $this->bootstrapWithoutBootingProviders();
+            }
+
+            $this->bootstrap();
+
+            return $this->getArtisan()->run($input, $output);
+        } catch (Throwable $e) {
+            $this->reportException($e);
+
+            $this->renderException($output, $e);
+
+            return 1;
+        }
+    }
+
+    /**
+     * Завершите приложение.
+     *
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  int  $status
+     * @return void
+     */
+    public function terminate($input, $status)
+    {
+        $this->app->terminate();
+
+        if ($this->commandStartedAt === null) {
+            return;
+        }
+
+        $this->commandStartedAt->setTimezone($this->app['config']->get('app.timezone') ?? 'UTC');
+
+        foreach ($this->commandLifecycleDurationHandlers as ['threshold' => $threshold, 'handler' => $handler]) {
+            $end ??= Carbon::now();
+
+            if ($this->commandStartedAt->diffInMilliseconds($end) > $threshold) {
+                $handler($this->commandStartedAt, $input, $status);
+            }
+        }
+
+        $this->commandStartedAt = null;
+    }
+
+    /**
+     * Зарегистрируйте обратный вызов, который будет вызван, когда продолжительность жизненного цикла команды превысит заданный промежуток времени.
      *
      * @param  \DateTimeInterface|\Carbon\CarbonInterval|float|int  $threshold
      * @param  callable  $handler
@@ -139,55 +279,21 @@ class Kernel implements KernelContract
             'handler' => $handler,
         ];
     }
-    
+
     /**
-     * Get the name of the cache store that should manage scheduling mutexes.
+     * Когда началась обработка команды.
      *
-     * @return string
+     * @return \Boot\Support\Carbon|null
      */
-    protected function scheduleCache()
+    public function commandStartedAt()
     {
-        return $this->app['config']->get('cache.schedule_store', Env::get('SCHEDULE_CACHE_DRIVER'));
+        return $this->commandStartedAt;
     }
 
     /**
-     * Run the console application.
+     * Определите расписание команд приложения.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
-     * @return int
-     */
-    public function handle($input, $output = null)
-    {
-        try {
-            $this->bootstrap();
-
-            return $this->getArtisan()->run($input, $output);
-        } catch (Throwable $e) {
-            $this->reportException($e);
-
-            $this->renderException($output, $e);
-
-            return 1;
-        }
-    }
-
-    /**
-     * Terminate the application.
-     *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
-     * @return void
-     */
-    public function terminate($input, $status)
-    {
-        $this->app->terminate();
-    }
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Boot\System\Scheduling\Schedule  $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -196,7 +302,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get the timezone that should be used by default for scheduled events.
+     * Получите часовой пояс, который следует использовать по умолчанию для запланированных событий.
      *
      * @return \DateTimeZone|string|null
      */
@@ -208,7 +314,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Register the Closure based commands for the application.
+     * Зарегистрируйте команды для приложения.
      *
      * @return void
      */
@@ -218,7 +324,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Register a Closure based command with the application.
+     * Зарегистрируйте команду на основе замыкания в приложении.
      *
      * @param  string  $signature
      * @param  \Closure  $callback
@@ -236,7 +342,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Register all of the commands in the given directory.
+     * Зарегистрируйте все команды в указанном каталоге.
      *
      * @param  array|string  $paths
      * @return void
@@ -255,15 +361,13 @@ class Kernel implements KernelContract
 
         $namespace = $this->app->getNamespace();
 
-        foreach ((new Finder)->in($paths)->files() as $command) {
-            $command = $namespace.str_replace(
-                ['/', '.php'],
-                ['\\', ''],
-                Str::after($command->getRealPath(), realpath(app_path()).DIRECTORY_SEPARATOR)
-            );
+        foreach (Finder::create()->in($paths)->files() as $file) {
+            $command = $this->commandClassFromFile($file, $namespace);
 
-            if (is_subclass_of($command, Command::class) &&
-                ! (new ReflectionClass($command))->isAbstract()) {
+            if (
+                is_subclass_of($command, Command::class) &&
+                ! (new ReflectionClass($command))->isAbstract()
+            ) {
                 Artisan::starting(function ($artisan) use ($command) {
                     $artisan->resolve($command);
                 });
@@ -272,7 +376,24 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Register the given command with the console application.
+     * Извлечь имя класса команды из указанного пути к файлу.
+     *
+     * @param  \SplFileInfo  $file
+     * @param  string  $namespace
+     * @return string
+     */
+    protected function commandClassFromFile(SplFileInfo $file, string $namespace): string
+    {
+        return $namespace . str_replace(
+            ['/', '.php'],
+            ['\\', ''],
+            Str::after($file->getRealPath(), realpath(app_path()) . DIRECTORY_SEPARATOR)
+        );
+    }
+
+
+    /**
+     * Зарегистрируйте данную команду в консольном приложении.
      *
      * @param  \Symfony\Component\Console\Command\Command  $command
      * @return void
@@ -283,7 +404,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Run an Artisan console command by name.
+     * Запустите консольную команду Artisan по имени.
      *
      * @param  string  $command
      * @param  array  $parameters
@@ -294,13 +415,17 @@ class Kernel implements KernelContract
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
     {
+        if (in_array($command, ['env:encrypt', 'env:decrypt'], true)) {
+            $this->bootstrapWithoutBootingProviders();
+        }
+
         $this->bootstrap();
 
         return $this->getArtisan()->call($command, $parameters, $outputBuffer);
     }
 
     /**
-     * Queue the given console command.
+     * Поставить в очередь данную консольную команду.
      *
      * @param  string  $command
      * @param  array  $parameters
@@ -312,7 +437,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get all of the commands registered with the console.
+     * Зарегистрируйте все команды в консоли.
      *
      * @return array
      */
@@ -323,8 +448,9 @@ class Kernel implements KernelContract
         return $this->getArtisan()->all();
     }
 
+
     /**
-     * Get the output for the last run command.
+     * Получите вывод последней выполненной команды.
      *
      * @return string
      */
@@ -336,7 +462,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Bootstrap the application for artisan commands.
+     * Загрузить приложение для команд Artisan.
      *
      * @return void
      */
@@ -356,25 +482,44 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get the Artisan application instance.
+     * Загрузите приложение без загрузки поставщиков услуг.
      *
-     * @return \Boot\System\Application
+     * @return void
+     */
+    public function bootstrapWithoutBootingProviders()
+    {
+        $this->app->bootstrapWith(
+            collect($this->bootstrappers())->reject(function ($bootstrapper) {
+                // return $bootstrapper === \Illuminate\Foundation\Bootstrap\BootProviders::class;
+            })->all()
+        );
+    }
+
+    /**
+     * Получите экземпляр приложения Artisan.
+     *
+     * @return \Illuminate\Console\Application
      */
     protected function getArtisan()
     {
         if (is_null($this->artisan)) {
             $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                                    ->resolveCommands($this->commands)
-                                    ->setContainerCommandLoader();
+                ->resolveCommands($this->commands)
+                ->setContainerCommandLoader();
+
+            if ($this->symfonyDispatcher instanceof EventDispatcher) {
+                $this->artisan->setDispatcher($this->symfonyDispatcher);
+                $this->artisan->setSignalsToDispatchEvent();
+            }
         }
 
         return $this->artisan;
     }
 
     /**
-     * Set the Artisan application instance.
+     * Установите экземпляр приложения Artisan.
      *
-     * @param  \Boot\System\Application  $artisan
+     * @param  \Illuminate\Console\Application|null  $artisan
      * @return void
      */
     public function setArtisan($artisan)
@@ -383,7 +528,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Get the bootstrap classes for the application.
+     * Получите классы начальной загрузки для приложения.
      *
      * @return array
      */
@@ -393,7 +538,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Report the exception to the exception handler.
+     * Сообщите об исключении обработчику исключений.
      *
      * @param  \Throwable  $e
      * @return void
@@ -404,7 +549,7 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Render the given exception.
+     * Вывести данное исключение.
      *
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @param  \Throwable  $e
