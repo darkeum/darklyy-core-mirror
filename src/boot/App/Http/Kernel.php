@@ -45,17 +45,17 @@ class Kernel extends \Boot\System\Http\Kernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\App\Http\Middleware\LocaleMiddleware::class,
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
-            \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
+            // \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
 
         ],
 
         'api' => [
             'throttle:api',
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,           
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\System\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
-           
+            // \Boot\System\Inspector\Middleware\WebRequestMonitoring::class,
+
         ],
     ];
 
