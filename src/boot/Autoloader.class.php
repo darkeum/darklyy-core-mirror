@@ -50,7 +50,7 @@ class AutoloaderFramework
 				}
 				break;
 		}
-		if (!in_array($correctPatch, $this->ignorePathArray())) {
+		if (isset($correctPatch) && !in_array($correctPatch, $this->ignorePathArray())) {
 			if ($type == 'noFirstBoot' || $type ==  'boot') {
 				$correctPatch = __DIR__ . '/' . $correctPatch;
 			} else {
