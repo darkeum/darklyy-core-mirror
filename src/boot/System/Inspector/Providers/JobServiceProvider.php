@@ -103,25 +103,24 @@ class JobServiceProvider extends ServiceProvider
     {
         $id = $this->getJobId($job);
 
-        if (array_key_exists($id, $this->segments)) {
+        if (\array_key_exists($id, $this->segments)) {
             $this->segments[$id]->end();
         } else {
-            Inspector::currentTransaction()
+            Inspector::transaction()
                 ->setResult($failed ? 'failed' : 'success');
         }
 
-        // Flush immediately if the job is processed in a long-running process.
         /*
-         * We do not have to flush if the application is using the sync driver.
-         * In that case the package consider the job as a segment.
-         * This can cause the "Undefined property: Boot\System\Inspector\Inspector::$transaction" error.
+         * Flush immediately if the job is processed in a long-running process.
          *
-         * https://github.com/inspector-apm/inspector-laravel/issues/21
+         * We do not have to flush if the application is using the sync driver.
+         * In that case, the package considers the job as a segment.
          */
-        if ($this->app->runningInConsole() && config('queue.default') !== 'sync') {
+        if ($job->getConnectionName() !== 'sync') {
             Inspector::flush();
         }
     }
+
 
     /**
      * Get the job ID.
