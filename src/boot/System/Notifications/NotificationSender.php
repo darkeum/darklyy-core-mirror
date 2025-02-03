@@ -108,13 +108,15 @@ class NotificationSender
             $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
                 $notificationId = Str::uuid()->toString();
                 foreach ((array) $viaChannels as $channel) {
-                    $eneble_chanel = Settings::getByUser($notifiable->id,'notification_' . $channel, true);
-                    if ($channel == 'mail') {
-                        Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
-                    }
-                    if ($eneble_chanel) {
-                        if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
-                            $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
+                    if (!in_array($channel, config('notification.ignore-channel', []))) {
+                        $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
+                        if ($channel == 'mail') {
+                            Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                        }
+                        if ($eneble_chanel) {
+                            if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
+                                $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
+                            }
                         }
                     }
                 }
