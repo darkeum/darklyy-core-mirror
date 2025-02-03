@@ -72,7 +72,6 @@
         "illuminate/validation": "^10.0",
         "illuminate/view": "^10.0",
         "illuminate/redis": "^10.0",
-        "inspector-apm/inspector-php": "^3.7",
         "irazasyed/telegram-bot-sdk": "^3.13",
         "jenssegers/agent": "^2.6",
         "kilylabs/client-bank-exchange-php": "^1.0",
