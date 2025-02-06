@@ -243,7 +243,7 @@ class template
 					$this->loadFile($file, true);
 				} else {
 					// dd(ROOT . $loadDefault);
-					fatal_error(_ERROR, str_replace('[file]', $file . $this->ext, _FILE_NOT_FOUND));
+					fatal_error('Ошибка', str_replace('[file]', $file . $this->ext, 'Файл шаблона [file] не найден'));
 				}
 			}
 		}
