@@ -84,16 +84,18 @@ class TemplateProcessor extends PhpWordTemplateProcessor
     }
 
     /**
-     * Экранирование зарещервированных символов
+     * Экранирование зарезервированных символов
      *
      * @param  string $value
      * @return string
      */
-    public function prepareSetValue(string $value): string
+    public function prepareSetValue(string|null $value): string|null
     {
-        $value = str_replace("&", "&amp;", $value);
-        $value = str_replace("<", "&lt;", $value);
-        $value = str_replace(">", "&gt;", $value);
+        if (!empty($value)) {
+            $value = str_replace("&", "&amp;", $value);
+            $value = str_replace("<", "&lt;", $value);
+            $value = str_replace(">", "&gt;", $value);
+        }
         return  $value;
     }
 }
