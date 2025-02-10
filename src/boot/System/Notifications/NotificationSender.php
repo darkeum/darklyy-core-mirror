@@ -109,9 +109,13 @@ class NotificationSender
                 $notificationId = Str::uuid()->toString();
                 foreach ((array) $viaChannels as $channel) {
                     if (!in_array($channel, config('notification.ignore-channel', []))) {
-                        $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
-                        if ($channel == 'mail') {
-                            Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                        if ($notifiable instanceof AnonymousNotifiable) {
+                            $eneble_chanel = true;
+                        } else {
+                            $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
+                            if ($channel == 'mail') {
+                                Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                            }
                         }
                         if ($eneble_chanel) {
                             if (!($notifiable instanceof AnonymousNotifiable && $channel === 'database')) {
@@ -219,10 +223,15 @@ class NotificationSender
                 if (method_exists($notification, 'viaQueues')) {
                     $queue = $notification->viaQueues()[$channel] ?? null;
                 }
-                $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
-                if ($channel == 'mail') {
-                    Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                if ($notifiable instanceof AnonymousNotifiable) {
+                    $eneble_chanel = true;
+                } else {
+                    $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
+                    if ($channel == 'mail') {
+                        Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                    }
                 }
+
                 if ($eneble_chanel) {
                     $this->bus->dispatch(
                         (new SendQueuedNotifications($notifiable, $notification, [$channel]))
