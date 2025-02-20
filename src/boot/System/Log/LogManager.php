@@ -3,6 +3,8 @@
 namespace Boot\System\Log;
 
 use Closure;
+use Boot\System\Log\Context\Repository as ContextRepository;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Monolog\Formatter\LineFormatter;
@@ -16,13 +18,16 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogHandler;
 use Monolog\Handler\WhatFailureGroupHandler;
 use Monolog\Logger as Monolog;
+use Monolog\Processor\ProcessorInterface;
+use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class LogManager  implements  LoggerInterface
+/**
+ * @mixin \Illuminate\Log\Logger
+ */
+class LogManager implements LoggerInterface
 {
-
-
     use ParsesLogConfiguration;
 
     /**
@@ -132,7 +137,26 @@ class LogManager  implements  LoggerInterface
     {
         try {
             return $this->channels[$name] ?? with($this->resolve($name, $config), function ($logger) use ($name) {
-                return $this->channels[$name] = $this->tap($name, new Logger($logger, $this->app['events']))->withContext($this->sharedContext);
+                $loggerWithContext = $this->tap(
+                    $name,
+                    new Logger($logger, $this->app['events'])
+                )->withContext($this->sharedContext);
+
+                if (method_exists($loggerWithContext->getLogger(), 'pushProcessor')) {
+                    $loggerWithContext->pushProcessor(function ($record) {
+
+                        if (! $this->app->bound(ContextRepository::class)) {
+                            return $record;
+                        }
+
+                        return $record->with(extra: [
+                            ...$record->extra,
+                            ...$this->app[ContextRepository::class]->all(),
+                        ]);
+                    });
+                }
+
+                return $this->channels[$name] = $loggerWithContext;
             });
         } catch (Throwable $e) {
             return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
@@ -258,13 +282,13 @@ class LogManager  implements  LoggerInterface
             $config['channels'] = explode(',', $config['channels']);
         }
 
-        $handlers = collect($config['channels'])->flatMap(function ($channel) {
+        $handlers = (new Collection($config['channels']))->flatMap(function ($channel) {
             return $channel instanceof LoggerInterface
                 ? $channel->getHandlers()
                 : $this->channel($channel)->getHandlers();
         })->all();
 
-        $processors = collect($config['channels'])->flatMap(function ($channel) {
+        $processors = (new Collection($config['channels']))->flatMap(function ($channel) {
             return $channel instanceof LoggerInterface
                 ? $channel->getProcessors()
                 : $this->channel($channel)->getProcessors();
@@ -292,7 +316,7 @@ class LogManager  implements  LoggerInterface
                     $config['bubble'] ?? true, $config['permission'] ?? null, $config['locking'] ?? false
                 ), $config
             ),
-        ]);
+        ], $config['replace_placeholders'] ?? false ? [new PsrLogMessageProcessor()] : []);
     }
 
     /**
@@ -308,7 +332,7 @@ class LogManager  implements  LoggerInterface
                 $config['path'], $config['days'] ?? 7, $this->level($config),
                 $config['bubble'] ?? true, $config['permission'] ?? null, $config['locking'] ?? false
             ), $config),
-        ]);
+        ], $config['replace_placeholders'] ?? false ? [new PsrLogMessageProcessor()] : []);
     }
 
     /**
@@ -332,7 +356,7 @@ class LogManager  implements  LoggerInterface
                 $config['bubble'] ?? true,
                 $config['exclude_fields'] ?? []
             ), $config),
-        ]);
+        ], $config['replace_placeholders'] ?? false ? [new PsrLogMessageProcessor()] : []);
     }
 
     /**
@@ -348,7 +372,7 @@ class LogManager  implements  LoggerInterface
                 Str::snake($this->app['config']['app.name'], '-'),
                 $config['facility'] ?? LOG_USER, $this->level($config)
             ), $config),
-        ]);
+        ], $config['replace_placeholders'] ?? false ? [new PsrLogMessageProcessor()] : []);
     }
 
     /**
@@ -363,7 +387,7 @@ class LogManager  implements  LoggerInterface
             $this->prepareHandler(new ErrorLogHandler(
                 $config['type'] ?? ErrorLogHandler::OPERATING_SYSTEM, $this->level($config)
             )),
-        ]);
+        ], $config['replace_placeholders'] ?? false ? [new PsrLogMessageProcessor()] : []);
     }
 
     /**
@@ -383,15 +407,35 @@ class LogManager  implements  LoggerInterface
             );
         }
 
+        (new Collection($config['processors'] ?? []))->each(function ($processor) {
+            $processor = $processor['processor'] ?? $processor;
+
+            if (! is_a($processor, ProcessorInterface::class, true)) {
+                throw new InvalidArgumentException(
+                    $processor.' must be an instance of '.ProcessorInterface::class
+                );
+            }
+        });
+
         $with = array_merge(
             ['level' => $this->level($config)],
             $config['with'] ?? [],
             $config['handler_with'] ?? []
         );
 
-        return new Monolog($this->parseChannel($config), [$this->prepareHandler(
+        $handler = $this->prepareHandler(
             $this->app->make($config['handler'], $with), $config
-        )]);
+        );
+
+        $processors = (new Collection($config['processors'] ?? []))
+            ->map(fn ($processor) => $this->app->make($processor['processor'] ?? $processor, $processor['with'] ?? []))
+            ->toArray();
+
+        return new Monolog(
+            $this->parseChannel($config),
+            [$handler],
+            $processors,
+        );
     }
 
     /**
@@ -419,7 +463,13 @@ class LogManager  implements  LoggerInterface
     protected function prepareHandler(HandlerInterface $handler, array $config = [])
     {
         if (isset($config['action_level'])) {
-            $handler = new FingersCrossedHandler($handler, $this->actionLevel($config));
+            $handler = new FingersCrossedHandler(
+                $handler,
+                $this->actionLevel($config),
+                0,
+                true,
+                $config['stop_buffering'] ?? true
+            );
         }
 
         if (! $handler instanceof FormattableHandlerInterface) {
@@ -442,9 +492,7 @@ class LogManager  implements  LoggerInterface
      */
     protected function formatter()
     {
-        return tap(new LineFormatter(null, $this->dateFormat, true, true), function ($formatter) {
-            $formatter->includeStacktraces();
-        });
+        return new LineFormatter(null, $this->dateFormat, true, true, true);
     }
 
     /**
@@ -472,6 +520,22 @@ class LogManager  implements  LoggerInterface
     public function sharedContext()
     {
         return $this->sharedContext;
+    }
+
+    /**
+     * Flush the log context on all currently resolved channels.
+     *
+     * @return $this
+     */
+    public function withoutContext()
+    {
+        foreach ($this->channels as $channel) {
+            if (method_exists($channel, 'withoutContext')) {
+                $channel->withoutContext();
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -546,7 +610,7 @@ class LogManager  implements  LoggerInterface
      * Unset the given channel instance.
      *
      * @param  string|null  $driver
-     * @return $this
+     * @return void
      */
     public function forgetChannel($driver = null)
     {
@@ -571,7 +635,7 @@ class LogManager  implements  LoggerInterface
             $driver ??= 'null';
         }
 
-        return $driver;
+        return trim($driver);
     }
 
     /**
@@ -587,7 +651,7 @@ class LogManager  implements  LoggerInterface
     /**
      * System is unusable.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -602,7 +666,7 @@ class LogManager  implements  LoggerInterface
      * Example: Entire website down, database unavailable, etc. This should
      * trigger the SMS alerts and wake you up.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -616,7 +680,7 @@ class LogManager  implements  LoggerInterface
      *
      * Example: Application component unavailable, unexpected exception.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -629,7 +693,7 @@ class LogManager  implements  LoggerInterface
      * Runtime errors that do not require immediate action but should typically
      * be logged and monitored.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -644,7 +708,7 @@ class LogManager  implements  LoggerInterface
      * Example: Use of deprecated APIs, poor use of an API, undesirable things
      * that are not necessarily wrong.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -656,7 +720,7 @@ class LogManager  implements  LoggerInterface
     /**
      * Normal but significant events.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -670,7 +734,7 @@ class LogManager  implements  LoggerInterface
      *
      * Example: User logs in, SQL logs.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -682,7 +746,7 @@ class LogManager  implements  LoggerInterface
     /**
      * Detailed debug information.
      *
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
@@ -695,13 +759,26 @@ class LogManager  implements  LoggerInterface
      * Logs with an arbitrary level.
      *
      * @param  mixed  $level
-     * @param  string  $message
+     * @param  string|\Stringable  $message
      * @param  array  $context
      * @return void
      */
     public function log($level, $message, array $context = []): void
     {
         $this->driver()->log($level, $message, $context);
+    }
+
+    /**
+     * Set the application instance used by the manager.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @return $this
+     */
+    public function setApplication($app)
+    {
+        $this->app = $app;
+
+        return $this;
     }
 
     /**
@@ -715,6 +792,4 @@ class LogManager  implements  LoggerInterface
     {
         return $this->driver()->$method(...$parameters);
     }
-
-
 }

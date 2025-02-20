@@ -19,6 +19,7 @@ use Illuminate\Support\Traits\Macroable;
 use Boot\System\Events\EventServiceProvider;
 use Boot\System\Routing\RoutingServiceProvider;
 use Illuminate\Contracts\Foundation\CachesRoutes;
+use Boot\System\Log\Context\ContextServiceProvider;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -246,6 +247,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     {
         $this->register(new EventServiceProvider($this));
         $this->register(new LogServiceProvider($this));
+        $this->register(new ContextServiceProvider($this));
         $this->register(new RoutingServiceProvider($this));
     }
 
