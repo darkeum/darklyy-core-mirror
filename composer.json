@@ -142,7 +142,7 @@
         "vlucas/phpdotenv": "^5.3",
         "workerman/channel": "^1.1",
         "workerman/workerman": "^4.0",
-        "laravel/prompts": "^0.1.13"
+        "laravel/prompts": "^0.3"
 
     },
     "conflict": {
