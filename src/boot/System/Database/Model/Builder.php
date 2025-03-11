@@ -31,15 +31,15 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null, $total = null)
     {
-        // $PaginationState = new PaginationState;
-        // $PaginationState->resolveUsing();
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        $perPage = $perPage ?: $this->model->getPerPage();
+        $total = value($total) ?? $this->toBase()->getCountForPagination();
 
-        $results = ($total = $this->toBase()->getCountForPagination())
+        $perPage = value($perPage, $total) ?: $this->model->getPerPage();
+
+        $results = $total
             ? $this->forPage($page, $perPage)->get($columns)
             : $this->model->newCollection();
 
@@ -107,5 +107,5 @@ class Builder extends \Illuminate\Database\Eloquent\Builder
         ));
     }
 
-    
+
 }

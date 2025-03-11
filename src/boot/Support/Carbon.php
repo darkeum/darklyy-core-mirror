@@ -16,7 +16,7 @@ use Carbon\CarbonImmutable as BaseCarbonImmutable;
 
 class Carbon extends BaseCarbon
 {
-    public static function setTestNow($testNow = null)
+    public static function setTestNow(mixed $testNow = null): void
     {
         BaseCarbon::setTestNow($testNow);
         BaseCarbonImmutable::setTestNow($testNow);

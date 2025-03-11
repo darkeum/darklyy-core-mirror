@@ -3,20 +3,20 @@
 namespace Boot\System\Console;
 
 use Closure;
-use Boot\System\Console\Events\ArtisanStarting;
-use Illuminate\Contracts\Console\Application as ApplicationContract;
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\ProcessUtils;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Container\Container;
+use Boot\System\Console\Events\ArtisanStarting;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Process\PhpExecutableFinder;
+use Illuminate\Contracts\Console\Application as ApplicationContract;
 
 class Application extends SymfonyApplication implements ApplicationContract
 {
@@ -161,7 +161,8 @@ class Application extends SymfonyApplication implements ApplicationContract
         }
 
         return $this->run(
-            $input, $this->lastOutput = $outputBuffer ?: new BufferedOutput
+            $input,
+            $this->lastOutput = $outputBuffer ?: new BufferedOutput
         );
     }
 
@@ -199,8 +200,8 @@ class Application extends SymfonyApplication implements ApplicationContract
     public function output()
     {
         return $this->lastOutput && method_exists($this->lastOutput, 'fetch')
-                        ? $this->lastOutput->fetch()
-                        : '';
+            ? $this->lastOutput->fetch()
+            : '';
     }
 
     /**
@@ -209,7 +210,7 @@ class Application extends SymfonyApplication implements ApplicationContract
      * @param  \Symfony\Component\Console\Command\Command  $command
      * @return \Symfony\Component\Console\Command\Command
      */
-    public function add(SymfonyCommand $command)
+    public function add(SymfonyCommand $command): ?SymfonyCommand
     {
         if ($command instanceof Command) {
             $command->setLaravel($this->darklyy);
@@ -311,7 +312,7 @@ class Application extends SymfonyApplication implements ApplicationContract
         return $this->darklyy;
     }
 
-      /**
+    /**
      * Get the Laravel application instance.
      *
      * @return \Illuminate\Contracts\Foundation\Application

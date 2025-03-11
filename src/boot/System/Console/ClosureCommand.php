@@ -32,14 +32,14 @@ class ClosureCommand extends Command
         parent::__construct();
     }
 
-    /**
+  /**
      * Execute the console command.
      *
      * @param  \Symfony\Component\Console\Input\InputInterface  $input
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $inputs = array_merge($input->getArguments(), $input->getOptions());
 
@@ -51,10 +51,17 @@ class ClosureCommand extends Command
             }
         }
 
-        return (int) $this->laravel->call(
-            $this->callback->bindTo($this, $this), $parameters
-        );
+        try {
+            return (int) $this->laravel->call(
+                $this->callback->bindTo($this, $this), $parameters
+            );
+        } catch (ManuallyFailedException $e) {
+            $this->components->error($e->getMessage());
+
+            return static::FAILURE;
+        }
     }
+
 
     /**
      * Set the description for the command.

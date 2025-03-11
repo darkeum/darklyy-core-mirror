@@ -197,8 +197,12 @@ class UrlGenerator implements UrlGeneratorContract
             return $path;
         }
 
-        $tail = implode('/', array_map(
-            'rawurlencode', (array) $this->formatParameters($extra))
+        $tail = implode(
+            '/',
+            array_map(
+                'rawurlencode',
+                (array) $this->formatParameters($extra)
+            )
         );
 
         // Once we have the scheme we will compile the "tail" by collapsing the values
@@ -209,9 +213,31 @@ class UrlGenerator implements UrlGeneratorContract
         [$path, $query] = $this->extractQueryString($path);
 
         return $this->format(
-            $root, '/'.trim($path.'/'.$tail, '/')
-        ).$query;
+            $root,
+            '/' . trim($path . '/' . $tail, '/')
+        ) . $query;
     }
+
+    /**
+     * Generate an absolute URL with the given query parameters.
+     *
+     * @param  string  $path
+     * @param  array  $query
+     * @param  mixed  $extra
+     * @param  bool|null  $secure
+     * @return string
+     */
+    public function query($path, $query = [], $extra = [], $secure = null)
+    {
+        [$path, $existingQueryString] = $this->extractQueryString($path);
+
+        parse_str(Str::after($existingQueryString, '?'), $existingQueryArray);
+
+        return rtrim($this->to($path . '?' . Arr::query(
+            array_merge($existingQueryArray, $query)
+        ), $extra, $secure), '?');
+    }
+
 
     /**
      * Generate a secure, absolute URL to the given path.
@@ -243,7 +269,7 @@ class UrlGenerator implements UrlGeneratorContract
         // for asset paths, but only for routes to endpoints in the application.
         $root = $this->assetRoot ?: $this->formatRoot($this->formatScheme($secure));
 
-        return $this->removeIndex($root).'/'.trim($path, '/');
+        return $this->removeIndex($root) . '/' . trim($path, '/');
     }
 
     /**
@@ -272,7 +298,7 @@ class UrlGenerator implements UrlGeneratorContract
         // for asset paths, but only for routes to endpoints in the application.
         $root = $this->formatRoot($this->formatScheme($secure), $root);
 
-        return $this->removeIndex($root).'/'.trim($path, '/');
+        return $this->removeIndex($root) . '/' . trim($path, '/');
     }
 
     /**
@@ -285,7 +311,7 @@ class UrlGenerator implements UrlGeneratorContract
     {
         $i = 'index.php';
 
-        return str_contains($root, $i) ? str_replace('/'.$i, '', $root) : $root;
+        return str_contains($root, $i) ? str_replace('/' . $i, '', $root) : $root;
     }
 
     /**
@@ -301,7 +327,7 @@ class UrlGenerator implements UrlGeneratorContract
         }
 
         if (is_null($this->cachedScheme)) {
-            $this->cachedScheme = $this->forceScheme ?: $this->request->getScheme().'://';
+            $this->cachedScheme = $this->forceScheme ?: $this->request->getScheme() . '://';
         }
 
         return $this->cachedScheme;
@@ -411,13 +437,13 @@ class UrlGenerator implements UrlGeneratorContract
         $ignoreQuery[] = 'signature';
         $ignoreQuery[] = 'url';
 
-        $url = $absolute ? $request->url() : '/'.$request->path();
+        $url = $absolute ? $request->url() : '/' . $request->path();
 
         $queryString = collect(explode('&', $request->server->get('QUERY_STRING')))
-            ->reject(fn ($parameter) => in_array(Str::before($parameter, '='), $ignoreQuery))
+            ->reject(fn($parameter) => in_array(Str::before($parameter, '='), $ignoreQuery))
             ->join('&');
 
-        $original = rtrim($url.'?'.$queryString, '?');
+        $original = rtrim($url . '?' . $queryString, '?');
 
         $signature = hash_hmac('sha256', $original, call_user_func($this->keyResolver));
 
@@ -470,12 +496,14 @@ class UrlGenerator implements UrlGeneratorContract
     {
         $parameters = collect(Arr::wrap($parameters))->map(function ($value, $key) use ($route) {
             return $value instanceof UrlRoutable && $route->bindingFieldFor($key)
-                    ? $value->{$route->bindingFieldFor($key)}
-                    : $value;
+                ? $value->{$route->bindingFieldFor($key)}
+                : $value;
         })->all();
 
         return $this->routeUrl()->to(
-            $route, $this->formatParameters($parameters), $absolute
+            $route,
+            $this->formatParameters($parameters),
+            $absolute
         );
     }
 
@@ -507,11 +535,11 @@ class UrlGenerator implements UrlGeneratorContract
     protected function formatAction($action)
     {
         if (is_array($action)) {
-            $action = '\\'.implode('@', $action);
+            $action = '\\' . implode('@', $action);
         }
 
         if ($this->rootNamespace && ! str_starts_with($action, '\\')) {
-            return $this->rootNamespace.'\\'.$action;
+            return $this->rootNamespace . '\\' . $action;
         } else {
             return trim($action, '\\');
         }
@@ -573,7 +601,7 @@ class UrlGenerator implements UrlGeneratorContract
 
         $start = str_starts_with($root, 'http://') ? 'http://' : 'https://';
 
-        return preg_replace('~'.$start.'~', $scheme, $root, 1);
+        return preg_replace('~' . $start . '~', $scheme, $root, 1);
     }
 
     /**
@@ -586,7 +614,7 @@ class UrlGenerator implements UrlGeneratorContract
      */
     public function format($root, $path, $route = null)
     {
-        $path = '/'.trim($path, '/');
+        $path = '/' . trim($path, '/');
 
         if ($this->formatHostUsing) {
             $root = call_user_func($this->formatHostUsing, $root, $route);
@@ -596,7 +624,7 @@ class UrlGenerator implements UrlGeneratorContract
             $path = call_user_func($this->formatPathUsing, $path, $route);
         }
 
-        return trim($root.$path, '/');
+        return trim($root . $path, '/');
     }
 
     /**
@@ -659,7 +687,7 @@ class UrlGenerator implements UrlGeneratorContract
     {
         $this->cachedScheme = null;
 
-        $this->forceScheme = $scheme ? $scheme.'://' : null;
+        $this->forceScheme = $scheme ? $scheme . '://' : null;
     }
 
     /**

@@ -210,10 +210,11 @@ abstract class Grammar extends BaseGrammar
      * @param  mixed  $table
      * @return string
      */
-    public function wrapTable($table)
+    public function wrapTable($table, $prefix = null)
     {
         return parent::wrapTable(
-            $table instanceof Blueprint ? $table->getTable() : $table
+            $table instanceof Blueprint ? $table->getTable() : $table,
+            $prefix
         );
     }
 
