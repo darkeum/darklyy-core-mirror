@@ -138,7 +138,7 @@
         "twig/twig": "^3.20",
         "typesense/typesense-php": "^4.8",
         "verot/class.upload.php": "^2.1",
-        "vinkla/hashids": "^11.0",
+        "vinkla/hashids": "^13.0",
         "vlucas/phpdotenv": "^5.3",
         "workerman/channel": "^1.1",
         "workerman/workerman": "^4.0",
