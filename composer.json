@@ -17,7 +17,7 @@
         "aldas/modbus-tcp-client": "^3.4",
         "amphp/socket": "^1.2",
         "asimlqt/php-google-spreadsheet-client": "^3.0",
-        "barryvdh/laravel-ide-helper": "^2.13",
+        "barryvdh/laravel-ide-helper": "^3.5",
         "bjeavons/zxcvbn-php": "^1.2",
         "bogdaan/viber-bot-php": "^0.0.15",
         "bramus/ansi-php": "~3.0",
