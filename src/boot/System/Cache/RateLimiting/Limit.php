@@ -18,13 +18,12 @@ class Limit
      */
     public $maxAttempts;
 
-    /**
-     * The number of minutes until the rate limit is reset.
+   /**
+     * The number of seconds until the rate limit is reset.
      *
      * @var int
      */
-    public $decayMinutes;
-
+    public $decaySeconds;
     /**
      * The response generator callback.
      *
@@ -40,11 +39,11 @@ class Limit
      * @param  int  $decayMinutes
      * @return void
      */
-    public function __construct($key = '', int $maxAttempts = 60, int $decayMinutes = 1)
+    public function __construct($key = '', int $maxAttempts = 60, int $decaySeconds = 1)
     {
         $this->key = $key;
         $this->maxAttempts = $maxAttempts;
-        $this->decayMinutes = $decayMinutes;
+        $this->decaySeconds = $decaySeconds;
     }
 
     /**
