@@ -144,17 +144,6 @@ class GetAttrNode extends GetAttrExpression
             return $object->$item;
         }
 
-        return \twig_get_attribute(
-            $env,
-            $source,
-            $object,
-            $item,
-            $arguments,
-            $type,
-            $isDefinedTest,
-            $ignoreStrictCheck,
-            $sandboxed,
-            $lineno
-        );
+
     }
 }
