@@ -4,7 +4,7 @@ namespace Boot\System\Cache\RateLimiting;
 
 class Unlimited extends GlobalLimit
 {
-    /**
+  /**
      * Create a new limit instance.
      *
      * @return void
