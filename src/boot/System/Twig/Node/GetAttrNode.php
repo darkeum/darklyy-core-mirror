@@ -10,6 +10,7 @@ namespace Boot\System\Twig\Node;
 use Twig\Compiler;
 use Twig\Environment;
 use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
 use Twig\Extension\SandboxExtension;
 use Twig\Node\Expression\GetAttrExpression;
 use Twig\Node\Node;
@@ -25,13 +26,13 @@ use Twig\Template;
  */
 class GetAttrNode extends GetAttrExpression
 {
-    /**
+     /**
      * @inheritdoc
      */
-    public function __construct(array $nodes = [], array $attributes = [], int $lineno = 0, string $tag = null)
+    public function __construct(array $nodes = [], array $attributes = [], int $lineno = 0)
     {
         // Skip parent::__construct()
-        Node::__construct($nodes, $attributes, $lineno, $tag);
+        Node::__construct($nodes, $attributes, $lineno);
     }
 
     /**
@@ -144,6 +145,15 @@ class GetAttrNode extends GetAttrExpression
             return $object->$item;
         }
 
-
+        return CoreExtension::getAttribute(
+            $env,
+            $source,
+            $object,
+            $item,
+            $arguments,
+            $type,
+            $isDefinedTest,
+            $ignoreStrictCheck
+        );
     }
 }
