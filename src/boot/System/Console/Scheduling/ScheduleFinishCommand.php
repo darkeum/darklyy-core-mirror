@@ -5,6 +5,7 @@ namespace Boot\System\Console\Scheduling;
 use Boot\System\Console\Command;
 use Boot\System\Console\Events\ScheduledBackgroundTaskFinished;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Collection;
 
 class ScheduleFinishCommand extends Command
 {
@@ -43,12 +44,12 @@ class ScheduleFinishCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param  \Boot\System\Scheduling\Schedule  $schedule
+     * @param  \Boot\System\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     public function handle(Schedule $schedule)
     {
-        collect($schedule->events())->filter(function ($value) {
+        (new Collection($schedule->events()))->filter(function ($value) {
             return $value->mutexName() == $this->argument('id');
         })->each(function ($event) {
             $event->finish($this->laravel, $this->argument('code'));

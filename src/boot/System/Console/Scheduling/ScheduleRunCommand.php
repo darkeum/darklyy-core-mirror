@@ -1,81 +1,99 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
+use Throwable;
+use Boot\Support\Carbon;
+use Illuminate\Support\Sleep;
+use Boot\Support\Facades\Date;
 use Boot\System\Console\Command;
-use Boot\System\Console\Events\ScheduledTaskFailed;
-use Boot\System\Console\Events\ScheduledTaskFinished;
-use Boot\System\Console\Events\ScheduledTaskSkipped;
-use Boot\System\Console\Events\ScheduledTaskStarting;
+use Boot\System\Console\Application;
 use Boot\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Facades\Date;
-use Throwable;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Boot\System\Console\Events\ScheduledTaskFailed;
+use Illuminate\Contracts\Cache\Repository as Cache;
+use Boot\System\Console\Events\ScheduledTaskSkipped;
+use Boot\System\Console\Events\ScheduledTaskFinished;
+use Boot\System\Console\Events\ScheduledTaskStarting;
 
+#[AsCommand(name: 'schedule:run')]
 class ScheduleRunCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя консольной команды
      *
      * @var string
      */
     protected $name = 'schedule:run';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'schedule:run';
-
-    /**
-     * The console command description.
+     *  Описание консольной команды.
      *
      * @var string
      */
-    protected $description = 'Запуск запланированных задач';
+    protected $description = 'Выполнить запланированные команды';
 
     /**
-     * The schedule instance.
+     * Экземпляр планировщика.
      *
-     * @var \Boot\System\Scheduling\Schedule
+     * @var \Boot\System\Console\Scheduling\Schedule
      */
     protected $schedule;
 
     /**
-     * The 24 hour timestamp this scheduler command started running.
+     * 24-часовая временная метка начала выполнения этой команды планировщика.
      *
-     * @var \Illuminate\Support\Carbon
+     * @var \Boot\Support\Carbon
      */
     protected $startedAt;
 
     /**
-     * Check if any events ran.
+     * Проверьте, произошли ли какие-либо события.
      *
      * @var bool
      */
     protected $eventsRan = false;
 
     /**
-     * The event dispatcher.
+     * Диспетчер событий.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $dispatcher;
 
     /**
-     * The exception handler.
+     * Обработчик исключений.
      *
      * @var \Illuminate\Contracts\Debug\ExceptionHandler
      */
     protected $handler;
 
     /**
-     * Create a new command instance.
+     * Реализация кэш-хранилища.
+     *
+     * @var \Illuminate\Contracts\Cache\Repository
+     */
+    protected $cache;
+
+    /**
+     * Двоичный файл PHP, используемый командой.
+     *
+     * @var string
+     */
+    protected $phpBinary;
+
+    /**
+     * Создайте новый экземпляр команды.
      *
      * @return void
      */
@@ -87,20 +105,31 @@ class ScheduleRunCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * Выполнение консольной команды.
      *
-     * @param  \Boot\System\Scheduling\Schedule  $schedule
+     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
+     * @param  \Illuminate\Contracts\Cache\Repository  $cache
      * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $handler
      * @return void
      */
-    public function handle(Schedule $schedule, Dispatcher $dispatcher, ExceptionHandler $handler)
+    public function handle(Schedule $schedule, Dispatcher $dispatcher, Cache $cache, ExceptionHandler $handler)
     {
         $this->schedule = $schedule;
         $this->dispatcher = $dispatcher;
+        $this->cache = $cache;
         $this->handler = $handler;
+        $this->phpBinary = Application::phpBinary();
 
-        foreach ($this->schedule->dueEvents($this->laravel) as $event) {
+        $this->newLine();
+
+        $events = $this->schedule->dueEvents($this->laravel);
+
+        if ($events->contains->isRepeatable()) {
+            $this->clearInterruptSignal();
+        }
+
+        foreach ($events as $event) {
             if (! $event->filtersPass($this->laravel)) {
                 $this->dispatcher->dispatch(new ScheduledTaskSkipped($event));
 
@@ -116,15 +145,21 @@ class ScheduleRunCommand extends Command
             $this->eventsRan = true;
         }
 
+        if ($events->contains->isRepeatable()) {
+            $this->repeatEvents($events->filter->isRepeatable());
+        }
+
         if (! $this->eventsRan) {
-            $this->info('Нет запланированных команд, готовых к запуску.');
+            $this->components->info('Нет запланированных команд, готовых к выполнению.');
+        } else {
+            $this->newLine();
         }
     }
 
     /**
-     * Run the given single server event.
+     *Запустить заданное событие одного сервера.
      *
-     * @param  \Boot\System\Scheduling\Event  $event
+     * @param  \Boot\System\Console\Scheduling\Event  $event
      * @return void
      */
     protected function runSingleServerEvent($event)
@@ -132,7 +167,10 @@ class ScheduleRunCommand extends Command
         if ($this->schedule->serverShouldRun($event, $this->startedAt)) {
             $this->runEvent($event);
         } else {
-            $this->line('<info>Команда пропущена (уже выполнялась на другом сервере):</info> '.$event->getSummaryForDisplay());
+            $this->components->info(sprintf(
+                'Пропуск [%s], так как команда уже запущена на другом сервере.',
+                $event->getSummaryForDisplay()
+            ));
         }
     }
 
@@ -144,25 +182,111 @@ class ScheduleRunCommand extends Command
      */
     protected function runEvent($event)
     {
-        $this->line('<info>['.date('c').'] Запуск запланированной команды:</info> '.$event->getSummaryForDisplay());
+        $summary = $event->getSummaryForDisplay();
 
-        $this->dispatcher->dispatch(new ScheduledTaskStarting($event));
+        $command = $event instanceof CallbackEvent
+            ? $summary
+            : trim(str_replace($this->phpBinary, '', $event->command));
 
-        $start = microtime(true);
+        $description = sprintf(
+            '<fg=gray>%s</> Выполняется [%s]%s',
+            Carbon::now()->format('Y-m-d H:i:s'),
+            $command,
+            $event->runInBackground ? ' в фоне' : '',
+        );
 
-        try {
-            $event->run($this->laravel);
+        $this->components->task($description, function () use ($event) {
+            $this->dispatcher->dispatch(new ScheduledTaskStarting($event));
 
-            $this->dispatcher->dispatch(new ScheduledTaskFinished(
-                $event,
-                round(microtime(true) - $start, 2)
-            ));
+            $start = microtime(true);
 
-            $this->eventsRan = true;
-        } catch (Throwable $e) {
-            $this->dispatcher->dispatch(new ScheduledTaskFailed($event, $e));
+            try {
+                $event->run($this->laravel);
 
-            $this->handler->report($e);
+                $this->dispatcher->dispatch(new ScheduledTaskFinished(
+                    $event,
+                    round(microtime(true) - $start, 2)
+                ));
+
+                $this->eventsRan = true;
+            } catch (Throwable $e) {
+                $this->dispatcher->dispatch(new ScheduledTaskFailed($event, $e));
+
+                $this->handler->report($e);
+            }
+
+            return $event->exitCode == 0;
+        });
+
+        if (! $event instanceof CallbackEvent) {
+            $this->components->bulletList([
+                $event->getSummaryForDisplay(),
+            ]);
         }
+    }
+
+    /**
+     * Запустить заданные повторяющиеся события.
+     *
+     * @param  \Illuminate\Support\Collection<\Boot\system\Console\Scheduling\Event>  $events
+     * @return void
+     */
+    protected function repeatEvents($events)
+    {
+        $hasEnteredMaintenanceMode = false;
+
+        while (Date::now()->lte($this->startedAt->endOfMinute())) {
+            foreach ($events as $event) {
+                if ($this->shouldInterrupt()) {
+                    return;
+                }
+
+                if (! $event->shouldRepeatNow()) {
+                    continue;
+                }
+
+                $hasEnteredMaintenanceMode = $hasEnteredMaintenanceMode || $this->laravel->isDownForMaintenance();
+
+                if ($hasEnteredMaintenanceMode && ! $event->runsInMaintenanceMode()) {
+                    continue;
+                }
+
+                if (! $event->filtersPass($this->laravel)) {
+                    $this->dispatcher->dispatch(new ScheduledTaskSkipped($event));
+
+                    continue;
+                }
+
+                if ($event->onOneServer) {
+                    $this->runSingleServerEvent($event);
+                } else {
+                    $this->runEvent($event);
+                }
+
+                $this->eventsRan = true;
+            }
+
+            Sleep::usleep(100000);
+        }
+    }
+
+    /**
+     * Определите, следует ли прерывать выполнение расписания.
+     *
+     * @return bool
+     */
+    protected function shouldInterrupt()
+    {
+        return $this->cache->get('illuminate:schedule:interrupt', false);
+    }
+
+    /**
+     * Убедитесь, что сигнал прерывания сброшен.
+     *
+     * @return void
+     */
+    protected function clearInterruptSignal()
+    {
+        $this->cache->forget('illuminate:schedule:interrupt');
     }
 }

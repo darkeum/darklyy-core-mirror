@@ -1,46 +1,49 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use Boot\System\Console\Application;
 use Boot\System\Console\Command;
-use Illuminate\Support\Carbon;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+use function Laravel\Prompts\select;
+
+#[AsCommand(name: 'schedule:test')]
 class ScheduleTestCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя консольной команды
      *
      * @var string
      */
-    protected $signature = 'schedule:test {--name= : The name of the scheduled command to run}';
+    protected $signature = 'schedule:test {--name= : Имя запланированной для выполнения команды}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'schedule:test';
-
-    /**
-     * The console command description.
+     * Описание консольной команды.
      *
      * @var string
      */
-    protected $description = 'Run a scheduled command';
+    protected $description = 'Выполнить запланированную команду';
 
     /**
-     * Execute the console command.
+     * Выполнение консольной команды.
      *
-     * @param  \Boot\System\Scheduling\Schedule  $schedule
+     * @param  \Boot\System\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     public function handle(Schedule $schedule)
     {
+        $phpBinary = Application::phpBinary();
+
         $commands = $schedule->events();
 
         $commandNames = [];
@@ -50,29 +53,76 @@ class ScheduleTestCommand extends Command
         }
 
         if (empty($commandNames)) {
-            return $this->comment('No scheduled commands have been defined.');
+            return $this->components->info('No scheduled commands have been defined.');
         }
 
         if (! empty($name = $this->option('name'))) {
-            $commandBinary = Application::phpBinary().' '.Application::artisanBinary();
+            $commandBinary = $phpBinary.' '.Application::artisanBinary();
 
             $matches = array_filter($commandNames, function ($commandName) use ($commandBinary, $name) {
                 return trim(str_replace($commandBinary, '', $commandName)) === $name;
             });
 
             if (count($matches) !== 1) {
-                return $this->error('No matching scheduled command found.');
+                $this->components->info('No matching scheduled command found.');
+
+                return;
             }
 
             $index = key($matches);
         } else {
-            $index = array_search($this->choice('Which command would you like to run?', $commandNames), $commandNames);
+            $index = $this->getSelectedCommandByIndex($commandNames);
         }
 
         $event = $commands[$index];
 
-        $this->line('<info>['.Carbon::now()->format('c').'] Running scheduled command:</info> '.$event->getSummaryForDisplay());
+        $summary = $event->getSummaryForDisplay();
 
-        $event->run($this->laravel);
+        $command = $event instanceof CallbackEvent
+            ? $summary
+            : trim(str_replace($phpBinary, '', $event->command));
+
+        $description = sprintf(
+            'Running [%s]%s',
+            $command,
+            $event->runInBackground ? ' normally in background' : '',
+        );
+
+        $event->runInBackground = false;
+
+        $this->components->task($description, fn () => $event->run($this->laravel));
+
+        if (! $event instanceof CallbackEvent) {
+            $this->components->bulletList([$event->getSummaryForDisplay()]);
+        }
+
+        $this->newLine();
+    }
+
+    /**
+     * Получить выбранное имя команды по индексу.
+     *
+     * @param  array  $commandNames
+     * @return int
+     */
+    protected function getSelectedCommandByIndex(array $commandNames)
+    {
+        if (count($commandNames) !== count(array_unique($commandNames))) {
+            // Некоторые команды (вероятно, замыкания) имеют одинаковое имя, добавляйте к каждой из них уникальные индексы...
+            $uniqueCommandNames = array_map(function ($index, $value) {
+                return "$value [$index]";
+            }, array_keys($commandNames), $commandNames);
+
+            $selectedCommand = select('Which command would you like to run?', $uniqueCommandNames);
+
+            preg_match('/\[(\d+)\]/', $selectedCommand, $choice);
+
+            return (int) $choice[1];
+        } else {
+            return array_search(
+                select('Which command would you like to run?', $commandNames),
+                $commandNames
+            );
+        }
     }
 }

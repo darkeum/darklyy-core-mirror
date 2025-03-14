@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use Illuminate\Contracts\Container\Container;
@@ -12,37 +21,37 @@ use Throwable;
 class CallbackEvent extends Event
 {
     /**
-     * The callback to call.
+     * Обратный вызов.
      *
      * @var string
      */
     protected $callback;
 
     /**
-     * The parameters to pass to the method.
+     * Параметры для передачи методу.
      *
      * @var array
      */
     protected $parameters;
 
     /**
-     * The result of the callback's execution.
+     * Результат выполнения обратного вызова.
      *
      * @var mixed
      */
     protected $result;
 
     /**
-     * The exception that was thrown when calling the callback, if any.
+     * Исключение, возникшее при вызове обратного вызова, если таковое имеется.
      *
      * @var \Throwable|null
      */
     protected $exception;
 
     /**
-     * Create a new event instance.
+     * Создайте новый экземпляр события.
      *
-     * @param  \Boot\System\Scheduling\EventMutex  $mutex
+     * @param  \Boot\System\Console\Scheduling\EventMutex  $mutex
      * @param  string|callable  $callback
      * @param  array  $parameters
      * @param  \DateTimeZone|string|null  $timezone
@@ -54,7 +63,7 @@ class CallbackEvent extends Event
     {
         if (! is_string($callback) && ! Reflector::isCallable($callback)) {
             throw new InvalidArgumentException(
-                'Invalid scheduled callback event. Must be a string or callable.'
+                'Недопустимое запланированное событие обратного вызова. Должна быть строкой или вызываемой.'
             );
         }
 
@@ -65,7 +74,7 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Run the callback event.
+     * Запустите событие обратного вызова.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
      * @return mixed
@@ -84,7 +93,7 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Determine if the event should skip because another process is overlapping.
+     * Определите, следует ли пропустить событие из-за наложения другого процесса.
      *
      * @return bool
      */
@@ -94,7 +103,7 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Indicate that the callback should run in the background.
+     * Укажите, что обратный вызов должен выполняться в фоновом режиме.
      *
      * @return void
      *
@@ -102,11 +111,11 @@ class CallbackEvent extends Event
      */
     public function runInBackground()
     {
-        throw new RuntimeException('Scheduled closures can not be run in the background.');
+        throw new RuntimeException('Запланированные закрытия не могут выполняться в фоновом режиме.');
     }
 
     /**
-     * Run the callback.
+     * Запустите обратный вызов.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
      * @return int
@@ -127,7 +136,9 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Do not allow the event to overlap each other.
+     * Не допускайте, чтобы события накладывались друг на друга.
+     *
+     * Срок действия базовой блокировки кэша может быть указан в минутах.
      *
      * @param  int  $expiresAt
      * @return $this
@@ -138,7 +149,7 @@ class CallbackEvent extends Event
     {
         if (! isset($this->description)) {
             throw new LogicException(
-                "A scheduled event name is required to prevent overlapping. Use the 'name' method before 'withoutOverlapping'."
+                "Имя запланированного события необходимо для предотвращения перекрытия. Используйте метод 'name' перед 'withoutOverlapping'."
             );
         }
 
@@ -146,7 +157,7 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Allow the event to only run on one server for each cron expression.
+     * Разрешить запуск события только на одном сервере для каждого выражения cron.
      *
      * @return $this
      *
@@ -156,7 +167,7 @@ class CallbackEvent extends Event
     {
         if (! isset($this->description)) {
             throw new LogicException(
-                "A scheduled event name is required to only run on one server. Use the 'name' method before 'onOneServer'."
+                "Имя запланированного события требуется для запуска только на одном сервере. Используйте метод 'name' перед 'onOneServer'."
             );
         }
 
@@ -164,7 +175,7 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Get the summary of the event for display.
+     * Получите сводку события для отображения.
      *
      * @return string
      */
@@ -178,17 +189,17 @@ class CallbackEvent extends Event
     }
 
     /**
-     * Get the mutex name for the scheduled command.
+     * Получите имя mutex для запланированной команды.
      *
      * @return string
      */
     public function mutexName()
     {
-        return 'framework/schedule-'.sha1($this->description);
+        return 'framework/schedule-' . sha1($this->description ?? '');
     }
 
     /**
-     * Clear the mutex for the event.
+     * Очистить mutex для события.
      *
      * @return void
      */

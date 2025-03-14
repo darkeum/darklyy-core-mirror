@@ -1,11 +1,20 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 interface EventMutex
 {
     /**
-     * Attempt to obtain an event mutex for the given event.
+     * Попытка получить mutex события для указанного события.
      *
      * @param  \Boot\System\Scheduling\Event  $event
      * @return bool
@@ -13,7 +22,7 @@ interface EventMutex
     public function create(Event $event);
 
     /**
-     * Determine if an event mutex exists for the given event.
+     * Определите, существует ли mutex события для данного события.
      *
      * @param  \Boot\System\Scheduling\Event  $event
      * @return bool
@@ -21,7 +30,7 @@ interface EventMutex
     public function exists(Event $event);
 
     /**
-     * Clear the event mutex for the given event.
+     * Очистить mutex события для указанного события.
      *
      * @param  \Boot\System\Scheduling\Event  $event
      * @return void
