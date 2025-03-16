@@ -1,13 +1,23 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use Illuminate\Support\Carbon;
+use InvalidArgumentException;
 
 trait ManagesFrequencies
 {
     /**
-     * The Cron expression representing the event's frequency.
+     * Выражение Cron, представляющее частоту события.
      *
      * @param  string  $expression
      * @return $this
@@ -20,7 +30,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run between start and end time.
+     * Запланируйте событие, чтобы запустить между началом и окончанием.
      *
      * @param  string  $startTime
      * @param  string  $endTime
@@ -32,7 +42,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to not run between start and end time.
+     * Запланируйте событие, чтобы не работать между началом и окончанием.
      *
      * @param  string  $startTime
      * @param  string  $endTime
@@ -44,7 +54,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run between start and end time.
+     * Запланируйте событие, чтобы запустить между началом и окончанием.
      *
      * @param  string  $startTime
      * @param  string  $endTime
@@ -66,13 +76,98 @@ trait ManagesFrequencies
             }
         }
 
-        return function () use ($now, $startTime, $endTime) {
-            return $now->between($startTime, $endTime);
-        };
+        return fn () => $now->between($startTime, $endTime);
     }
 
     /**
-     * Schedule the event to run every minute.
+     * Запланируйте мероприятие, чтобы запустить каждую секунду.
+     *
+     * @return $this
+     */
+    public function everySecond()
+    {
+        return $this->repeatEvery(1);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы запустить каждые две секунды.
+     *
+     * @return $this
+     */
+    public function everyTwoSeconds()
+    {
+        return $this->repeatEvery(2);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы работать каждые пять секунд.
+     *
+     * @return $this
+     */
+    public function everyFiveSeconds()
+    {
+        return $this->repeatEvery(5);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы запустить каждые десять секунд.
+     *
+     * @return $this
+     */
+    public function everyTenSeconds()
+    {
+        return $this->repeatEvery(10);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы пробежать каждые пятнадцать секунд.
+     *
+     * @return $this
+     */
+    public function everyFifteenSeconds()
+    {
+        return $this->repeatEvery(15);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы пробежать каждые двадцать секунд.
+     *
+     * @return $this
+     */
+    public function everyTwentySeconds()
+    {
+        return $this->repeatEvery(20);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы запустить каждые тридцать секунд.
+     *
+     * @return $this
+     */
+    public function everyThirtySeconds()
+    {
+        return $this->repeatEvery(30);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы работать несколько раз в минуту.
+     *
+     * @param  int<0, 59>  $seconds
+     * @return $this
+     */
+    protected function repeatEvery($seconds)
+    {
+        if (60 % $seconds !== 0) {
+            throw new InvalidArgumentException("The seconds [$seconds] are not evenly divisible by 60.");
+        }
+
+        $this->repeatSeconds = $seconds;
+
+        return $this->everyMinute();
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы запустить каждую минуту.
      *
      * @return $this
      */
@@ -82,7 +177,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every two minutes.
+     * Запланируйте мероприятие, чтобы работать каждые две минуты.
      *
      * @return $this
      */
@@ -92,7 +187,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every three minutes.
+     * Запланируйте мероприятие, чтобы работать каждые три минуты.
      *
      * @return $this
      */
@@ -102,7 +197,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every four minutes.
+     * Запланируйте мероприятие, чтобы работать каждые четыре минуты.
      *
      * @return $this
      */
@@ -112,7 +207,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every five minutes.
+     * Запланируйте мероприятие, чтобы работать каждые пять минут.
      *
      * @return $this
      */
@@ -122,7 +217,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every ten minutes.
+     * Запланируйте мероприятие, чтобы пробежать каждые десять минут.
      *
      * @return $this
      */
@@ -132,7 +227,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every fifteen minutes.
+     * Запланируйте мероприятие, чтобы пробежать каждые пятнадцать минут.
      *
      * @return $this
      */
@@ -142,17 +237,17 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run every thirty minutes.
+     * Запланируйте мероприятие, чтобы запустить каждые тридцать минут.
      *
      * @return $this
      */
     public function everyThirtyMinutes()
     {
-        return $this->spliceIntoPosition(1, '0,30');
+        return $this->spliceIntoPosition(1, '*/30');
     }
 
     /**
-     * Schedule the event to run hourly.
+     * Запланируйте мероприятие, чтобы работать ежечасно.
      *
      * @return $this
      */
@@ -162,75 +257,83 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run hourly at a given offset in the hour.
+     * Запланируйте мероприятие, чтобы работать ежечасно при заданном смещении в час.
      *
-     * @param  array|int  $offset
+     * @param  array|string|int<0, 59>|int<0, 59>[]  $offset
      * @return $this
      */
     public function hourlyAt($offset)
     {
-        $offset = is_array($offset) ? implode(',', $offset) : $offset;
-
-        return $this->spliceIntoPosition(1, $offset);
+        return $this->hourBasedSchedule($offset, '*');
     }
 
     /**
-     * Schedule the event to run every two hours.
+     * Запланируйте мероприятие, чтобы запустить каждый нечетный час.
      *
+     * @param  array|string|int  $offset
      * @return $this
      */
-    public function everyTwoHours()
+    public function everyOddHour($offset = 0)
     {
-        return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, '*/2');
+        return $this->hourBasedSchedule($offset, '1-23/2');
     }
 
     /**
-     * Schedule the event to run every three hours.
+     * Запланируйте мероприятие, чтобы работать каждые два часа.
      *
+     * @param  array|string|int  $offset
      * @return $this
      */
-    public function everyThreeHours()
+    public function everyTwoHours($offset = 0)
     {
-        return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, '*/3');
+        return $this->hourBasedSchedule($offset, '*/2');
     }
 
     /**
-     * Schedule the event to run every four hours.
+     * Запланируйте мероприятие, чтобы работать каждые три часа.
      *
+     * @param  array|string|int  $offset
      * @return $this
      */
-    public function everyFourHours()
+    public function everyThreeHours($offset = 0)
     {
-        return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, '*/4');
+        return $this->hourBasedSchedule($offset, '*/3');
     }
 
     /**
-     * Schedule the event to run every six hours.
+     * Запланируйте мероприятие, чтобы работать каждые четыре часа.
      *
+     * @param  array|string|int  $offset
      * @return $this
      */
-    public function everySixHours()
+    public function everyFourHours($offset = 0)
     {
-        return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, '*/6');
+        return $this->hourBasedSchedule($offset, '*/4');
     }
 
     /**
-     * Schedule the event to run daily.
+     * Запланируйте мероприятие, чтобы работать каждые шесть часов.
+     *
+     * @param  array|string|int  $offset
+     * @return $this
+     */
+    public function everySixHours($offset = 0)
+    {
+        return $this->hourBasedSchedule($offset, '*/6');
+    }
+
+    /**
+     * Запланируйте мероприятие ежедневно.
      *
      * @return $this
      */
     public function daily()
     {
-        return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, 0);
+        return $this->hourBasedSchedule(0, 0);
     }
 
     /**
-     * Schedule the command at a given time.
+     * Запланируйте команду на данный момент времени.
      *
      * @param  string  $time
      * @return $this
@@ -241,7 +344,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run daily at a given time (10:00, 19:30, etc).
+     * Запланируйте мероприятие ежедневно в данный момент времени (10:00, 19:30 и т. Д.).
      *
      * @param  string  $time
      * @return $this
@@ -250,15 +353,17 @@ trait ManagesFrequencies
     {
         $segments = explode(':', $time);
 
-        return $this->spliceIntoPosition(2, (int) $segments[0])
-                    ->spliceIntoPosition(1, count($segments) === 2 ? (int) $segments[1] : '0');
+        return $this->hourBasedSchedule(
+            count($segments) === 2 ? (int) $segments[1] : '0',
+            (int) $segments[0]
+        );
     }
 
     /**
-     * Schedule the event to run twice daily.
+     * Запланируйте мероприятие, чтобы работать два раза в день.
      *
-     * @param  int  $first
-     * @param  int  $second
+     * @param  int<0, 23>  $first
+     * @param  int<0, 23>  $second
      * @return $this
      */
     public function twiceDaily($first = 1, $second = 13)
@@ -267,23 +372,39 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run twice daily at a given offset.
+     * Запланируйте мероприятие, чтобы запустить два раза в день в данном смещении.
      *
-     * @param  int  $first
-     * @param  int  $second
-     * @param  int  $offset
+     * @param  int<0, 23>  $first
+     * @param  int<0, 23>  $second
+     * @param  int<0, 59>  $offset
      * @return $this
      */
     public function twiceDailyAt($first = 1, $second = 13, $offset = 0)
     {
         $hours = $first.','.$second;
 
-        return $this->spliceIntoPosition(1, $offset)
-                    ->spliceIntoPosition(2, $hours);
+        return $this->hourBasedSchedule($offset, $hours);
     }
 
     /**
-     * Schedule the event to run only on weekdays.
+     * Запланируйте мероприятие, чтобы запустить в заданные минуты и часы.
+     *
+     * @param  array|string|int<0, 59>  $minutes
+     * @param  array|string|int<0, 23>  $hours
+     * @return $this
+     */
+    protected function hourBasedSchedule($minutes, $hours)
+    {
+        $minutes = is_array($minutes) ? implode(',', $minutes) : $minutes;
+
+        $hours = is_array($hours) ? implode(',', $hours) : $hours;
+
+        return $this->spliceIntoPosition(1, $minutes)
+            ->spliceIntoPosition(2, $hours);
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы работать только в будние дни.
      *
      * @return $this
      */
@@ -293,7 +414,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on weekends.
+     * Запланируйте мероприятие, чтобы работать только по выходным.
      *
      * @return $this
      */
@@ -303,7 +424,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Mondays.
+     * Запланируйте мероприятие, чтобы работать только по понедельникам.
      *
      * @return $this
      */
@@ -313,7 +434,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Tuesdays.
+     * Запланируйте мероприятие, чтобы работать только по вторникам.
      *
      * @return $this
      */
@@ -323,7 +444,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Wednesdays.
+     * Запланируйте мероприятие, чтобы работать только по средам.
      *
      * @return $this
      */
@@ -333,7 +454,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Thursdays.
+     * Запланируйте мероприятие, чтобы работать только по четвергам.
      *
      * @return $this
      */
@@ -343,7 +464,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Fridays.
+     * Запланируйте мероприятие, чтобы работать только по пятницам.
      *
      * @return $this
      */
@@ -353,7 +474,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Saturdays.
+     * Запланируйте мероприятие, чтобы работать только по субботам.
      *
      * @return $this
      */
@@ -363,7 +484,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run only on Sundays.
+     * Запланируйте мероприятие, чтобы работать только по воскресеньям.
      *
      * @return $this
      */
@@ -373,19 +494,19 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run weekly.
+     * Запланируйте мероприятие, чтобы работать еженедельно.
      *
      * @return $this
      */
     public function weekly()
     {
         return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, 0)
-                    ->spliceIntoPosition(5, 0);
+            ->spliceIntoPosition(2, 0)
+            ->spliceIntoPosition(5, 0);
     }
 
     /**
-     * Schedule the event to run weekly on a given day and time.
+     * Запланируйте мероприятие, чтобы работать еженедельно в данный день и время.
      *
      * @param  array|mixed  $dayOfWeek
      * @param  string  $time
@@ -399,21 +520,21 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run monthly.
+     * Запланируйте мероприятие, чтобы запустить ежемесячно.
      *
      * @return $this
      */
     public function monthly()
     {
         return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, 0)
-                    ->spliceIntoPosition(3, 1);
+            ->spliceIntoPosition(2, 0)
+            ->spliceIntoPosition(3, 1);
     }
 
     /**
-     * Schedule the event to run monthly on a given day and time.
+     * Запланируйте мероприятие, чтобы пробежать ежемесячно в данный день и время.
      *
-     * @param  int  $dayOfMonth
+     * @param  int<1, 31>  $dayOfMonth
      * @param  string  $time
      * @return $this
      */
@@ -425,10 +546,10 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run twice monthly at a given time.
+     * Запланируйте мероприятие, чтобы пробежать дважды в месяц в данный момент.
      *
-     * @param  int  $first
-     * @param  int  $second
+     * @param  int<1, 31>  $first
+     * @param  int<1, 31>  $second
      * @param  string  $time
      * @return $this
      */
@@ -442,7 +563,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run on the last day of the month.
+     * Запланируйте мероприятие, чтобы пробежать в последний день месяца.
      *
      * @param  string  $time
      * @return $this
@@ -455,36 +576,51 @@ trait ManagesFrequencies
     }
 
     /**
-     * Schedule the event to run quarterly.
+     * Запланируйте мероприятие, чтобы запустить ежеквартально.
      *
      * @return $this
      */
     public function quarterly()
     {
         return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, 0)
-                    ->spliceIntoPosition(3, 1)
-                    ->spliceIntoPosition(4, '1-12/3');
+            ->spliceIntoPosition(2, 0)
+            ->spliceIntoPosition(3, 1)
+            ->spliceIntoPosition(4, '1-12/3');
     }
 
     /**
-     * Schedule the event to run yearly.
+     * Запланируйте мероприятие, чтобы пробежать ежеквартально в данный день и время.
+     *
+     * @param  int  $dayOfQuarter
+     * @param  string  $time
+     * @return $this
+     */
+    public function quarterlyOn($dayOfQuarter = 1, $time = '0:0')
+    {
+        $this->dailyAt($time);
+
+        return $this->spliceIntoPosition(3, $dayOfQuarter)
+            ->spliceIntoPosition(4, '1-12/3');
+    }
+
+    /**
+     * Запланируйте мероприятие, чтобы работать ежегодно.
      *
      * @return $this
      */
     public function yearly()
     {
         return $this->spliceIntoPosition(1, 0)
-                    ->spliceIntoPosition(2, 0)
-                    ->spliceIntoPosition(3, 1)
-                    ->spliceIntoPosition(4, 1);
+            ->spliceIntoPosition(2, 0)
+            ->spliceIntoPosition(3, 1)
+            ->spliceIntoPosition(4, 1);
     }
 
     /**
-     * Schedule the event to run yearly on a given month, day, and time.
+     * Запланируйте мероприятие, которое будет проводиться ежегодно в определенный месяц, день и время.
      *
      * @param  int  $month
-     * @param  int|string  $dayOfMonth
+     * @param  int<1, 31>|string  $dayOfMonth
      * @param  string  $time
      * @return $this
      */
@@ -493,11 +629,11 @@ trait ManagesFrequencies
         $this->dailyAt($time);
 
         return $this->spliceIntoPosition(3, $dayOfMonth)
-                    ->spliceIntoPosition(4, $month);
+            ->spliceIntoPosition(4, $month);
     }
 
     /**
-     * Set the days of the week the command should run on.
+     * Установите дни недели, на которые должна работать команда.
      *
      * @param  array|mixed  $days
      * @return $this
@@ -510,7 +646,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Set the timezone the date should be evaluated on.
+     * Установите часовой пояс. Дата должна быть оценена.
      *
      * @param  \DateTimeZone|string  $timezone
      * @return $this
@@ -523,7 +659,7 @@ trait ManagesFrequencies
     }
 
     /**
-     * Splice the given value into the given position of the expression.
+     * Переплесьте заданное значение в заданную позицию выражения.
      *
      * @param  int  $position
      * @param  string  $value
@@ -531,7 +667,7 @@ trait ManagesFrequencies
      */
     protected function spliceIntoPosition($position, $value)
     {
-        $segments = explode(' ', $this->expression);
+        $segments = preg_split("/\s+/", $this->expression);
 
         $segments[$position - 1] = $value;
 

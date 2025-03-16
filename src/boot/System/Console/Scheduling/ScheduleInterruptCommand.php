@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use Boot\System\Console\Command;
@@ -11,30 +20,30 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class ScheduleInterruptCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя команды консоли.
      *
-     * @var string
+     * @var String
      */
     protected $name = 'schedule:interrupt';
 
     /**
-     * The console command description.
+     * Консольная команда Описание.
      *
-     * @var string
+     * @var String
      */
-    protected $description = 'Interrupt the current schedule run';
+    protected $description = 'Прервать выполнение текущего расписания';
 
     /**
-     * The cache store implementation.
+     * Реализация магазина Cache.
      *
-     * @var \Illuminate\Contracts\Cache\Repository
+     * @var \illuminate\Contracts\Cache\Repository
      */
     protected $cache;
 
     /**
-     * Create a new schedule interrupt command.
+     * Создать новую команду прерывания.
      *
-     * @param  \Illuminate\Contracts\Cache\Repository  $cache
+     * @param \Illuminate\Contracts\Cache\Repository $ Cache
      * @return void
      */
     public function __construct(Cache $cache)
@@ -45,7 +54,7 @@ class ScheduleInterruptCommand extends Command
     }
 
     /**
-     * Execute the console command.
+     * Выполнить команду консоли.
      *
      * @return void
      */

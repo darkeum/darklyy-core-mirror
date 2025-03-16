@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use BadMethodCallException;
@@ -40,63 +49,63 @@ class Schedule
     const SATURDAY = 6;
 
     /**
-     * All of the events on the schedule.
+     * Все события в графике.
      *
      * @var \Boot\System\Console\Scheduling\Event[]
      */
     protected $events = [];
 
     /**
-     * The event mutex implementation.
+     * Реализация событие mutex.
      *
      * @var \Boot\System\Console\Scheduling\EventMutex
      */
     protected $eventMutex;
 
     /**
-     * The scheduling mutex implementation.
+     * Реализация планирования mutex.
      *
-     * @var \Illuminate\Console\Scheduling\SchedulingMutex
+     * @var \Boot\System\Console\Scheduling\SchedulingMutex
      */
     protected $schedulingMutex;
 
     /**
-     * The timezone the date should be evaluated on.
+     * Временный пояс, дата, должна быть оценена.
      *
      * @var \DateTimeZone|string
      */
     protected $timezone;
 
     /**
-     * The job dispatcher implementation.
+     * Реализация работы диспетчера.
      *
      * @var \Illuminate\Contracts\Bus\Dispatcher
      */
     protected $dispatcher;
 
     /**
-     * The cache of mutex results.
+     * Кэш mutex результаты.
      *
      * @var array<string, bool>
      */
     protected $mutexCache = [];
 
     /**
-     * The attributes to pass to the event.
+     * Атрибуты, которые должны пройти на мероприятие.
      *
      * @var \Illuminate\Console\Scheduling\PendingEventAttributes|null
      */
     protected $attributes;
 
     /**
-     * The schedule group attributes stack.
+     * Стек атрибутов группы графика.
      *
      * @var array<int, PendingEventAttributes>
      */
     protected array $groupStack = [];
 
     /**
-     * Create a new schedule instance.
+     * Создайте новый экземпляр графика.
      *
      * @param  \DateTimeZone|string|null  $timezone
      * @return void
@@ -109,7 +118,7 @@ class Schedule
 
         if (! class_exists(Container::class)) {
             throw new RuntimeException(
-                'A container implementation is required to use the scheduler. Please install the illuminate/container package.'
+                'Для использования планировщика требуется реализация контейнера. Пожалуйста, установите пакет Illuminate/Container.'
             );
         }
 
@@ -125,7 +134,7 @@ class Schedule
     }
 
     /**
-     * Add a new callback event to the schedule.
+     * Добавьте новое событие обратного вызова в расписание.
      *
      * @param  string|callable  $callback
      * @param  array  $parameters
@@ -134,7 +143,10 @@ class Schedule
     public function call($callback, array $parameters = [])
     {
         $this->events[] = $event = new CallbackEvent(
-            $this->eventMutex, $callback, $parameters, $this->timezone
+            $this->eventMutex,
+            $callback,
+            $parameters,
+            $this->timezone
         );
 
         $this->mergePendingAttributes($event);
@@ -143,7 +155,7 @@ class Schedule
     }
 
     /**
-     * Add a new Artisan command event to the schedule.
+     * Добавьте в расписание новое командное мероприятие Darkander.
      *
      * @param  string  $command
      * @param  array  $parameters
@@ -155,17 +167,19 @@ class Schedule
             $command = Container::getInstance()->make($command);
 
             return $this->exec(
-                Application::formatCommandString($command->getName()), $parameters,
+                Application::formatCommandString($command->getName()),
+                $parameters,
             )->description($command->getDescription());
         }
 
         return $this->exec(
-            Application::formatCommandString($command), $parameters
+            Application::formatCommandString($command),
+            $parameters
         );
     }
 
     /**
-     * Add a new job callback event to the schedule.
+     * Добавьте новое событие обратного вызова работы в расписание.
      *
      * @param  object|string  $job
      * @param  string|null  $queue
@@ -194,7 +208,7 @@ class Schedule
     }
 
     /**
-     * Dispatch the given job to the queue.
+     * Отправить данную работу в очередь.
      *
      * @param  object  $job
      * @param  string|null  $queue
@@ -208,7 +222,7 @@ class Schedule
         if ($job instanceof Closure) {
             if (! class_exists(CallQueuedClosure::class)) {
                 throw new RuntimeException(
-                    'To enable support for closure jobs, please install the illuminate/queue package.'
+                    'Чтобы обеспечить поддержку для закрытия, пожалуйста, установите illuminate/queue пакет.'
                 );
             }
 
@@ -225,7 +239,7 @@ class Schedule
     }
 
     /**
-     * Dispatch the given unique job to the queue.
+     * Отправьте данную уникальную работу в очередь.
      *
      * @param  object  $job
      * @param  string|null  $queue
@@ -237,7 +251,7 @@ class Schedule
     protected function dispatchUniqueJobToQueue($job, $queue, $connection)
     {
         if (! Container::getInstance()->bound(Cache::class)) {
-            throw new RuntimeException('Cache driver not available. Scheduling unique jobs not supported.');
+            throw new RuntimeException('Кэш драйвер недоступен. Планирование уникальных работ не поддерживается.');
         }
 
         if (! (new UniqueLock(Container::getInstance()->make(Cache::class)))->acquire($job)) {
@@ -250,7 +264,7 @@ class Schedule
     }
 
     /**
-     * Dispatch the given job right now.
+     * Отправьте данную работу прямо сейчас.
      *
      * @param  object  $job
      * @return void
@@ -261,7 +275,7 @@ class Schedule
     }
 
     /**
-     * Add a new command event to the schedule.
+     * Добавьте новое командное событие в расписание.
      *
      * @param  string  $command
      * @param  array  $parameters
@@ -270,7 +284,7 @@ class Schedule
     public function exec($command, array $parameters = [])
     {
         if (count($parameters)) {
-            $command .= ' '.$this->compileParameters($parameters);
+            $command .= ' ' . $this->compileParameters($parameters);
         }
 
         $this->events[] = $event = new Event($this->eventMutex, $command, $this->timezone);
@@ -281,7 +295,7 @@ class Schedule
     }
 
     /**
-     * Create new schedule group.
+     * Создайте новую группу расписания.
      *
      * @param  \Boot\System\Console\Scheduling\Event  $event
      * @return void
@@ -291,7 +305,7 @@ class Schedule
     public function group(Closure $events)
     {
         if ($this->attributes === null) {
-            throw new RuntimeException('Invoke an attribute method such as Schedule::daily() before defining a schedule group.');
+            throw new RuntimeException('Вызовите метод атрибутов, такой как Prade :: Daily (), прежде чем определить группу графика.');
         }
 
         $this->groupStack[] = $this->attributes;
@@ -302,7 +316,7 @@ class Schedule
     }
 
     /**
-     * Merge the current group attributes with the given event.
+     * Объедините текущие атрибуты группы с данным событием.
      *
      * @param  \Boot\System\Console\Scheduling\Event  $event
      * @return void
@@ -323,7 +337,7 @@ class Schedule
     }
 
     /**
-     * Compile parameters for a command.
+     * Параметры компиляции для команды.
      *
      * @param  array  $parameters
      * @return string
@@ -344,7 +358,7 @@ class Schedule
     }
 
     /**
-     * Compile array input for a command.
+     * Компиляция ввода массива для команды.
      *
      * @param  string|int  $key
      * @param  array  $value
@@ -370,7 +384,7 @@ class Schedule
     }
 
     /**
-     * Determine if the server is allowed to run this event.
+     * Определите, разрешено ли сервер для запуска этого события.
      *
      * @param  \Boot\System\Console\Scheduling\Event  $event
      * @param  \DateTimeInterface  $time
@@ -382,7 +396,7 @@ class Schedule
     }
 
     /**
-     * Get all of the events on the schedule that are due.
+     * Получите все события в расписании, которое должно быть.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return \Illuminate\Support\Collection
@@ -393,7 +407,7 @@ class Schedule
     }
 
     /**
-     * Get all of the events on the schedule.
+     * Получите все события по расписанию.
      *
      * @return \Boot\System\Console\Scheduling\Event[]
      */
@@ -403,7 +417,7 @@ class Schedule
     }
 
     /**
-     * Specify the cache store that should be used to store mutexes.
+     * Укажите хранилище кеша, которое следует использовать для хранения mutexes.
      *
      * @param  string  $store
      * @return $this
@@ -422,7 +436,7 @@ class Schedule
     }
 
     /**
-     * Get the job dispatcher, if available.
+     * Получите диспетчер работы, если таковые имеются.
      *
      * @return \Illuminate\Contracts\Bus\Dispatcher
      *
@@ -435,8 +449,9 @@ class Schedule
                 $this->dispatcher = Container::getInstance()->make(Dispatcher::class);
             } catch (BindingResolutionException $e) {
                 throw new RuntimeException(
-                    'Unable to resolve the dispatcher from the service container. Please bind it or install the illuminate/bus package.',
-                    is_int($e->getCode()) ? $e->getCode() : 0, $e
+                    'Невозможно разрешить диспетчер из контейнера обслуживания. Пожалуйста, свяжите его или установите illuminate/bus.',
+                    is_int($e->getCode()) ? $e->getCode() : 0,
+                    $e
                 );
             }
         }
@@ -445,7 +460,7 @@ class Schedule
     }
 
     /**
-     * Dynamically handle calls into the schedule instance.
+     * Динамически обрабатывать вызовы в экземпляр графика.
      *
      * @param  string  $method
      * @param  array  $parameters
@@ -464,7 +479,9 @@ class Schedule
         }
 
         throw new BadMethodCallException(sprintf(
-            'Method %s::%s does not exist.', static::class, $method
+            'Метод %s::%s не существует.',
+            static::class,
+            $method
         ));
     }
 }

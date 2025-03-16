@@ -1,27 +1,39 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
+
 namespace Boot\System\Console\Scheduling;
 
 use Boot\System\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'schedule:clear-cache')]
 class ScheduleClearCacheCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя команды консоли.
      *
      * @var string
      */
     protected $name = 'schedule:clear-cache';
 
     /**
-     * The console command description.
+     * Консольная команда Описание.
      *
      * @var string
      */
-    protected $description = 'Удалить кешированные файлы , созданные планировщиком';
+    protected $description = 'Удалить кешированные файлы, созданные планировщиком';
 
     /**
-     * Execute the console command.
+     * Выполнить команду консоли.
      *
      * @param  \Boot\System\Scheduling\Schedule  $schedule
      * @return void
@@ -32,7 +44,7 @@ class ScheduleClearCacheCommand extends Command
 
         foreach ($schedule->events($this->laravel) as $event) {
             if ($event->mutex->exists($event)) {
-                $this->line('<info>Deleting mutex for:</info> '.$event->command);
+                $this->line('<info>Удаление mutex для:</info> ' . $event->command);
 
                 $event->mutex->forget($event);
 
@@ -41,7 +53,7 @@ class ScheduleClearCacheCommand extends Command
         }
 
         if (! $mutexCleared) {
-            $this->info('No mutex files were found.');
+            $this->info('Файлов mutex не было найдено.');
         }
     }
 }

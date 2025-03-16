@@ -1,48 +1,48 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Console\Scheduling;
 
 use Boot\System\Console\Command;
 use Boot\System\Console\Events\ScheduledBackgroundTaskFinished;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'schedule:finish')]
 class ScheduleFinishCommand extends Command
 {
     /**
-     * The console command name.
+     * Имя команды консоли.
      *
      * @var string
      */
     protected $signature = 'schedule:finish {id} {code=0}';
 
     /**
-     * The name of the console command.
-     *
-     * This name is used to identify the command during lazy loading.
-     *
-     * @var string|null
-     *
-     * @deprecated
-     */
-    protected static $defaultName = 'schedule:finish';
-
-    /**
-     * The console command description.
+     * Консольная команда Описание.
      *
      * @var string
      */
-    protected $description = 'Handle the completion of a scheduled command';
+    protected $description = 'Обрабатывать завершение запланированной команды';
 
     /**
-     * Indicates whether the command should be shown in the Artisan command list.
+     * Указывает, должна ли команда быть показана в списке команд Artisan.
      *
      * @var bool
      */
     protected $hidden = true;
 
     /**
-     * Execute the console command.
+     * Выполнить команду консоли.
      *
      * @param  \Boot\System\Console\Scheduling\Schedule  $schedule
      * @return void

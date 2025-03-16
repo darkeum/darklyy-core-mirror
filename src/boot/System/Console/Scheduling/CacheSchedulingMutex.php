@@ -17,7 +17,7 @@ use Illuminate\Contracts\Cache\Factory as Cache;
 class CacheSchedulingMutex implements SchedulingMutex, CacheAware
 {
     /**
-     * TРеализация фабрики кэша.
+     * Реализация фабрики кэша.
      *
      * @var \Illuminate\Contracts\Cache\Factory
      */

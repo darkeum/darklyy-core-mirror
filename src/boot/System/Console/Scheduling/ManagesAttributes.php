@@ -16,98 +16,98 @@ use Illuminate\Support\Reflector;
 trait ManagesAttributes
 {
     /**
-     * The cron expression representing the event's frequency.
+     * Выражение Cron, представляющее частоту события.
      *
      * @var string
      */
     public $expression = '* * * * *';
 
     /**
-     * How often to repeat the event during a minute.
+     * Как часто повторять событие в течение минуты.
      *
      * @var int|null
      */
     public $repeatSeconds = null;
 
     /**
-     * The timezone the date should be evaluated on.
+     * Временный пояс, дата, должна быть оценена.
      *
      * @var \DateTimeZone|string
      */
     public $timezone;
 
     /**
-     * The user the command should run as.
+     * Пользователь команда должна работать как.
      *
      * @var string|null
      */
     public $user;
 
     /**
-     * The list of environments the command should run under.
+     * Список сред, в которых команда должна работать.
      *
      * @var array
      */
     public $environments = [];
 
     /**
-     * Indicates if the command should run in maintenance mode.
+     * Указывает, должна ли команда работать в режиме обслуживания.
      *
      * @var bool
      */
     public $evenInMaintenanceMode = false;
 
     /**
-     * Indicates if the command should not overlap itself.
+     * Указывает, не должна ли команда перекрываться.
      *
      * @var bool
      */
     public $withoutOverlapping = false;
 
     /**
-     * Indicates if the command should only be allowed to run on one server for each cron expression.
+     * Указывает, следует ли разрешено запускать только на одном сервере для каждого выражения Cron.
      *
      * @var bool
      */
     public $onOneServer = false;
 
     /**
-     * The number of minutes the mutex should be valid.
+     * Количество минут, которые мутекс должен быть действительным.
      *
      * @var int
      */
     public $expiresAt = 1440;
 
     /**
-     * Indicates if the command should run in the background.
+     * Указывает, должна ли команда работать в фоновом режиме.
      *
      * @var bool
      */
     public $runInBackground = false;
 
     /**
-     * The array of filter callbacks.
+     * Массив обратных вызовов фильтра.
      *
      * @var array
      */
     protected $filters = [];
 
     /**
-     * The array of reject callbacks.
+     * Массив обратных вызовов.
      *
      * @var array
      */
     protected $rejects = [];
 
     /**
-     * The human readable description of the event.
+     * Человеческое читаемое описание события.
      *
      * @var string|null
      */
     public $description;
 
     /**
-     * Set which user the command should run as.
+     * Установите, какой пользователь команда должна работать как.
      *
      * @param  string  $user
      * @return $this
@@ -120,7 +120,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Limit the environments the command should run in.
+     * Ограничьте среды, в которых должна работать команда.
      *
      * @param  array|mixed  $environments
      * @return $this
@@ -133,7 +133,7 @@ trait ManagesAttributes
     }
 
     /**
-     * State that the command should run even in maintenance mode.
+     * Укажите, что команда должна работать даже в режиме обслуживания.
      *
      * @return $this
      */
@@ -145,8 +145,8 @@ trait ManagesAttributes
     }
 
     /**
-     * Do not allow the event to overlap each other.
-     * The expiration time of the underlying cache lock may be specified in minutes.
+     * Не позволяйте событию перекрывать друг друга.
+     * Время истечения срока базового блокировки кэша может быть указано за считанные минуты.
      *
      * @param  int  $expiresAt
      * @return $this
@@ -163,7 +163,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Allow the event to only run on one server for each cron expression.
+     * Позвольте событию работать только на одном сервере для каждого выражения Cron.
      *
      * @return $this
      */
@@ -175,7 +175,7 @@ trait ManagesAttributes
     }
 
     /**
-     * State that the command should run in the background.
+     * Укажите, что команда должна работать в фоновом режиме.
      *
      * @return $this
      */
@@ -187,7 +187,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Register a callback to further filter the schedule.
+     * Зарегистрируйте обратный вызов для дальнейшего фильтрации расписания.
      *
      * @param  \Closure|bool  $callback
      * @return $this
@@ -202,7 +202,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Register a callback to further filter the schedule.
+     * Зарегистрируйте обратный вызов для дальнейшего фильтрации расписания.
      *
      * @param  \Closure|bool  $callback
      * @return $this
@@ -217,7 +217,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Set the human-friendly description of the event.
+     * Установите ориентированное на человеку описание события.
      *
      * @param  string  $description
      * @return $this
@@ -228,7 +228,7 @@ trait ManagesAttributes
     }
 
     /**
-     * Set the human-friendly description of the event.
+     * Установите ориентированное на человеку описание события.
      *
      * @param  string  $description
      * @return $this
