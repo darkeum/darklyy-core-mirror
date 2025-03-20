@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
 * @name        JMY CORE
@@ -50,7 +50,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model{
         //refresh()
         $data_json = $model->toJson();
         $e_comment = $comment." Data: ".$data_json;
-        
+
         setLog($type, $pid, $module, $e_comment);
     }
 
@@ -67,12 +67,12 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model{
         });
     }
 
-    protected function asJson($value){
+    protected function asJson($value, $flags = JSON_UNESCAPED_UNICODE){
         /**
          * Alter Cast
          * Default is altering unicode
          */
-        return json_encode($value, JSON_UNESCAPED_UNICODE);
+        return json_encode($value, $flags);
     }
 
 
