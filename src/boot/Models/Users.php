@@ -165,10 +165,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
      */
     public function routeNotificationForMail()
     {
-        if (Settings::get('notification_mail', false)) {
-            return $this->email;
-        }
-        return null;
+        return $this->email;
     }
 
     public function usersPhoneId(): HasOne
