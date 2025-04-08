@@ -17,6 +17,7 @@ use Boot\System\Database\Model\Model;
 use Boot\System\Settings\Facades\Settings;
 use Illuminate\Support\Traits\Localizable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Boot\System\Notifications\RequiredNotification;
 use Boot\System\Notifications\Events\NotificationSent;
 use Boot\System\Notifications\Events\NotificationSending;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -99,6 +100,7 @@ class NotificationSender
      */
     public function sendNow($notifiables, $notification, array $channels = null)
     {
+
         $notifiables = $this->formatNotifiables($notifiables);
         $original = clone $notification;
         foreach ($notifiables as $notifiable) {
@@ -107,9 +109,10 @@ class NotificationSender
             }
             $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
                 $notificationId = Str::uuid()->toString();
+
                 foreach ((array) $viaChannels as $channel) {
                     if (!in_array($channel, config('notification.ignore-channel', []))) {
-                        if ($notifiable instanceof AnonymousNotifiable) {
+                        if ($notifiable instanceof AnonymousNotifiable || $original instanceof RequiredNotification) {
                             $eneble_chanel = true;
                         } else {
                             $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
@@ -123,6 +126,7 @@ class NotificationSender
                             }
                         }
                     }
+
                 }
             });
         }
@@ -223,7 +227,7 @@ class NotificationSender
                 if (method_exists($notification, 'viaQueues')) {
                     $queue = $notification->viaQueues()[$channel] ?? null;
                 }
-                if ($notifiable instanceof AnonymousNotifiable) {
+                if ($notifiable instanceof AnonymousNotifiable || $notification instanceof RequiredNotification) {
                     $eneble_chanel = true;
                 } else {
                     $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
