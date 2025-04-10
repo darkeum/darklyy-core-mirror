@@ -117,7 +117,7 @@ class NotificationSender
                         } else {
                             $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
                             if ($channel == 'mail') {
-                                Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                                $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
                             }
                         }
                         if ($eneble_chanel) {
@@ -232,9 +232,10 @@ class NotificationSender
                 } else {
                     $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, true);
                     if ($channel == 'mail') {
-                        Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
+                        $eneble_chanel = Settings::getByUser($notifiable->id, 'notification_' . $channel, false);
                     }
                 }
+
 
                 if ($eneble_chanel) {
                     $this->bus->dispatch(
