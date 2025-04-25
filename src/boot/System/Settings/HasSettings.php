@@ -14,7 +14,8 @@ namespace Boot\System\Settings;
 use Boot\Support\Facades\Cache;
 use Boot\System\Settings\Models\Settings;
 
-trait HasSettings {
+trait HasSettings
+{
 
     public function _settings()
     {
@@ -26,10 +27,10 @@ trait HasSettings {
     {
         $settings = $this->getCache();
         $data = $this->searchSetting($key, $settings);
-        if(isset($data['value'])){
+        if (isset($data['value'])) {
             $value = $data['value'];
             $type = $data['type'];
-            switch($type) {
+            switch ($type) {
                 case null:
                     return $value ?? $default;
                 case 'string':
@@ -38,20 +39,23 @@ trait HasSettings {
                     return (bool) $value;
                 case 'integer':
                     return (int) $value;
+                case 'array':
+                    return json_decode($value, true);
+                case 'object':
+                    return json_decode($value);
             }
         } else {
             return $default;
         }
-
     }
 
     private function searchSetting($key, $array, $column = 'name')
     {
-        foreach ($array as $k => $val) {
-        if ($val[$column] == $key) {
-            return $val;
+        foreach ($array as $val) {
+            if ($val[$column] == $key) {
+                return $val;
+            }
         }
-    }
         return null;
     }
 
@@ -65,8 +69,7 @@ trait HasSettings {
     // create-update multiple settings at once
     public function setSettings($data = [])
     {
-        foreach($data as $setting)
-        {
+        foreach ($data as $setting) {
             $key = $setting['key'];
             $value = $setting['value'];
             $type = isset($setting['type']) ? $setting['type'] : 'string';
@@ -78,8 +81,10 @@ trait HasSettings {
     private function storeSetting($key, $value, $type)
     {
         $record = Settings::where(['uid' => $this->id, 'name' => $key])->first();
-        if($record)
-        {
+        if ($type === 'array' || $type === 'object') {
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
+        }
+        if ($record) {
             $record->value = $value;
             $record->type = $type;
             $record->save();
@@ -91,8 +96,7 @@ trait HasSettings {
 
     private function getCache()
     {
-        if (Cache::has('user_settings_' . $this->id))
-        {
+        if (Cache::has('user_settings_' . $this->id)) {
             return Cache::get('user_settings_' . $this->id);
         }
         return $this->setCache();
@@ -100,13 +104,11 @@ trait HasSettings {
 
     private function setCache()
     {
-        if (Cache::has('user_settings_' . $this->id))
-        {
+        if (Cache::has('user_settings_' . $this->id)) {
             Cache::forget('user_settings_' . $this->id);
         }
-        $settings = Settings::where('uid',$this->id)->get()->toArray();
+        $settings = Settings::where('uid', $this->id)->get()->toArray();
         Cache::forever('user_settings_' . $this->id, $settings);
         return $this->getCache();
     }
-
 }
