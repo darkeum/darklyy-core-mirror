@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -19,25 +19,24 @@ class SettingsManager
     /**
      * Получить настройки пользователя по ключу
      *
-     * @param  mixed $key Ключ настроек
+     * @param  string $key Ключ настроек
      * @param  mixed $default Значение по умолчанию
      * @return void
      */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null)
     {
-
         return Auth::check() ? Auth::user()->settings($key, $default) : $default;
     }
 
     /**
      * Получить настройки указанного пользователя по ключу
      *
-     * @param  mixed $uid Идетификатор пользователя
-     * @param  mixed $key Ключ настроек
+     * @param  int $uid Идентификатор пользователя
+     * @param  string $key Ключ настроек
      * @param  mixed $default Значение по умолчанию
      * @return void
      */
-    public function getByUser($uid, $key, $default = null)
+    public function getByUser(int $uid, string $key, $default = null)
     {
         $user = Users::find($uid);
         return !empty($user) ? $user->settings($key, $default) : $default;
@@ -46,11 +45,12 @@ class SettingsManager
     /**
      * Установить настройки пользователя по ключу
      *
-     * @param  mixed $key Ключ настроек
+     * @param  string $key Ключ настроек
      * @param  mixed $value Значение
+     * @param  string $value Тип переменной
      * @return void
      */
-    public function set($key, $value, $type = 'string')
+    public function set(string $key, mixed $value, string $type = 'unknown')
     {
         return Auth::user()->setSetting($key, $value, $type);
     }
