@@ -51,6 +51,9 @@ trait HasSettings
                     return (bool) $value;
                 case 'integer':
                     return (int) $value;
+                case 'double':
+                case 'float':
+                    return (float) $value;
                 case 'array':
                     return json_decode($value, true);
                 case 'object':
