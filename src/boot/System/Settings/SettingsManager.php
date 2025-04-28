@@ -36,7 +36,7 @@ class SettingsManager
      * @param  mixed $default Значение по умолчанию
      * @return void
      */
-    public function getByUser(int $uid, string $key, $default = null)
+    public function getByUser(int $uid, string $key, mixed $default = null)
     {
         $user = Users::find($uid);
         return !empty($user) ? $user->settings($key, $default) : $default;
