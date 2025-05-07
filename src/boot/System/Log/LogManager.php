@@ -635,6 +635,10 @@ class LogManager implements LoggerInterface
             $driver ??= 'null';
         }
 
+        if ($this->app->runningInConsole()) {
+            $driver ??= 'null';
+        }
+
         return trim($driver);
     }
 
