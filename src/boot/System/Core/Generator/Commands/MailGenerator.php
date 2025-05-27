@@ -1,12 +1,12 @@
 <?php
 
 /*
-* @name        JMY CORE
-* @link        https://jmy.su/
-* @copyright   Copyright (C) 2012-2022 JMY LTD
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
-* @author      Komarov Ivan & Volkov Aleksandr
+* @author      Komarov Ivan
 */
 
 namespace Boot\System\Core\Generator\Commands;
@@ -44,35 +44,35 @@ class MailGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Mail';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/Mails/*';
 
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'mail.stub';
 
     /**
      * Сбор информации для генерации
-     * 
+     *
      * @return array
      */
     public function getUserInputs()
@@ -97,7 +97,7 @@ class MailGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Имя класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileName(): string

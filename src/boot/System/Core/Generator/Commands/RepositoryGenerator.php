@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Core\Generator\Commands;
 
 use Boot\System\Core\Generator\GeneratorCommand;
@@ -16,7 +25,7 @@ class RepositoryGenerator extends GeneratorCommand implements ComponentsGenerato
      */
     public $inputs = [
     ];
-  
+
     /**
      * Имя консольной команды
      *
@@ -33,35 +42,35 @@ class RepositoryGenerator extends GeneratorCommand implements ComponentsGenerato
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Repository';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/Data/Repositories/*';
- 
+
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'repository.stub';
 
     /**
      * Сбор информации для генерации
-     * 
+     *
      * @return array
      */
     public function getUserInputs()

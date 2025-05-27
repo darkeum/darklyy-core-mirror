@@ -1,12 +1,12 @@
 <?php
 
 /*
-* @name        JMY CORE
-* @link        https://jmy.su/
-* @copyright   Copyright (C) 2012-2022 JMY LTD
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
-* @author      Komarov Ivan & Volkov Aleksandr
+* @author      Komarov Ivan
 */
 
 namespace Boot\System\Core\Generator\Commands;
@@ -29,7 +29,7 @@ class ControllerGenerator extends GeneratorCommand implements ComponentsGenerato
         ['ui', null, InputOption::VALUE_OPTIONAL, 'Пользовательский интерфейс для контроллера.'],
         ['stub', null, InputOption::VALUE_OPTIONAL, 'Шаблон для генерации контроллера.'],
     ];
-  
+
     /**
      * Имя консольной команды
      *
@@ -46,29 +46,29 @@ class ControllerGenerator extends GeneratorCommand implements ComponentsGenerato
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Controller';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/UI/{user-interface}/Controllers/*';
- 
+
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'controllers/generic.stub';
 
@@ -121,10 +121,10 @@ class ControllerGenerator extends GeneratorCommand implements ComponentsGenerato
         ];
     }
 
-    
+
     /**
      * Имя класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileName(): string

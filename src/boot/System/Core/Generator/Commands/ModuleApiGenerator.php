@@ -1,12 +1,12 @@
 <?php
 
 /*
-* @name        JMY CORE
-* @link        https://jmy.su/
-* @copyright   Copyright (C) 2012-2022 JMY LTD
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
-* @author      Komarov Ivan & Volkov Aleksandr
+* @author      Komarov Ivan
 */
 
 namespace Boot\System\Core\Generator\Commands;
@@ -47,29 +47,29 @@ class ModuleApiGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Module';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/*';
 
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'composer.stub';
 
@@ -124,12 +124,12 @@ class ModuleApiGenerator extends GeneratorCommand implements ComponentsGenerator
             '--full' => false,
         ]);
 
-     
+
         $this->printInfoMessage('Создание маршрутов по умолчанию');
         $version = $this->checkParameterOrAsk('docversion', 'Введите версию для *всех* конечных точек API. (integer)', 1);
         $doctype = $this->checkParameterOrChoice('doctype', 'Выберите тип для *всех* конечных точек', ['private', 'public'], 0);
 
-       
+
         $url = Str::lower($this->checkParameterOrAsk('url', 'Введите базовый URI для всех конечных точек (foo/bar)', Str::lower($models)));
         $url = ltrim($url, '/');
 
@@ -250,7 +250,7 @@ class ModuleApiGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Имя класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileName(): string
@@ -260,7 +260,7 @@ class ModuleApiGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Расширение класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileExtension(): string

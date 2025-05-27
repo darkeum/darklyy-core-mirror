@@ -1,12 +1,12 @@
 <?php
 
 /*
-* @name        JMY CORE
-* @link        https://jmy.su/
-* @copyright   Copyright (C) 2012-2022 JMY LTD
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
-* @author      Komarov Ivan & Volkov Aleksandr
+* @author      Komarov Ivan
 */
 
 namespace Boot\System\Core\Generator\Commands;
@@ -32,7 +32,7 @@ class RouteGenerator extends GeneratorCommand implements ComponentsGenerator
         ['url', null, InputOption::VALUE_OPTIONAL, 'URI конечной точки (/stores, /cars, ...)'],
         ['verb', null, InputOption::VALUE_OPTIONAL, 'Метод HTTP конечной точки (GET, POST, ...)'],
     ];
-  
+
     /**
      * Имя консольной команды
      *
@@ -49,35 +49,35 @@ class RouteGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Route';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/UI/{user-interface}/Routes/*';
- 
+
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{endpoint-name}.{endpoint-version}.{documentation-type}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'routes/generic.stub';
 
     /**
      * Сбор информации для генерации
-     * 
+     *
      * @return array
      */
     public function getUserInputs()

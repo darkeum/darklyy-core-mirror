@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Core\Generator\Commands;
 
 use Boot\System\Core\Generator\GeneratorCommand;
@@ -33,35 +42,35 @@ class ConfigurationGenerator extends GeneratorCommand implements ComponentsGener
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Configuration';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/Configs/*';
 
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'config.stub';
 
     /**
      * Сбор информации для генерации
-     * 
+     *
      * @return array
      */
     public function getUserInputs()
@@ -83,7 +92,7 @@ class ConfigurationGenerator extends GeneratorCommand implements ComponentsGener
 
     /**
      * Имя класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileName(): string
