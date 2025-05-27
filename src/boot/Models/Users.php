@@ -41,7 +41,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     use HashIdTrait, HasResourceKeyTrait, SoftDeletes;
 
-    protected $fillable = ["nick", "password", "tail", "hash", "email", "provider", "social_id", "status", "oid", "icq", "phone", "phone2", "skype", "surname", "name", "ochestvo", "name_source","place", "age", "sex", "birthday", "hobby", "signature", "points", "carma", "user_comments", "user_news", "group", "exgroup", "last_visit", "regdate", "active", "ip", "hidden", "fields", "regId", "utm_source", "inn", 'remember_token'];
+    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "ochestvo", "name_source","place", "sex", "birthday", "signature",  "group", "exgroup", "visited_at", "active", "ip", "hidden", "fields", "inn", 'remember_token', "status"];
 
     protected $appends = ["short_user_name", "full_user_name",  "short_user_name_public"];
 
@@ -52,6 +52,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'visited_at' => 'datetime',
         'name_source' => 'object',
     ];
 

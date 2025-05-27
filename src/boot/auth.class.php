@@ -114,9 +114,7 @@ class auth
 			$this->user_info = getcache('userInfo_' . AuthFacade::id());
 			if (empty($this->user_info)) {
 				$this->user_info = $db->getRow($db->query("SELECT * FROM `" . USER_DB . "`.`" . USER_PREFIX . "_users` WHERE id = '" . AuthFacade::id() . "' "));
-				foreach ($this->groups_array as $id => $arr) {
-					if ($arr['special'] == 1 && $this->user_info['points'] >= $arr['points'] && $arr['points'] > 0) $this->user_info['exgroup'] = $id;
-				}
+
 				$short_user_name = $this->user_info['surname'] . ' ';
 				$short_user_name .= mb_substr($this->user_info['name'], 0, 1) . '. ';
 				$short_user_name .= mb_substr($this->user_info['ochestvo'], 0, 1) . '.';
