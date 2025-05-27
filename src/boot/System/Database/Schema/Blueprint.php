@@ -122,7 +122,7 @@ class Blueprint
         $this->ensureCommandsAreValid($connection);
 
         foreach ($this->commands as $command) {
-            $method = 'compile'.ucfirst($command->name);
+            $method = 'compile' . ucfirst($command->name);
 
             if (method_exists($grammar, $method) || $grammar::hasMacro($method)) {
                 if (! is_null($sql = $grammar->$method($this, $command, $connection))) {
@@ -244,7 +244,8 @@ class Blueprint
                 $value = $column->{$attributeName};
 
                 $this->addCommand(
-                    $commandName, compact('value', 'column')
+                    $commandName,
+                    compact('value', 'column')
                 );
             }
         }
@@ -571,36 +572,36 @@ class Blueprint
      */
     public function uid($column = 'uid', $comment = 'Идентификатор ответственного')
     {
-        return $this->bigInteger($column)->comment($comment);
+        return $this->unsignedBigInteger($column)->comment($comment);
     }
-    
+
     public function category($column = 'category')
     {
-        return $this->bigInteger($column)->nullable()->comment('Идентификатор категории');
-    }  
-    
+        return $this->unsignedBigInteger($column)->nullable()->comment('Идентификатор категории');
+    }
+
     public function org($column = 'org')
     {
-        return $this->bigInteger($column)->default(1)->comment('Идентификатор организации');
-    } 
+        return $this->unsignedBigInteger($column)->default(1)->comment('Идентификатор организации');
+    }
 
     public function oid($column = 'oid', $comment = 'Идентификатор контрагента')
     {
-        return $this->bigInteger($column)->comment($comment);
+        return $this->unsignedBigInteger($column)->comment($comment);
     }
-    
+
     public function status($column = 'status', $comment = 'Статус')
     {
         return $this->integer($column)->default(1)->comment($comment);
-    }    
-    
+    }
+
     public function comment_column($column = 'comment', $comment = 'Комментарий')
     {
         return $this->text($column)->comment($comment)->nullable();
     }
-    
-  
-    
+
+
+
 
     /**
      * Create a new auto-incrementing integer (4-byte) column on the table.
@@ -855,7 +856,7 @@ class Blueprint
     }
 
     /**
-     * Create a new unsigned big integer (8-byte) column on the table.
+     * Создание новой беззнаковой колонки Big Integer (8-Byte) в таблице с возможностью создать свзь.
      *
      * @param  string  $column
      * @return \Boot\System\Database\Schema\ForeignIdColumnDefinition
@@ -868,6 +869,82 @@ class Blueprint
             'autoIncrement' => false,
             'unsigned' => true,
         ]);
+
+        return $column;
+    }
+
+    /**
+     * Создание новой беззнаковой колонки Big Integer (8-Byte) в таблице с возможностью создать свзь с таблицей организаций.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ForeignDefaultColumnDefinition
+     */
+    public function foreignOrg($column)
+    {
+        $this->columns[] = $column = new ForeignDefaultColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+            'comment' => 'Идентификатор организации',
+            'default' => 1,
+        ], 'org');
+
+        return $column;
+    }
+
+    /**
+     * Создание новой беззнаковой колонки Big Integer (8-Byte) в таблице с возможностью создать свзь с таблицей пользователей.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ForeignDefaultColumnDefinition
+     */
+    public function foreignUid($column)
+    {
+        $this->columns[] = $column = new ForeignDefaultColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+            'comment' => 'Идентификатор пользователя',
+        ], 'users');
+
+        return $column;
+    }
+
+     /**
+     * Создание новой беззнаковой колонки Big Integer (8-Byte) в таблице с возможностью создать свзь с таблицей контрагентов.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ForeignDefaultColumnDefinition
+     */
+    public function foreignOid($column)
+    {
+        $this->columns[] = $column = new ForeignDefaultColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+            'comment' => 'контрагента',
+        ], 'organiztions');
+
+        return $column;
+    }
+
+     /**
+     * Создание новой беззнаковой колонки Big Integer (8-Byte) в таблице с возможностью создать свзь с указанной таблицей.
+     *
+     * @param  string  $column
+     * @return \Boot\System\Database\Schema\ForeignDefaultColumnDefinition
+     */
+    public function foreignCustom($column, $references_on = null)
+    {
+        $this->columns[] = $column = new ForeignDefaultColumnDefinition($this, [
+            'type' => 'bigInteger',
+            'name' => $column,
+            'autoIncrement' => false,
+            'unsigned' => true,
+        ], $references_on);
 
         return $column;
     }
@@ -1105,12 +1182,12 @@ class Blueprint
 
         $this->timestamp('updated_at', $precision)->nullable()->comment('Дата изменения');
     }
-    
-   public function numb()
+
+    public function numb()
     {
         $this->bigInteger('numb_counter')->comment('Счетчик нумерации');
 
-        $this->string('numb', 255)->comment('Номер документа');      
+        $this->string('numb', 255)->comment('Номер документа');
     }
 
     /**
@@ -1437,7 +1514,8 @@ class Blueprint
         $index = $index ?: $this->createIndexName($type, $columns);
 
         return $this->addCommand(
-            $type, compact('index', 'columns', 'algorithm')
+            $type,
+            compact('index', 'columns', 'algorithm')
         );
     }
 
@@ -1472,7 +1550,7 @@ class Blueprint
      */
     protected function createIndexName($type, array $columns)
     {
-        $index = strtolower($this->prefix.$this->table.'_'.implode('_', $columns).'_'.$type);
+        $index = strtolower($this->prefix . $this->table . '_' . implode('_', $columns) . '_' . $type);
 
         return str_replace(['-', '.'], '_', $index);
     }
