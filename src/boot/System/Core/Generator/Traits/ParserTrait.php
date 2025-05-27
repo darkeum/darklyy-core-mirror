@@ -47,6 +47,7 @@ trait ParserTrait
     public function parseStubContent($stub, $data)
     {
         $data['year'] = Carbon::now()->format('Y');
+        $data['author'] = $this->checkParameter('author', 'Author of file');
         $stub = str_replace(array_map([$this, 'maskStubVariables'], array_keys($data)), array_values($data), $stub);
         return $stub;
     }
