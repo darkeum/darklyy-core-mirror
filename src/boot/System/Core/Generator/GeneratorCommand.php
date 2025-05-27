@@ -1,14 +1,13 @@
 <?php
-
 namespace Boot\System\Core\Generator;
 
+use Boot\System\Console\Command;
 use Boot\System\Core\Exceptions\GeneratorErrorException;
 use Boot\System\Core\Generator\Interfaces\ComponentsGenerator;
 use Boot\System\Core\Generator\Traits\FileSystemTrait;
 use Boot\System\Core\Generator\Traits\FormatterTrait;
 use Boot\System\Core\Generator\Traits\ParserTrait;
 use Boot\System\Core\Generator\Traits\PrinterTrait;
-use Boot\System\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem as IlluminateFilesystem;
 use Illuminate\Support\Str;
@@ -75,8 +74,9 @@ abstract class GeneratorCommand extends Command
     private IlluminateFilesystem $fileSystem;
 
     private array $defaultInputs = [
-        ['container', null, InputOption::VALUE_OPTIONAL, 'The name of the container'],
-        ['file', null, InputOption::VALUE_OPTIONAL, 'The name of the file'],
+        ['container', null, InputOption::VALUE_OPTIONAL, 'Имя модуля'],
+        ['file', null, InputOption::VALUE_OPTIONAL, 'Имя файла'],
+        ['author', null, InputOption::VALUE_OPTIONAL, 'Автор файла'],
     ];
 
     public function __construct(IlluminateFilesystem $fileSystem)
@@ -97,13 +97,14 @@ abstract class GeneratorCommand extends Command
 
         // $this->sectionName = ucfirst($this->checkParameterOrAsk('section', 'Введите имя модуля', self::DEFAULT_SECTION_NAME));
         $this->containerName = ucfirst($this->checkParameterOrAsk('container', 'Введите имя модуля'));
-        $this->fileName = $this->checkParameterOrAsk('file', 'Введите имя ' . $this->fileType . ' ', $this->getDefaultFileName());
+        $this->fileName      = $this->checkParameterOrAsk('file', 'Введите имя ' . $this->fileType . ' ', $this->getDefaultFileName());
 
         // Now fix the section, container and file name
         // $thsis->sectionName = $this->removeSpecialChars($this->sectionName);
         $this->containerName = $this->removeSpecialChars($this->containerName);
-        if (!$this->fileType === 'Configuration')
+        if (! $this->fileType === 'Configuration') {
             $this->fileName = $this->removeSpecialChars($this->fileName);
+        }
 
         // And we are ready to start
         $this->printStartedMessage($this->containerName, $this->fileName);
@@ -119,11 +120,11 @@ abstract class GeneratorCommand extends Command
 
         // Get the actual path of the output file as well as the correct filename
         $this->parsedFileName = $this->parseFileStructure($this->nameStructure, $this->userData['file-parameters']);
-        $this->filePath = $this->getFilePath($this->parsePathStructure($this->pathStructure, $this->userData['path-parameters']));
+        $this->filePath       = $this->getFilePath($this->parsePathStructure($this->pathStructure, $this->userData['path-parameters']));
 
-        if (!$this->fileSystem->exists($this->filePath)) {
+        if (! $this->fileSystem->exists($this->filePath)) {
             // Prepare stub content
-            $this->stubContent = $this->getStubContent();
+            $this->stubContent         = $this->getStubContent();
             $this->renderedStubContent = $this->parseStubContent($this->stubContent, $this->userData['stub-parameters']);
 
             $this->generateFile($this->filePath, $this->renderedStubContent);
@@ -142,7 +143,7 @@ abstract class GeneratorCommand extends Command
      */
     private function validateGenerator($generator): void
     {
-        if (!$generator instanceof ComponentsGenerator) {
+        if (! $generator instanceof ComponentsGenerator) {
             throw new GeneratorErrorException(
                 'Your component maker command should implement ComponentsGenerator interface.'
             );
@@ -166,6 +167,24 @@ abstract class GeneratorCommand extends Command
             $value = $this->ask($question, $default);
         }
 
+        return $value;
+    }
+
+    /**
+     * Checks if the param is set (via CLI), otherwise asks the user for a value
+     *
+     * @param $param
+     * @param $question
+     * @param null $default
+     * @return array|string
+     */
+    protected function checkParameter($param, $default = null)
+    {
+        // Check if we have already have a param set
+        $value = $this->option($param);
+        if ($value == null) {
+            $value = $default;
+        }
         return $value;
     }
 
@@ -199,15 +218,15 @@ abstract class GeneratorCommand extends Command
      */
     private function sanitizeUserData($data)
     {
-        if (!array_key_exists('path-parameters', $data)) {
+        if (! array_key_exists('path-parameters', $data)) {
             $data['path-parameters'] = [];
         }
 
-        if (!array_key_exists('stub-parameters', $data)) {
+        if (! array_key_exists('stub-parameters', $data)) {
             $data['stub-parameters'] = [];
         }
 
-        if (!array_key_exists('file-parameters', $data)) {
+        if (! array_key_exists('file-parameters', $data)) {
             $data['file-parameters'] = [];
         }
 
@@ -218,7 +237,7 @@ abstract class GeneratorCommand extends Command
     {
         // Complete the missing parts of the path
         $path = base_path() . '/' .
-            str_replace('\\', '/', self::ROOT . '/' . $path) . '.' . $this->getDefaultFileExtension();
+        str_replace('\\', '/', self::ROOT . '/' . $path) . '.' . $this->getDefaultFileExtension();
 
         // Try to create directory
         $this->createDirectory($path);
@@ -246,7 +265,7 @@ abstract class GeneratorCommand extends Command
         $file = str_replace('*', $this->stubName, $path);
 
         // Check if the custom file exists
-        if (!$this->fileSystem->exists($file)) {
+        if (! $this->fileSystem->exists($file)) {
             // It does not exist - so take the default file!
             $path = __DIR__ . '/' . self::STUB_PATH;
             $file = str_replace('*', $this->stubName, $path);
