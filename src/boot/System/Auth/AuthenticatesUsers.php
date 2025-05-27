@@ -46,7 +46,6 @@ trait AuthenticatesUsers
 
             return $this->sendLockoutResponse($request);
         }
-        $this->rehashPassword($request);
         if ($this->attemptLogin($request)) {
             if ($request->hasSession()) {
                 $request->session()->put('auth.password_confirmed_at', time());
@@ -79,17 +78,6 @@ trait AuthenticatesUsers
         ]);
     }
 
-
-    protected function rehashPassword(Request $request)
-    {
-        $input = $this->credentials($request);
-        $user = Users::where($this->username(), $input[$this->username()])->whereNotNull('tail')->first();
-        if (!empty($user) && $this->password_check($input['password'], $user)) {
-            $user->password = Hash::make($input['password']);
-            $user->tail = null;
-            $user->save();
-        }
-    }
     protected function password_generate($password, $tail)
     {
         return md5(mb_substr(md5(md5($password)), 0, -mb_strlen($tail)) . $tail);
@@ -109,7 +97,7 @@ trait AuthenticatesUsers
      * @return bool
      */
     protected function attemptLogin(Request $request)
-    {       
+    {
         return $this->guard()->attempt(
             $this->credentials($request),
             $request->filled('remember')
