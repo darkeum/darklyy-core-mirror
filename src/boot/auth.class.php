@@ -117,10 +117,10 @@ class auth
 
 				$short_user_name = $this->user_info['surname'] . ' ';
 				$short_user_name .= mb_substr($this->user_info['name'], 0, 1) . '. ';
-				$short_user_name .= mb_substr($this->user_info['ochestvo'], 0, 1) . '.';
+				$short_user_name .= mb_substr($this->user_info['patronymic'], 0, 1) . '.';
 				$full_user_name = $this->user_info['surname'] . ' ';
 				$full_user_name .= $this->user_info['name'] . ' ';
-				$full_user_name .= $this->user_info['ochestvo'];
+				$full_user_name .= $this->user_info['patronymic'];
 				$this->user_info['short_user_name'] =  $short_user_name;
 				$this->user_info['full_user_name'] = $full_user_name;
 
@@ -181,10 +181,10 @@ class auth
 			$user_info_array = $db->getRow($db->query("SELECT * FROM `" . USER_DB . "`.`" . USER_PREFIX . "_users` WHERE id = '" . $uid . "'"));
 			$short_user_name = $user_info_array['surname'] . ' ';
 			$short_user_name .= mb_substr($user_info_array['name'], 0, 1) . '. ';
-			$short_user_name .= mb_substr($user_info_array['ochestvo'], 0, 1) . '.';
+			$short_user_name .= mb_substr($user_info_array['patronymic'], 0, 1) . '.';
 			$full_user_name = $user_info_array['surname'] . ' ';
 			$full_user_name .= $user_info_array['name'] . ' ';
-			$full_user_name .= $user_info_array['ochestvo'];
+			$full_user_name .= $user_info_array['patronymic'];
 			$user_info_array['short_user_name'] =  $short_user_name;
 			$user_info_array['full_user_name'] = $full_user_name;
 			setcache('userInfo_' . $uid, $user_info_array);
@@ -255,7 +255,7 @@ class auth
 		AuthFacade::logout();
 	}
 
-	function updateProfile($mail, $icq, $skype, $phone, $surname, $name, $ochestvo, $place, $age, $gender, $birthDate, $hobby, $signature, $fields, $uid = false)
+	function updateProfile($mail, $icq, $skype, $phone, $surname, $name, $patronymic, $place, $age, $gender, $birthDate, $hobby, $signature, $fields, $uid = false)
 	{
 	}
 
@@ -271,11 +271,11 @@ class auth
 	{
 	}
 
-	function register($user_login, $password, $tail, $email, $icq, $skype, $family, $name, $ochestvo, $age, $sex, $about, $signature, $activate, $ip, $group = '2', $phone = '')
+	function register($user_login, $password, $tail, $email, $icq, $skype, $family, $name, $patronymic, $age, $sex, $about, $signature, $activate, $ip, $group = '2', $phone = '')
 	{
 	}
 
-	function register_social($user_login, $password, $tail, $email, $social_id, $provider, $birthday, $avatar_auth, $icq, $skype, $family, $name, $ochestvo, $age, $sex, $about, $signature, $activate, $ip, $group = '2', $phone = '')
+	function register_social($user_login, $password, $tail, $email, $social_id, $provider, $birthday, $avatar_auth, $icq, $skype, $family, $name, $patronymic, $age, $sex, $about, $signature, $activate, $ip, $group = '2', $phone = '')
 	{
 	}
 }

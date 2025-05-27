@@ -35,7 +35,7 @@ if (!function_exists('getUserFullName')) {
     function getUserFullName($id)
     {
         $user = Users::findOrFail($id);
-        return $user->surname . ' ' . $user->name . ' ' . $user->ochestvo;
+        return $user->surname . ' ' . $user->name . ' ' . $user->patronymic;
     }
 }
 

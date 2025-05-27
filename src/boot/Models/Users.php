@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -17,7 +17,6 @@ use Illuminate\Auth\MustVerifyEmail;
 use Boot\System\Sanctum\HasApiTokens;
 use Boot\System\Settings\HasSettings;
 use Darkeum\DaData\Facades\DaDataName;
-use Organizations\Model\Organizations;
 use Boot\System\Core\Traits\HashIdTrait;
 use Boot\System\Auth\Access\Authorizable;
 use Boot\System\Notifications\Notifiable;
@@ -28,7 +27,6 @@ use Boot\System\Auth\Passwords\CanResetPassword;
 use Boot\System\Core\Traits\HasResourceKeyTrait;
 use Boot\System\Permission\Traits\HasPermissions;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
@@ -41,7 +39,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     use HashIdTrait, HasResourceKeyTrait, SoftDeletes;
 
-    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "ochestvo", "name_source","place", "sex", "birthday", "signature",  "group", "exgroup", "visited_at", "active", "ip", "hidden", "fields", "inn", 'remember_token', "status"];
+    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "patronymic", "name_source","place", "sex", "birthday", "signature",  "group", "visited_at", "active", "hidden", "fields", "inn", 'remember_token'];
 
     protected $appends = ["short_user_name", "full_user_name",  "short_user_name_public"];
 
@@ -51,7 +49,6 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'visited_at' => 'datetime',
         'name_source' => 'object',
     ];
@@ -89,7 +86,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     {
         $shortName = $this->surname;
         $shortName .= $this->name != null ? ' ' . mb_substr($this->name, 0, 1) . '.' : '';
-        $shortName .= $this->ochestvo != null ? ' ' . mb_substr($this->ochestvo, 0, 1) . '.' : '';
+        $shortName .= $this->patronymic != null ? ' ' . mb_substr($this->patronymic, 0, 1) . '.' : '';
 
         return $shortName;
     }
@@ -97,14 +94,14 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     public function getShortUserNamePublicAttribute()
     {
         $shortName = $this->name != null ?  mb_substr($this->name, 0, 1) . '.' : '';
-        $shortName .= $this->ochestvo != null ? ' ' . mb_substr($this->ochestvo, 0, 1) . '.' : '';
-        $shortName .= ' ' . $this->surname;
+        $shortName .= $this->patronymic != null ? ' ' . mb_substr($this->patronymic, 0, 1) . '.' : '';
+        $shortName .= ' ' . $this->patronymic;
         return $shortName;
     }
 
     public function getFullUserNameAttribute()
     {
-        return $this->surname . " " . $this->name . " " . $this->ochestvo;
+        return $this->surname . " " . $this->name . " " . $this->patronymic;
     }
 
     public function token()
@@ -198,10 +195,10 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
             return $this->name_source;
         } else {
 
-            if (!empty($this->surname) && !empty($this->name) && !empty($this->ochestvo)) {
+            if (!empty($this->surname) && !empty($this->name) && !empty($this->patronymic)) {
 
                 try {
-                    $source_name = DaDataName::standardization($this->surname . ' ' . $this->name . ' ' . $this->ochestvo)[0];
+                    $source_name = DaDataName::standardization($this->surname . ' ' . $this->name . ' ' . $this->patronymic)[0];
                     $this->name_source = $source_name;
                     $this->save();
 
