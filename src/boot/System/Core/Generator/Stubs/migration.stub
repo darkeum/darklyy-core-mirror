@@ -3,18 +3,18 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2023 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-{{year}} ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
-* @author      Author name
+* @author      {{author}}
 */
 
 use Boot\Support\Facades\Schema;
 use Boot\System\Database\Schema\Blueprint;
 use Boot\System\Database\Migrations\Migration;
 
-class {{class-name}} extends Migration
-{
+return new class extends Migration {
+
     /**
      * Запуск миграции
      */

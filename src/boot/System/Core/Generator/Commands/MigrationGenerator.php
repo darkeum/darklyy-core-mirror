@@ -1,10 +1,19 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Core\Generator\Commands;
 
+use Boot\Support\Carbon;
 use Boot\System\Core\Generator\GeneratorCommand;
 use Boot\System\Core\Generator\Interfaces\ComponentsGenerator;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Pluralizer;
 use Illuminate\Support\Str;
@@ -19,7 +28,7 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
      * @var  array
      */
     public $inputs = [
-        ['tablename', null, InputOption::VALUE_OPTIONAL, 'Имя таблицы'],
+        ['tablename', null, InputOption::VALUE_OPTIONAL, 'Имя таблицы']
     ];
 
     /**
@@ -38,29 +47,29 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Тип создаваемого класса
-     * 
+     *
      * @var string
      */
     protected string $fileType = 'Migration';
 
     /**
      * Структура пути к файлу.
-     * 
+     *
      * @var string
      */
     protected string $pathStructure = '{container-name}/Data/Migrations/*';
 
     /**
      * Структура имени файла.
-     * 
+     *
      * @var string
      */
     protected string $nameStructure = '{date}_{file-name}';
 
     /**
      * Имя шаблона
-     * 
-     * @var string 
+     *
+     * @var string
      */
     protected string $stubName = 'migration.stub';
 
@@ -76,7 +85,7 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
         $exists = false;
 
         $folder = $this->parsePathStructure($this->pathStructure, [
-            'container-name' => $this->containerName
+            'container-name' => $this->containerName,
         ]);
         $folder = $this->getFilePath($folder);
         $folder = rtrim($folder, $this->parsedFileName . '.' . $this->getDefaultFileExtension());
@@ -102,12 +111,12 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
             ],
             'stub-parameters' => [
                 '_container-name' => Str::lower($this->containerName),
-                'container-name' => $this->containerName,
-                'class-name' => Str::studly($this->fileName),
-                'table-name' => $tableName
+                'container-name'  => $this->containerName,
+                'class-name'      => Str::studly($this->fileName),
+                'table-name'      => $tableName,
             ],
             'file-parameters' => [
-                'date' => Carbon::now()->format('Y_m_d_His'),
+                'date'      => Carbon::now()->format('Y_m_d_His'),
                 'file-name' => $this->fileName,
             ],
         ];
@@ -115,7 +124,7 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Имя класса по умолчанию
-     * 
+     *
      * @return string
      */
     public function getDefaultFileName(): string
@@ -125,7 +134,7 @@ class MigrationGenerator extends GeneratorCommand implements ComponentsGenerator
 
     /**
      * Удаляет «специальные символы» из строки
-     * 
+     *
      * @return string
      */
     protected function removeSpecialChars($str): string
