@@ -13,5 +13,5 @@ namespace Boot\Models;
 
 class UsersToken extends Model
 {
-    protected $fillable = ["uid", "token", "platform", "device_id", "date", "veritification_code", "last_command", "status"];
+    protected $fillable = ["uid", "token", "platform", "device_id",  "veritification_code", "status"];
 }

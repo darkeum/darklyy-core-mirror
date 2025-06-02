@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -11,25 +11,26 @@
 
 namespace Boot\Models;
 
-use Orgs\Models\Org;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Auth\MustVerifyEmail;
+use Boot\System\Auth\Access\Authorizable;
+use Boot\System\Auth\Passwords\CanResetPassword;
+use Boot\System\Core\Traits\HashIdTrait;
+use Boot\System\Core\Traits\HasResourceKeyTrait;
+use Boot\System\Notifications\Notifiable;
+use Boot\System\Permission\Traits\HasPermissions;
+use Boot\System\Permission\Traits\HasRoles;
 use Boot\System\Sanctum\HasApiTokens;
+use Boot\System\Settings\Facades\Settings;
 use Boot\System\Settings\HasSettings;
 use Darkeum\DaData\Facades\DaDataName;
-use Boot\System\Core\Traits\HashIdTrait;
-use Boot\System\Auth\Access\Authorizable;
-use Boot\System\Notifications\Notifiable;
-use Boot\System\Settings\Facades\Settings;
-use Boot\System\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Boot\System\Auth\Passwords\CanResetPassword;
-use Boot\System\Core\Traits\HasResourceKeyTrait;
-use Boot\System\Permission\Traits\HasPermissions;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Orgs\Models\Org;
 
 class Users extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract
 {
@@ -39,21 +40,23 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     use HashIdTrait, HasResourceKeyTrait, SoftDeletes;
 
-    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "patronymic", "name_source","place", "sex", "birthday", "signature",  "group", "visited_at", "active", "hidden", "fields", "inn", 'remember_token'];
+    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "patronymic", "name_source", "place", "birthday", "sex", "signature", "inn", "remember_token", "group", "visited_at", "hidden", "active"];
 
-    protected $appends = ["short_user_name", "full_user_name",  "short_user_name_public"];
+    protected $appends = ["short_user_name", "full_user_name", "short_user_name_public"];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+
     protected $casts = [
-        'visited_at' => 'datetime',
+        'birthday'    => 'datetime:Y-m-d',
+        'visited_at'  => 'datetime:Y-m-d H:i:s',
         'name_source' => 'object',
     ];
 
-    static public function boot()
+    public static function boot()
     {
         parent::boot();
 
@@ -67,18 +70,22 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
         return static::avatar($this->id);
     }
 
-    static public function avatar($uid = null)
+    public static function avatar($uid = null)
     {
         $avatarGuest = "/avatars/guest_avatar.png";
-        $noAvatar = "/avatars/no_avatar.png";
+        $noAvatar    = "/avatars/no_avatar.png";
 
-        if (empty($uid)) return $uid == 0 ? $avatarGuest : $noAvatar;
+        if (empty($uid)) {
+            return $uid == 0 ? $avatarGuest : $noAvatar;
+        }
 
         $path = "resources/avatars/users/";
-        if (glob(ROOT . "{$path}/av{$uid}.*"))
+        if (glob(ROOT . "{$path}/av{$uid}.*")) {
             foreach (glob(ROOT . "{$path}/av{$uid}.*") as $av) {
                 return "/avatars/users/" . basename($av);
             }
+        }
+
         return $noAvatar;
     }
 
@@ -93,9 +100,9 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     public function getShortUserNamePublicAttribute()
     {
-        $shortName = $this->name != null ?  mb_substr($this->name, 0, 1) . '.' : '';
+        $shortName = $this->name != null ? mb_substr($this->name, 0, 1) . '.' : '';
         $shortName .= $this->patronymic != null ? ' ' . mb_substr($this->patronymic, 0, 1) . '.' : '';
-        $shortName .= ' ' . $this->patronymic;
+        $shortName .= ' ' . $this->surname;
         return $shortName;
     }
 
@@ -119,8 +126,8 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     {
         if (Settings::get('notification_' . $platform, true)) {
             $token = $this->token()->where('platform', $platform)->first();
-            if (!empty($token)) {
-                return  $token->token;
+            if (! empty($token)) {
+                return $token->token;
             }
         }
         return null;
@@ -170,7 +177,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     {
         return $this->hasOne(UsersPhoneid::class, 'uid')->withDefault([
             'uid' => '',
-            'id' => ''
+            'id'  => '',
         ]);
     }
 
@@ -191,23 +198,23 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
      */
     public function getNameDetailAttribute()
     {
-        if (!empty($this->name_source) && is_object($this->name_source)) {
+        if (! empty($this->name_source) && is_object($this->name_source)) {
             return $this->name_source;
         } else {
 
-            if (!empty($this->surname) && !empty($this->name) && !empty($this->patronymic)) {
+            if (! empty($this->surname) && ! empty($this->name) && ! empty($this->patronymic)) {
 
                 try {
-                    $source_name = DaDataName::standardization($this->surname . ' ' . $this->name . ' ' . $this->patronymic)[0];
+                    $source_name       = DaDataName::standardization($this->surname . ' ' . $this->name . ' ' . $this->patronymic)[0];
                     $this->name_source = $source_name;
                     $this->save();
 
                     return $this->name_source;
                 } catch (\Exception $e) {
-                    return (object)[];
+                    return (object) [];
                 }
             } else {
-                return (object)[];
+                return (object) [];
             }
         }
     }
