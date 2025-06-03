@@ -13,7 +13,7 @@ class ForeignDefaultColumnDefinition extends ColumnDefinition
      */
     protected $blueprint;
 
-    protected string $references_on;
+    protected string|null $references_on;
 
 
     /**
