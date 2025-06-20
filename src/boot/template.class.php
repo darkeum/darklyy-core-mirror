@@ -93,7 +93,7 @@ class template
 		$modArr = getcache('plugins');
 
 		if (empty($modArr)) {
-			$query = $db->query("SELECT * FROM `" . DB_PREFIX . "_plugins` WHERE `active` = '1' ORDER BY priority ASC");
+			$query = $db->query("SELECT * FROM `" . DB_PREFIX . "_plugins` WHERE `active` = '1' ORDER BY id ASC");
 			while ($result = $db->getRow($query)) {
 				if ($result['service'] == 'blocks') {
 					$this->blocks[$result['id']] = $result;
