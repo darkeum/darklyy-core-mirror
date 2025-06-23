@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2024 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -13,7 +13,7 @@ namespace Boot\Models;
 
 class Categories extends Model
 {
-    protected $fillable = ["id", "name", "altname", "fulltitle", "description", "full", "keywords", "module", "icon", "preview", "preview_og", "position", "position_filter", "parent_id", "sum", "hidden", "status"];
+    protected $fillable = ["id", "name", "altname", "fulltitle", "description", "full", "keywords", "code", "module", "icon", "preview", "preview_og", "position", "position_filter", "parent_id", "hidden", "status"];
 
     public $timestamps = false;
 

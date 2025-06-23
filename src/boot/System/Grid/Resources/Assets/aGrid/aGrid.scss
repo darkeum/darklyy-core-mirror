@@ -6,12 +6,11 @@
 //     Author: Sergey Pereverzev
 // ================================================================================================
 
-@import '~/resources/assets/scss/variables/variables';
+@import "~/resources/assets/scss/variables/variables";
 
 // Main container Datatables aGrid
 .aGrid-container {
-
-  margin: 0!important;
+  margin: 0 !important;
 
   //
   button.aGrid-mods-button {
@@ -23,9 +22,21 @@
   &.mods {
     button.aGrid-mods-button {
       border-color: var(--a-primary-color);
+      .pris & {
+        border-color: var(--p-primary-color);
+      }
+      .portal & {
+        border-color: var(--portal-primary-color);
+      }
 
       i {
         color: var(--a-primary-color);
+        .pris & {
+          color: var(--p-primary-color);
+        }
+        .portal & {
+          color: var(--portal-primary-color);
+        }
       }
     }
 
@@ -45,7 +56,6 @@
         }
       }
     }
-
   }
 
   // Рамка индикатор блокировки
@@ -78,12 +88,12 @@
         // Обратимся к dtsb-searchBuilder он же search-builder-custom
         .search-builder-custom {
           .dtsb-inputCont {
-            select, input {
+            select,
+            input {
               height: 100%;
             }
           }
         }
-
       }
 
       .dt-button-collection.dtb-collection-closeable {
@@ -103,15 +113,12 @@
 
   // Зоны DataTables
   .dataTables_scroll {
-
     // Зона 1 - Хеадер - Тут у нас заголовки и поля фильтрации и поиска
     .dataTables_scrollHead {
-
       .dataTables_scrollHeadInner {
-
         // КОСТЫЛЬ
-        padding-right: 0!important;
-        width: 100%!important;
+        padding-right: 0 !important;
+        width: 100% !important;
 
         table {
           margin-top: 0 !important;
@@ -119,7 +126,8 @@
           // Исправление столбцов Datatables (Что бы border'ы были ровными)
           &.table-sm-px {
             tr {
-              th, td {
+              th,
+              td {
                 //padding: 5px;
               }
             }
@@ -148,14 +156,11 @@
                     border-radius: 3px;
                     line-height: normal;
                   }
-
                 }
-
               }
 
               // Фильтры и поиски
               &.aGrid-filters {
-
                 th {
                   padding: 0.3rem 0.5rem;
 
@@ -170,7 +175,6 @@
                       //min-height: 2.142rem;
                     }
                   }
-
                 }
               }
             }
@@ -185,7 +189,6 @@
       background: repeating-conic-gradient(#fff1 0% 25%, #0001 0% 50%) 0/30px 30px !important;
 
       table {
-
         z-index: 0 !important;
 
         &.dt-behavior {
@@ -193,20 +196,18 @@
         }
 
         &.dataTable {
-
           td {
             position: relative;
 
             .badge-render {
-              i, svg {
+              i,
+              svg {
                 margin-left: 3px;
               }
             }
           }
-
         }
       }
-
     }
 
     // Зона 3 - Лоадер - processing
@@ -233,7 +234,6 @@
     .ps__thumb-y {
       cursor: pointer;
     }
-
   }
 
   .dt-footer {
@@ -242,16 +242,13 @@
 
   // Работа с таблицей Datatables
   table {
-
     // Работа с Grid
     &.aGrid-table {
-
       position: relative;
 
       &.collapsed {
         tbody {
           tr {
-
             //&:hover {
             //  .dtr-control:before {
             //    color: $a-color;
@@ -277,14 +274,13 @@
               }
             }
 
-            td, th {
+            td,
+            th {
               // Флаг вниз стрелка слева таблицы
               &.dtr-control:hover {
-
               }
 
               &.dtr-control {
-
                 &:has(:before) {
                   background-color: #0a66c2;
                 }
@@ -302,7 +298,7 @@
                   display: grid;
                   position: absolute;
                   color: white;
-                  font-family: 'feather' !important;
+                  font-family: "feather" !important;
                   content: "\e932" !important; // Шеврон down
                   align-items: center;
                   background-color: $a-color;
@@ -310,10 +306,7 @@
                   .pris & {
                     background-color: $p-color;
                   }
-
                 }
-
-
               }
             }
           }
@@ -333,8 +326,8 @@
       // Работа с Thead Grid
       thead {
         .sorting {
-
-          &:before, &:after {
+          &:before,
+          &:after {
             //content: '';
             right: 0 !important;
           }
@@ -349,23 +342,24 @@
             top: auto;
           }
 
-          &.sorting_asc, &.sorting_desc {
-            &:before, &:after {
+          &.sorting_asc,
+          &.sorting_desc {
+            &:before,
+            &:after {
             }
           }
 
           &.sorting_asc {
-            &:before, &:after {
+            &:before,
+            &:after {
             }
-
           }
 
           &.sorting_desc {
-            &:before, &:after {
+            &:before,
+            &:after {
             }
-
           }
-
         }
 
         tr th {
@@ -376,7 +370,6 @@
       // Работа с TR Grid - Строки таблицы
       tbody {
         tr {
-
           cursor: pointer;
 
           // Если таблица пуста то растягивать ее во всю высоту
@@ -400,9 +393,7 @@
 
           & {
             td {
-
               &:has(.render) {
-
                 &:hover {
                   //background-color: rgba(var(--a-primary-rgb), 0.2);
                 }
@@ -419,7 +410,6 @@
                     &:hover {
                     }
                   }
-
                 }
 
                 &:after {
@@ -428,15 +418,13 @@
                   top: 2px;
 
                   // Кружок простой
-                  content: '';
+                  content: "";
                   width: 5px;
                   height: 5px;
                   background-color: rgba(var(--a-primary-rgb), 0.7);
                   border-radius: 50%;
-
                 }
               }
-
             }
           }
 
@@ -444,7 +432,12 @@
           &.selected {
             background-color: $a-color !important;
             color: var(--white);
-
+            .pris & {
+              background-color: var(--p-primary-color) !important;
+            }
+            .portal & {
+              color: var(--portal-primary-color) !important;
+            }
             //
             * {
               box-shadow: none !important;
@@ -482,7 +475,6 @@
               .form-check-input {
                 border-color: white;
               }
-
             }
 
             .pris & {
@@ -539,7 +531,6 @@
             .render-popover {
               pointer-events: none;
             }
-
           }
 
           .child span.dtr-title {
@@ -550,10 +541,8 @@
             //display: block;
             border: 1px solid transparent;
           }
-
         }
       }
-
     }
 
     // Первый столбец
@@ -569,7 +558,6 @@
       padding-left: 10px; // 15px
       padding-right: 10px; // 15px
     }
-
   }
 
   // Свое контекстное меню
@@ -596,7 +584,8 @@
   }
 
   //
-  [class^="fa-"], [class*=" fa-"] {
+  [class^="fa-"],
+  [class*=" fa-"] {
     speak: none;
     font-style: normal;
     //font-weight: normal;
@@ -606,7 +595,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
 }
 
 .flatpickr-calendar {
@@ -621,7 +609,7 @@
   }
 }
 
-div.dataTables_wrapper .dt-button-collection > div.dtsb-searchBuilder[role=menu] {
+div.dataTables_wrapper .dt-button-collection > div.dtsb-searchBuilder[role="menu"] {
   display: block;
   transform: none;
   box-shadow: none;
@@ -644,7 +632,6 @@ div.dtb-popover-close {
 
   .popover-body {
     .qq-view-item {
-
       display: grid;
 
       div:first-child {
@@ -661,7 +648,6 @@ div.dtb-popover-close {
 .dark-layout {
   .aGrid-container {
     table {
-
       tbody {
       }
 
@@ -675,10 +661,8 @@ div.dtb-popover-close {
         }
 
         td {
-
         }
       }
-
     }
   }
 }
@@ -690,14 +674,13 @@ div.dtb-popover-close {
   }
 
   75% {
-    top: 10px
+    top: 10px;
   }
 
   to {
-    top: -10px
+    top: -10px;
   }
 }
-
 
 //.text-truncate:hover{
 //  /* overflow: visible; */
