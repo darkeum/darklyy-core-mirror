@@ -386,6 +386,10 @@
               background-color: rgba($p-color-rgb, 0.1);
             }
 
+            .portal & {
+              background-color: rgba($portal-color-rgb, 0.1);
+            }
+
             .dark-layout & {
               background-color: #343d55;
             }
@@ -430,13 +434,13 @@
 
           // Выделение строки (при клике) - Смена цветов badge, btn и тд.
           &.selected {
-            background-color: $a-color !important;
+            background-color: $a-color;
             color: var(--white);
             .pris & {
-              background-color: var(--p-primary-color) !important;
+              background-color: var(--p-primary-color);
             }
             .portal & {
-              color: var(--portal-primary-color) !important;
+              background-color: var(--portal-primary-color);
             }
             //
             * {
