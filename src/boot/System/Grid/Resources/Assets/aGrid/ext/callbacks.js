@@ -140,8 +140,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             if (values.hasOwnProperty('__AJAX_SELECT_GRID')) {
                                 ajax_url = values.__AJAX_SELECT_GRID;
                                 delete values.__AJAX_SELECT_GRID;
-                                // console.log(ajax);
-
+                                // console.log(ajax_url);
                                 // ...
                             }
 
@@ -150,22 +149,24 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 let all = values.__ALL_SELECT_GRID; // Сохраняем в переменной
                                 delete values.__ALL_SELECT_GRID; // Удаляем из объекта
 
+                                // Добавим attr к первому созданному пункту
                                 first.attr({
                                     'value': '__ALL_SELECT_GRID'
                                 }).html(all);
                             }
 
-                            // WIP - Кастомный первым будет
+                            // WIP - CUSTOM пункт будет первым
                             if (values.hasOwnProperty('__CUSTOM_SELECT_GRID')) {
-                                let custom = JSON.parse(values.__CUSTOM_SELECT_GRID);
-                                delete values.__CUSTOM_SELECT_GRID;
+                                let custom = JSON.parse(values.__CUSTOM_SELECT_GRID); // Сохраняем в переменной
+                                delete values.__CUSTOM_SELECT_GRID; // Удаляем из объекта
 
+                                // Добавим attr к первому созданному пункту
                                 first.attr({
                                     'value': Object.keys(custom)[0]
                                 }).html(Object.values(custom)[0]);
                             }
 
-                            // Переберем пункты Select
+                            // Переберем пункты Select/Select2
                             $.each(values, function (index, item) {
                                 // Создаем option'ы для select'а
                                 let option = $('<option></option>');
