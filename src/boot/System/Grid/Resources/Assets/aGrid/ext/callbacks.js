@@ -133,12 +133,12 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         if (col.options.hasOwnProperty('value')) {
                             let values = JSON.parse(col.options.value);
                             let first = $('<option></option>');
-                            let ajax = false;
+                            let ajax_url = false;
                             // console.log(values)
 
                             // WIP - Если есть пункт для работы с AJAX
                             if (values.hasOwnProperty('__AJAX_SELECT_GRID')) {
-                                ajax = values.__AJAX_SELECT_GRID;
+                                ajax_url = values.__AJAX_SELECT_GRID;
                                 delete values.__AJAX_SELECT_GRID;
                                 // console.log(ajax);
 
@@ -176,7 +176,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             });
                             // console.log(select_options)
 
-                            // Сортируем по алфавиту пункты в Select если нужно (order - true/false)
+                            // Сортируем по алфавиту пункты в Select если нужно (order - true/false) - TODO WIP
                             if (col.options.hasOwnProperty('order')) {
                                 select_options.sort(function (x, y) {
                                     // order - true/false
@@ -213,7 +213,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 // && typeof col.options.select2 == 'boolean' //
                                 && col.options.select2 == true) {
                                 api.aGrid.ui.select2(select, {
-                                    url: ajax
+                                    url: ajax_url // по умолчанию false или может быть ссылка на запрос
                                 });
                             }
                         }
