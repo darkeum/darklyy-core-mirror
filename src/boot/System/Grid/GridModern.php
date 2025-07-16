@@ -276,9 +276,10 @@ abstract class GridModern
 
         //dd($data);
 
+        // Создадим пустую коллекцию
         $result = collect([]);
 
-        // Новый вариант
+        // Если массив добавим его в коллекцию
         if (is_array($data)) {
             $result = collect($data);
         }
@@ -288,7 +289,10 @@ abstract class GridModern
             $result = $data;
         }
 
-        if (is_string($data)) {
+        // Если подан Class то будем использовать запрос к Class'у
+        if (is_string($data) and class_exists($data)) {
+            //dd(get_declared_classes());
+            //dd(class_exists($data));
             $data = route('grid.ui.select2', ['model' => $data, 'col' => $column]);
             $result->prepend($data, "__AJAX_SELECT_GRID");
         }
@@ -298,6 +302,7 @@ abstract class GridModern
             $result->prepend(__('grid.all'), "__ALL_SELECT_GRID");
         }
 
+        //
         if (is_string($first)) {
             $result->prepend($first, "__ALL_SELECT_GRID");
         }
