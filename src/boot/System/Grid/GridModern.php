@@ -421,7 +421,7 @@ abstract class GridModern
     protected function getCategories($func_id = null, $empty = false)
     {
         $rows = [];
-        $cats_arr = \Boot\Support\Facades\Categories::getFullTree('catalog_v2');
+        $cats_arr = \Boot\Support\Facades\Categories::getNameTree('catalog_v2');
         //if ($empty) {
         //    $rows[''] = 'Без категории';
         //}
