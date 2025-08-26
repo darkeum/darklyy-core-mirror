@@ -3,7 +3,7 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
@@ -11,159 +11,199 @@
 
 namespace Boot\System\Categories;
 
-use Boot\Support\Cache;
 use Boot\Models\Categories as CategoryModel;
+use Boot\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Collection;
 
 class Categories
 {
-  private $categoriesList;
-  private $categoriesClearList;
+    const CACHE_KEY = 'categories.clear2';
 
-  public function __construct()
-  {
-    if(Cache::has('categories.clear')) {
-      $categoriesClearList = Cache::get('categories.clear');
-    } else {
-      $categoriesClearList = CategoryModel::all()->toArray();
-      Cache::set('categories.clear', $categoriesClearList);
+    /**
+     * Список всех категорий
+     *
+     * @var Collection<CategoryModel>
+     */
+    private Collection $categories_list;
+
+    /**
+     * Конструктор класса
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->categories_list = $this->getCategoryCache();
     }
-    $prepareList = array();
-    $prepareClearList = array();
-    foreach ($categoriesClearList as $key => $value) {
-      $prepareClearList[$value['id']] = $value;
-      $prepareList[$value['module']][$value['id']] = $value;
+
+    /**
+     * Получить кэш категорий
+     *
+     * @return Collection<CategoryModel>
+     */
+    public function getCategoryCache(): Collection
+    {
+        return Cache::rememberForever(self::CACHE_KEY, function () {
+            return CategoryModel::all();
+        });
     }
-    $this->categoriesClearList = cc($prepareClearList);
-    $this->categoriesList =  cc($prepareList);
-  }
 
-  public function getModuleCategories($module)
-  {
-    $category = $this->categoriesClearList->where('module', $module)->all();
-    if (!empty($category)) {
-
-      foreach ($category  as $k => $v) {
-        $category[$k]['url'] = '/'.$module.'/'.$this->getCategoryFullUrl($k);
-      }
-      return $category;
-      // dd($category);
-    } else {
-      return [];
+    /**
+     * Очистить кэш категорий
+     *
+     * @return void
+     */
+    public function clearCategoryCache(): void
+    {
+        Cache::forget(self::CACHE_KEY);
     }
-  }
 
-  public function getCategory($key)
-  {
-    // dd($this->categoriesClearList);
-    $category = $this->categoriesClearList->where('id', $key)->first();
-    if (!empty($category)) {
-      $category['url'] = $this->getCategoryFullUrl($key);
-      // dd( $category);
-      return cc($category);
-    } else {
-      return [];
+    /**
+     * Получить категории модуля
+     *
+     * @param  string $module Наименованеи модуля
+     * @return  Collection<CategoryModel>
+     */
+    public function getModuleCategories(string $module): Collection
+    {
+        return $this->categories_list->where('module', $module);
     }
-  }
 
-  public function getCategoryFullUrl($key, $url = null)
-  {
-    //  dd($this->categoriesClearList);
-    foreach ($this->categoriesClearList as $k => $category) {
-      if ($k == $key) {
-        if ($category['parent_id'] == '0') {
-          return $category['altname'] . '/' . $url;
+    /**
+     * Получить категорию по ее идетификатору
+     *
+     * @param  int $key Идетификатор категории
+     * @return CategoryModel|null
+     */
+    public function getCategory(int $key): CategoryModel | null
+    {
+        return $this->categories_list->where('id', $key)->first();
+    }
+
+    /**
+     * Получить категорию по ее slug
+     *
+     * @param  string $key Slug категории
+     * @return CategoryModel|null
+     */
+    public function getCategoryBySlug(string $slug): CategoryModel | null
+    {
+        return $this->categories_list->where('altname', $slug)->first();
+    }
+
+    /**
+     * Получить список всех категорий
+     *
+     * @return Collection<CategoryModel>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories_list;
+    }
+
+    /**
+     * Получить дочернии категории
+     *
+     * @param   int $parent_id Идетификатор родительской категории
+     * @return  Collection<CategoryModel>
+     */
+    public function getChildrenCategories(int $parent_id): Collection
+    {
+        return $this->categories_list->where('parent_id', $parent_id);
+    }
+
+    /**
+     * Получение полного URL категории
+     *
+     * @param  int $key Идетификатор категории
+     * @param  string|null $url
+     * @return string
+     */
+    public function getCategoryUrl(int $key, string | null $url = null): string
+    {
+        $category = $this->getCategory($key);
+        if ($category->parent_id == '0' || $category->parent_id == null) {
+            return $category->altname . '/' . $url;
         } else {
-          return $this->getCategoryFullUrl($category['parent_id'], $category['altname']) . '/' . $url;
+            return $this->getCategoryUrl($category->parent_id, $category->altname) . ($url != null ? ('/' . $url) : '');
         }
-      }
     }
-  }
 
-  public function getCategoryBySlug($key)
-  {
-    // dd($this->categoriesList);
-    foreach ($this->categoriesList as $categoryModule) {
-      foreach ($categoryModule as $k => $category) {
-        if (isset($category['altname'])) {
-          // var_dump($category->get('altname'));
-          if ($category['altname'] == $key) {
-            return $k;
-          }
+    /**
+     * Список категорий в форме дерева
+     *
+     * @param  string $module Наименование модуля
+     * @return array
+     */
+    public function getTree(string $module): array
+    {
+        foreach ($this->categories_list->where("module", $module) as $item) {
+            $cat_get[$item->id] = $item;
         }
-      }
+        if (isset($cat_get)) {
+            foreach ($cat_get as $key => $value) {
+                $cats_arr[$key]['name']       = $value->name;
+                $cats_arr[$key]['category'][] = $value;
+                $flag                         = $value->parent_id;
+                while ($flag != 0 || $flag != null) {
+                    $cats_arr[$key]['name']       = $cat_get[$flag]->name . " / " . $cats_arr[$key]['name'];
+                    $cats_arr[$key]['category'][] = $cat_get[$flag];
+                    $flag                         = $cat_get[$flag]->parent_id;
+                }
+                $cats_arr[$key]['category'] = array_reverse($cats_arr[$key]['category']);
+            }
+            asort($cats_arr);
+            return $cats_arr;
+        }
+        return [];
     }
-    return false;
-  }
-  /*
-   * Список всех категорий
-   */
-  public function getCategories()
-  {
 
-   return $this->categoriesList;
-  }
-
-  /**
-   * getFullTree - Список категорий в форме дерева
-   *
-   * @param  String $module
-   * @return Array
-   */
-  public function getFullTree(String $module):Array{
-      $items = CategoryModel::where("status", 1)->where("module", $module)->get();
-			foreach($items as $item){
-        $cat_get[ $item->id ] = [ $item->name, $item->parent_id ];
-      }
-			if(isset($cat_get)){
-				foreach ($cat_get as $cid => $sub_arr){
-					$cats_arr[$cid] = $sub_arr[0];
-					$flag = $sub_arr[1];
-					while ($flag != 0){
-						$cats_arr[$cid] = $cat_get[$flag][0]." / ".$cats_arr[$cid];
-						$flag = $cat_get[$flag][1];
-					}
-				}
-				asort($cats_arr);
-				return $cats_arr;
-			}
-		return [];
-  }
-  /*
-   * хлебные крошки
-   * $id - ID категории в которой мы находимся
-   */
-  public function breadcrumbs($id)
-  {
-    $breadcrumbs_array = [];
-    $array = $this->categories;
-    for ($i = 0; $i < count($array); $i++) {
-      if ($id) {
-        $breadcrumbs_array[$array[$id]['id']] = $array[$id]['title'];
-        $id = $array[$id]['id_parent'];
-      }
+    /**
+     * Список категорий в форме дерева только имя
+     *
+     * @param  string $module Наименование модуля
+     * @return array
+     */
+    public function getNameTree(string $module): array
+    {
+        $result = [];
+        foreach ($this->getTree($module) as $key => $item) {
+            $result[$key] = $item['name'];
+        }
+        return $result;
     }
-    return array_reverse($breadcrumbs_array, true);
-  }
-  /*
-   * @bonus
-   * Получаем ID всех дочерных категорий родителя
-   */
-  public function getChildren($id_parent)
-  {
-    static $children = [];
-    $result = $this->db->query("SELECT `id` FROM `categories` WHERE `id_parent` = '$id_parent'")->fetchAll();
-    foreach ($result as $post) {
-      $children[] = $post['id'];
-      $this->getChildren($post['id']);
+
+    /**
+     * Список категорий в форме дерева только имя и URL
+     *
+     * @param  string $module Наименование модуля
+     * @return array
+     */
+    public function getNameAndUrlTree(string $module): array
+    {
+        $result = [];
+        foreach ($this->getTree($module) as $key => $item) {
+            $result[$key]['name'] = $item['name'];
+            $result[$key]['url']  = $this->getCategoryUrl($key);
+        }
+        return $result;
     }
-    return $children;
-  }
 
+    /**
+     * Хлебные крошки для указанной категории
+     *
+     * @param  int $id Идетификато ркатегории
+     * @return array
+     */
+    public function breadcrumbs(int $key, array $breadcrumbs = []): array
+    {
+        $category      = $this->getCategory($key);
+        $breadcrumbs[] = $category;
+        if ($category->parent_id == '0' || $category->parent_id == null) {
+            return $breadcrumbs;
+        } else {
+            return $this->breadcrumbs($category->parent_id, $breadcrumbs);
+        }
+    }
 
-
-
-  public function getCategoriesList()
-  {
-    return $this->categoriesList;
-  }
 }
