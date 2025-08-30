@@ -2,11 +2,12 @@
 
 namespace Boot\System\Auth\Notifications;
 
+use Boot\System\Notifications\RequiredNotification;
 use Boot\System\Notifications\Messages\MailMessage;
 use Boot\System\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
 
-class ResetPassword extends Notification
+class ResetPassword extends Notification implements RequiredNotification
 {
     /**
      * The password reset token.
