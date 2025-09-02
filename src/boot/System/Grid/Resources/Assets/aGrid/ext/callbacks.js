@@ -71,7 +71,7 @@ DataTable.Api.register('aGrid.callbacks.drawCallback', function (settings) {
     api.aGrid.fn.setTitles(columns);      // Установка title для столбцов // ПЕРЕДЕЛАТЬ!
     api.aGrid.ui.table.empty(rows);       // Работа с пустой таблицей
     feather.replace();                    // Обновление иконок внутри таблицы
-    api.aGrid.ui.bootstrap.reload();      // Перезагрузка всех Bootstrap элементов на странице
+    api.aGrid.ui.bootstrap.reload();      // Перезагрузка всех Bootstrap элементов в контейнере aGrid
     // api.aGrid.ui.loader(false);        // Скрыть Loader
 });
 

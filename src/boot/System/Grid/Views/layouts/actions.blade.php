@@ -23,10 +23,13 @@ https://app.weeek.net/ws/288286/document/12
         return $marker;
     };
 
+    // Проверка если destroy является простой ссылкой то вернуть именно её
+    $destroy_url = is_bool($destroy) ? route('admin.'. $module .'.destroy', $row['id']) : $destroy;
+
 @endphp
 
 @if($destroy ?? false)
-    <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}"
+    <form action="{{ $destroy_url }}"
           method="POST"
           onsubmit="return confirm('Удалить ?');"
     >
@@ -54,7 +57,7 @@ https://app.weeek.net/ws/288286/document/12
                         @switch($marker($key))
 
                             @case('destroy')
-                                <form action="{{ route('admin.'. $module .'.destroy', $row['id']) }}" method="POST"
+                                <form action="{{ $destroy_url }}" method="POST"
                                       onsubmit="if(confirm('Удалить ?')){ return true }else{ return false }"
                                 >
                                     @csrf
@@ -125,8 +128,6 @@ https://app.weeek.net/ws/288286/document/12
                         @case('destroy')
                             <button class="btn btn-sm btn-outline-secondary" type="submit"
                                     title="{{ $actions_cfg[$key][0] }}"
-                                    data-bs-original-title="{{ $actions_cfg[$key][0] }}"
-                                    data-bs-toggle="tooltip"
                                     @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
                             >
                                 <i class="feather-trash"></i>
@@ -138,8 +139,6 @@ https://app.weeek.net/ws/288286/document/12
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions[$key]['text'] ?? '' }}"
-                               data-bs-original-title="{{ $actions[$key]['text'] ?? '' }}"
-                               data-bs-toggle="tooltip"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions[$key]['icon'] }}"></i>
@@ -172,8 +171,6 @@ https://app.weeek.net/ws/288286/document/12
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions_cfg[$key][0] }}"
-                               data-bs-original-title="{{ $actions_cfg[$key][0] }}"
-                               data-bs-toggle="tooltip"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions_cfg[$key][1] }}"></i>

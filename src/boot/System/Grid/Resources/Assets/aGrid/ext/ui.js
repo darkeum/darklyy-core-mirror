@@ -12,22 +12,21 @@ DataTable.Api.register('aGrid.ui', function () {
 });
 
 // ### Bootstrap
-// Перезагрузка всех Bootstrap элементов на странице
+// Перезагрузка всех Bootstrap элементов в контейнере aGrid
 DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
     // Удалить все старые tooltip'ы и popover'ы
-    $('.tooltip').detach();
-    $('.popover').detach();
-
-    // $('[data-toggle="tooltip"]').tooltip();
-    // $('[data-bs-toggle="popover"]').popover();
+    // $('.tooltip').detach();
+    // $('.popover').detach();
 
     // tooltips
-    let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    // let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    // let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    $('.aGrid-container [title]').tooltip();
 
     // popovers
-    let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+    // let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+    // let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+    $('.aGrid-container [data-bs-toggle="popover"]').popover();
 });
 
 // bootstrap Popover
