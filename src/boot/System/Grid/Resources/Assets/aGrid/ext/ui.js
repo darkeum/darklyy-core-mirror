@@ -21,7 +21,7 @@ DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
     // tooltips
     // let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     // let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    $('.aGrid-container [title]').tooltip();
+    $('.aGrid-container [data-bs-toggle="tooltip"]').tooltip();
 
     // popovers
     // let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');

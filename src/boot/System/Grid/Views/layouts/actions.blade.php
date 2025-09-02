@@ -24,7 +24,9 @@ https://app.weeek.net/ws/288286/document/12
     };
 
     // Проверка если destroy является простой ссылкой то вернуть именно её
-    $destroy_url = is_bool($destroy) ? route('admin.'. $module .'.destroy', $row['id']) : $destroy;
+    if ($destroy ?? false) {
+        $destroy_url = is_bool($destroy) ? route('admin.'. $module .'.destroy', $row['id']) : $destroy;
+    }
 
 @endphp
 
@@ -35,7 +37,7 @@ https://app.weeek.net/ws/288286/document/12
     >
         @csrf
         @method('DELETE')
-@endif
+        @endif
 
         <div class="btn-group {{ ($actions_count >= 2) ? 'dropstart' : '' }}" role="group">
 
@@ -128,6 +130,7 @@ https://app.weeek.net/ws/288286/document/12
                         @case('destroy')
                             <button class="btn btn-sm btn-outline-secondary" type="submit"
                                     title="{{ $actions_cfg[$key][0] }}"
+                                    data-bs-toggle="tooltip"
                                     @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
                             >
                                 <i class="feather-trash"></i>
@@ -139,6 +142,7 @@ https://app.weeek.net/ws/288286/document/12
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions[$key]['text'] ?? '' }}"
+                               data-bs-toggle="tooltip"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions[$key]['icon'] }}"></i>
@@ -171,6 +175,7 @@ https://app.weeek.net/ws/288286/document/12
                                target="_blank"
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions_cfg[$key][0] }}"
+                               data-bs-toggle="tooltip"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions_cfg[$key][1] }}"></i>
@@ -183,7 +188,7 @@ https://app.weeek.net/ws/288286/document/12
 
         </div>
 
-@if($destroy ?? false)
+        @if($destroy ?? false)
     </form>
 @endif
 
