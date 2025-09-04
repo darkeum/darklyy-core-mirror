@@ -72,10 +72,14 @@ class TemplateProcessor extends PhpWordTemplateProcessor
             $rowNumber = $rowKey + 1;
             foreach ($rowData as $macro => $replace) {
                 if (is_array($replace)) {
-                    $oTextRun = new \PhpOffice\PhpWord\Element\TextRun();
-                    $oLink = $oTextRun->addLink($replace['link'], $this->prepareSetValue($replace['text']), $replace['style']);
-                    $this->addLink($oLink);
-                    $this->setComplexValue($macro . '#' . $rowNumber, $oLink);
+                    if ($replace['link']) {
+                        $oTextRun = new \PhpOffice\PhpWord\Element\TextRun();
+                        $oLink = $oTextRun->addLink($replace['link'], $this->prepareSetValue($replace['text']), $replace['style']);
+                        $this->addLink($oLink);
+                        $this->setComplexValue($macro . '#' . $rowNumber, $oLink);
+                    } else {
+                        $this->setValue($macro . '#' . $rowNumber, $this->prepareSetValue($replace['text']));
+                    }
                 } else {
                     $this->setValue($macro . '#' . $rowNumber, $this->prepareSetValue($replace));
                 }
