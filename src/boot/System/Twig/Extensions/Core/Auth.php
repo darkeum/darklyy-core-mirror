@@ -11,8 +11,8 @@
 
 namespace Boot\System\Twig\Extensions\Core;
 
-use Illuminate\Auth\AuthManager;
 use Twig\TwigFunction;
+use Boot\System\Auth\AuthManager;
 use Twig\Extension\AbstractExtension;
 
 /**

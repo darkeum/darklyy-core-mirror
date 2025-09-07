@@ -795,7 +795,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     {
         $providers = Collection::make($this->make('config')->get('app.providers'))
             ->partition(function ($provider) {
-                return str_starts_with($provider, 'Illuminate\\');
+                return str_starts_with($provider, 'Illuminate\\') || str_starts_with($provider, 'Boot\\');
             });
 
         $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
@@ -1469,7 +1469,7 @@ class Application extends Container implements ApplicationContract, CachesConfig
     {
         foreach ([
             'app' => [self::class, \Illuminate\Contracts\Container\Container::class, \Illuminate\Contracts\Foundation\Application::class, \Psr\Container\ContainerInterface::class],
-            'auth' => [\Illuminate\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
+            'auth' => [\Boot\System\Auth\AuthManager::class, \Illuminate\Contracts\Auth\Factory::class],
             'auth.driver' => [\Illuminate\Contracts\Auth\Guard::class],
             'blade.compiler' => [\Illuminate\View\Compilers\BladeCompiler::class],
             'cache' => [\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class],
