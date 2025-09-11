@@ -123,7 +123,7 @@ class Categories
     {
         $category = $this->getCategory($key);
         if ($category->parent_id == '0' || $category->parent_id == null) {
-            return $category->altname . '/' . $url;
+            return $category->altname . ($url != null ? ('/' . $url) : '');
         } else {
             return $this->getCategoryUrl($category->parent_id, $category->altname) . ($url != null ? ('/' . $url) : '');
         }

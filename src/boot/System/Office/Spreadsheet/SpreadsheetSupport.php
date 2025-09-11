@@ -15,6 +15,7 @@ use Exception;
 use Boot\System\Office\OfficeSupport;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SpreadsheetSupport extends OfficeSupport
@@ -284,6 +285,56 @@ class SpreadsheetSupport extends OfficeSupport
                     $sheet->addChart($chart);
                 }
                 $charts = null;
+            }
+
+
+            if (isset($stylePage['title']) && $stylePage['title'] == __("report::sales.closing")) {
+                $highestRow = $sheet->getHighestRow();
+                for ($currentRow = 2; $currentRow <= $highestRow; $currentRow++) {
+                    $currentColA = $sheet->getCell('A' . $currentRow)->getValue();
+                    $currentColB = $sheet->getCell('B' . $currentRow)->getValue();
+                    $mergedCount = 0;
+
+                    for ($nextRow = $currentRow + 1; $nextRow <= $highestRow; $nextRow++) {
+                        $nextColA = $sheet->getCell('A' . $nextRow)->getValue();
+                        $nextColB = $sheet->getCell('B' . $nextRow)->getValue();
+
+                        if ($currentColA === $nextColA && $currentColB === $nextColB) {
+
+                            $mergedCount += 1;
+
+                            continue;
+                        }
+
+                        if ($mergedCount > 0) {
+                            $sheet->mergeCells('A' . $currentRow . ':' . 'A' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('B' . $currentRow . ':' . 'B' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('C' . $currentRow . ':' . 'C' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('D' . $currentRow . ':' . 'D' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('E' . $currentRow . ':' . 'E' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('I' . $currentRow . ':' . 'I' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('L' . $currentRow . ':' . 'L' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('M' . $currentRow . ':' . 'M' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('N' . $currentRow . ':' . 'N' . $currentRow + $mergedCount);
+
+                            $sheet->getStyle('A' . $currentRow . ':' . 'A' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('B' . $currentRow . ':' . 'B' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('C' . $currentRow . ':' . 'C' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('D' . $currentRow . ':' . 'D' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('E' . $currentRow . ':' . 'E' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('I' . $currentRow . ':' . 'I' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('L' . $currentRow . ':' . 'L' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('M' . $currentRow . ':' . 'M' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('N' . $currentRow . ':' . 'N' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                        }
+                        $currentRow += $mergedCount;
+                        break;
+                    }
+                }
             }
         }
 
