@@ -569,6 +569,17 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
     let $default = {
         text: 'Нет результатов',
         width: '100%',
+        sorter: function(data) {
+            // Сортируем по алфавиту но "Все" всегда первый
+            return data.sort(function(a, b) {
+                // Элемент с value = 0 всегда на первом месте
+                if (a.id === _OPTIONS.select2.drop_all) return -1;
+                if (b.id === _OPTIONS.select2.drop_all) return 1;
+
+                // Остальные элементы сортируются по тексту
+                return a.text.localeCompare(b.text);
+            });
+        },
         // dropdownParent: $('body'),
         // theme: 'custom',
         // tags: true,
