@@ -390,7 +390,7 @@ abstract class Repository
         $db = $this->buildWhere($db);
         $limit = intval($this->limit);
         $page = intval($this->page);
-        //Установка сортировки 
+        //Установка сортировки
         if ($this->short_field && $this->short) {
             $db->orderBy($this->short_field, $this->short);
         }
@@ -419,7 +419,7 @@ abstract class Repository
 
         //установка фильтров
         if (!empty($this->where)) {
-           
+
             foreach ($this->where as $k => $v) {
                 if ($v['column'] instanceof \Illuminate\Database\Query\Expression) {
                     $v['column'] = $v['field'];
@@ -613,7 +613,7 @@ abstract class Repository
 
         //-----------------
         // Placeholders
-        //-----------------		
+        //-----------------
         $replace = array(
             $this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'agg'),
             $this->query_placeholders['fields'] => $this->buildFieldsAgg($this->cols),
