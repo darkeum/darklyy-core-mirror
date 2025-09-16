@@ -137,28 +137,28 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // console.log(values)
 
                             // WIP - Если есть пункт для работы с AJAX
-                            if (values.hasOwnProperty('__AJAX_SELECT_GRID')) {
-                                ajax_url = values.__AJAX_SELECT_GRID;
-                                delete values.__AJAX_SELECT_GRID;
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop_ajax)) {
+                                ajax_url = values[_OPTIONS.select2.drop_ajax];
+                                delete values[_OPTIONS.select2.drop_ajax];
                                 // console.log(ajax_url);
                                 // ...
                             }
 
                             // Если есть пункт "ВСЕ" то он первый
-                            if (values.hasOwnProperty('__ALL_SELECT_GRID')) {
-                                let all = values.__ALL_SELECT_GRID; // Сохраняем в переменной
-                                delete values.__ALL_SELECT_GRID; // Удаляем из объекта
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop_all)) {
+                                let allText = values[_OPTIONS.select2.drop_all]; // Сохраняем в переменной
+                                delete values[_OPTIONS.select2.drop_all]; // Удаляем из объекта
 
                                 // Добавим attr к первому созданному пункту
                                 first.attr({
-                                    'value': '__ALL_SELECT_GRID'
-                                }).html(all);
+                                    'value': _OPTIONS.select2.drop_all
+                                }).html(allText);
                             }
 
                             // WIP - CUSTOM пункт будет первым
-                            if (values.hasOwnProperty('__CUSTOM_SELECT_GRID')) {
-                                let custom = JSON.parse(values.__CUSTOM_SELECT_GRID); // Сохраняем в переменной
-                                delete values.__CUSTOM_SELECT_GRID; // Удаляем из объекта
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop_custom)) {
+                                let custom = JSON.parse(values[_OPTIONS.select2.drop_custom]); // Сохраняем в переменной
+                                delete values[_OPTIONS.select2.drop_custom]; // Удаляем из объекта
 
                                 // Добавим attr к первому созданному пункту
                                 first.attr({
