@@ -4,6 +4,7 @@ namespace Boot\System\Grid;
 
 use Boot\System\Http\Request;
 use Throwable;
+
 //use phpDocumentor\Reflection\Types\Collection;
 //use ReflectionClass;
 
@@ -78,7 +79,7 @@ class GridView
         return view('grid::layouts.toolbar.mods.list')->render();
     }
 
-    #
+    # Select2
     public static function select2(Request $request)
     {
         $model = $request->query('model');
@@ -121,6 +122,22 @@ class GridView
 
         return $css;
 
+    }
+
+    # Вернуть html tag
+    public static function tag($tag = 'div', $class = '', $html = '', $tooltip = false)
+    {
+        if ($tooltip) {
+            $tooltip = " data-bs-toggle='tooltip' title='{$tooltip}'";
+        }
+
+        return "<{$tag} class='{$class}'{$tooltip}>{$html}</{$tag}>";
+    }
+
+    # Вернуть Badge
+    public static function badge($tag = 'span', $color = '', $html = '')
+    {
+        return self::tag($tag, "badge {$color}", $html);
     }
 
 }
