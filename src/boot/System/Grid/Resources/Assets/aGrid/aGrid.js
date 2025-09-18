@@ -1,10 +1,13 @@
+// Импорт настроек
+import {_OPTIONS} from "./options.js";
+
+// Импорт расширений
 import {} from "/aGrid/ext/callbacks.js";
 import {} from "/aGrid/ext/dt.js";
 import {} from "/aGrid/ext/fn.js";
 import {} from "/aGrid/ext/mods.js";
 import {} from "/aGrid/ext/ui.js";
 import {} from "/aGrid/ext/utils.js";
-import {_OPTIONS} from "./options.js";
 
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {

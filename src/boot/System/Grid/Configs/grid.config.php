@@ -18,6 +18,7 @@ return [
 
     'debug_output' => true,
 
+    # ...
     'input' => [
         'grid' => 'grid',
         'patch' => '',
@@ -26,6 +27,7 @@ return [
         'operation' => 'oper',
     ],
 
+    # ...
     'actions' => [
         'show' => ['Просмотр', 'eye'],
         'edit' => ['Редактировать', 'edit'],
@@ -35,20 +37,20 @@ return [
         'download' => ['Скачать', 'download'],
     ],
 
-    // ignored
+    # ignored
     'ignored' => ['actions', 'checkbox'],
 
-    // Параметры
+    # Параметры
     'params' => [
         'configs' => [
             'icon' => ''
         ]
     ],
 
-    // Значения по умолчанию Grid
+    # Значения по умолчанию Grid
     'default' => [
 
-        // Поля которые необходимо фильтровать
+        # Поля которые необходимо фильтровать
         'filters' => [
             'label',
             'format_date',
@@ -64,7 +66,9 @@ return [
             'priority'
         ],
 
+        # ...
         'cols' => [
+
             'title' => '',              // Заголовок столбца по умолчанию
 
             // Типы используемых полей для фильтров
@@ -150,7 +154,7 @@ return [
 
             'prefix' => null,           // Фейковый префикс ...
 
-            'null' => null,             //
+            'null' => null,             // Если ничего нет Null
 
             'encode' => [               // Кодирование в текст (Если нужно вывести код html то обязательно false)
                 '_' => true,
@@ -167,6 +171,7 @@ return [
             ],
         ],
 
+        # ...
         'nav' => [
             'search' => false,         // Поле поиска
             'builder' => true,         // Конструктор поиска
@@ -181,7 +186,7 @@ return [
             ],
         ],
 
-        // Список действий мыши по умолчанию (select, open, 'opennt', 'opennw')
+        # Список действий мыши по умолчанию (select, open, 'opennt', 'opennw')
         'mouse' => [
             'click' => null,
             'dblclick' => 'open',
