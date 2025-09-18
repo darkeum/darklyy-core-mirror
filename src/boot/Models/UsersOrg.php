@@ -3,13 +3,15 @@
 /*
 * @name        DARKLYY
 * @link        https://darklyy.ru/
-* @copyright   Copyright (C) 2012-2022 ООО «ПРИС»
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
 * @license     LICENSE.txt (see attached file)
 * @version     VERSION.txt (see attached file)
 * @author      Komarov Ivan
 */
 
 namespace Boot\Models;
+
+use Contragents\Models\Contragents;
 
 class UsersOrg extends Model
 {
@@ -20,7 +22,12 @@ class UsersOrg extends Model
         return $this->hasOne(Users::class, "id", "uid");
     }
 
-    static function getType()
+    public function contrgent()
+    {
+        return $this->hasOne(Contragents::class, "id", "oid");
+    }
+
+    public static function getType()
     {
         return [
             0 => "Отсутствует",
