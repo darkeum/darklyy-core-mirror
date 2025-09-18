@@ -1,3 +1,5 @@
+/* УТИЛИТЫ - utils - Вспомогательные утилиты */
+
 import {_OPTIONS} from "../options.js";
 
 DataTable.Api.register('aGrid.utils', function () {
@@ -6,7 +8,6 @@ DataTable.Api.register('aGrid.utils', function () {
     return api.aGrid;
 });
 
-/* УТИЛИТЫ - utils */
 // config - ПЕРЕДЕЛАТЬ!
 DataTable.Api.register('aGrid.utils.config', function (param, module = false) {
 
