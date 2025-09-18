@@ -22,7 +22,7 @@ class UsersOrg extends Model
         return $this->hasOne(Users::class, "id", "uid");
     }
 
-    public function contrgent()
+    public function contragent()
     {
         return $this->hasOne(Contragents::class, "id", "oid");
     }
