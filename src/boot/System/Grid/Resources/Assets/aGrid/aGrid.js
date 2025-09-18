@@ -2,12 +2,12 @@
 import {_OPTIONS} from "./options.js";
 
 // Импорт расширений
-import {} from "/aGrid/ext/callbacks.js";
-import {} from "/aGrid/ext/dt.js";
-import {} from "/aGrid/ext/fn.js";
-import {} from "/aGrid/ext/mods.js";
-import {} from "/aGrid/ext/ui.js";
-import {} from "/aGrid/ext/utils.js";
+import {} from "./ext/callbacks.js";
+import {} from "./ext/dt.js";
+import {} from "./ext/fn.js";
+import {} from "./ext/mods.js";
+import {} from "./ext/ui.js";
+import {} from "./ext/utils.js";
 
 // Инициализация aGrid EXT
 DataTable.Api.register('aGrid', function () {
