@@ -126,27 +126,27 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // console.log(values)
 
                             // WIP - Если есть пункт для работы с AJAX
-                            if (values.hasOwnProperty(_OPTIONS.select2.drop_ajax)) {
-                                ajax_url = values[_OPTIONS.select2.drop_ajax];
-                                delete values[_OPTIONS.select2.drop_ajax];
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop.ajax)) {
+                                ajax_url = values[_OPTIONS.select2.drop.ajax];
+                                delete values[_OPTIONS.select2.drop.ajax];
                                 // console.log(ajax_url);
                                 // ...
                             }
 
                             // Если есть пункт "ВСЕ" то он первый
-                            if (values.hasOwnProperty(_OPTIONS.select2.drop_all)) {
-                                let allText = values[_OPTIONS.select2.drop_all];
-                                delete values[_OPTIONS.select2.drop_all];
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop.all)) {
+                                let allText = values[_OPTIONS.select2.drop.all];
+                                delete values[_OPTIONS.select2.drop.all];
 
                                 first.attr({
-                                    'value': _OPTIONS.select2.drop_all
+                                    'value': _OPTIONS.select2.drop.all
                                 }).html(allText);
                             }
 
                             // WIP - CUSTOM пункт будет первым
-                            if (values.hasOwnProperty(_OPTIONS.select2.drop_custom)) {
-                                let custom = JSON.parse(values[_OPTIONS.select2.drop_custom]);
-                                delete values[_OPTIONS.select2.drop_custom];
+                            if (values.hasOwnProperty(_OPTIONS.select2.drop.custom)) {
+                                let custom = JSON.parse(values[_OPTIONS.select2.drop.custom]);
+                                delete values[_OPTIONS.select2.drop.custom];
 
                                 first.attr({
                                     'value': Object.keys(custom)[0]
@@ -196,6 +196,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // Инициализация Select2 если требуется
                             if (col.options.hasOwnProperty('select2')
                                 && col.options.select2 == true) {
+                                // _OPTIONS.select2.default
                                 api.aGrid.ui.select2(select, {
                                     url: ajax_url // URL для AJAX-загрузки данных
                                 });

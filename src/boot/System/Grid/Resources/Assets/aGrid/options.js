@@ -10,9 +10,12 @@ export let _OPTIONS = {
     store: store.namespace('aGrid'), // Система хранения в локальном кеше браузера для aGrid
     dropContent: false, // Список для popover модификаторов (инициализируется позже)
     select2: {
-        drop_all: '__ALL_SELECT_GRID', // Индикатор пункта "Все" в select2
-        drop_custom: '__CUSTOM_SELECT_GRID', // Индикатор пункта "Custom" в select2
-        drop_ajax: '__AJAX_SELECT_GRID', // Индикатор пункта для AJAX-загрузки в select2
+        default: {},
+        drop: {
+            all: '__ALL_SELECT_GRID', // Индикатор пункта "Все" в select2
+            custom: '__CUSTOM_SELECT_GRID', // Индикатор пункта "Custom" в select2
+            ajax: '__AJAX_SELECT_GRID', // Индикатор пункта для AJAX-загрузки в select2
+        },
     }
 };
 
