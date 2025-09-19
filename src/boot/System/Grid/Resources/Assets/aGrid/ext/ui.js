@@ -1,114 +1,68 @@
-/* УТИЛИТЫ - ui - Упарвление визуальными элементами */
+/* УТИЛИТЫ - ui - Управление визуальными элементами */
 
 import {_OPTIONS} from "../options.js";
 
-// Импорт элеметов
-import {} from "./elements/select2.js";
-
+// Основной метод инициализации UI утилит
 DataTable.Api.register('aGrid.ui', function () {
     let api = this;
 
-    // Вызов контекстного меню для table tr
-    // api.aGrid.ui.contextMenu();
-
+    // Инициализация скролла таблицы
     api.aGrid.ui.table.scroll();
 
     return api.aGrid;
 });
 
-// ### Bootstrap
+// ### Bootstrap утилиты
 // Перезагрузка всех Bootstrap элементов в контейнере aGrid
 DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
-    // Удалить все старые tooltip'ы и popover'ы
-    // $('.tooltip').detach();
-    // $('.popover').detach();
-
-    // tooltips
-    // let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    // let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    // Инициализация Bootstrap tooltips во всем контейнере aGrid
     $('.aGrid-container [data-bs-toggle="tooltip"]').tooltip();
 
-    // popovers
-    // let popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
-    // let popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
+    // Инициализация Bootstrap popovers во всем контейнере aGrid
     $('.aGrid-container [data-bs-toggle="popover"]').popover();
 });
 
-// bootstrap Popover
-// bootstrapPopover() {}
-
 /* ************************************************************************ */
 
-// Установка tr.selected (Выделение строки - Фон строки) - Возможно не НУЖНА!
-// rowSelected(t, param = false) {
-//     let table = this.table;
-//     let row = $(t);
-//
-//     // Не выделять строку если таблица пуста
-//     if (row.children().hasClass('dataTables_empty')) {
-//         return false
-//     }
-//
-//     // Выделять если таблица не пуста
-//     if (!row.hasClass('selected') && !row.hasClass('child')) {
-//         table.$('tr.selected').toggleClass('selected');
-//         row.toggleClass('selected');
-//     }
-// }
-
-// Управление Loader'ером
+// Управление Loader'ом - отображение/скрытие индикатора загрузки
 DataTable.Api.register('aGrid.ui.loader', function (display = false) {
     let loading = $('.dataTables_processing.dts_loading');
     let h_dataTables_scrollBody = $('.dataTables_scrollBody').outerHeight();
 
+    // Настройка отображения и размеров лоадера
     loading.css({
-        // top: 'auto',
         height: h_dataTables_scrollBody,
         display: display ? 'block' : 'none'
     });
 });
 
-// Вызов контекстного меню для table tr (НЕ ПЕРЕДЕЛАНО!)
+// Контекстное меню для строк таблицы (НЕ ПЕРЕДЕЛАНО!)
 DataTable.Api.register('aGrid.ui.contextMenu', function () {
     let grid = this;
     let table = this.table;
 
+    // Инициализация контекстного меню для строк таблицы
     $.contextMenu({
         selector: 'tbody tr',
-        // selector: 'disable', // Временно отключил дроп список
-        // selectableSubMenu: true,
         events: {
             preShow: function (options, e) {
-                grid.rowSelected(options)
-
-                // console.log(this)
-                // console.log(options)
-                this.mouseTarget = e.target;
+                grid.rowSelected(options) // Выделение строки при показе меню
+                this.mouseTarget = e.target; // Сохранение целевого элемента
             },
             show: function (options) {
-
+                // Логика при показе меню
             },
             hide: function (options) {
-
+                // Логика при скрытии меню
             },
             activated: function (options) {
-                feather.replace();
+                feather.replace(); // Обновление feather иконок
             }
         },
         callback: function (key, options) {
+            // Обработчик выбора пункта меню
             let r = 'clicked ' + key;
-            // let r = 'clicked ' + options.name;
-
-            // console.log(key)
-            // console.log(options)
-            // console.log(options.$trigger)
-
-            // console.log(table.row(options.$trigger).data())
-
-            // console.log(options.items)
-            // console.log(options.commands[key].name)
-
-            grid.notif('success', false, r)
+            grid.notif('success', false, r) // Уведомление о действии
         },
         items: {
             'look': {
@@ -118,14 +72,7 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                     return 'context-menu-feather';
                 },
                 callback: function (key, options, e) {
-                    grid.openUrl(options.$trigger);
-                    // console.log(key)
-                    // console.log(options.$trigger)
-                    // console.log(e)
-
-                    // let data = table.row(t).data();
-                    // let data = table.row(options.$trigger).data();
-                    // console.log(data)
+                    grid.openUrl(options.$trigger); // Открытие URL просмотра
                 }
             },
             'edit': {
@@ -135,9 +82,7 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                     return 'context-menu-feather';
                 },
                 callback: function (key, options, e) {
-                    // var r = 'Нажата ' + key + ' ' + options.items[key].name;
-                    // toastr['success']('', r, {});
-                    grid.openUrl(options.$trigger, 'edit');
+                    grid.openUrl(options.$trigger, 'edit'); // Открытие URL редактирования
                 }
             },
             'copy': {
@@ -145,41 +90,25 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                 icon: function (opt, $item, itemKey, item) {
                     let sub = $item.find('ul.context-menu-list').detach();
                     $item.html('<i class="feather-copy"></i>' + item.name).append(sub);
-                    // или
-                    // 0==$item.children("i").length&&$item.prepend('<i class="feather-share"></i>');
-
                     return 'context-menu-feather';
                 },
                 items: {
                     'col': {
                         name: 'Текст',
                         icon: function (opt, $item, itemKey, item) {
-                            // $item.html('<i data-feather="columns"></i>' + item.name);
                             $item.html('<i data-feather="type"></i>' + item.name);
                             return 'context-menu-feather';
                         },
                         callback: function (key, options, e) {
-
+                            // Копирование текста ячейки
                             let target = $(options.events.mouseTarget);
                             let text = target.text();
 
-                            // Если зажат Ctrl то копировать вместе с заголовками столбцов
-                            // if (e.ctrlKey) {
-                            //     let columns = table.settings().init().columns;
-                            //     let index = target.index();
-                            //     text = columns[index].title + ': ' + text
-                            // }
-
-                            text = (text !== '') ? text : false;
-
                             if (text) {
-                                grid.clipboardWrite(text);
+                                grid.clipboardWrite(text); // Запись в буфер обмена
                             } else {
                                 grid.notif('warning', 'Внимание', 'Пустое поле')
                             }
-
-                            // console.log(table.row(options.$trigger).data())
-
                         }
                     },
                     'row': {
@@ -189,7 +118,7 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                             return 'context-menu-feather';
                         },
                         callback: function (key, options, e) {
-
+                            // Копирование всей строки с заголовками
                             let row = table.row(options.$trigger).data();
                             let columns = table.settings().init().columns;
 
@@ -197,25 +126,19 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                             let arr = [];
 
                             entries.forEach(function (elem, index) {
-
                                 let header = columns[index];
                                 let text = elem[1];
 
                                 if (header.data === 'action' || header.visible === false) {
-                                    // ...
+                                    // Пропуск служебных колонок
                                 } else {
                                     let parseText = ($($.parseHTML(text)).text() !== '') ? $($.parseHTML(text)).text() : 'Не указано';
-                                    // Если зажат Ctrl то копировать вместе с заголовками столбцов
-                                    // if (e.ctrlKey) {
-                                    //     parseText = header.title + ': ' + parseText
-                                    // }
-
                                     parseText = header.title + ': ' + parseText;
                                     arr.push(parseText);
                                 }
                             });
 
-                            grid.clipboardWrite(arr.join(', '));
+                            grid.clipboardWrite(arr.join(', ')); // Запись в буфер обмена
                         }
                     },
                 }
@@ -224,11 +147,7 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                 name: 'Экспорт',
                 icon: function (opt, $item, itemKey, item) {
                     let sub = $item.find('ul.context-menu-list').detach();
-
                     $item.html('<i class="feather-share"></i>' + item.name).append(sub);
-                    // или
-                    // 0==$item.children("i").length&&$item.prepend('<i class="feather-share"></i>');
-
                     return 'context-menu-feather';
                 },
                 items: {
@@ -269,41 +188,106 @@ DataTable.Api.register('aGrid.ui.contextMenu', function () {
                     },
                 }
             },
-            // fold1: {
-            //     name: 'Sub Group',
-            //     items: {
-            //         'Foo Bar': {name: 'Foo bar'},
-            //         fold1a: {
-            //             name: 'Other group',
-            //             items: {
-            //                 Echo: {name: 'echo'},
-            //                 Foxtrot: {name: 'foxtrot'},
-            //                 Golf: {name: 'golf'}
-            //             }
-            //         }
-            //     }
-            // }
         }
     });
 });
 
-// Работа с пустой таблицей (Если в таблице нет данных)
-DataTable.Api.register('aGrid.ui.table.empty', function (rows) {
-    // let table = $(this.table);
-    // if (rows === 0) {
-    //     table.addClass('h-100 overflow-hidden');
-    // } else {
-    //     table.removeClass('h-100 overflow-hidden');
-    // }
+// Управление select2 - кастомизация выпадающих списков
+DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
+
+    // Настройка AJAX для select2 если указан URL
+    if (options.hasOwnProperty('url') && options.url) {
+        let ajax = {
+            ajax: {
+                url: options.url,
+                dataType: 'json',
+                type: "GET",
+                data: function (query) {
+                    return {
+                        query: query.term // Поисковый запрос
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item, // Отображаемый текст
+                                id: item, // ID элемента
+                                value: item, // Значение элемента
+                            }
+                        })
+                    };
+                },
+            },
+            minimumInputLength: 3, // Минимальная длина для поиска
+        };
+        options = {...options, ...ajax}; // Объединение опций
+    }
+
+    // Кастомные адаптеры для select2 (закомментированы)
+    // $.fn.select2.amd.define('select2/selectAllAdapter', [...]); // Адаптер "Выбрать все"
+    // $.fn.select2.amd.define('select2/selectAllAdapter2', [...]); // Второй адаптер "Выбрать все"
+    // $.fn.select2.amd.define("SingleSelectSearchAdapter", [...]); // Адаптер для одиночного выбора
+
+    // Параметры по умолчанию для select2
+    let $default = {
+        text: 'Нет результатов',
+        width: '100%',
+        sorter: function (data) {
+            // Сортировка с приоритетом для элемента "Все"
+            return data.sort(function (a, b) {
+                if (a.id === _OPTIONS.select2.drop_all) return -1;
+                if (b.id === _OPTIONS.select2.drop_all) return 1;
+                return a.text.localeCompare(b.text);
+            });
+        },
+        containerCssClass: 'form-select2-sm',
+        dropdownCssClass: '',
+        dropdownAutoWidth: true,
+        language: {
+            inputTooShort: function (args) {
+                var remainingChars = args.minimum - args.input.length;
+                var message = 'Пожалуйста введите ' + remainingChars + ' или больше символов';
+                return message;
+            },
+            inputTooLong: function (args) {
+                return "Вы набрали слишком много";
+            },
+            errorLoading: function () {
+                return "Ошибка загрузки результатов";
+            },
+            loadingMore: function () {
+                return "Загрузка дополнительных результатов";
+            },
+            noResults: function () {
+                return "Результаты не найдены";
+            },
+            searching: function () {
+                return "Поиск...";
+            },
+            maximumSelected: function (args) {
+                return "Ошибка загрузки результатов.";
+            }
+        },
+        escapeMarkup: function (markup) {
+            return markup;
+        }
+    }
+    options = {...$default, ...options}; // Объединение с переданными опциями
+
+    unit.select2(options); // Инициализация select2
 });
 
-// Вызываем PerfectScrollbar на dataTables_scrollBody
+// Работа с пустой таблицей (закомментировано)
+DataTable.Api.register('aGrid.ui.table.empty', function (rows) {
+    // Логика для пустой таблицы
+});
+
+// Инициализация PerfectScrollbar для контейнера скролла таблицы
 DataTable.Api.register('aGrid.ui.table.scroll', function () {
-    // Используем PerfectScrollbar
+    // Использование PerfectScrollbar для кастомного скролла
     let ps = new PerfectScrollbar('.dataTables_scrollBody', {
-        // suppressScrollX: true,
-        // wheelPropagation: false, // Стандартные методы отключения прокрутки страницы вверх
-        wheelSpeed: 0.3, // от 0.2 до 0.4 нормально грузит (0.3 оптимально вроде...)
-        minScrollbarLength: 50,
+        wheelSpeed: 0.3, // Скорость прокрутки
+        minScrollbarLength: 50, // Минимальная длина скроллбара
     });
 });

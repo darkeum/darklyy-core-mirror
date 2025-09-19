@@ -1,11 +1,11 @@
 import {_OPTIONS} from "../options.js";
 
 /* МОДИФИКАТОРЫ - mods */
-// Инициализация popover modifiers
+// Инициализация popover modifiers - управление дополнительными функциями таблицы
 DataTable.Api.register('aGrid.mods', function () {
     let button = $('.aGrid-mods-button');
     if (!button.length) {
-        return false
+        return false // Если кнопка модификаторов не найдена, выходим
     }
 
     let api = this;
@@ -13,7 +13,7 @@ DataTable.Api.register('aGrid.mods', function () {
         button: button
     };
 
-    // Список для popover модификаторов
+    // Список для popover модификаторов - загрузка содержимого из data-атрибута
     let dropContent = $.get({url: api.aGrid.mods.$.button.data('content'), async: false}).responseText;
     api.aGrid.mods.$.dropContent = $(dropContent);
 
@@ -26,39 +26,33 @@ DataTable.Api.register('aGrid.mods', function () {
     // Активация быстрого просмотра для таблицы aGrid
     api.aGrid.mods.list.visible();
 
-    // Клик по кнопке
+    // Клик по кнопке модификаторов
     api.aGrid.mods.$.button.on('click', function (event) {
-        // $('body').on('click', '.aGrid-mods-button', function (event) {
-
-        // Создаем popover для aGrid-mods и выводим в нем список переключалок
+        // Создаем popover для aGrid-mods и выводим в нем список переключателей
         const popover = api.aGrid.mods.$.button.popover({
             title: api.aGrid.mods.$.button.attr('title'),
             content: api.aGrid.mods.$.dropContent,
-            // container: grid.container.parents(),
             html: true,
             sanitize: false,
             offset: [0, 10],
             customClass: 'aGrid-mods search-options-popover',
-            trigger: 'manual',
+            trigger: 'manual', // Ручное управление отображением
         });
 
-        popover.popover('toggle');
+        popover.popover('toggle'); // Переключение состояния popover
 
-        // Показ popover
-        // grid.button.on('show.bs.popover', function () {});
-
-        // Скрыть popover
+        // Скрытие popover при событии hidden
         api.aGrid.mods.$.button.on('hidden.bs.popover', function () {
-            api.aGrid.mods.$.button.popover('dispose')
+            api.aGrid.mods.$.button.popover('dispose') // Уничтожение popover
         });
 
     });
 
-    // Событие если input будет изменен
+    // Событие изменения состояния input в модификаторах
     $(document).on('change', '.aGrid-mods li input', function (event) {
-        api.aGrid.mods.fn.check(event);
-        api.aGrid.mods.list.blocked(event);
-        api.aGrid.mods.list.visible(event);
+        api.aGrid.mods.fn.check(event); // Проверка состояния
+        api.aGrid.mods.list.blocked(event); // Обновление блокировки прокрутки
+        api.aGrid.mods.list.visible(event); // Обновление быстрого просмотра
 
         // api.aGrid.modsActions(event.currentTarget.name, event);
     });
@@ -71,11 +65,13 @@ DataTable.Api.register('aGrid.mods.fn.check', function (event = false) {
     let api = this;
 
     let module = api.aGrid.$.module;
-    let modules = api.aGrid.$.store.namespace('modules');
+    let modules = api.aGrid.$.store.namespace('modules'); // Получение пространства модулей из хранилища
 
     if (event) {
+        // Сохранение состояния переключателя в хранилище
         modules.add(module, {[event.currentTarget.name]: event.currentTarget.checked})
     } else {
+        // Восстановление состояний переключателей из хранилища
         $.each(modules.get(module), function (index, value) {
             let selector = '*[name="' + index + '"]';
             api.aGrid.mods.$.dropContent = api.aGrid.mods.$.dropContent.find(selector).attr('checked', value).end();
@@ -84,72 +80,66 @@ DataTable.Api.register('aGrid.mods.fn.check', function (event = false) {
 
     // Проверка true в объекте для индикатора кнопки
     if (modules.get(module) && Object.values(modules.get(module)).includes(true)) {
-        api.aGrid.$.container.addClass('mods');
+        api.aGrid.$.container.addClass('mods'); // Добавление класса-индикатора
     } else {
-        api.aGrid.$.container.removeClass('mods');
+        api.aGrid.$.container.removeClass('mods'); // Удаление класса-индикатора
     }
 });
 
 // ### СПИСОК МОДОВ
 // МОД - Отключение прокрутки страницы при наведении на таблицу grid
+// Документация Bootstrap Popover: https://getbootstrap.com/docs/5.3/components/popovers/
 DataTable.Api.register('aGrid.mods.list.blocked', function (event = false) {
     let api = this;
     // https://jsbin.com/teqoqib/6/edit?html,js,output
 
-    // if (event.currentTarget.name == 'blocked') {}
-
     let module = api.aGrid.$.module;
     let modules = api.aGrid.$.store.namespace('modules');
 
-    let checked = modules.get(module)?.blocked; // event.currentTarget.checked
-    api.aGrid.$.container.toggleClass('blocked', !!(checked));
+    let checked = modules.get(module)?.blocked; // Получение состояния блокировки
+    api.aGrid.$.container.toggleClass('blocked', !!(checked)); // Переключение CSS класса
 
     // Обработчик отключения прокрутки страницы
     let disabledScroll = (e) => {
-        e.preventDefault()
+        e.preventDefault() // Блокировка стандартного поведения прокрутки
     };
 
-    // Обработка наведения на init блок - Принудительно если галочка стоит то :
+    // Обработка наведения на контейнер таблицы
     api.aGrid.$.container
         .mouseenter(function () {
-            // Остановить
+            // Включение блокировки прокрутки при наведении
             if (modules.get(module)?.blocked) {
                 document.addEventListener('mousewheel', disabledScroll, {passive: false})
             }
         })
         .mouseleave(function () {
-            // Возобновить
+            // Выключение блокировки прокрутки при уходе курсора
             document.removeEventListener('mousewheel', disabledScroll, {passive: false})
         });
-
-    // grid.container.unbind("mouseenter");
-    // grid.container.unbind("mouseleave");
 });
 
 // МОД - Включение быстрого просмотра строки
 DataTable.Api.register('aGrid.mods.list.visible', function (event = false) {
     let api = this;
 
-    // if (event.currentTarget.name == 'visible') {}
-
     let module = api.aGrid.$.module;
     let modules = api.aGrid.$.store.namespace('modules');
 
-    // if (event) {}
-
-    // Нумерация
-    let checked = modules.get(module)?.visible; // event.currentTarget.checked
+    // Включение/выключение нумерации столбцов
+    let checked = modules.get(module)?.visible;
     api.aGrid.mods.list.visible.actions.colsNum(!!(checked))
 
+    // Обработчики событий для popover быстрого просмотра
     let selector = 'tr td:last-child';
-    // $(document)
     $('tbody')
         .on('mouseenter', selector, function (event) {
+            // Показать popover при наведении
             if (modules.get(module)?.visible) {
                 $(this).popover('show');
             }
         })
         .on('mouseleave', selector, function (event) {
+            // Скрыть popover при уходе курсора
             if (modules.get(module)?.visible) {
                 $(this).popover('hide');
             }
@@ -157,36 +147,37 @@ DataTable.Api.register('aGrid.mods.list.visible', function (event = false) {
 });
 
 // ### ДЕЙСТВИЯ МОДОВ
-// ДЕЙСТВИЕ - "Быстрый просмотр строки"
+// ДЕЙСТВИЕ - "Быстрый просмотр строки" - создание popover с данными строки
 DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr) {
     let api = this;
     let row = api.row(tr);
 
-    let r_data = row.data(); // api.row( this ).data()
-    let r_index = (r_data.id) ? r_data.id : row.index(); // api.row( this ).index()
+    let r_data = row.data(); // Данные строки
+    let r_index = (r_data.id) ? r_data.id : row.index(); // ID или индекс строки
 
-    let columns = api.settings().init().columns; // Более гибкий вариант получения колонок
+    let columns = api.settings().init().columns; // Получение настроек колонок
     let content = '';
-    const entries = Object.entries(r_data);
+    const entries = Object.entries(r_data); // Преобразование данных в массив [ключ, значение]
 
-    // Массив игнорирования (Столбцы с этими типами будут игнорироваться при создании строк карточки)
+    // Массив игнорирования (Столбцы с этими типами будут игнорироваться)
     let ignore = _OPTIONS.ignore;
 
-    // Собираем блок div
+    // Собираем блок div для контента popover
     content += '<div class="qq-view-item">';
 
-    // Собираем строки
+    // Собираем строки с данными
     let counter = 0;
     entries.forEach(function (elem, index) {
 
-        // let id = elem[0];
         let header = columns[index];
         let text = elem[1];
 
+        // Пропускаем игнорируемые колонки
         if (ignore.includes(header.configs.type) || header.visible === false) {
             content += ''
         } else {
             counter++;
+            // Форматирование элемента данных
             content +=
                 '<div class="mt-1">' +
                 '<div class="avatar float-start bg-light-primary rounded me-1">' +
@@ -194,74 +185,46 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
                 '<div class="more-info">' +
                 '<small class="hr-text hr-text-left my-50">' + header.title + '</small>' +
                 '<h6 class="mb-0">' + ((text !== null) ? text : '') + '</h6>' +
-                // '<div class="hr-text my-50"></div>' +
                 '</div></div>';
         }
 
     });
     content += '</div>';
 
-    // Создаем popover
+    // Создаем popover для последней ячейки строки
     const popover = $(tr).children('td:last-child').popover({
-        // const popover = $(tr).children('td:first-child').popover({
-        // title: 'Карточка строки #' + r_index,
         title: 'Карточка строки #' + r_index,
         content: content,
-        // selector: '.aGrid-container table.table tbody tr td:last-child',
         html: true,
         sanitize: false,
-        // offset: [0, 10],
         customClass: 'qq-view',
-        // trigger: 'click',
-        // trigger: 'hover',
-        trigger: 'manual',
-        placement: 'left',
+        trigger: 'manual', // Ручное управление
+        placement: 'left', // Позиция слева
     });
-
-    // Активатор при наведении
-    // $(tr).children('td:last-child').hover(function (event) {
-    //     // if (event.ctrlKey) {
-    //     //     popover.popover('toggle');
-    //     // }
-    //     popover.popover('toggle');
-    // });
-
-    // popover.on('show.bs.popover', function (event) {
-    //     // alert('The popover is about to be shown.');
-    //     log('The popover is about to be shown.');
-    // });
-    // $("[data-toggle='popover']").on('shown.bs.popover', function(){
-    //     alert('The popover is now fully shown.');
-    // });
-    // $("[data-toggle='popover']").on('hide.bs.popover', function(){
-    //     alert('The popover is about to be hidden.');
-    // });
-    // $("[data-toggle='popover']").on('hidden.bs.popover', function(){
-    //     alert('The popover is now hidden.');
-    // });
 });
 
 // ДЕЙСТВИЕ - Нумерация столбцов таблицы
 DataTable.Api.register('aGrid.mods.list.visible.actions.colsNum', function (param) {
     let api = this;
 
-    // Массив игнорирования (Столбцы с этими типами будут игнорироваться при создании строк карточки)
+    // Массив игнорирования (Столбцы с этими типами будут игнорироваться)
     let ignore = _OPTIONS.ignore;
 
+    // Обработка каждого заголовка таблицы
     $('.dataTables_scrollHeadInner .aGrid-titles th').each(function (index, unit) {
 
         let data = $(unit).data();
+        // Пропускаем игнорируемые типы колонок
         if (!ignore.includes(data.type)) {
             switch (param) {
                 case true:
+                    // Добавление номера колонки
                     let unit = $('<span class="col-number"></span>').text(index + 1);
-
-                    // if ($(this).attr('data-type') !== 'actions') {
                     $(this).prepend(unit);
-                    // }
                     break;
 
                 case false:
+                    // Удаление номера колонки
                     $(this).children('.col-number').remove();
                     break;
             }

@@ -2,99 +2,91 @@ import {_OPTIONS} from "../options.js";
 
 /* ЗАГРУЗКА GRID EXT Callback's */
 
-// #1 - preDrawCallback - ...
+// #1 - preDrawCallback - вызывается перед отрисовкой таблицы
+// Документация: https://datatables.net/reference/option/preDrawCallback
 DataTable.Api.register('aGrid.callbacks.preDrawCallback', function (settings) {
     let api = this;
+    // Можно добавить подготовительные операции перед отрисовкой
 });
 
-// #2 - serverParams - Загрузка параметров
+// #2 - serverParams - Загрузка параметров для серверного запроса
+// Документация: https://datatables.net/reference/option/ajax.data
 DataTable.Api.register('aGrid.callbacks.serverParams', function (data) {
     let api = this;
 
-    // ...
+    // Добавление имени колонки к информации о сортировке
     data['order'].forEach(function (items, index) {
         data['order'][index]['column_name'] = data['columns'][items.column]['name'];
     });
 
-    // ...
-    api.aGrid.fn.hideSearchInputs(api.table().columns().responsiveHidden().toArray()); // Скрытие полей поиска
+    // Скрытие полей поиска для скрытых колонок и показ лоадера
+    api.aGrid.fn.hideSearchInputs(api.table().columns().responsiveHidden().toArray());
     api.aGrid.ui.loader(true); // Show Loader
 
     // console.log(data)
 
     return data;
-
 });
 
 // #3 - createdRow - Создание строк в таблице
+// Документация: https://datatables.net/reference/option/createdRow
 DataTable.Api.register('aGrid.callbacks.createdRow', function (row, data, dataIndex) {
     let api = this;
+    // Добавление быстрых действий к строке
     api.aGrid.mods.list.visible.actions.quickRow(row);
 });
 
 // #4 - headerCallback - Создание Header'а таблицы
+// Документация: https://datatables.net/reference/option/headerCallback
 DataTable.Api.register('aGrid.callbacks.headerCallback', function (thead, data, start, end, display) {
     let api = this;
+    // Можно добавить кастомную логику для заголовка таблицы
 });
 
-// #5 - drawCallback - Отрисовка
+// #5 - drawCallback - Отрисовка таблицы после обновления данных
+// Документация: https://datatables.net/reference/option/drawCallback
 DataTable.Api.register('aGrid.callbacks.drawCallback', function (settings) {
     let api = this;
 
-    // var rows = api.rows({ page: 'current' }).nodes();
-    // var columns = api.columns({ page: 'current' }).nodes();
-    // var columns = api.columns().nodes();
-
+    // Получение количества строк и информации о колонках
     let rows = this.table().rows().count();     // Кол-во строк count
     let columns = settings.aoColumns;           // Столбцы - Данные
 
-    // let columns = grid.table.settings()[0].aoColumns;
-    // let columns = grid.table.columns().header().settings()[0].aoColumns;
-    // let columns = api.columns().header().toArray();
-
-    // log(grid.table.columns().header().settings()[0].aoColumns)
-    // log(grid.table.settings()[0].aoColumns)
-    // log(settings.settings.aoColumns)
-
-    // Таблица
-    // log(settings.nTable)
-    // log(settings.oInstance)
-
-    // let table = $(settings.nTable);
-    // let header = $(settings.nTHead.children);
-
-    //log(settings.aoColumns[3])
-    //log(api.settings()[0].aoColumns)
-    // log(api.columns().header().settings())
-    // log(columns[3])
-
+    // Установка заголовков, обработка пустой таблицы, обновление иконок
     api.aGrid.fn.setTitles(columns);      // Установка title для столбцов // ПЕРЕДЕЛАТЬ!
     api.aGrid.ui.table.empty(rows);       // Работа с пустой таблицей
-    feather.replace();                    // Обновление иконок внутри таблицы
+    feather.replace();                    // Обновление иконок внутри таблицы (Feather Icons)
     api.aGrid.ui.bootstrap.reload();      // Перезагрузка всех Bootstrap элементов в контейнере aGrid
-    // api.aGrid.ui.loader(false);        // Скрыть Loader
+    // api.aGrid.ui.loader(false);        // Скрыть Loader (закомментировано)
 });
 
-// #6 - stateLoadCallback - ...
+// #6 - stateLoadCallback - Загрузка состояния таблицы
+// Документация: https://datatables.net/reference/option/stateLoadCallback
 DataTable.Api.register('aGrid.callbacks.stateLoadCallback', function (settings, callback) {
     let api = this;
+    // Кастомная логика загрузки состояния таблицы
 });
 
-// #7 - stateLoadParams - ...
+// #7 - stateLoadParams - Обработка параметров состояния
+// Документация: https://datatables.net/reference/option/stateLoadParams
 DataTable.Api.register('aGrid.callbacks.stateLoadParams', function (data) {
     let api = this;
+    // Модификация данных состояния перед загрузкой
 });
 
 // #8 - initComplete - Инициализация завершена
+// Документация: https://datatables.net/reference/option/initComplete
 DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json) {
     let api = this;
 
-    api.tables().header().to$().addClass('table-header');               // Установить css-класс заголовка таблицы
-    api.searchBuilder.container().addClass('search-builder-custom');    // Установить css-класс searchBuilder
+    // Установка CSS классов для заголовка таблицы и SearchBuilder
+    api.tables().header().to$().addClass('table-header');
+    api.searchBuilder.container().addClass('search-builder-custom');
     // console.log(api.searchBuilder.container());
 
     // Генератор полей для поиска c фильтром исключений
     let ignore = _OPTIONS.ignore;
+    // Фильтрация колонок: только объекты, не игнорируемые типы и видимые колонки
     let options = api.settings()[0].aoColumns.filter(
         (item) =>
             typeof (item) === 'object'
@@ -104,16 +96,16 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     // console.log(options)
 
     // WIP - ПЕРЕДЕЛАТЬ!
-    // $('.aGrid-container table .aGrid-filters th').each(function (i) {
+    // Итерация по всем ячейкам фильтров в заголовке таблицы
     api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) {
 
-        // Все от столбца в COL
+        // Получение конфигурации колонки
         let col = (options[i]) ? options[i] : false;
         col.placeholder = col.label; // Добавим placeholder
         // console.log(col);
         // console.log(col.type);
 
-        // Генерация полей для поиска и сортировки
+        // Генерация полей для поиска и сортировки (только для searchable колонок)
         if (col.searchable) {
 
             // Типы полей на switch - Добавление типов полей для Grid
@@ -123,10 +115,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                 // Выпадающий список select и Выпадающий список - Select2.js
                 case 'select' :
 
-                    // console.log(col);
-                    // console.log(col.options.hasOwnProperty('value'));
-
-                    // А есть ли "options" ?
+                    // Проверка наличия опций для select
                     if (col.options) {
 
                         // Если есть "value" - Строки в список поданы
@@ -146,10 +135,9 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // Если есть пункт "ВСЕ" то он первый
                             if (values.hasOwnProperty(_OPTIONS.select2.drop_all)) {
-                                let allText = values[_OPTIONS.select2.drop_all]; // Сохраняем в переменной
-                                delete values[_OPTIONS.select2.drop_all]; // Удаляем из объекта
+                                let allText = values[_OPTIONS.select2.drop_all];
+                                delete values[_OPTIONS.select2.drop_all];
 
-                                // Добавим attr к первому созданному пункту
                                 first.attr({
                                     'value': _OPTIONS.select2.drop_all
                                 }).html(allText);
@@ -157,30 +145,27 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // WIP - CUSTOM пункт будет первым
                             if (values.hasOwnProperty(_OPTIONS.select2.drop_custom)) {
-                                let custom = JSON.parse(values[_OPTIONS.select2.drop_custom]); // Сохраняем в переменной
-                                delete values[_OPTIONS.select2.drop_custom]; // Удаляем из объекта
+                                let custom = JSON.parse(values[_OPTIONS.select2.drop_custom]);
+                                delete values[_OPTIONS.select2.drop_custom];
 
-                                // Добавим attr к первому созданному пункту
                                 first.attr({
                                     'value': Object.keys(custom)[0]
                                 }).html(Object.values(custom)[0]);
                             }
 
-                            // Переберем пункты Select/Select2
+                            // Создание options для select
                             $.each(values, function (index, item) {
-                                // Создаем option'ы для select'а
                                 let option = $('<option></option>');
                                 option.attr({
-                                    'value': index, // Не ставить value если 0 КОСТЫЛЬ
+                                    'value': index,
                                 }).html(item);
                                 select_options.push(option);
                             });
                             // console.log(select_options)
 
-                            // Сортируем по алфавиту пункты в Select если нужно (order - true/false) - TODO WIP
+                            // Сортируем по алфавиту пункты в Select если нужно
                             if (col.options.hasOwnProperty('order')) {
                                 select_options.sort(function (x, y) {
-                                    // order - true/false
                                     if (col.options.order == true) {
                                         return $(x).text() > $(y).text() ? 1 : -1;
                                     } else {
@@ -189,19 +174,18 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 });
                             }
 
-                            // Добавляем первый элемент в select (Всё)
+                            // Добавляем первый элемент в select
                             select_options.unshift(first);
 
-                            // Создаем select выпадающий список и добавляем в него option'ы
+                            // Создаем select и добавляем options
                             select = $('<select></select>');
                             select.attr({
                                 'id': col.data,
                                 'class': 'form-select form-select-sm'
-                                // 'class': 'form-select'
                             }).html(select_options);
                             $(this).append(select);
 
-                            // Событие изменения Select
+                            // Обработчик изменения значения select
                             $('select', this).on('change', function () {
                                 if (api.column(col.idx).search() !== this.value) {
                                     api.column(col.idx).search(this.value).draw();
@@ -209,12 +193,11 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 }
                             });
 
-                            // WIP - Добавить Select2.js к Select если нужно
+                            // Инициализация Select2 если требуется
                             if (col.options.hasOwnProperty('select2')
-                                // && typeof col.options.select2 == 'boolean' //
                                 && col.options.select2 == true) {
                                 api.aGrid.ui.select2(select, {
-                                    url: ajax_url // по умолчанию false или может быть ссылка на запрос
+                                    url: ajax_url // URL для AJAX-загрузки данных
                                 });
                             }
                         }
@@ -224,7 +207,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                 // Даты - WIP ПЕРЕДЕЛАТЬ !!!
                 case 'date_range':
-                    // Создаём input
+                    // Создание input для диапазона дат
                     input = $('<input />');
                     input.attr({
                         'type': 'text',
@@ -234,42 +217,32 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                     });
                     $(this).append(input);
 
+                    // Локализация flatpickr
                     flatpickr.localize(flatpickr.l10ns[$('html').attr('lang')]);
                     let rangePicker = $('#date-range-' + col.data);
 
+                    // Инициализация flatpickr для выбора диапазона дат
                     if (rangePicker.length) {
                         rangePicker.flatpickr({
                             mode: 'range',
-                            enableTime: col.configs.displayFormat.includes(' '), // Проверка пробела чтобы понять нужна ли дата
-                            // noCalendar: true,
+                            enableTime: col.configs.displayFormat.includes(' '), // Включение времени если есть пробел в формате
                             time_24hr: true,
                             dateFormat: col.configs.displayFormat, // Формат даты
-                            // positionElement: '',
                             locale: {
                                 rangeSeparator: ' - '
                             },
                             onChange: function (selectedDates, dateStr, instance) {
-                                if (selectedDates[0] == undefined) {
-                                    // $(instance.input).removeClass('text-center');
-                                }
-                                if (selectedDates[1] != undefined) {
-                                    // $(instance.input).addClass('text-center');
-                                    // console.log(api.column(col.idx));
-                                }
-
-                                // title к полям выбора даты
-                                $(instance.element).attr('title', dateStr)
-
+                                // Логика при изменении дат
+                                $(instance.element).attr('title', dateStr) // Установка title
                             },
                             onOpen: function (selectedDates, dateStr, instance) {
-
-                                // console.log($(instance.input).val());
+                                // Логика при открытии picker'а
                                 if ($(instance.input).val() == '') {
                                     $(rangePicker).val('');
                                 }
-                                // $(rangePicker).removeClass('text-center');
                             },
                             onClose: function (selectedDates, dateStr, instance) {
+                                // Логика при закрытии picker'а
                                 let startDate = '', endDate = new Date();
                                 if (selectedDates[0] != undefined) {
                                     startDate = selectedDates[0].getMonth() + 1
@@ -284,28 +257,14 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                     $('.end_date').val(endDate);
                                 }
                                 $(rangePicker).trigger('change').trigger('keyup');
-
-                                // if (api.column(col.idx).search() !== this.value) {
-                                //     api.column(col.idx).search(this.value).draw();
-                                // }
-
                             },
                             onReady: function (_, __, fp) {
-                                // fp.calendarContainer.classList.add('flatpickr-calendar');
+                                // Логика при готовности picker'а
                             }
                         });
                     }
 
-                    // $('input', this).on('keypress', function (e) {
-                    //     if (e.which === 13) {
-                    //         $(this).attr("disabled", "disabled");
-                    //         if (api.column(col.idx).search() !== this.value) {
-                    //             api.column(col.idx).search(this.value).draw();
-                    //         }
-                    //         $(this).removeAttr("disabled");
-                    //     }
-                    // });
-
+                    // Обработчик изменения значения date range
                     $('input', this).on('change', function () {
                         $(this).attr('disabled', 'disabled');
                         if (api.column(col.idx).search() !== this.value) {
@@ -318,7 +277,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                 // По умолчанию поле поиска простой input type text
                 default:
-                    // Создаем input
+                    // Создание текстового input для поиска
                     input = $('<input />');
                     input.attr({
                         'type': 'text',
@@ -328,6 +287,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                     });
                     $(this).append(input);
 
+                    // Обработчик нажатия Enter в текстовом поле
                     $('input', this).on('keypress', function (e) {
                         if (e.which === 13) {
                             $(this).attr("disabled", "disabled");
@@ -343,9 +303,6 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
         }
     });
 
-    // ###
-    // api.aGrid.ui.select2($(".aGrid-filters th select")); // Использование select2
-    // api.aGrid.ui.loader(false); // Скрыть Loader
-
-    api.aGrid.ui.table.scroll();
+    // Дополнительные операции после инициализации
+    api.aGrid.ui.table.scroll(); // Настройка скроллинга таблицы
 });
