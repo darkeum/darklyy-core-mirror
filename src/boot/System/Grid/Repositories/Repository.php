@@ -12,8 +12,8 @@
 namespace Boot\System\Grid\Repositories;
 
 use Boot\Support\Facades\DB;
-use Boot\System\Grid\Utils\Utils;
 use Boot\System\Grid\Exception\ExceptionGrid;
+use Boot\System\Grid\Utils\Utils;
 
 abstract class Repository
 {
@@ -41,7 +41,7 @@ abstract class Repository
     /**
      * Конструктор репозитория
      *
-     * @param mixed $parameter
+     * @param  mixed  $parameter
      * @return void
      */
     public function __construct($parameter = [])
@@ -54,7 +54,7 @@ abstract class Repository
     /**
      * Установка параметров
      *
-     * @param mixed $parameter
+     * @param  mixed  $parameter
      * @return void
      */
     public function setParameters($parameter)
@@ -66,14 +66,14 @@ abstract class Repository
         $this->search();
 
         reset($this->cols);
-        $this->primary_key = $this->primary_key ? (array)$this->primary_key : array(key($this->cols));
+        $this->primary_key = $this->primary_key ? (array) $this->primary_key : array(key($this->cols));
         if (is_null($this->primary_key_auto_increment)) {
             $this->primary_key_auto_increment = count($this->primary_key) == 1;
         }
 
-
         $this->short_field = $this->request->order[0]['column_name'] ?: $this->primary_key[0];
-        $this->short = in_array(($this->request->order[0]['dir'] ?? 'asc'), array('asc', 'desc')) ? $this->request->order[0]['dir'] : 'asc';
+        $this->short = in_array(($this->request->order[0]['dir'] ?? 'asc'),
+            array('asc', 'desc')) ? $this->request->order[0]['dir'] : 'asc';
         // dd($this->short_field, $this->short);
         $this->page = max(1, intval($this->request->page ?? 1));
         $this->limit = max(-1, intval($this->request->rows));
@@ -93,7 +93,21 @@ abstract class Repository
         foreach ($columns as $column) {
             $request[$column['data']] = $column;
         }
+
         foreach ($this->cols as $k => $c) {
+
+            // WIP - Поиск повыбранному полю "По умолчанию" при загрузке страницы
+            // Нужно убрать или доработать. Загрузка всегда через фильтр
+            //if (isset($c['options'])) {
+            //    $options = json_decode($c['options'], true);
+            //    if (isset($options['default'])) {
+            //        $request[$k]['search']['value'] = $options['default'];
+            //    }
+            //} else {
+            //    if (isset($c['default'])) {
+            //        $request[$k]['search']['value'] = $c['default'];
+            //    }
+            //}
 
             if (!isset($request[$k])) {
                 continue;
@@ -104,7 +118,6 @@ abstract class Repository
             }
             $val = $request[$k]['search']['value'];
             $val = $this->searchCleanVal($val);
-
 
             // if (is_array($val)) {
             //     foreach ($val as $kk => $vv) {
@@ -118,11 +131,13 @@ abstract class Repository
             $callback = array($this, Utils::uscore2camel('searchOp', $c['search_op']));
 
             if (!is_callable($callback)) {
-                throw new ExceptionGrid('Search operation ' . $c['search_op'] . ' is not defined');
+                throw new ExceptionGrid('Search operation '.$c['search_op'].' is not defined');
             }
 
             $wh = call_user_func($callback, $c, $val);
-            if ($wh) $this->where[] = $wh;
+            if ($wh) {
+                $this->where[] = $wh;
+            }
         }
         // dd($this->request->columns);
     }
@@ -130,7 +145,7 @@ abstract class Repository
     protected function searchCleanVal($val)
     {
         $val = trim($val);
-        $val = "'" . $val . "'";
+        $val = "'".$val."'";
         $start = (mb_strpos($val, "E'") === 0) ? 2 : 1;
         $val = mb_substr($val, $start, -1);
         return $val;
@@ -160,8 +175,8 @@ abstract class Repository
     /**
      * (Output) Disable search
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return bool
      */
     protected function searchOpIgnore($c, $val)
@@ -172,8 +187,8 @@ abstract class Repository
     /**
      * (Output) Look for EXACT match
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpEqual($c, $val)
@@ -181,16 +196,16 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val, 'field' => $c['field'] ?? null];
     }
 
-        /**
+    /**
      * (Output) Look for EXACT match
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpNull($c, $val)
     {
-        if($val == 0){
+        if ($val == 0) {
             $operator = 'null';
         } else {
             $operator = 'not_null';
@@ -201,8 +216,8 @@ abstract class Repository
     /**
      * (Output) Look for similar text
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpLike($c, $val)
@@ -211,14 +226,14 @@ abstract class Repository
         $val = addcslashes($val, '%_');
         $op = 'LIKE';
 
-        return ['column' => $c['db'], 'operator' => $op, 'value' => '%' . $val . '%', 'field' => $c['field'] ?? null];
+        return ['column' => $c['db'], 'operator' => $op, 'value' => '%'.$val.'%', 'field' => $c['field'] ?? null];
     }
 
     /**
      * (Output) Look for list of values
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpIn($c, $val)
@@ -231,8 +246,8 @@ abstract class Repository
      * (Output) Look for numeric value
      * Supports prefixes to search for range of numeric values
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string
      */
     protected function searchOpNumeric($c, $val)
@@ -309,7 +324,7 @@ abstract class Repository
         // dd($db->toSql());
         foreach ($db->get() as $r) {
             // dd($r);
-            $this->addRow((array)$r);
+            $this->addRow((array) $r);
         }
         // dd($this->raws);
         return $this->rows;
@@ -408,11 +423,13 @@ abstract class Repository
         //выборка полей для вывода
         $fields = array();
         foreach ($this->cols as $k => &$c) {
-            if ($c['manual']) continue;
+            if ($c['manual']) {
+                continue;
+            }
             if ($c['db'] instanceof \Illuminate\Database\Query\Expression) {
                 $fields[] = $c['db'];
             } else {
-                $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+                $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'].' AS '.$k);
             }
         }
         $db->select($fields);
@@ -471,7 +488,9 @@ abstract class Repository
 
         foreach ($this->cols as $k => $c) {
             #Discard this column in output?
-            if ($c['unset']) continue;
+            if ($c['unset']) {
+                continue;
+            }
             if (!empty($c['format_date'])) {
                 $row[$k] = empty($row[$k]) ? ($row["null"] ?? $row[$k]) : date($c['format_date'], strtotime($row[$k]));
             }
@@ -489,9 +508,9 @@ abstract class Repository
     /**
      * (Output) Per-row result modification
      *
-     * @param integer $id row_id
-     * @param array $cell - parsed cells
-     * @param array $row - data row
+     * @param  integer  $id  row_id
+     * @param  array  $cell  - parsed cells
+     * @param  array  $row  - data row
      * @return array - modified $cell
      */
     protected function addRowComplete($id, $cell, $row)
@@ -553,8 +572,8 @@ abstract class Repository
     /**
      * (Output) Populate cell
      *
-     * @param array $c - column options
-     * @param array $row - data row
+     * @param  array  $c  - column options
+     * @param  array  $row  - data row
      * @return mixed - final cell value
      */
     protected function addRowCell($c, $row)
@@ -562,10 +581,14 @@ abstract class Repository
         $val = isset($row[$c['name']]) ? $row[$c['name']] : null;
 
         #Handle nulls
-        if ($val === null and $c['null'] !== null) $val = $c['null'];
+        if ($val === null and $c['null'] !== null) {
+            $val = $c['null'];
+        }
 
         #Easy replace values
-        if ($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+        if ($c['replace']) {
+            $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+        }
         // WIP
         //if (is_array($c['replace'])) {
         //    $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
@@ -574,7 +597,9 @@ abstract class Repository
         //}
 
         #Encode before output
-        if ($c['encode']) $val = $this->outputEncodeValue($c, $val);
+        if ($c['encode']) {
+            $val = $this->outputEncodeValue($c, $val);
+        }
 
         #Замена лишних пробелов на одинарные (Читабельность JSON) - WIP
         //$val = preg_replace('/\s{2,}/', ' ', $val);
@@ -586,8 +611,8 @@ abstract class Repository
     /**
      * (Output) Encode each row value before output
      *
-     * @param $c - column
-     * @param $val - value
+     * @param $c  - column
+     * @param $val  - value
      * @return string - encoded value
      */
     protected function outputEncodeValue($c, $val)
@@ -599,7 +624,7 @@ abstract class Repository
     /**
      * Подготовка строк
      *
-     * @param mixed $raw
+     * @param  mixed  $raw
      * @return void
      */
     protected function parseRow($raw)
@@ -627,7 +652,7 @@ abstract class Repository
     /**
      * (Output) Build complete ROWS-query
      *
-     * @param string $q - base query
+     * @param  string  $q  - base query
      * @return string - final query
      */
     protected function buildQueryRows($q)
@@ -647,8 +672,12 @@ abstract class Repository
         // ORDER BY, LIMIT, OFFSET
         //-----------------
 
-        if ($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
-        if ($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
+        if ($this->do_sort) {
+            $q .= $this->buildOrderBy($this->sidx, $this->sord)."\n";
+        }
+        if ($this->do_limit) {
+            $q .= $this->buildLimitOffset($this->limit, $this->page)."\n";
+        }
 
         return $q;
     }
@@ -656,7 +685,7 @@ abstract class Repository
     /**
      * (Output) Implode {fields} for ROWS-query using 'db' property
      *
-     * @param array $cols - grid columns
+     * @param  array  $cols  - grid columns
      * @return string - imploded list
      */
     protected function buildFields($cols)
@@ -664,9 +693,11 @@ abstract class Repository
         $fields = array();
 
         foreach ($cols as $k => &$c) {
-            if ($c['manual']) continue;
+            if ($c['manual']) {
+                continue;
+            }
 
-            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
+            $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'].' AS '.$k);
         }
 
         return implode(', ', $fields);
@@ -675,7 +706,7 @@ abstract class Repository
     /**
      * (Output) Implode {fields} for AGG-query using 'db_agg' property
      *
-     * @param array $cols - grid columns
+     * @param  array  $cols  - grid columns
      * @return string - imploded list
      */
     protected function buildFieldsAgg($cols)
@@ -684,21 +715,23 @@ abstract class Repository
         $fields = array('count(*) AS _count');
 
         foreach ($cols as $k => $c) {
-            if (!$c['db_agg']) continue;
+            if (!$c['db_agg']) {
+                continue;
+            }
 
             switch ($c['db_agg']) {
-                    #Common
+                #Common
                 case 'sum':
                 case 'avg':
                 case 'count':
                 case 'min':
                 case 'max':
-                    $fields[] = $c['db_agg'] . '(' . $c['db'] . ') AS ' . $k;
+                    $fields[] = $c['db_agg'].'('.$c['db'].') AS '.$k;
                     break;
 
-                    #Custom
+                #Custom
                 default:
-                    $fields[] = $c['db_agg'] . ' AS ' . $k;
+                    $fields[] = $c['db_agg'].' AS '.$k;
                     break;
             }
         }
@@ -712,8 +745,8 @@ abstract class Repository
      *
      * Alter this if your database requires other syntax
      *
-     * @param integer $limit
-     * @param integer $page
+     * @param  integer  $limit
+     * @param  integer  $page
      * @return string
      */
     protected function buildLimitOffset($limit, $page)
@@ -735,8 +768,8 @@ abstract class Repository
      *
      * Input is checked in 'getOutputParams', so we trust it
      *
-     * @param string $sidx - field name
-     * @param string $sord - order (asc, desc)
+     * @param  string  $sidx  - field name
+     * @param  string  $sord  - order (asc, desc)
      * @return string
      */
     protected function buildOrderBy($sidx, $sord)
