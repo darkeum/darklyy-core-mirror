@@ -84,6 +84,10 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     api.searchBuilder.container().addClass('search-builder-custom');
     // console.log(api.searchBuilder.container());
 
+    let def = false;
+    let cols = api.tables().header().to$().children('tr.aGrid-filters').children();
+    // console.log(cols)
+
     // Генератор полей для поиска c фильтром исключений
     let ignore = _OPTIONS.ignore;
     // Фильтрация колонок: только объекты, не игнорируемые типы и видимые колонки
@@ -95,9 +99,11 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
     );
     // console.log(options)
 
+    // api.columns().search('');
+
     // WIP - ПЕРЕДЕЛАТЬ!
     // Итерация по всем ячейкам фильтров в заголовке таблицы
-    api.tables().header().to$().children('tr.aGrid-filters').children().each(function (i) {
+    cols.each(function (i) {
 
         // Получение конфигурации колонки
         let col = (options[i]) ? options[i] : false;
@@ -117,6 +123,8 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                     // Проверка наличия опций для select
                     if (col.options) {
+
+                        // console.log(col.options);
 
                         // Если есть "value" - Строки в список поданы
                         if (col.options.hasOwnProperty('value')) {
@@ -156,10 +164,19 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             // Создание options для select
                             $.each(values, function (index, item) {
                                 let option = $('<option></option>');
+
+                                //
+                                if (col.hasOwnProperty('default') && col.default == index) {
+                                    def = true;
+                                    option.attr('selected', 'selected');
+                                    api.column(col.idx).search(col.default);
+                                }
+
                                 option.attr({
-                                    'value': index,
+                                    'value': index
                                 }).html(item);
                                 select_options.push(option);
+
                             });
                             // console.log(select_options)
 
@@ -178,7 +195,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             select_options.unshift(first);
 
                             // Создаем select и добавляем options
-                            select = $('<select></select>');
+                            select = $('<select data-default-value="1"></select>');
                             select.attr({
                                 'id': col.data,
                                 'class': 'form-select form-select-sm'
@@ -189,14 +206,12 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             $('select', this).on('change', function () {
                                 if (api.column(col.idx).search() !== this.value) {
                                     api.column(col.idx).search(this.value).draw();
-                                    // console.log(col.idx, this.value)
                                 }
                             });
 
                             // Инициализация Select2 если требуется
                             if (col.options.hasOwnProperty('select2')
                                 && col.options.select2 == true) {
-                                // _OPTIONS.select2.default
                                 api.aGrid.ui.select2(select, {
                                     url: ajax_url // URL для AJAX-загрузки данных
                                 });
@@ -216,6 +231,14 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         'class': 'form-control form-control-sm flatpickr-range',
                         'placeholder': col.placeholder
                     });
+
+                    // Если есть значение по умолчанию то ставим его
+                    if (col.hasOwnProperty('default')) {
+                        def = true;
+                        input.attr('value', col.default);
+                        api.column(col.idx).search(col.default);
+                    }
+
                     $(this).append(input);
 
                     // Локализация flatpickr
@@ -286,6 +309,14 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         'class': 'form-control form-control-sm',
                         'placeholder': col.placeholder,
                     });
+
+                    // Если есть значение по умолчанию то ставим его
+                    if (col.hasOwnProperty('default')) {
+                        def = true;
+                        input.attr('value', col.default);
+                        api.column(col.idx).search(col.default);
+                    }
+
                     $(this).append(input);
 
                     // Обработчик нажатия Enter в текстовом поле
@@ -300,10 +331,11 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                     });
 
             }
-
         }
     });
 
     // Дополнительные операции после инициализации
+    def && api.draw(); // Запрос по поиску если есть default в запросе
     api.aGrid.ui.table.scroll(); // Настройка скроллинга таблицы
+
 });

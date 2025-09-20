@@ -22,8 +22,6 @@ DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
     $('.aGrid-container [data-bs-toggle="popover"]').popover();
 });
 
-/* ************************************************************************ */
-
 // Управление Loader'ом - отображение/скрытие индикатора загрузки
 DataTable.Api.register('aGrid.ui.loader', function (display = false) {
     let loading = $('.dataTables_processing.dts_loading');

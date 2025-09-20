@@ -377,6 +377,7 @@
                             },
                             @endif
 
+                                {!! isset($col['default']) ? 'default: ' . $col['default'] . ',' : false !!}
                                 {!! isset($col['options']) ? 'options: ' . $col['options'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
                                 {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
