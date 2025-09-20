@@ -72,12 +72,14 @@ return [
             'title' => '',              // Заголовок столбца по умолчанию
 
             // Типы используемых полей для фильтров
-            'type' => 'input',          // Тип поля по умолчанию ('input', 'select', 'date_range', 'actions')
+            'type' => 'input',          // Тип поля по умолчанию ('input', 'select', 'date', 'date_time', 'date_range', 'actions')
 
             // Сделать подгрузку переводов из Lang файла, а не от сюда!!!
             'label' => [                // Список label для полей - placeholder для поля по умолчанию
                 'input' => 'Найти',
                 'select' => 'Выбрать',
+                'date' => 'Выбрать дату',
+                'date_time' => 'Выбрать дату',
                 'date_range' => 'Выбрать дату',
                 'checkbox' => 'Отметить все',
                 'actions' => 'Действия',
@@ -130,6 +132,8 @@ return [
                 '_' => 'auto',
                 'input' => 'like',
                 'select' => 'equal',
+                'date' => 'date',
+                'date_time' => 'date_time',
                 'date_range' => 'date_range',
                 'actions' => false,
             ],

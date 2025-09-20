@@ -267,6 +267,58 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => $op, 'value' => $val, 'field' => $c['field'] ?? null];
     }
 
+    # ...
+    protected function searchOpDate($c, $val)
+    {
+        //--------------
+        // Single date (Только дата если в БД)
+        //--------------
+
+        // Обработка пустого значения
+        if (empty($val)) {
+            return null;
+        }
+
+        if (!$val) {
+            throw new ExceptionGrid('Invalid date format');
+        }
+
+        $val = strtotime(trim($val));
+
+        if (!$val) {
+            throw new jqGrid_Exception('Invalid date format');
+        }
+
+        $val = date('Y-m-d', $val);
+
+        return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
+    }
+
+    # ...
+    protected function searchOpDateTime($c, $val)
+    {
+        //--------------
+        // Single date time
+        //--------------
+
+        // Обработка пустого значения
+        if (empty($val)) {
+            return null;
+        }
+
+        if (!$val) {
+            throw new ExceptionGrid('Invalid date format');
+        }
+
+        $start = date('Y-m-d H:i:s', strtotime($val));
+        $end = date('Y-m-d H:i:s', strtotime($val.' + 1 days'));
+
+        // return $c['db'] . " BETWEEN '$start' AND '$end'";
+        return ['column' => $c['db'], 'operator' => 'between', 'value' => [$start, $end]];
+
+    }
+
+    # ...
     protected function searchOpDateRange($c, $val)
     {
         //--------------
@@ -317,6 +369,7 @@ abstract class Repository
         // return "DATE({$c['db']}) = '$val'";
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
     }
+
 
     public function getDataRows()
     {
@@ -499,6 +552,7 @@ abstract class Repository
             $cell[$c['name']] = $this->addRowCell($c, $row);
         }
         // dump($row);
+
         #Prase whole row
         $cell = $this->addRowComplete($id, $cell, $row);
         // dd($cell);

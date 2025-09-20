@@ -163,6 +163,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                             // Создание options для select
                             $.each(values, function (index, item) {
+
                                 let option = $('<option></option>');
 
                                 //
@@ -200,6 +201,8 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 'id': col.data,
                                 'class': 'form-select form-select-sm'
                             }).html(select_options);
+
+                            // Добавим в колонку
                             $(this).append(select);
 
                             // Обработчик изменения значения select
@@ -221,15 +224,17 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
                     break;
 
-                // Даты - WIP ПЕРЕДЕЛАТЬ !!!
-                case 'date_range':
+                // Дата
+                case 'date':
+                case 'date_time':
                     // Создание input для диапазона дат
                     input = $('<input />');
                     input.attr({
                         'type': 'text',
-                        'id': 'date-range-' + col.data,
-                        'class': 'form-control form-control-sm flatpickr-range',
-                        'placeholder': col.placeholder
+                        //'id': 'date-basic-' + col.data,
+                        'class': 'form-control form-control-sm text-center',
+                        'placeholder': col.placeholder,
+                        'aria-autocomplete': false
                     });
 
                     // Если есть значение по умолчанию то ставим его
@@ -239,15 +244,77 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         api.column(col.idx).search(col.default);
                     }
 
+                    // Добавим в колонку
                     $(this).append(input);
 
                     // Локализация flatpickr
                     flatpickr.localize(flatpickr.l10ns[$('html').attr('lang')]);
-                    let rangePicker = $('#date-range-' + col.data);
 
                     // Инициализация flatpickr для выбора диапазона дат
-                    if (rangePicker.length) {
-                        rangePicker.flatpickr({
+                    if (input.length) {
+                        input.flatpickr({
+                            dateFormat: col.configs.displayFormat, // Формат даты
+                            onChange: function (selectedDates, dateStr, instance) {
+                                // Логика при изменении дат
+                                $(instance.element).attr('title', dateStr) // Установка title
+
+                                // ...
+                                api.column(col.idx).search(dateStr).draw();
+                            },
+                            onOpen: function (selectedDates, dateStr, instance) {
+                                // Логика при открытии picker'а
+                                if ($(instance.input).val() == '') {
+                                    $(input).val('');
+                                }
+                            },
+                            onClose: function (selectedDates, dateStr, instance) {
+                                // $(input).trigger('change').trigger('keyup');
+                            },
+                            onReady: function (_, __, fp) {
+                                // Логика при готовности picker'а
+                            }
+                        });
+                    }
+
+                    // Обработчик изменения значения date
+                    input.on('change', function () {
+                        // $(this).attr('disabled', 'disabled');
+                        // if (api.column(col.idx).search() !== this.value) {
+                        //     api.column(col.idx).search(this.value).draw();
+                        // }
+                        // $(this).removeAttr('disabled');
+                    });
+
+                    break;
+
+                // Даты - WIP ПЕРЕДЕЛАТЬ !!!
+                case 'date_range':
+                    // Создание input для диапазона дат
+                    input = $('<input />');
+                    input.attr({
+                        'type': 'text',
+                        //'id': 'date-range-' + col.data,
+                        'class': 'form-control form-control-sm flatpickr-range',
+                        'placeholder': col.placeholder,
+                        'aria-autocomplete': false
+                    });
+
+                    // Если есть значение по умолчанию то ставим его
+                    if (col.hasOwnProperty('default')) {
+                        def = true;
+                        input.attr('value', col.default);
+                        api.column(col.idx).search(col.default);
+                    }
+
+                    // Добавим в колонку
+                    $(this).append(input);
+
+                    // Локализация flatpickr
+                    flatpickr.localize(flatpickr.l10ns[$('html').attr('lang')]);
+
+                    // Инициализация flatpickr для выбора диапазона дат
+                    if (input.length) {
+                        input.flatpickr({
                             mode: 'range',
                             enableTime: col.configs.displayFormat.includes(' '), // Включение времени если есть пробел в формате
                             time_24hr: true,
@@ -258,11 +325,14 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                             onChange: function (selectedDates, dateStr, instance) {
                                 // Логика при изменении дат
                                 $(instance.element).attr('title', dateStr) // Установка title
+
+                                // ...
+                                api.column(col.idx).search(this.value).draw();
                             },
                             onOpen: function (selectedDates, dateStr, instance) {
                                 // Логика при открытии picker'а
                                 if ($(instance.input).val() == '') {
-                                    $(rangePicker).val('');
+                                    $(input).val('');
                                 }
                             },
                             onClose: function (selectedDates, dateStr, instance) {
@@ -280,7 +350,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                         + '/' + selectedDates[1].getFullYear();
                                     $('.end_date').val(endDate);
                                 }
-                                $(rangePicker).trigger('change').trigger('keyup');
+                                $(input).trigger('change').trigger('keyup');
                             },
                             onReady: function (_, __, fp) {
                                 // Логика при готовности picker'а
@@ -289,12 +359,12 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                     }
 
                     // Обработчик изменения значения date range
-                    $('input', this).on('change', function () {
-                        $(this).attr('disabled', 'disabled');
-                        if (api.column(col.idx).search() !== this.value) {
-                            api.column(col.idx).search(this.value).draw();
-                        }
-                        $(this).removeAttr('disabled');
+                    input.on('change', function () {
+                        // $(this).attr('disabled', 'disabled');
+                        // if (api.column(col.idx).search() !== this.value) {
+                        //     api.column(col.idx).search(this.value).draw();
+                        // }
+                        // $(this).removeAttr('disabled');
                     });
 
                     break;
@@ -308,6 +378,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         'id': col.data,
                         'class': 'form-control form-control-sm',
                         'placeholder': col.placeholder,
+                        'aria-autocomplete': false
                     });
 
                     // Если есть значение по умолчанию то ставим его
@@ -317,10 +388,12 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                         api.column(col.idx).search(col.default);
                     }
 
+                    // Добавим в колонку
                     $(this).append(input);
 
                     // Обработчик нажатия Enter в текстовом поле
-                    $('input', this).on('keypress', function (e) {
+                    // $('input', this).on('keypress', function (e) {
+                    input.on('keypress', function (e) {
                         if (e.which === 13) {
                             $(this).attr("disabled", "disabled");
                             if (api.column(col.idx).search() !== this.value) {
