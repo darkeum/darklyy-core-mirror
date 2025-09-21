@@ -277,36 +277,13 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
     }
 
-    # Поиск по дате и времени
-    protected function searchOpDateTime($c, $val)
-    {
-        //--------------
-        // Single date time
-        //--------------
-
-        // Обработка пустого значения
-        if (empty($val)) {
-            return null;
-        }
-
-        if (!$val) {
-            throw new ExceptionGrid('Invalid date format');
-        }
-
-        $start = date('Y-m-d H:i:s', strtotime($val));
-        $end = date('Y-m-d H:i:s', strtotime($val.' + 1 days'));
-
-        // return $c['db'] . " BETWEEN '$start' AND '$end'";
-        return ['column' => $c['db'], 'operator' => 'between', 'value' => [$start, $end]];
-
-    }
-
     # Поиск по диапазону дат
     protected function searchOpDateRange($c, $val)
     {
         //--------------
         // Date range
         //--------------
+
         if (strpos($val, ' - ') !== false) {
             list($start, $end) = explode(' - ', $val, 2);
 
@@ -342,15 +319,15 @@ abstract class Repository
         // Single date
         //------------
 
-        $val = strtotime(trim($val));
+        $start = date('Y-m-d H:i:s', strtotime($val));
+        $end = date('Y-m-d H:i:s', strtotime($val.' + 1 days'));
 
-        if (!$val) {
+        if (!$start or !$end) {
             throw new ExceptionGrid('Invalid date format');
         }
 
-        $val = date('Y-m-d', $val);
-        // return "DATE({$c['db']}) = '$val'";
-        return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
+        // return $c['db'] . " BETWEEN '$start' AND '$end'";
+        return ['column' => $c['db'], 'operator' => 'between', 'value' => [$start, $end]];
     }
 
     # Загрузка строк
