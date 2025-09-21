@@ -105,6 +105,8 @@ return [
             // Для flatpickr
             'format_date' => [          // Формат даты для поля date_range. (По умолчанию - 'd.m.Y')
                 '_' => null,
+                'date' => 'd.m.Y',
+                'date_time' => 'd.m.Y',
                 'date_range' => 'd.m.Y',
             ],
 
