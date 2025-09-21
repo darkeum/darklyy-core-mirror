@@ -377,25 +377,31 @@
                             },
                             @endif
 
-                                {!! isset($col['default']) ? 'default: ' . $col['default'] . ',' : false !!}
-                                {!! isset($col['options']) ? 'options: ' . $col['options'] . ',' : false !!}
-                                {!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}
-                                {!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}
-
+                                {{--{!! isset($col['default']) ? 'default: "' . $col['default'] . '",' : false !!}--}}
+                                {{--{!! isset($col['options']) ? 'options: ' . $col['options'] . ',' : false !!}--}}
+                                {{--{!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}--}}
+                                {{--{!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}--}}
+                                {!! GridParams::paramHas($col, 'default') !!}
+                                {!! GridParams::paramHas($col, 'options') !!}
+                                {!! GridParams::paramHas($col, 'priority') !!}
+                                {!! GridParams::paramHas($col, 'priority', 'responsivePriority') !!}
                                 {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
+
                             configs: {
-                                {{--displayFormat: "{{ $col['format_date'] ?? false }}",--}}
-                                    {!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}
+                                {{--{!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}--}}
+                                    {!! GridParams::paramHas($col, 'format_date', 'displayFormat') !!}
 
                                 icon: "{{ $col['icon'] ?? null }}",
                                 type: "{{ $col['type'] ?? null }}",
                                 prefix: "{{ $col['prefix'] ?? null }}",
                                 render: "{{ $col['render'] ?? null }}",
 
-                                {!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}
-                                    {!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}
+                                {{--{!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}--}}
+                                    {{--{!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}--}}
+                                    {!! GridParams::paramHas($col, 'tooltip') !!}
+                                    {!! GridParams::paramHas($col, 'render', 'popover', true) !!}
+                                    {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
                             }
-                            {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
                             // data: {
                             //     _: 'phone',
@@ -624,47 +630,71 @@
 
         });
 
-        //
+        /**
+         * Функция для обработки экспорта данных из DataTables с серверной обработкой
+         * Временной получает все данные с сервера для экспорта, затем восстанавливает исходное состояние таблицы
+         *
+         * @param {Event} e - Событие, вызвавшее экспорт
+         * @param {DataTable} dt - Объект DataTable
+         * @param {Object} button - Объект кнопки, которая инициировала экспорт
+         * @param {Object} config - Конфигурационные настройки экспорта
+         */
         function newexportaction(e, dt, button, config) {
+            // Сохраняем контекст выполнения (this) для использования в обработчиках
             var self = this;
+
+            // Сохраняем исходное значение начальной позиции отображения данных
             var oldStart = dt.settings()[0]._iDisplayStart;
+
+            // Устанавливаем обработчик события preXhr (перед отправкой AJAX-запроса)
             dt.one('preXhr', function (e, s, data) {
-                // Только один раз загрузите все данные с сервера...
-                data.start = 0;
-                data.length = 2147483647;
+                // Временное изменение параметров запроса для получения ВСЕХ данных
+                data.start = 0; // Начинаем с первой записи
+                data.length = 2147483647; // Устанавливаем максимально возможное значение для получения всех данных
+
+                // Устанавливаем обработчик события preDraw (перед отрисовкой таблицы)
                 dt.one('preDraw', function (e, settings) {
-                    // Вызовите исходную функцию действия
+                    // Определяем тип кнопки экспорта и вызываем соответствующую функцию
                     if (button[0].className.indexOf('buttons-copy') >= 0) {
+                        // Вызываем стандартную функцию копирования в буфер обмена
                         $.fn.dataTable.ext.buttons.copyHtml5.action.call(self, e, dt, button, config);
                     } else if (button[0].className.indexOf('buttons-excel') >= 0) {
+                        // Проверяем доступность HTML5 экспорта в Excel и вызываем соответствующую функцию
                         $.fn.dataTable.ext.buttons.excelHtml5.available(dt, config) ?
                             $.fn.dataTable.ext.buttons.excelHtml5.action.call(self, e, dt, button, config) :
                             $.fn.dataTable.ext.buttons.excelFlash.action.call(self, e, dt, button, config);
                     } else if (button[0].className.indexOf('buttons-csv') >= 0) {
+                        // Проверяем доступность HTML5 экспорта в CSV и вызываем соответствующую функцию
                         $.fn.dataTable.ext.buttons.csvHtml5.available(dt, config) ?
                             $.fn.dataTable.ext.buttons.csvHtml5.action.call(self, e, dt, button, config) :
                             $.fn.dataTable.ext.buttons.csvFlash.action.call(self, e, dt, button, config);
                     } else if (button[0].className.indexOf('buttons-pdf') >= 0) {
+                        // Проверяем доступность HTML5 экспорта в PDF и вызываем соответствующую функцию
                         $.fn.dataTable.ext.buttons.pdfHtml5.available(dt, config) ?
                             $.fn.dataTable.ext.buttons.pdfHtml5.action.call(self, e, dt, button, config) :
                             $.fn.dataTable.ext.buttons.pdfFlash.action.call(self, e, dt, button, config);
                     } else if (button[0].className.indexOf('buttons-print') >= 0) {
+                        // Вызываем стандартную функцию печати
                         $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
                     }
+
+                    // Устанавливаем обработчик для следующего AJAX-запроса
                     dt.one('preXhr', function (e, s, data) {
-                        // DataTables считает, что первый отображаемый элемент имеет индекс 0, но мы этого не рисуем.
-                        // Установите свойство таким, каким оно было до экспорта.
-                        settings._iDisplayStart = oldStart;
-                        data.start = oldStart;
+                        // Восстанавливаем исходные настройки отображения данных
+                        settings._iDisplayStart = oldStart; // Восстанавливаем начальную позицию
+                        data.start = oldStart; // Устанавливаем исходное значение для следующего запроса
                     });
-                    // Перезагрузите сетку с исходной страницей. В противном случае функции API, такие как table.cell(this), не будут работать должным образом.
+
+                    // Перезагружаем данные таблицы через минимальную задержку
+                    // Это необходимо для корректной работы API DataTables
                     setTimeout(dt.ajax.reload, 0);
-                    // Запретить отображение полных данных в DOM
+
+                    // Запрещаем стандартную отрисовку полных данных в DOM
                     return false;
                 });
             });
 
-            // Запросите сервер с новыми настройками одноразового экспорта
+            // Инициируем AJAX-запрос с новыми параметрами для экспорта всех данных
             dt.ajax.reload();
         }
 
