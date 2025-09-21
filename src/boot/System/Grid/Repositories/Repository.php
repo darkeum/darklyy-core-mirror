@@ -96,19 +96,6 @@ abstract class Repository
 
         foreach ($this->cols as $k => $c) {
 
-            // WIP - Поиск повыбранному полю "По умолчанию" при загрузке страницы
-            // Нужно убрать или доработать. Загрузка всегда через фильтр
-            //if (isset($c['options'])) {
-            //    $options = json_decode($c['options'], true);
-            //    if (isset($options['default'])) {
-            //        $request[$k]['search']['value'] = $options['default'];
-            //    }
-            //} else {
-            //    if (isset($c['default'])) {
-            //        $request[$k]['search']['value'] = $c['default'];
-            //    }
-            //}
-
             if (!isset($request[$k])) {
                 continue;
             }
@@ -267,7 +254,7 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => $op, 'value' => $val, 'field' => $c['field'] ?? null];
     }
 
-    # ...
+    # Поиск просто по дате
     protected function searchOpDate($c, $val)
     {
         //--------------
@@ -279,14 +266,10 @@ abstract class Repository
             return null;
         }
 
-        if (!$val) {
-            throw new ExceptionGrid('Invalid date format');
-        }
-
         $val = strtotime(trim($val));
 
         if (!$val) {
-            throw new jqGrid_Exception('Invalid date format');
+            throw new ExceptionGrid('Invalid date format');
         }
 
         $val = date('Y-m-d', $val);
@@ -294,7 +277,7 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
     }
 
-    # ...
+    # Поиск по дате и времени
     protected function searchOpDateTime($c, $val)
     {
         //--------------
@@ -318,7 +301,7 @@ abstract class Repository
 
     }
 
-    # ...
+    # Поиск по диапазону дат
     protected function searchOpDateRange($c, $val)
     {
         //--------------
@@ -370,7 +353,7 @@ abstract class Repository
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val];
     }
 
-
+    # Загрузка строк
     public function getDataRows()
     {
         $db = $this->buildRows($this->db);
@@ -394,7 +377,7 @@ abstract class Repository
         $this->agg = $result;
     }
 
-
+    # ...
     public function getUserData()
     {
         if ($this->agg) {
@@ -403,17 +386,20 @@ abstract class Repository
         return $this->userdata;
     }
 
+    # ...
     public function getRecords()
     {
         return $this->count;
     }
 
+    # ...
     public function getTotal()
     {
         return $this->total;
     }
 
 
+    # ...
     protected function setRowCount($count = null)
     {
         if (is_null($count)) {
@@ -453,6 +439,7 @@ abstract class Repository
         }
     }
 
+    # ...
     protected function buildRows($db)
     {
         $db = $this->buildWhere($db);
@@ -471,6 +458,7 @@ abstract class Repository
         return $db;
     }
 
+    # ...
     protected function buildWhere($db)
     {
         //выборка полей для вывода
@@ -518,6 +506,7 @@ abstract class Repository
     }
 
 
+    # ...
     protected function implodePrimaryKey($row)
     {
         foreach ($this->primary_key as $k) {
@@ -527,6 +516,7 @@ abstract class Repository
         return implode($this->primary_key_glue, $pk_parts);
     }
 
+    # ...
     protected function addRow($row)
     {
         #Allow modification of result row without annoying overloading of 'addRow'
@@ -687,6 +677,7 @@ abstract class Repository
     }
 
 
+    # ...
     protected function buildQueryAgg($q)
     {
 
@@ -850,6 +841,7 @@ abstract class Repository
         return DB::table($this->table);
     }
 
+    # ...
     protected function getDefaultQuery()
     {
         if (empty($this->table)) {
