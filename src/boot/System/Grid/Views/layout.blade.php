@@ -270,17 +270,19 @@
                                         action: newexportaction,
                                         exportOptions: {
                                             columns: [
-                                                @foreach ($cols as $key => $col)
-                                                    @if($col['visible'] == true || $col['visible'] == 'true')
-                                                    @if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true')
-                                                    {{ $key }},
-                                                @endif
-                                                    @else
-                                                    @if($col['excel_only'] == true || $col['excel_only'] == 'true')
-                                                    {{ $key }},
-                                                @endif
-                                                @endif
-                                                @endforeach
+                                                @php
+                                                    foreach ($cols as $key => $col) {
+                                                        if($col['visible'] == true || $col['visible'] == 'true') {
+                                                            if($col['excel_hidden'] != true || $col['excel_hidden'] != 'true') {
+                                                                echo $key . ',';
+                                                            }
+                                                        } else {
+                                                            if($col['excel_only'] == true || $col['excel_only'] == 'true') {
+                                                                echo $key . ',';
+                                                            }
+                                                        }
+                                                    }
+                                                @endphp
                                             ]
                                         }
                                     },
@@ -353,8 +355,12 @@
 
                             @foreach ($cols as $key => $col){
 
-                            @if($col['type'] == 'checkbox') @php($checkbox_target[] = $key) @endif
-                                {{--{{ $col['type'] == 'checkbox' ? $checkbox_target[] = $key : '' }}--}}
+                            @php
+                                if($col['type'] == 'checkbox') {
+                                    $checkbox_target[] = $key;
+                                }
+                                //$col['type'] == 'checkbox' ? $checkbox_target[] = $key : ''
+                            @endphp
 
                             title: "{{ $col['title'] ?? '' }}",
                             label: "{{ $col['label'] ?? '' }}",
@@ -367,7 +373,7 @@
                             sortable: {{ isset($col['sortable']) ? ($col['sortable'] ? 'true' : 'false') : 'true' }},
                             searchable: {{ isset($col['search']) ? ($col['search'] === false ? 'false' : 'true') : 'false' }},
 
-                            {!! isset($col['other']) ? 'other: ' . $col['other'] . ',' : false !!}
+                            {!! isset($col['other']) ? "other: '{$col['other']}'," : false !!}
                             data: "{{ $col['name'] }}",
 
                             @if(($col['render']))render: function (data, type, row, meta) {
@@ -375,30 +381,27 @@
                             },
                             @endif
 
-                                {{--{!! isset($col['default']) ? 'default: "' . $col['default'] . '",' : false !!}--}}
-                                {{--{!! isset($col['options']) ? 'options: ' . $col['options'] . ',' : false !!}--}}
-                                {{--{!! isset($col['priority']) ? 'priority: ' . $col['priority'] . ',' : false !!}--}}
-                                {{--{!! isset($col['priority']) ? 'responsivePriority: ' . $col['priority'] . ',' : false !!}--}}
-                                {!! GridParams::paramHas($col, 'default') !!}
-                                {!! GridParams::paramHas($col, 'options') !!}
-                                {!! GridParams::paramHas($col, 'priority') !!}
-                                {!! GridParams::paramHas($col, 'priority', 'responsivePriority') !!}
+                                @php
+                                    echo isset($col['default']) ? "default: '{$col['default']}'," : '';
+                                    echo isset($col['options']) ? "options: {$col['options']}," : '';
+                                    echo isset($col['priority']) ? "priority: '{$col['priority']}'," : '';
+                                    echo isset($col['priority']) ? "responsivePriority: '{$col['priority']}'," : '';
+                                @endphp
                                 {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
 
                             configs: {
-                                {{--{!! isset($col['format_date']) ? 'displayFormat: "' . $col['format_date'] . '",' : false !!}--}}
-                                    {!! GridParams::paramHas($col, 'format_date', 'displayFormat') !!}
+
+                                @php
+                                    echo isset($col['format_date']) ? "displayFormat: '{$col['format_date']}'," : '';
+                                    echo isset($col['tooltip']) ? "tooltip: '{$col['tooltip']}'," : '';
+                                    echo ($col['render']) ? "popover: '{$col['popover']}'," : '';
+                                @endphp
 
                                 icon: "{{ $col['icon'] ?? null }}",
                                 type: "{{ $col['type'] ?? null }}",
                                 prefix: "{{ $col['prefix'] ?? null }}",
                                 render: "{{ $col['render'] ?? null }}",
-
-                                {{--{!! isset($col['tooltip']) ? 'tooltip: "' . $col['tooltip'] . '",' : false !!}--}}
-                                    {{--{!! ($col['render']) ? 'popover: "' . $col['popover'] . '",' : false !!}--}}
-                                    {!! GridParams::paramHas($col, 'tooltip') !!}
-                                    {!! GridParams::paramHas($col, 'render', 'popover', true) !!}
-                                    {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
+                                {{-- Все необходимые данные для JS можно переделать тут в configs  --}}
                             }
 
                             // data: {
