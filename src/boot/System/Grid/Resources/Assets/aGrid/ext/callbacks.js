@@ -81,8 +81,10 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
 
     // Установка CSS классов для заголовка таблицы и SearchBuilder
     api.tables().header().to$().addClass('table-header');
-    api.searchBuilder.container().addClass('search-builder-custom');
-    // console.log(api.searchBuilder.container());
+    if (api.searchBuilder.container()) {
+        api.searchBuilder.container().addClass('search-builder-custom');
+        // console.log(api.searchBuilder.container());
+    }
 
     let def = false;
     let cols = api.tables().header().to$().children('tr.aGrid-filters').children();
