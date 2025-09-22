@@ -103,12 +103,17 @@ class GridParams
     }
 
     # ...
-    public static function paramHas($col, $param, $custom = false, $mirror = false)
+    public static function paramHas($col, $param, $custom = false, $mirror = false, $json = false)
     {
         $custom = $custom ? $custom : $param;
         $mirror = $mirror ? $custom : $param;
+        $val = $col[$mirror] ?? false;
 
-        return isset($col[$param]) ? "{$custom}: '{$col[$mirror]}'," : false;
+        if (!$json) {
+            $val = "'{$val}'";
+        }
+
+        return isset($col[$param]) ? "{$custom}: {$val}," : false;
     }
 
     # ...
