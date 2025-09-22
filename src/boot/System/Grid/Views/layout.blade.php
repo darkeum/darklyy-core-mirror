@@ -8,18 +8,16 @@
         <div class="col-12">
 
             <div class="card aGrid-container" data-module="{{ Request::segment(3) }}">
-                <div class="card-header py-50 pe-50">
 
+                <div class="card-header justify-content-around justify-content-sm-between pe-50 py-50">
                     {{-- Заголовок --}}
-                    <div class="col-12 col-xl-6">
-                        <h4 class="card-title p-25">
-                            {{ $title }}
-                        </h4>
-                    </div>
+                    <h4 class="card-title p-25">
+                        {{ $title }}
+                    </h4>
                     {{-- Заголовок --}}
 
                     {{-- Панель поиска и параметров --}}
-                    <div class="col-12 col-xl-6">
+                    <div class="heading-elements">
                         <div class="btn-toolbar justify-content-end aGrid-toolbar">
 
                             {{-- Поле поиска --}}
@@ -324,7 +322,7 @@
                     },
 
                     //
-                    scrollY: '61vh', // Высота таблицы по умолчанию // 61 - 64 - 70
+                    scrollY: '60vh', // Высота таблицы по умолчанию // 61 - 64 - 70
                     scrollX: false,  //
                     // scrollXInner: false,
                     // scrollCollapse: true, // Высота таблицы будет максимальной если false даже если пуста!
