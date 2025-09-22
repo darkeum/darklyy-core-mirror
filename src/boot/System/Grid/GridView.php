@@ -135,7 +135,7 @@ class GridView
     }
 
     # Вернуть Badge
-    public static function badge($tag = 'span', $color = '', $html = '')
+    public static function badge($color = '', $html = '', $tag = 'span')
     {
         return self::tag($tag, "badge {$color}", $html);
     }
