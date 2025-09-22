@@ -381,10 +381,6 @@
                 color: var(--white) !important;
               }
 
-              .btn [class^=feather-] {
-                vertical-align: sub;
-              }
-
               .btn {
                 border-color: var(--white) !important;
                 color: var(--white);
@@ -439,12 +435,8 @@
               text-overflow: ellipsis;
             }
 
-            .ti {
-              display: block;
-            }
-
             > i {
-              display: block;
+              vertical-align: middle;
             }
 
             .render-popover {
