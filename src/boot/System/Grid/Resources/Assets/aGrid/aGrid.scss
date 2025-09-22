@@ -26,6 +26,7 @@
       .pris & {
         border-color: var(--p-primary-color); // Цвет границы для Pris темы
       }
+
       .portal & {
         border-color: var(--portal-primary-color); // Цвет границы для Portal темы
       }
@@ -35,6 +36,7 @@
         .pris & {
           color: var(--p-primary-color); // Цвет иконки для Pris темы
         }
+
         .portal & {
           color: var(--portal-primary-color); // Цвет иконки для Portal темы
         }
@@ -358,6 +360,7 @@
             .pris & {
               background-color: var(--p-primary-color); // Для Pris темы
             }
+
             .portal & {
               background-color: var(--portal-primary-color); // Для Portal темы
             }
@@ -378,13 +381,21 @@
                 color: var(--white) !important;
               }
 
+              .btn [class^=feather-] {
+                vertical-align: sub;
+              }
+
               .btn {
                 border-color: var(--white) !important;
                 color: var(--white);
               }
 
               .badge {
-                background-color: var(--white);
+                //background-color: var(--white);
+                //background-color: initial;
+                //border: 1px solid;
+
+                //filter: invert(1);
               }
 
               .render {
@@ -426,6 +437,14 @@
               border-color: transparent;
               background: transparent;
               text-overflow: ellipsis;
+            }
+
+            .ti {
+              display: block;
+            }
+
+            > i {
+              display: block;
             }
 
             .render-popover {
