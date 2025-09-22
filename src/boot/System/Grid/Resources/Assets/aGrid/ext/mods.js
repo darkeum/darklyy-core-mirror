@@ -32,6 +32,7 @@ DataTable.Api.register('aGrid.mods', function () {
         const popover = api.aGrid.mods.$.button.popover({
             title: api.aGrid.mods.$.button.attr('title'),
             content: api.aGrid.mods.$.dropContent,
+            // container: grid.container.parents(),
             html: true,
             sanitize: false,
             offset: [0, 10],
@@ -40,6 +41,9 @@ DataTable.Api.register('aGrid.mods', function () {
         });
 
         popover.popover('toggle'); // Переключение состояния popover
+
+        // Показ popover
+        // grid.button.on('show.bs.popover', function () {});
 
         // Скрытие popover при событии hidden
         api.aGrid.mods.$.button.on('hidden.bs.popover', function () {
@@ -92,6 +96,8 @@ DataTable.Api.register('aGrid.mods.fn.check', function (event = false) {
 DataTable.Api.register('aGrid.mods.list.blocked', function (event = false) {
     let api = this;
     // https://jsbin.com/teqoqib/6/edit?html,js,output
+
+    // if (event.currentTarget.name == 'blocked') {}
 
     let module = api.aGrid.$.module;
     let modules = api.aGrid.$.store.namespace('modules');
@@ -152,10 +158,10 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
     let api = this;
     let row = api.row(tr);
 
-    let r_data = row.data(); // Данные строки
-    let r_index = (r_data.id) ? r_data.id : row.index(); // ID или индекс строки
+    let r_data = row.data(); // Данные строки - // api.row( this ).data()
+    let r_index = (r_data.id) ? r_data.id : row.index(); // ID или индекс строки - // api.row( this ).index()
 
-    let columns = api.settings().init().columns; // Получение настроек колонок
+    let columns = api.settings().init().columns; // Получение настроек колонок - Более гибкий вариант получения колонок
     let content = '';
     const entries = Object.entries(r_data); // Преобразование данных в массив [ключ, значение]
 
@@ -185,6 +191,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
                 '<div class="more-info">' +
                 '<small class="hr-text hr-text-left my-50">' + header.title + '</small>' +
                 '<h6 class="mb-0">' + ((text !== null) ? text : '') + '</h6>' +
+                // '<div class="hr-text my-50"></div>' +
                 '</div></div>';
         }
 
@@ -201,6 +208,29 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
         trigger: 'manual', // Ручное управление
         placement: 'left', // Позиция слева
     });
+
+    // Активатор при наведении
+    // $(tr).children('td:last-child').hover(function (event) {
+    //     // if (event.ctrlKey) {
+    //     //     popover.popover('toggle');
+    //     // }
+    //     popover.popover('toggle');
+    // });
+
+    // popover.on('show.bs.popover', function (event) {
+    //     // alert('The popover is about to be shown.');
+    //     log('The popover is about to be shown.');
+    // });
+    // $("[data-toggle='popover']").on('shown.bs.popover', function(){
+    //     alert('The popover is now fully shown.');
+    // });
+    // $("[data-toggle='popover']").on('hide.bs.popover', function(){
+    //     alert('The popover is about to be hidden.');
+    // });
+    // $("[data-toggle='popover']").on('hidden.bs.popover', function(){
+    //     alert('The popover is now hidden.');
+    // });
+
 });
 
 // ДЕЙСТВИЕ - Нумерация столбцов таблицы
@@ -220,8 +250,9 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.colsNum', function (para
                 case true:
                     // Добавление номера колонки
                     let unit = $('<span class="col-number"></span>').text(index + 1);
+                    // if ($(this).attr('data-type') !== 'actions') {
                     $(this).prepend(unit);
-                    break;
+                // }
 
                 case false:
                     // Удаление номера колонки
