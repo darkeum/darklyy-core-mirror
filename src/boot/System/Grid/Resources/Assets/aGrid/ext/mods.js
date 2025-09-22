@@ -3,18 +3,19 @@ import {_OPTIONS} from "../options.js";
 /* МОДИФИКАТОРЫ - mods */
 // Инициализация popover modifiers - управление дополнительными функциями таблицы
 DataTable.Api.register('aGrid.mods', function () {
+    let api = this;
+
+    // Проверим а есть ли вообще кнопка модов ???
     let button = $('.aGrid-mods-button');
     if (!button.length) {
         return false // Если кнопка модификаторов не найдена, выходим
     }
 
-    let api = this;
-    api.aGrid.mods.$ = {
-        button: button
-    };
+    // Добавим куда писать данные для модов
+    api.aGrid.mods.$ = {};
 
     // Список для popover модификаторов - загрузка содержимого из data-атрибута
-    let dropContent = $.get({url: api.aGrid.mods.$.button.data('content'), async: false}).responseText;
+    let dropContent = $.get({url: button.data('content'), async: false}).responseText;
     api.aGrid.mods.$.dropContent = $(dropContent);
 
     // Проверка индикатора модифицирования
@@ -26,38 +27,40 @@ DataTable.Api.register('aGrid.mods', function () {
     // Активация быстрого просмотра для таблицы aGrid
     api.aGrid.mods.list.visible();
 
-    // Клик по кнопке модификаторов
-    api.aGrid.mods.$.button.on('click', function (event) {
-        // Создаем popover для aGrid-mods и выводим в нем список переключателей
-        const popover = api.aGrid.mods.$.button.popover({
-            title: api.aGrid.mods.$.button.attr('title'),
-            content: api.aGrid.mods.$.dropContent,
-            // container: grid.container.parents(),
-            html: true,
-            sanitize: false,
-            offset: [0, 10],
-            customClass: 'aGrid-mods search-options-popover',
-            trigger: 'manual', // Ручное управление отображением
-        });
-
-        popover.popover('toggle'); // Переключение состояния popover
-
-        // Показ popover
-        // grid.button.on('show.bs.popover', function () {});
-
-        // Скрытие popover при событии hidden
-        api.aGrid.mods.$.button.on('hidden.bs.popover', function () {
-            api.aGrid.mods.$.button.popover('dispose') // Уничтожение popover
-        });
-
+    // Создаем popover для aGrid-mods и выводим в нем список переключателей
+    const popover = button.popover({
+        title: button[0].hasAttribute('title') ? button.attr('title') : button.attr('data-bs-original-title'),
+        content: api.aGrid.mods.$.dropContent,
+        // container: grid.container.parents(),
+        html: true,
+        sanitize: false,
+        offset: [0, 10],
+        customClass: 'aGrid-mods search-options-popover',
+        trigger: 'manual', // Ручное управление отображением
     });
+
+    // Клик по кнопке модификаторов
+    button.on('click', function (event) {
+        popover.popover('toggle'); // Переключение состояния popover
+    });
+
+    // Показ popover
+    // button.on('show.bs.popover', function () {});
+
+    // Скрытие popover при событии hidden - Принудительно!
+    button.on('hidden.bs.popover', function () {
+        // console.log('hidden.bs.popover')
+        // button.popover('dispose') // Уничтожение popover
+    });
+
+    // Вернем для общего доступа по api.aGrid.mods.$.button
+    api.aGrid.mods.$.button = button;
 
     // Событие изменения состояния input в модификаторах
     $(document).on('change', '.aGrid-mods li input', function (event) {
         api.aGrid.mods.fn.check(event); // Проверка состояния
         api.aGrid.mods.list.blocked(event); // Обновление блокировки прокрутки
         api.aGrid.mods.list.visible(event); // Обновление быстрого просмотра
-
         // api.aGrid.modsActions(event.currentTarget.name, event);
     });
 
