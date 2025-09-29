@@ -312,24 +312,20 @@ class SpreadsheetSupport extends OfficeSupport
                             $sheet->mergeCells('C' . $currentRow . ':' . 'C' . $currentRow + $mergedCount);
                             $sheet->mergeCells('D' . $currentRow . ':' . 'D' . $currentRow + $mergedCount);
                             $sheet->mergeCells('E' . $currentRow . ':' . 'E' . $currentRow + $mergedCount);
-                            $sheet->mergeCells('I' . $currentRow . ':' . 'I' . $currentRow + $mergedCount);
-                            $sheet->mergeCells('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount);
-                            $sheet->mergeCells('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount);
                             $sheet->mergeCells('L' . $currentRow . ':' . 'L' . $currentRow + $mergedCount);
                             $sheet->mergeCells('M' . $currentRow . ':' . 'M' . $currentRow + $mergedCount);
-                            $sheet->mergeCells('N' . $currentRow . ':' . 'N' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount);
+                            $sheet->mergeCells('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount);
 
                             $sheet->getStyle('A' . $currentRow . ':' . 'A' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('B' . $currentRow . ':' . 'B' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('C' . $currentRow . ':' . 'C' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('D' . $currentRow . ':' . 'D' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('E' . $currentRow . ':' . 'E' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-                            $sheet->getStyle('I' . $currentRow . ':' . 'I' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-                            $sheet->getStyle('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-                            $sheet->getStyle('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('L' . $currentRow . ':' . 'L' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                             $sheet->getStyle('M' . $currentRow . ':' . 'M' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
-                            $sheet->getStyle('N' . $currentRow . ':' . 'N' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('J' . $currentRow . ':' . 'J' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+                            $sheet->getStyle('K' . $currentRow . ':' . 'K' . $currentRow + $mergedCount)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
                         }
                         $currentRow += $mergedCount;
                         break;
