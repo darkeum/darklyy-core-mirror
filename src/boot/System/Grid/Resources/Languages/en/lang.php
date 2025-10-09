@@ -243,5 +243,34 @@ return
                 ],
                 "button" => "Create"
             ]
+        ],
+
+        // Колонки
+        'cols' => [
+            'code' => 'Code',
+            'numb' => 'No.',
+            'title' => 'Title',
+            'heading' => 'Heading',
+
+            'uid' => 'Responsible',
+            'org' => 'Organization',
+
+            'all' => 'All',
+            'null' => 'Missing',
+            'not_specified' => 'Not specified',
+
+            'created_at' => 'Creation date',
+            'created_at_cut' => 'Created',
+            'updated_at' => 'Modification date',
+            'updated_at_cut' => 'Modified',
+
+            'category' => 'Category',
+            'comment' => 'Comment',
+            'status' => 'Status',
+
+            'action' => 'Actions',
+            'show' => 'View',
+            'export.excel' => 'Save as Excel',
+            'trash.show' => 'Show deleted',
         ]
     ];
