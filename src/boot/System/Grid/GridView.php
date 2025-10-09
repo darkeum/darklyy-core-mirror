@@ -94,7 +94,7 @@ class GridView
 
         //dd($result->pluck($col, $col)->toJson(JSON_UNESCAPED_UNICODE));
         $result = $result->pluck($col, $col);
-        //$result->prepend(__('grid.all'), "__ALL_SELECT_GRID");
+        //$result->prepend(__('grid::lang.cols.all'), "__ALL_SELECT_GRID");
         //dd($result);
 
         return $result->toArray();

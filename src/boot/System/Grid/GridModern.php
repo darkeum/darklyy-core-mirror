@@ -299,7 +299,7 @@ abstract class GridModern
 
         // Задание первого значения в select2 для Grid
         if (is_bool($first) and $first) {
-            $result->prepend(__('grid.all'), "__ALL_SELECT_GRID");
+            $result->prepend(__('grid::lang.cols.all'), "__ALL_SELECT_GRID");
         }
 
         //
