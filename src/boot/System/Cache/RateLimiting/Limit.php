@@ -1,44 +1,59 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2025 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Cache\RateLimiting;
 
 class Limit
 {
-/**
-     * The rate limit signature key.
+    /**
+     * Ключ ограничения лимита.
      *
      * @var mixed
      */
     public $key;
 
     /**
-     * The maximum number of attempts allowed within the given number of seconds.
+     * Максимальное количество попыток, разрешенное в течение заданного количества секунд.
      *
      * @var int
      */
     public $maxAttempts;
 
     /**
-     * The number of seconds until the rate limit is reset.
+     * Количество секунд до сброса ограничения скорости.
      *
      * @var int
      */
     public $decaySeconds;
 
     /**
-     * The response generator callback.
+     * Обратный вызов after используется для определения того, следует ли сработать ограничитель.
+     *
+     * @var ?callable
+     */
+    public $afterCallback = null;
+
+    /**
+     * Обратный вызов генератора ответов.
      *
      * @var callable
      */
     public $responseCallback;
 
     /**
-     * Create a new limit instance.
+     * Создайте новый экземпляр лимита.
      *
      * @param  mixed  $key
      * @param  int  $maxAttempts
      * @param  int  $decaySeconds
-     * @return void
      */
     public function __construct($key = '', int $maxAttempts = 60, int $decaySeconds = 60)
     {
@@ -48,7 +63,7 @@ class Limit
     }
 
     /**
-     * Create a new rate limit.
+     * Создание нового лимита в секундах
      *
      * @param  int  $maxAttempts
      * @param  int  $decaySeconds
@@ -60,7 +75,7 @@ class Limit
     }
 
     /**
-     * Create a new rate limit.
+     * Создание нового лимита в минутах
      *
      * @param  int  $maxAttempts
      * @param  int  $decayMinutes
@@ -72,7 +87,7 @@ class Limit
     }
 
     /**
-     * Create a new rate limit using minutes as decay time.
+     * Создание нового лимита, используя минуты в качестве времени затухания.
      *
      * @param  int  $decayMinutes
      * @param  int  $maxAttempts
@@ -84,7 +99,7 @@ class Limit
     }
 
     /**
-     * Create a new rate limit using hours as decay time.
+     *  Создание нового лимита в часах
      *
      * @param  int  $maxAttempts
      * @param  int  $decayHours
@@ -96,7 +111,7 @@ class Limit
     }
 
     /**
-     * Create a new rate limit using days as decay time.
+     *  Создание нового лимита, используя часы в качестве времени затухания.
      *
      * @param  int  $maxAttempts
      * @param  int  $decayDays
@@ -108,7 +123,7 @@ class Limit
     }
 
     /**
-     * Create a new unlimited rate limit.
+     * Создайте новый безлимитный лимит скорости.
      *
      * @return static
      */
@@ -118,7 +133,7 @@ class Limit
     }
 
     /**
-     * Set the key of the rate limit.
+     * Установите ключ ограничения скорости.
      *
      * @param  mixed  $key
      * @return $this
@@ -131,7 +146,20 @@ class Limit
     }
 
     /**
-     * Set the callback that should generate the response when the limit is exceeded.
+     * Установите обратный вызов, чтобы определить, следует ли сработать ограничитель.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function after($callback)
+    {
+        $this->afterCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Установите обратный вызов, который должен генерировать ответ при превышении лимита..
      *
      * @param  callable  $callback
      * @return $this
@@ -144,7 +172,7 @@ class Limit
     }
 
     /**
-     * Get a potential fallback key for the limit.
+     * Получите потенциальный запасной ключ для лимита.
      *
      * @return string
      */
