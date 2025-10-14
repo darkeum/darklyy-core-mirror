@@ -229,7 +229,7 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
 
     // Параметры по умолчанию для select2
     let $default = {
-        text: 'Нет результатов',
+        text: _OPTIONS.select2.noresults,
         width: '100%',
         sorter: function (data) {
             // Сортировка с приоритетом для элемента "Все"
