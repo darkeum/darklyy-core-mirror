@@ -117,10 +117,12 @@ abstract class Repository
 
             $callback = array($this, Utils::uscore2camel('searchOp', $c['search_op']));
 
+            // ...
             if (!is_callable($callback)) {
                 throw new ExceptionGrid('Search operation '.$c['search_op'].' is not defined');
             }
 
+            // ...
             $wh = call_user_func($callback, $c, $val);
             if ($wh) {
                 $this->where[] = $wh;
@@ -180,6 +182,10 @@ abstract class Repository
      */
     protected function searchOpEqual($c, $val)
     {
+        if ($val == 'GRID-SELECT-ALL') {
+            $val = true;
+        }
+
         return ['column' => $c['db'], 'operator' => '=', 'value' => $val, 'field' => $c['field'] ?? null];
     }
 
@@ -214,6 +220,50 @@ abstract class Repository
         $op = 'LIKE';
 
         return ['column' => $c['db'], 'operator' => $op, 'value' => '%'.$val.'%', 'field' => $c['field'] ?? null];
+    }
+
+    /**
+     * (Output) Look for similar text
+     *
+     * @param $c  - column
+     * @param $val  - value
+     * @return string
+     */
+    protected function searchOpLikeJson($c, $val)
+    {
+        #Escape wildcards
+        $val = addcslashes($val, '%_');
+        $op = 'LIKE';
+
+        $result = ['column' => $c['db'], 'operator' => $op, 'value' => '%"'.$val.'"%', 'field' => $c['field'] ?? null];
+
+        if ($val == 'GRID-SELECT-ALL') {
+            $result['value'] = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * (Output) Look for similar text
+     *
+     * @param $c  - column
+     * @param $val  - value
+     * @return string
+     */
+    protected function searchOpJson($c, $val)
+    {
+        #Escape wildcards
+        //$val = addcslashes($val, '%_');
+        //$op = 'LIKE';
+        //
+        //$result = ['column' => $c['db'], 'operator' => $op, 'value' => '%"'.$val.'"%', 'field' => $c['field'] ?? null];
+        //
+        //if ($val == 'GRID-SELECT-ALL') {
+        //    $result['value'] = true;
+        //}
+        //
+        //return $result;
     }
 
     /**
@@ -452,7 +502,7 @@ abstract class Repository
         }
         $db->select($fields);
 
-        //установка фильтров
+        // Установка фильтров
         if (!empty($this->where)) {
 
             foreach ($this->where as $k => $v) {
@@ -460,7 +510,7 @@ abstract class Repository
                     $v['column'] = $v['field'];
                 }
                 // dump($v);
-                if ($v['value'] != "GRIDSELECT-ALL") {
+                if ($v['value'] != "GRID-SELECT-ALL") {
                     switch (mb_strtolower($v["operator"])) {
                         default:
                             $db->where($v['column'], $v['operator'], $v['value']);
@@ -610,6 +660,7 @@ abstract class Repository
         if ($c['replace']) {
             $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
         }
+
         // WIP
         //if (is_array($c['replace'])) {
         //    $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
