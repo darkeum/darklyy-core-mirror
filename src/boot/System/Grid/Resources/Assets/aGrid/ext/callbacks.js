@@ -176,7 +176,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                 }
 
                                 option.attr({
-                                    'value': `"${index}"`
+                                    'value': index
                                 }).html(item);
                                 select_options.push(option);
 
