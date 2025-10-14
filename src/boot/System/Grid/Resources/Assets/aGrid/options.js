@@ -11,6 +11,7 @@ export let _OPTIONS = {
     dropContent: false, // Список для popover модификаторов (инициализируется позже)
     select2: {
         default: {},
+        noresults: 'Нет результатов',
         drop: {
             all: 'GRID-SELECT-ALL', // Индикатор пункта "Все" в select2
             custom: 'GRID-SELECT-CUSTOM', // Индикатор пункта "Custom" в select2
