@@ -12,9 +12,9 @@ export let _OPTIONS = {
     select2: {
         default: {},
         drop: {
-            all: '__ALL_SELECT_GRID', // Индикатор пункта "Все" в select2
-            custom: '__CUSTOM_SELECT_GRID', // Индикатор пункта "Custom" в select2
-            ajax: '__AJAX_SELECT_GRID', // Индикатор пункта для AJAX-загрузки в select2
+            all: 'GRIDSELECT-ALL', // Индикатор пункта "Все" в select2
+            custom: 'GRIDSELECT-CUSTOM', // Индикатор пункта "Custom" в select2
+            ajax: 'GRIDSELECT-AJAX', // Индикатор пункта для AJAX-загрузки в select2
         },
     }
 };

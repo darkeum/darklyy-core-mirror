@@ -460,7 +460,7 @@ abstract class Repository
                     $v['column'] = $v['field'];
                 }
                 // dump($v);
-                if ($v['value'] != "__ALL_SELECT_GRID") {
+                if ($v['value'] != "GRIDSELECT-ALL") {
                     switch (mb_strtolower($v["operator"])) {
                         default:
                             $db->where($v['column'], $v['operator'], $v['value']);
