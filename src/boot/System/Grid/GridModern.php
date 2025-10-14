@@ -294,17 +294,17 @@ abstract class GridModern
             //dd(get_declared_classes());
             //dd(class_exists($data));
             $data = route('grid.ui.select2', ['model' => $data, 'col' => $column]);
-            $result->prepend($data, "GRIDSELECT-AJAX");
+            $result->prepend($data, "GRID-SELECT-AJAX");
         }
 
         // Задание первого значения в select2 для Grid
         if (is_bool($first) and $first) {
-            $result->prepend(__('grid::lang.cols.all'), "GRIDSELECT-ALL");
+            $result->prepend(__('grid::lang.cols.all'), "GRID-SELECT-ALL");
         }
 
         //
         if (is_string($first)) {
-            $result->prepend($first, "GRIDSELECT-ALL");
+            $result->prepend($first, "GRID-SELECT-ALL");
         }
 
         // Если массив
@@ -313,7 +313,7 @@ abstract class GridModern
 
             $custom = $first->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
             //$custom = $first->toJson();
-            $result->prepend($custom, "GRIDSELECT-CUSTOM");
+            $result->prepend($custom, "GRID-SELECT-CUSTOM");
             $result->prepend($first->take(1)->keys()->first(), $first->take(1)->values()->first());
         }
 
