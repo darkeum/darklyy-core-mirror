@@ -234,8 +234,8 @@ DataTable.Api.register('aGrid.ui.select2', function (unit, options = {}) {
         sorter: function (data) {
             // Сортировка с приоритетом для элемента "Все"
             return data.sort(function (a, b) {
-                if (a.id === _OPTIONS.select2.drop_all) return -1;
-                if (b.id === _OPTIONS.select2.drop_all) return 1;
+                if (a.id === _OPTIONS.select2.drop.all) return -1;
+                if (b.id === _OPTIONS.select2.drop.all) return 1;
                 return a.text.localeCompare(b.text);
             });
         },
