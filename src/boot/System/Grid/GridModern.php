@@ -11,23 +11,20 @@
 
 namespace Boot\System\Grid;
 
-use Boot\Support\Str;
-use Boot\System\Media\Downloaders\DefaultDownloader;
-use Exception;
 use Boot\Support\Facades\DB;
+use Boot\Support\Str;
+use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Grid\Data\Raw;
-use Boot\System\Grid\Data\Value;
-use Boot\System\Grid\Utils\Utils;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
-use Boot\System\Grid\Traits\RenderTrait;
 use Boot\System\Grid\Exception\ExceptionGrid;
-use Boot\System\Grid\Repositories\Repository;
 use Boot\System\Grid\Repositories\DBRepository;
 use Boot\System\Grid\Repositories\ModelRepository;
 use Boot\System\Grid\Repositories\QueryRepository;
-use Boot\System\Database\Model\Builder as ModelBuilder;
-use ReflectionClass;
+use Boot\System\Grid\Repositories\Repository;
+use Boot\System\Grid\Traits\RenderTrait;
+use Boot\System\Grid\Utils\Utils;
+use Exception;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 
 abstract class GridModern
 {
@@ -396,25 +393,38 @@ abstract class GridModern
     #
     protected function getOrg($table, $column = 'org')
     {
-        $rows = [];
-        $org = DB::table($table)->leftJoin('org', 'org.id', '=', $table.'.'.$column)->leftJoin('organizations',
-            'organizations.id', '=', 'org.oid')->distinct()->select("organizations.*", "org.id as org_id")->get();
-        foreach ($org as $k => $v) {
-            $rows[$v->org_id] = $v->name;
-        }
-        return $rows;
+        $list = DB::table($table)->leftJoin('org', 'org.id', '=', $table.'.'.$column)
+            ->leftJoin('organizations',
+                'organizations.id', '=', 'org.oid')
+            ->distinct()
+            ->select("organizations.*", "org.id as org_id")
+            ->pluck('name', 'org_id')
+            ->filter()
+            //->map(function ($item){
+            //    return trim($item);
+            //})
+            ->toArray();
+
+        return $list;
     }
 
-    #
+    # Получаем производителей
     protected function getManufacture($table, $column)
     {
-        $rows = [];
-        $org = DB::table($table)->leftJoin('catalog_manufacture as cm', 'cm.id', '=',
-            $table.'.'.$column)->distinct()->select("cm.*")->orderBy("cm.name")->get();
-        foreach ($org as $k => $v) {
-            $rows[$v->id] = $v->name;
-        }
-        return $rows;
+        $list = DB::table($table)
+            ->leftJoin('catalog_manufacture as cm', 'cm.id', '=',
+                $table.'.'.$column)
+            ->distinct()
+            ->select("cm.*")
+            ->orderBy("cm.name")
+            ->pluck('name', 'id')
+            ->filter()
+            ->map(function ($item){
+                return trim($item);
+            })
+            ->toArray();
+
+        return $list;
     }
 
     # Получаем список категорий
@@ -442,10 +452,12 @@ abstract class GridModern
     {
         $rows = [];
         $array = DB::table('categories')->get();
+
         foreach ($array as $item) {
             $cats_arr[$item->id] = $item->name;
         }
         $rows[''] = 'Без категории';
+
         foreach ($cats_arr as $cid => $name) {
             $id = $cid;
             if (!empty($func_id) && is_callable($func_id)) {
@@ -466,7 +478,7 @@ abstract class GridModern
      */
     protected function getUid($table = null, $column = 'uid')
     {
-        $rows = array();
+        $rows = [];
         $rows["0"] = "Гость";
         if (!empty($table)) {
             $users = DB::table($table)->leftJoin('users', 'users.id', '=',
