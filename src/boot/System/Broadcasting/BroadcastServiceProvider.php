@@ -12,8 +12,8 @@
 namespace Boot\System\Broadcasting;
 
 use Boot\System\Broadcasting\BroadcastManager;
-use Illuminate\Contracts\Broadcasting\Broadcaster as BroadcasterContract;
-use Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactory;
+use Boot\Contracts\Broadcasting\Broadcaster as BroadcasterContract;
+use Boot\Contracts\Broadcasting\Factory as BroadcastingFactory;
 use Boot\Contracts\Support\DeferrableProvider;
 use Boot\Support\ServiceProvider;
 

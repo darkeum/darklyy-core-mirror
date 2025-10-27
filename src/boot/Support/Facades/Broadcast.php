@@ -2,7 +2,7 @@
 
 namespace Boot\Support\Facades;
 
-use Illuminate\Contracts\Broadcasting\Factory as BroadcastingFactoryContract;
+use Boot\Contracts\Broadcasting\Factory as BroadcastingFactoryContract;
 
 /**
  * @method static void routes(array|null $attributes = null)
