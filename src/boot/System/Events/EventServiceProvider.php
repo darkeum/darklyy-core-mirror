@@ -3,7 +3,7 @@
 namespace Boot\System\Events;
 
 use Boot\Support\ServiceProvider;
-use Illuminate\Events\Dispatcher;
+use Boot\System\Events\Dispatcher;
 use Illuminate\Contracts\Queue\Factory as QueueFactoryContract;
 
 class EventServiceProvider extends ServiceProvider
