@@ -63,7 +63,7 @@ class TelegramApiService extends ApiController
                             try {
                                 Mail::to($user->email)->send(new \Boot\Mails\TelegramRegister($userToken->veritification_code));
                             } catch (\Throwable $th) {
-                               
+
                             }
                             // Mail::to($user->email)->send(new \Boot\Mails\TelegramRegister($userToken->veritification_code));
                             $userToken->update([
@@ -119,11 +119,7 @@ class TelegramApiService extends ApiController
                     ]);
                 }
             } else {
-                $telegram->addCommands([
-                    \Telegram\Bot\Commands\HelpCommand::class,
-                    \Storage\Bots\Telegram\ViewTransferCommand::class,
-                    \Boot\System\Bots\Telegram\Commands\ConfirmCommand::class,
-                ]);
+                $telegram->addCommands(config('bots.telegram.commands', []));
                 $telegram->commandsHandler(true);
                 if ($updates->detectType() == 'callback_query') {
                     $callbackData = $updates->callbackQuery->data;
