@@ -92,7 +92,12 @@ class FrameworkExtension extends AbstractExtension implements GlobalsInterface
             echo Enqueue::enqueueFile($matches);
         });
 
-        $router = new TwigFunction('router', function ($name, $params = null) {            
+        $enqueue = new TwigFunction('env', function ($key, $default = null) {
+
+            echo env($key, $default);
+        });
+
+        $router = new TwigFunction('router', function ($name, $params = null) {
             if(is_string($params)) {
                 $params = ['id' => $params];
             }
@@ -117,19 +122,19 @@ class FrameworkExtension extends AbstractExtension implements GlobalsInterface
             // $flag = false;
             // foreach ($nameArr as $value) {
             //    if($currentRouterName == $value) {
-            //       $flag = true;  
+            //       $flag = true;
             //       break;
             //    }
-            // } 
+            // }
             // if(empty($isTrue))    {
             //     echo $flag;
             // }  else {
             //     if($flag) {
-            //        echo $isTrue; 
+            //        echo $isTrue;
             //     }
-            // }   
+            // }
             echo '';
-           
+
         });
 
         $lang = new TwigFunction('lang', function ($key) {
