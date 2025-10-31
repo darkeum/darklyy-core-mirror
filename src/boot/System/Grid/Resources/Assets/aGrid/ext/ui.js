@@ -16,6 +16,7 @@ DataTable.Api.register('aGrid.ui', function () {
 // Перезагрузка всех Bootstrap элементов в контейнере aGrid
 DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
 
+    // Удалить лишние popover в контейнере
     $('.aGrid-container .popover.render-popover').remove();
 
     // Инициализация Bootstrap tooltips во всем контейнере aGrid
