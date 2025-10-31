@@ -131,6 +131,7 @@ https://app.weeek.net/ws/288286/document/12
                             <button class="btn btn-sm btn-outline-secondary" type="submit"
                                     title="{{ $actions_cfg[$key][0] }}"
                                     data-bs-toggle="tooltip"
+                                    data-bs-container=".aGrid-container"
                                     @if($tooltip ?? false) data-bs-placement="{{ $tooltip }}" @endif
                             >
                                 <i class="feather-trash"></i>
@@ -143,6 +144,7 @@ https://app.weeek.net/ws/288286/document/12
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions[$key]['text'] ?? '' }}"
                                data-bs-toggle="tooltip"
+                               data-bs-container=".aGrid-container"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions[$key]['icon'] }}"></i>
@@ -176,6 +178,7 @@ https://app.weeek.net/ws/288286/document/12
                                class="btn btn-sm btn-outline-secondary"
                                title="{{ $actions_cfg[$key][0] }}"
                                data-bs-toggle="tooltip"
+                               data-bs-container=".aGrid-container"
                                data-bs-placement="{{ ($tooltip ?? false) ? $tooltip : 'left' }}"
                             >
                                 <i class="feather-{{ $actions_cfg[$key][1] }}"></i>

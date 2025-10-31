@@ -5,6 +5,7 @@
         {{--title="Модификаторы таблицы"--}}
         data-content="{{ route('grid.view.mods') }}"
         data-bs-original-title="Модификаторы таблицы"
+        data-bs-container=".aGrid-container"
         {{--data-bs-toggle="tooltip"--}}
         {{--data-bs-placement="left"--}}
 >

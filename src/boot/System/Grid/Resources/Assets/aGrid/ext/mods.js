@@ -31,10 +31,10 @@ DataTable.Api.register('aGrid.mods', function () {
     const popover = button.popover({
         title: button[0].hasAttribute('title') ? button.attr('title') : button.attr('data-bs-original-title'),
         content: api.aGrid.mods.$.dropContent,
-        // container: grid.container.parents(),
+        container: '.aGrid-container',
         html: true,
         sanitize: false,
-        offset: [0, 10],
+        offset: [0, 34],
         customClass: 'aGrid-mods search-options-popover',
         trigger: 'manual', // Ручное управление отображением
     });
@@ -142,8 +142,13 @@ DataTable.Api.register('aGrid.mods.list.visible', function (event = false) {
     let selector = 'tr td:last-child';
     $('tbody')
         .on('mouseenter', selector, function (event) {
+
             // Показать popover при наведении
             if (modules.get(module)?.visible) {
+                // Скрыть tooltip'ы у дочерних элементов через Bootstrap API
+                $(this).find("[data-bs-toggle='tooltip']").tooltip('hide');
+
+                //
                 $(this).popover('show');
             }
         })
@@ -205,6 +210,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
     const popover = $(tr).children('td:last-child').popover({
         title: 'Карточка строки #' + r_index,
         content: content,
+        container: '.aGrid-container',
         html: true,
         sanitize: false,
         customClass: 'qq-view',

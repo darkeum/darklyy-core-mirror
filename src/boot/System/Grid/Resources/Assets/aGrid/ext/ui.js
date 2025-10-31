@@ -15,6 +15,9 @@ DataTable.Api.register('aGrid.ui', function () {
 // ### Bootstrap утилиты
 // Перезагрузка всех Bootstrap элементов в контейнере aGrid
 DataTable.Api.register('aGrid.ui.bootstrap.reload', function () {
+
+    $('.aGrid-container .popover.render-popover').remove();
+
     // Инициализация Bootstrap tooltips во всем контейнере aGrid
     $('.aGrid-container [data-bs-toggle="tooltip"]').tooltip();
 

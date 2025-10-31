@@ -162,6 +162,7 @@ DataTable.Api.register('aGrid.fn.render', function (data, type, row, meta) {
                     'data-bs-custom-class': 'render-popover',
                     'data-bs-placement': configs.popover,
                     'data-bs-content': popover_data,
+                    'data-bs-container': '.aGrid-container',
                 };
             }
 
