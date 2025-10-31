@@ -142,13 +142,8 @@ DataTable.Api.register('aGrid.mods.list.visible', function (event = false) {
     let selector = 'tr td:last-child';
     $('tbody')
         .on('mouseenter', selector, function (event) {
-
             // Показать popover при наведении
             if (modules.get(module)?.visible) {
-                // Скрыть tooltip'ы у дочерних элементов через Bootstrap API
-                $(this).find("[data-bs-toggle='tooltip']").tooltip('hide');
-
-                //
                 $(this).popover('show');
             }
         })
