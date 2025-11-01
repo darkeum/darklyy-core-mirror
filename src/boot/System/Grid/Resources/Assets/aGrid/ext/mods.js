@@ -206,6 +206,7 @@ DataTable.Api.register('aGrid.mods.list.visible.actions.quickRow', function (tr)
         title: 'Карточка строки #' + r_index,
         content: content,
         container: '.aGrid-container',
+        offset: [0, 20],
         html: true,
         sanitize: false,
         customClass: 'qq-view',
