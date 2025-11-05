@@ -363,10 +363,10 @@ class Filesystem extends LaravelFilesystem
      * @param  bool  $hidden
      * @return \Symfony\Component\Finder\SplFileInfo[]
      */
-    public function files($directory, $hidden = false)
+    public function files($directory, $hidden = false, array|string|int $depth = 0)
     {
         return iterator_to_array(
-            Finder::create()->files()->ignoreDotFiles(!$hidden)->in($directory)->depth(0)->sortByName(),
+            Finder::create()->files()->ignoreDotFiles(! $hidden)->in($directory)->depth($depth)->sortByName(),
             false
         );
     }
@@ -380,10 +380,7 @@ class Filesystem extends LaravelFilesystem
      */
     public function allFiles($directory, $hidden = false)
     {
-        return iterator_to_array(
-            Finder::create()->files()->ignoreDotFiles(!$hidden)->in($directory)->sortByName(),
-            false
-        );
+        return $this->files($directory, $hidden, []);
     }
 
     /**
@@ -392,16 +389,17 @@ class Filesystem extends LaravelFilesystem
      * @param  string  $directory
      * @return array
      */
-    public function directories($directory)
+    public function directories($directory, array|string|int $depth = 0)
     {
         $directories = [];
 
-        foreach (Finder::create()->in($directory)->directories()->depth(0)->sortByName() as $dir) {
+        foreach (Finder::create()->in($directory)->directories()->depth($depth)->sortByName() as $dir) {
             $directories[] = $dir->getPathname();
         }
 
         return $directories;
     }
+
 
     /**
      * Create a directory.
