@@ -50,10 +50,17 @@ class Module
      * @param  int|null $id
      * @return string
      */
-    public static function getModuleRoute(string $module, string $type = 'show', ?int $id = null): string
+    public static function getRoute(string $module, string $type = 'show', ?int $id = null): string
     {
         $config = Config::get('module');
-        if (isset($config[$module]['routes'][$type])) {
+        if (isset($config[$module])) {
+            if (! in_array($type, ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'])) {
+                throw new \Exception('Недопустимый маршрут модуля');
+            }
+            if (! isset($config[$module]['routes'][$type])) {
+                throw new \Exception('Маршрут "' . $type . '" у модуля "' . $module . '" не зарегистрирован');
+            }
+
             if (Route::has($config[$module]['routes'][$type])) {
                 if (in_array($type, ['show', 'edit', 'update', 'destroy'])) {
                     return route($config[$module]['routes'][$type], ['id' => $id]);
@@ -62,9 +69,9 @@ class Module
                 }
             } else {
                 if (in_array($type, ['show', 'edit', 'update', 'destroy'])) {
-                    return $config[$module]['routes'][$type] . '/' . $id;
+                    return config('app.url') . '/' . $config[$module]['routes'][$type] . '/' . $id;
                 } else {
-                    return $config[$module]['routes'][$type];
+                    return config('app.url') . '/' . $config[$module]['routes'][$type];
                 }
             }
         } else {
@@ -73,84 +80,84 @@ class Module
     }
 
     /**
-     * Получение "show" маршрута модуля
+     * Получение "show" марщрута модуля
      *
      * @param  string $module
      * @param  int $id
      * @return string
      */
-    public static function getModuleShowRoute(string $module, int $id): string
+    public static function getRouteShow(string $module, int $id): string
     {
-        return self::getModuleRoute($module, 'show', $id);
+        return self::getRoute($module, 'show', $id);
     }
 
     /**
-     * Получение "edit" маршрута модуля
+     * Получение "edit" марщрута модуля
      *
      * @param  string $module
      * @param  int $id
      * @return string
      */
-    public static function getModuleEditRoute(string $module, int $id): string
+    public static function getRouteEdit(string $module, int $id): string
     {
-        return self::getModuleRoute($module, 'edit', $id);
+        return self::getRoute($module, 'edit', $id);
     }
 
     /**
-     * Получение "update" маршрута модуля
+     * Получение "update" марщрута модуля
      *
      * @param  string $module
      * @param  int $id
      * @return string
      */
-    public static function getModuleUpdateRoute(string $module, int $id): string
+    public static function getRouteUpdate(string $module, int $id): string
     {
-        return self::getModuleRoute($module, 'update', $id);
+        return self::getRoute($module, 'update', $id);
     }
 
     /**
-     * Получение "destroy" маршрута модуля
+     * Получение "destroy" марщрута модуля
      *
      * @param  string $module
      * @param  int $id
      * @return string
      */
-    public static function getModuleDestroyRoute(string $module, int $id): string
+    public static function getRouteDestroy(string $module, int $id): string
     {
-        return self::getModuleRoute($module, 'destroy', $id);
+        return self::getRoute($module, 'destroy', $id);
     }
 
     /**
-     * Получение "index" маршрута модуля
+     * Получение "index" марщрута модуля
      *
      * @param  string $module
      * @return string
      */
-    public static function getModuleIndexRoute(string $module): string
+    public static function getRouteIndex(string $module): string
     {
-        return self::getModuleRoute($module, 'index');
+        return self::getRoute($module, 'index');
     }
 
     /**
-     * Получение "create" маршрута модуля
+     * Получение "create" марщрута модуля
      *
      * @param  string $module
      * @return string
      */
-    public static function getModuleCreateRoute(string $module): string
+    public static function getRouteCreate(string $module): string
     {
-        return self::getModuleRoute($module, 'create');
+        return self::getRoute($module, 'create');
     }
 
     /**
-     * Получение "store" маршрута модуля
+     * Получение "store" марщрута модуля
      *
      * @param  string $module
      * @return string
      */
-    public static function getModuleStoreRoute(string $module): string
+    public static function getRouteStore(string $module): string
     {
-        return self::getModuleRoute($module, 'store');
+        return self::getRoute($module, 'store');
     }
 
     /**
