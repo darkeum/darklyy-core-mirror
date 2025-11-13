@@ -80,7 +80,7 @@ class Module
     }
 
     /**
-     * Получение "show" марщрута модуля
+     * Получение "show" маршрута модуля
      *
      * @param  string $module
      * @param  int $id
@@ -92,7 +92,7 @@ class Module
     }
 
     /**
-     * Получение "edit" марщрута модуля
+     * Получение "edit" маршрута модуля
      *
      * @param  string $module
      * @param  int $id
@@ -104,7 +104,7 @@ class Module
     }
 
     /**
-     * Получение "update" марщрута модуля
+     * Получение "update" маршрута модуля
      *
      * @param  string $module
      * @param  int $id
@@ -116,7 +116,7 @@ class Module
     }
 
     /**
-     * Получение "destroy" марщрута модуля
+     * Получение "destroy" маршрута модуля
      *
      * @param  string $module
      * @param  int $id
@@ -128,7 +128,7 @@ class Module
     }
 
     /**
-     * Получение "index" марщрута модуля
+     * Получение "index" маршрута модуля
      *
      * @param  string $module
      * @return string
@@ -139,7 +139,7 @@ class Module
     }
 
     /**
-     * Получение "create" марщрута модуля
+     * Получение "create" маршрута модуля
      *
      * @param  string $module
      * @return string
@@ -150,7 +150,7 @@ class Module
     }
 
     /**
-     * Получение "store" марщрута модуля
+     * Получение "store" маршрута модуля
      *
      * @param  string $module
      * @return string
@@ -221,7 +221,7 @@ class Module
      *
      * @param  string   $module Имя модуля
      * @param  int      $org ID организации
-     * @return string   Возвращет префикс модуля с учетом организации
+     * @return string   Возвращает префикс модуля с учетом организации
      */
     public static function prefix($module, $org)
     {
@@ -234,7 +234,7 @@ class Module
      * @param  string   $module Имя модуля
      * @param  int      $id ID записи
      * @param  int      $org ID организации
-     * @return string   Возвращет префикс модуля с учетом организации и id
+     * @return string   Возвращает префикс модуля с учетом организации и id
      */
     public static function prefixWithId($module, $id, $org)
     {
@@ -247,7 +247,7 @@ class Module
      * @param  string   $module Имя модуля
      * @param  int      $org ID организации
      * @param  string   $date Дата новой записи
-     * @return array    Возвращет массив с счетчиком, префиксом и полным номером документа с учетом указанной даты
+     * @return array    Возвращает массив с счетчиком, префиксом и полным номером документа с учетом указанной даты
      */
     public static function numb($module, $org, $date)
     {
