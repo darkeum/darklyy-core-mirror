@@ -12,14 +12,15 @@
 
 namespace Boot\Support;
 
-use \Organizations\Model\Org;
 use Boot\Support\Facades\Cache;
+use Boot\Support\Facades\Route;
 use \Boot\Support\Facades\Config;
+use \Organizations\Model\Org;
 
 class Module
 {
     /**
-     * Получение данных модуля из конфигурации 
+     * Получение данных модуля из конфигурации
      *
      * @param  string  $module Имя модуля
      * @return array   Массив с данными модуля
@@ -30,15 +31,126 @@ class Module
         if (isset($config[$module])) {
             $mc = $config[$module];
             return [
-                'prefix' => $mc['prefix'],
-                'database' => $mc['database'],
-                'model' => $mc['model'] ?? null,
+                'prefix'    => $mc['prefix'],
+                'database'  => $mc['database'],
+                'model'     => $mc['model'] ?? null,
                 'datefield' => $mc['datefield'] ?? 'date',
-                'datetype' => $mc['datetype'] ?? 'datetime',
+                'datetype'  => $mc['datetype'] ?? 'datetime',
             ];
         } else {
             throw new \Exception('Модуль не зарегистрирован');
         }
+    }
+
+    /**
+     * Получение заданного маршрута модуля
+     *
+     * @param  string $module
+     * @param  string $type
+     * @param  int|null $id
+     * @return string
+     */
+    public static function getModuleRoute(string $module, string $type = 'show', ?int $id = null): string
+    {
+        $config = Config::get('module');
+        if (isset($config[$module]['routes'][$type])) {
+            if (Route::has($config[$module]['routes'][$type])) {
+                if (in_array($type, ['show', 'edit', 'update', 'destroy'])) {
+                    return route($config[$module]['routes'][$type], ['id' => $id]);
+                } else {
+                    return route($config[$module]['routes'][$type]);
+                }
+            } else {
+                if (in_array($type, ['show', 'edit', 'update', 'destroy'])) {
+                    return $config[$module]['routes'][$type] . '/' . $id;
+                } else {
+                    return $config[$module]['routes'][$type];
+                }
+            }
+        } else {
+            throw new \Exception('Модуль не зарегистрирован');
+        }
+    }
+
+    /**
+     * Получение "show" маршрута модуля
+     *
+     * @param  string $module
+     * @param  int $id
+     * @return string
+     */
+    public static function getModuleShowRoute(string $module, int $id): string
+    {
+        return self::getModuleRoute($module, 'show', $id);
+    }
+
+    /**
+     * Получение "edit" маршрута модуля
+     *
+     * @param  string $module
+     * @param  int $id
+     * @return string
+     */
+    public static function getModuleEditRoute(string $module, int $id): string
+    {
+        return self::getModuleRoute($module, 'edit', $id);
+    }
+
+    /**
+     * Получение "update" маршрута модуля
+     *
+     * @param  string $module
+     * @param  int $id
+     * @return string
+     */
+    public static function getModuleUpdateRoute(string $module, int $id): string
+    {
+        return self::getModuleRoute($module, 'update', $id);
+    }
+
+    /**
+     * Получение "destroy" маршрута модуля
+     *
+     * @param  string $module
+     * @param  int $id
+     * @return string
+     */
+    public static function getModuleDestroyRoute(string $module, int $id): string
+    {
+        return self::getModuleRoute($module, 'destroy', $id);
+    }
+
+    /**
+     * Получение "index" маршрута модуля
+     *
+     * @param  string $module
+     * @return string
+     */
+    public static function getModuleIndexRoute(string $module): string
+    {
+        return self::getModuleRoute($module, 'index');
+    }
+
+    /**
+     * Получение "create" маршрута модуля
+     *
+     * @param  string $module
+     * @return string
+     */
+    public static function getModuleCreateRoute(string $module): string
+    {
+        return self::getModuleRoute($module, 'create');
+    }
+
+    /**
+     * Получение "store" маршрута модуля
+     *
+     * @param  string $module
+     * @return string
+     */
+    public static function getModuleStoreRoute(string $module): string
+    {
+        return self::getModuleRoute($module, 'store');
     }
 
     /**
@@ -55,13 +167,13 @@ class Module
                 $org_prefix[$item->id] = $item->prefix;
             }
             return $org_prefix;
-        });       
-        if(isset($org_prefix[$org])){
+        });
+        if (isset($org_prefix[$org])) {
             return $org_prefix[$org];
         } else {
             throw new \Exception('Организация не найдена');
         }
-       
+
     }
 
     /**
@@ -136,23 +248,23 @@ class Module
 
         $currentYear = date('Y', strtotime($date));
 
-        $prepareFrom   = $currentYear . '-01-01 00:00:00';
-        $prepareTo     = $currentYear . '-12-31 23:59:59';
+        $prepareFrom = $currentYear . '-01-01 00:00:00';
+        $prepareTo   = $currentYear . '-12-31 23:59:59';
 
         switch ($m['datetype']) {
             case 'datetime':
                 $from = $prepareFrom;
-                $to = $prepareTo;
+                $to   = $prepareTo;
                 break;
 
             case 'date':
                 $from = date('Y-m-d', strtotime($prepareFrom));
-                $to = date('Y-m-d', strtotime($prepareTo));
+                $to   = date('Y-m-d', strtotime($prepareTo));
                 break;
 
             case 'timestamp':
                 $from = strtotime($prepareFrom);
-                $to = strtotime($prepareTo);
+                $to   = strtotime($prepareTo);
                 break;
 
             default:
@@ -169,12 +281,12 @@ class Module
         }
 
         $prefix = static::prefix($module, $org);
-        $numb = $prefix . '-' . $currentCounter;
+        $numb   = $prefix . '-' . $currentCounter;
 
         return [
-            'numb' => $numb,
+            'numb'         => $numb,
             'numb_counter' => $currentCounter,
-            'prefix' => $prefix,
+            'prefix'       => $prefix,
         ];
     }
 }
