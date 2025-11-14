@@ -233,6 +233,7 @@ class SpreadsheetSupport extends OfficeSupport
 
             if (isset($stylePage['title'])) $sheet->setTitle($stylePage['title']);
             if (isset($stylePage['fix-header'])) $sheet->freezePane($stylePage['fix-header']);
+            if (isset($stylePage['autoFilter'])) $sheet->setAutoFilter($stylePage['autoFilter']);
 
             //Начальная координата x
             $columnPosition = 1;
