@@ -206,34 +206,29 @@ abstract class jqGrid
             $this->query = $this->getDefaultQuery();
         } else {
 
-            // Обработка организаций пользователя для вывода строк в гридах
-            $user = Auth::user();
-            //$user = Users::find(1);
-            $orgs = $user->orgs->pluck('id');
-            $uid_db = $this->cols['uid']['db'];
-            $org_db = $this->cols['org']['db'];
-            //$this->cols['org']['visible'] = false; // Не робит
-
             // Только данные тех организаций в которых состоит пользователь
-            if (array_key_exists('uid', $this->cols) and array_key_exists('org', $this->cols)) {
-                if ($orgs->isNotEmpty()) {
-                    $orgsQ = $orgs->implode(',');
-                    $this->query = $this->query."AND $uid_db = $user->id AND $org_db IN ($orgsQ) ";
-                } else {
-                    $this->query = $this->query."AND 1 = 0 ";
-                }
-            }
+            if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                // Обработка организаций пользователя для вывода строк в гридах
+                $user = Auth::user();
+                //$user = Users::find(1);
 
-            // OR раздельная логика
-            //if (array_key_exists('uid', $this->cols)) {
-            //    $this->query = $this->query."AND $uid_db = $user->id ";
-            //} elseif (array_key_exists('org', $this->cols) and $orgs->isNotEmpty()) {
-            //    $orgsQ = $orgs->implode(',');
-            //    $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-            //} else {
-            //    // Если нет ни uid ни org в cols - блокируем доступ
-            //    $this->query = $this->query."AND 1 = 0 ";
-            //}
+                if (array_key_exists('uid', $this->cols)) {
+                    $uid_db = $this->cols['uid']['db'];
+                    $this->query = $this->query."AND $uid_db = $user->id ";
+                }
+
+                if (array_key_exists('org', $this->cols)) {
+                    $orgs = $user->orgs->pluck('id');
+                    $org_db = $this->cols['org']['db'];
+
+                    if ($orgs->isNotEmpty()) {
+                        $orgsQ = $orgs->implode(',');
+                        $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                    }
+                }
+            } else {
+                //$this->query = $this->query."AND 1 = 0 ";
+            }
         }
 
         //----------------
@@ -728,7 +723,7 @@ abstract class jqGrid
             if (!$c['db_agg']) continue;
 
             switch ($c['db_agg']) {
-                    #Common
+                #Common
                 case 'sum':
                 case 'avg':
                 case 'count':
@@ -737,7 +732,7 @@ abstract class jqGrid
                     $fields[] = $c['db_agg'] . '(' . $c['db'] . ') AS ' . $k;
                     break;
 
-                    #Custom
+                #Custom
                 default:
                     $fields[] = $c['db_agg'] . ' AS ' . $k;
                     break;
