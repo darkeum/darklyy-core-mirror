@@ -259,8 +259,19 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                if ($orgs->isNotEmpty() and array_key_exists('org', $this->cols)) {
-                    $this->db = $this->db->whereIn($db, $orgs->toArray());
+                if (array_key_exists('org', $this->cols)) {
+
+                    // Когда пользователь не в одной из организаций
+                    //if ($orgs->isEmpty()) {
+                    //    $this->db = $this->db->where($db, 0);
+                    //}
+
+                    // Только данные тех организаций в которых состоит пользователь
+                    if ($orgs->isNotEmpty()) {
+                        $this->db = $this->db->whereIn($db, $orgs->toArray());
+                    } else {
+                        $this->db = $this->db->where($db, 0);
+                    }
                 }
             }
         } elseif ($this->db_type == 'query') {
