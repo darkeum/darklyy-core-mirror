@@ -214,7 +214,7 @@ abstract class jqGrid
 
                 if (array_key_exists('uid', $this->cols)) {
                     $uid_db = $this->cols['uid']['db'];
-                    $this->query = $this->query."AND $uid_db = $user->id ";
+                    $this->query = $this->query."AND $uid_db = $user->id OR $uid_db IS NULL ";
                 }
 
                 if (array_key_exists('org', $this->cols)) {
@@ -223,7 +223,7 @@ abstract class jqGrid
 
                     if ($orgs->isNotEmpty()) {
                         $orgsQ = $orgs->implode(',');
-                        $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                        $this->query = $this->query."AND $org_db IN ($orgsQ) OR $org_db IS NULL ";
                     }
                 }
             } else {
