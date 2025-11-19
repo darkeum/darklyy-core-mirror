@@ -1,5 +1,8 @@
 <?php
 
+use Boot\Models\Users;
+use \Boot\Support\Facades\Auth;
+
 abstract class jqGrid
 {
     /** @var $DB jqGrid_DB */
@@ -201,6 +204,36 @@ abstract class jqGrid
 
         if (!$this->query) {
             $this->query = $this->getDefaultQuery();
+        } else {
+
+            // Обработка организаций пользователя для вывода строк в гридах
+            $user = Auth::user();
+            //$user = Users::find(1);
+            $orgs = $user->orgs->pluck('id');
+            $uid_db = $this->cols['uid']['db'];
+            $org_db = $this->cols['org']['db'];
+            //$this->cols['org']['visible'] = false; // Не робит
+
+            // Только данные тех организаций в которых состоит пользователь
+            if (array_key_exists('uid', $this->cols) and array_key_exists('org', $this->cols)) {
+                if ($orgs->isNotEmpty()) {
+                    $orgsQ = $orgs->implode(',');
+                    $this->query = $this->query."AND $uid_db = $user->id AND $org_db IN ($orgsQ) ";
+                } else {
+                    $this->query = $this->query."AND 1 = 0 ";
+                }
+            }
+
+            // OR раздельная логика
+            //if (array_key_exists('uid', $this->cols)) {
+            //    $this->query = $this->query."AND $uid_db = $user->id ";
+            //} elseif (array_key_exists('org', $this->cols) and $orgs->isNotEmpty()) {
+            //    $orgsQ = $orgs->implode(',');
+            //    $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+            //} else {
+            //    // Если нет ни uid ни org в cols - блокируем доступ
+            //    $this->query = $this->query."AND 1 = 0 ";
+            //}
         }
 
         //----------------
@@ -617,7 +650,7 @@ abstract class jqGrid
 
         //-----------------
         // Placeholders
-        //-----------------		
+        //-----------------
         $replace = array(
             $this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'agg'),
             $this->query_placeholders['fields'] => $this->buildFieldsAgg($this->cols),
