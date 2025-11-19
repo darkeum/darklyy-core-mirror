@@ -261,48 +261,41 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                if (array_key_exists('uid', $this->cols) and array_key_exists('org', $this->cols)) {
-                    if ($orgs->isNotEmpty()) {
-                        $this->db = $this->db->where($uid_db, $user->id)->whereIn($org_db, $orgs->toArray());
-                    } else {
-                        $this->db = $this->db->where(1, 0);
+                if ($this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+
+                    if (array_key_exists('uid', $this->cols)) {
+                        $this->db = $this->db->where($uid_db, $user->id);
+                    }
+
+                    if (array_key_exists('org', $this->cols)) {
+                        if ($orgs->isNotEmpty()) {
+                            $this->db = $this->db->whereIn($org_db, $orgs->toArray());
+                        } else {
+                            //$this->db = $this->db->where(1, 0);
+                        }
                     }
                 }
-
-                // OR раздельная логика
-                //if (array_key_exists('uid', $this->cols)) {
-                //    $this->db = $this->db->where($uid_db, $user->id);
-                //} elseif (array_key_exists('org', $this->cols) and $orgs->isNotEmpty()) {
-                //    $this->db = $this->db->whereIn($org_db, $orgs->toArray());
-                //} else {
-                //    // Если нет ни uid ни org в cols - блокируем доступ
-                //    $this->db = $this->db->where(1, 0);
-                //}
             }
         } elseif ($this->db_type == 'query') {
             if (!$this->query) {
                 $this->query = $this->getDefaultQuery();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                if (array_key_exists('uid', $this->cols) and array_key_exists('org', $this->cols)) {
-                    if ($orgs->isNotEmpty()) {
-                        $orgsQ = $orgs->implode(',');
-                        $this->query = $this->query."AND $uid_db = $user->id AND $org_db IN ($orgsQ) ";
-                    } else {
-                        $this->query = $this->query."AND 1 = 0 ";
+                if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                    // Обработка организаций пользователя для вывода строк в гридах
+                    if (array_key_exists('uid', $this->cols)) {
+                        $this->query = $this->query."AND $uid_db = $user->id ";
                     }
-                }
 
-                // OR раздельная логика
-                //if (array_key_exists('uid', $this->cols)) {
-                //    $this->query = $this->query."AND $uid_db = $user->id ";
-                //} elseif (array_key_exists('org', $this->cols) and $orgs->isNotEmpty()) {
-                //    $orgsQ = $orgs->implode(',');
-                //    $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-                //} else {
-                //    // Если нет ни uid ни org в cols - блокируем доступ
-                //    $this->query = $this->query."AND 1 = 0 ";
-                //}
+                    if (array_key_exists('org', $this->cols)) {
+                        if ($orgs->isNotEmpty()) {
+                            $orgsQ = $orgs->implode(',');
+                            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                        }
+                    }
+                } else {
+                    //$this->query = $this->query."AND 1 = 0 ";
+                }
             }
         }
 
