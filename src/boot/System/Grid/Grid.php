@@ -270,7 +270,7 @@ abstract class Grid
                     if ($orgs->isNotEmpty()) {
                         $this->db = $this->db->whereIn($db, $orgs->toArray());
                     } else {
-                        $this->db = $this->db->where($db, 0);
+                        $this->db = $this->db->where(1, 0);
                     }
                 }
             }
