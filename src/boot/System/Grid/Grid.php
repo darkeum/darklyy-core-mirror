@@ -11,15 +11,17 @@
 
 namespace Boot\System\Grid;
 
+use Boot\Models\Users;
+use Boot\Support\Facades\Request;
 use Boot\System\Database\DB;
 use Boot\System\Grid\Data\Raw;
 use Boot\System\Grid\Data\Value;
-use Boot\System\Grid\Utils\Utils;
-use Boot\Support\Facades\Request;
-use Boot\System\Grid\Export\Export;
 use Boot\System\Grid\Exception\ExceptionDB;
 use Boot\System\Grid\Exception\ExceptionGrid;
 use Boot\System\Grid\Exception\ExceptionRender;
+use Boot\System\Grid\Export\Export;
+use Boot\System\Grid\Utils\Utils;
+use \Boot\Support\Facades\Auth;
 
 abstract class Grid
 {
@@ -233,22 +235,51 @@ abstract class Grid
     {
         //Получение и валидация параметров требующихся для вывода данных
         $this->getOutputParams();
-        //выполнение стандартной фильтрации
+        // Выполнение стандартной фильтрации
         if ($this->do_search) {
             $this->search();
         }
-        //выполнение расширенной фильтрации
+
+        // Выполнение расширенной фильтрации
         if ($this->do_search_advanced) {
             $this->searchAdvanced();
         }
-        //При отсутствии объекта базы данных ил шаблона запроса пытается подставить стандартный
+
+        // Обработка организаций пользователя для вывода строк в гридах
+        if ($this->db or $this->query) {
+            $orgs = Auth::user()->orgs->pluck('id');
+            //$orgs = Users::find(1)->orgs->pluck('id');
+            $db = $this->cols['org']['db'];
+            //$this->cols['org']['visible'] = false; // Не робит
+        }
+
+        // При отсутствии объекта базы данных ил шаблона запроса пытается подставить стандартный
         if ($this->db_type == 'db') {
             if (!$this->db) {
                 $this->db = $this->getDefaultDB();
+            } else {
+                // Только данные тех организаций в которых состоит пользователь
+                if ($orgs->isNotEmpty() and array_key_exists('org', $this->cols)) {
+                    $this->db = $this->db->whereIn($db, $orgs->toArray());
+                }
             }
         } elseif ($this->db_type == 'query') {
             if (!$this->query) {
                 $this->query = $this->getDefaultQuery();
+            } else {
+                if (array_key_exists('org', $this->cols)) {
+
+                    // Когда пользователь не в одной из организаций
+                    if ($orgs->isEmpty()) {
+                        $this->query = $this->query."AND $db = 0 ";
+                    }
+
+                    // Только данные тех организаций в которых состоит пользователь
+                    if ($orgs->isNotEmpty()) {
+                        $orgsQ = $orgs->implode(',');
+                        $this->query = $this->query."AND $db IN ($orgsQ) ";
+                    }
+                }
             }
         }
 
