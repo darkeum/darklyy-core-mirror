@@ -261,6 +261,7 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
+                /**
                 if ($this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
 
                     if (array_key_exists('uid', $this->cols)) {
@@ -275,11 +276,13 @@ abstract class Grid
                         }
                     }
                 }
+                /**/
             }
         } elseif ($this->db_type == 'query') {
             if (!$this->query) {
                 $this->query = $this->getDefaultQuery();
             } else {
+                /**
                 // Только данные тех организаций в которых состоит пользователь
                 if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
                     // Обработка организаций пользователя для вывода строк в гридах
@@ -296,6 +299,7 @@ abstract class Grid
                 } else {
                     //$this->query = $this->query."AND 1 = 0 ";
                 }
+                /**/
             }
         }
 
