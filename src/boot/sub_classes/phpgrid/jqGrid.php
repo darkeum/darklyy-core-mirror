@@ -115,6 +115,7 @@ abstract class jqGrid
     protected $render_extend = 'opts';
     protected $render_suffix_col = null;
     protected $render_filter_toolbar = false;
+    protected bool $protected_other_org = false;
 
     /**
      * Class constructor, initializes basic properties
@@ -206,9 +207,8 @@ abstract class jqGrid
             $this->query = $this->getDefaultQuery();
         } else {
 
-            /**
             // Только данные тех организаций в которых состоит пользователь
-            if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+            if ($this->protected_other_org and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
                 // Обработка организаций пользователя для вывода строк в гридах
                 $user = Auth::user();
                 //$user = Users::find(1);
@@ -230,7 +230,7 @@ abstract class jqGrid
             } else {
                 //$this->query = $this->query."AND 1 = 0 ";
             }
-            /**/
+
         }
 
         //----------------

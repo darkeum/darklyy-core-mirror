@@ -135,6 +135,7 @@ abstract class Grid
     protected $render_extend = 'opts';
     protected $render_suffix_col = null;
     protected $render_filter_toolbar = false;
+    protected bool $protected_other_org = false;
 
     protected $settings = array(
         'grid_path' => 'tytj',
@@ -261,8 +262,7 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                /**
-                if ($this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                if ($this->protected_other_org and $this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
 
                     if (array_key_exists('uid', $this->cols)) {
                         $this->db = $this->db->where($uid_db, $user->id)->orWhereNull($uid_db);
@@ -282,9 +282,9 @@ abstract class Grid
             if (!$this->query) {
                 $this->query = $this->getDefaultQuery();
             } else {
-                /**
+
                 // Только данные тех организаций в которых состоит пользователь
-                if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                if ($this->protected_other_org and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
                     // Обработка организаций пользователя для вывода строк в гридах
                     if (array_key_exists('uid', $this->cols)) {
                         $this->query = $this->query."AND $uid_db = $user->id OR $uid_db IS NULL ";
@@ -299,7 +299,7 @@ abstract class Grid
                 } else {
                     //$this->query = $this->query."AND 1 = 0 ";
                 }
-                /**/
+
             }
         }
 

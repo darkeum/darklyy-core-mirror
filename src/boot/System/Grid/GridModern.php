@@ -44,6 +44,7 @@ abstract class GridModern
         $out = 'json',
         $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op'),
         $default;
+    protected bool $protected_other_org = false;
 
     public $options, $cols;
 
@@ -126,7 +127,7 @@ abstract class GridModern
         $this->request = $request;
 
         // Только данные тех организаций в которых состоит пользователь
-        //$this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
+        $this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
         $this->getOutputParams();
         $this->getRepository();
         $this->getRepositoryRows();
@@ -221,7 +222,7 @@ abstract class GridModern
         //$user = Users::find(1);
         //$this->cols['org']['visible'] = false; // Не робит
 
-        if ($this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+        if ($this->protected_other_org and $this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
 
             if (array_key_exists('uid', $this->cols)) {
                 $uid_db = $this->cols['uid']['db'];
@@ -239,6 +240,7 @@ abstract class GridModern
                 }
             }
         }
+
     }
 
     /**
