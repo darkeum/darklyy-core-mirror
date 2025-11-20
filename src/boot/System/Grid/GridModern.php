@@ -11,6 +11,8 @@
 
 namespace Boot\System\Grid;
 
+use Boot\Models\Users;
+use Boot\Support\Facades\Auth;
 use Boot\Support\Facades\DB;
 use Boot\Support\Str;
 use Boot\System\Database\Model\Builder as ModelBuilder;
@@ -123,6 +125,7 @@ abstract class GridModern
     {
         $this->request = $request;
 
+        $this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
         $this->getOutputParams();
         $this->getRepository();
         $this->getRepositoryRows();
@@ -204,6 +207,37 @@ abstract class GridModern
     protected function parseRow($raw)
     {
         return $raw;
+    }
+
+    /**
+     * Получение и проверка доступа к материалам по организации пользователя
+     *
+     * @return void
+     */
+    protected function getCheckOrgs()
+    {
+        $user = Auth::user();
+        //$user = Users::find(1);
+        //$this->cols['org']['visible'] = false; // Не робит
+
+        if ($this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+
+            if (array_key_exists('uid', $this->cols)) {
+                $uid_db = $this->cols['uid']['db'];
+                $this->db = $this->db->where($uid_db, $user->id)->orWhereNull($uid_db);
+            }
+
+            if (array_key_exists('org', $this->cols)) {
+                $orgs = $user->orgs->pluck('id');
+                $org_db = $this->cols['org']['db'];
+
+                if ($orgs->isNotEmpty()) {
+                    $this->db = $this->db->whereIn($org_db, $orgs->toArray())->orWhereNull($org_db);
+                } else {
+                    //$this->db = $this->db->where(1, 0);
+                }
+            }
+        }
     }
 
     /**
