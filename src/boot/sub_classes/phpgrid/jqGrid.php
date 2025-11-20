@@ -206,6 +206,7 @@ abstract class jqGrid
             $this->query = $this->getDefaultQuery();
         } else {
 
+            /**
             // Только данные тех организаций в которых состоит пользователь
             if (array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
                 // Обработка организаций пользователя для вывода строк в гридах
@@ -229,6 +230,7 @@ abstract class jqGrid
             } else {
                 //$this->query = $this->query."AND 1 = 0 ";
             }
+            /**/
         }
 
         //----------------
