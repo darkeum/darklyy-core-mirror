@@ -125,6 +125,7 @@ abstract class GridModern
     {
         $this->request = $request;
 
+        // Только данные тех организаций в которых состоит пользователь
         //$this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
         $this->getOutputParams();
         $this->getRepository();
