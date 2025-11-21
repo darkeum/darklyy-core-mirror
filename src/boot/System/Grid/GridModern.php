@@ -236,8 +236,6 @@ abstract class GridModern
 
         if ($this->protected_other_item_permission) {
             $this->protected_other_item_permission = match(true) {
-                // Если явно установлено true - возвращаем как есть
-                //$this->protected_other_item_permission === true => true,
 
                 // Если строка - проверяем разрешение с этим именем
                 is_string($this->protected_other_item_permission) => !$user->can($this->protected_other_item_permission),
