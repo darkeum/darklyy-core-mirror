@@ -18,7 +18,7 @@ use Boot\System\Livewire\Exceptions\ComponentNotFoundException;
 class GridManager
 {
     public $componentAliases;
-    
+
     /**
      * Монтирование указанного Grid`а
      *
@@ -77,6 +77,7 @@ class GridManager
         ));
         $grid = new $componentClass($id);
         $grid->setGridId($component);
+        $grid->setModuleName();
         switch ($operation) {
             case 'render':
                 return $grid->render();
@@ -86,6 +87,6 @@ class GridManager
                 break;
         }
         throw new Exception("Недопустимая операция", 1);
-        
+
     }
 }
