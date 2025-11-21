@@ -227,23 +227,23 @@ abstract class jqGrid
             //dd($this->protected_other_item_permission);
 
             // Только данные тех организаций в которых состоит пользователь
-            if ($this->protected_other_item_permission) {
-
-                if (array_key_exists('uid', $this->cols)) {
-                    $uid_db = $this->cols['uid']['db'];
-                    $this->query = $this->query."AND $uid_db = $user->id ";
-                }
-
-                if (array_key_exists('org', $this->cols)) {
-                    $orgs = $user->orgs->pluck('id');
-                    $org_db = $this->cols['org']['db'];
-
-                    //if ($orgs->isNotEmpty()) {
-                        $orgsQ = $orgs->implode(',');
-                        $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-                    //}
-                }
-            }
+            //if ($this->protected_other_item_permission) {
+            //
+            //    if (array_key_exists('uid', $this->cols)) {
+            //        $uid_db = $this->cols['uid']['db'];
+            //        $this->query = $this->query."AND $uid_db = $user->id ";
+            //    }
+            //
+            //    if (array_key_exists('org', $this->cols)) {
+            //        $orgs = $user->orgs->pluck('id');
+            //        $org_db = $this->cols['org']['db'];
+            //
+            //        //if ($orgs->isNotEmpty()) {
+            //            $orgsQ = $orgs->implode(',');
+            //            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+            //        //}
+            //    }
+            //}
 
         }
 

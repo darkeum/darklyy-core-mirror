@@ -276,20 +276,20 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                if ($this->protected_other_item_permission) {
-
-                    if (array_key_exists('uid', $this->cols)) {
-                        $this->db = $this->db->where($uid_db, $user->id);
-                    }
-
-                    if (array_key_exists('org', $this->cols)) {
-                        //if ($orgs->isNotEmpty()) {
-                            $this->db = $this->db->whereIn($org_db, $orgs->toArray());
-                        //} else {
-                        //    $this->db = $this->db->where(1, 0);
-                        //}
-                    }
-                }
+                //if ($this->protected_other_item_permission) {
+                //
+                //    if (array_key_exists('uid', $this->cols)) {
+                //        $this->db = $this->db->where($uid_db, $user->id);
+                //    }
+                //
+                //    if (array_key_exists('org', $this->cols)) {
+                //        //if ($orgs->isNotEmpty()) {
+                //            $this->db = $this->db->whereIn($org_db, $orgs->toArray());
+                //        //} else {
+                //        //    $this->db = $this->db->where(1, 0);
+                //        //}
+                //    }
+                //}
                 /**/
             }
         } elseif ($this->db_type == 'query') {
@@ -298,19 +298,19 @@ abstract class Grid
             } else {
 
                 // Только данные тех организаций в которых состоит пользователь
-                if ($this->protected_other_item_permission) {
-                    // Обработка организаций пользователя для вывода строк в гридах
-                    if (array_key_exists('uid', $this->cols)) {
-                        $this->query = $this->query."AND $uid_db = $user->id ";
-                    }
-
-                    if (array_key_exists('org', $this->cols)) {
-                        //if ($orgs->isNotEmpty()) {
-                            $orgsQ = $orgs->implode(',');
-                            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-                        //}
-                    }
-                }
+                //if ($this->protected_other_item_permission) {
+                //    // Обработка организаций пользователя для вывода строк в гридах
+                //    if (array_key_exists('uid', $this->cols)) {
+                //        $this->query = $this->query."AND $uid_db = $user->id ";
+                //    }
+                //
+                //    if (array_key_exists('org', $this->cols)) {
+                //        //if ($orgs->isNotEmpty()) {
+                //            $orgsQ = $orgs->implode(',');
+                //            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                //        //}
+                //    }
+                //}
 
             }
         }
