@@ -283,11 +283,11 @@ abstract class Grid
                     }
 
                     if (array_key_exists('org', $this->cols)) {
-                        if ($orgs->isNotEmpty()) {
+                        //if ($orgs->isNotEmpty()) {
                             $this->db = $this->db->whereIn($org_db, $orgs->toArray());
-                        } else {
-                            $this->db = $this->db->where(1, 0);
-                        }
+                        //} else {
+                        //    $this->db = $this->db->where(1, 0);
+                        //}
                     }
                 }
                 /**/
@@ -305,10 +305,10 @@ abstract class Grid
                     }
 
                     if (array_key_exists('org', $this->cols)) {
-                        if ($orgs->isNotEmpty()) {
+                        //if ($orgs->isNotEmpty()) {
                             $orgsQ = $orgs->implode(',');
                             $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-                        }
+                        //}
                     }
                 } else {
                     $this->query = $this->query."AND 1 = 0 ";

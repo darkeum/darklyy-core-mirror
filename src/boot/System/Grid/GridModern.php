@@ -257,11 +257,11 @@ abstract class GridModern
                 $orgs = $user->orgs->pluck('id');
                 $org_db = $this->cols['org']['db'];
 
-                if ($orgs->isNotEmpty()) {
+                //if ($orgs->isNotEmpty()) {
                     $this->db = $this->db->whereIn($org_db, $orgs->toArray());
-                } else {
-                    $this->db = $this->db->where(1, 0);
-                }
+                //} else {
+                //    $this->db = $this->db->where(1, 0);
+                //}
             }
         }
 

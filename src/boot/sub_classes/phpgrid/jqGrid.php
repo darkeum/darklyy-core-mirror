@@ -238,13 +238,13 @@ abstract class jqGrid
                     $orgs = $user->orgs->pluck('id');
                     $org_db = $this->cols['org']['db'];
 
-                    if ($orgs->isNotEmpty()) {
+                    //if ($orgs->isNotEmpty()) {
                         $orgsQ = $orgs->implode(',');
                         $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-                    }
+                    //}
                 }
             } else {
-                $this->query = $this->query."AND 1 = 0 ";
+                $this->query = $this->query."AND id = 0 ";
             }
 
         }
