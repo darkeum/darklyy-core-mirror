@@ -221,7 +221,7 @@ abstract class jqGrid
                 $this->protected_other_item_permission = match(true) {
 
                     // Если строка - проверяем разрешение с этим именем
-                    is_string($this->protected_other_item_permission) => !$user->can($this->protected_other_item_permission),
+                    is_string($this->protected_other_item_permission) => $user->can($this->protected_other_item_permission),
 
                     // Во всех остальных случаях - проверяем стандартное разрешение
                     default => $user->can("{$this->module_name} view_other")
