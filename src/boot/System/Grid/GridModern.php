@@ -260,7 +260,7 @@ abstract class GridModern
                 if ($orgs->isNotEmpty()) {
                     $this->db = $this->db->whereIn($org_db, $orgs->toArray());
                 } else {
-                    //$this->db = $this->db->where(1, 0);
+                    $this->db = $this->db->where(1, 0);
                 }
             }
         }

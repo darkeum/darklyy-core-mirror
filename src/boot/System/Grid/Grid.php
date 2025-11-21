@@ -286,7 +286,7 @@ abstract class Grid
                         if ($orgs->isNotEmpty()) {
                             $this->db = $this->db->whereIn($org_db, $orgs->toArray());
                         } else {
-                            //$this->db = $this->db->where(1, 0);
+                            $this->db = $this->db->where(1, 0);
                         }
                     }
                 }
@@ -311,7 +311,7 @@ abstract class Grid
                         }
                     }
                 } else {
-                    //$this->query = $this->query."AND 1 = 0 ";
+                    $this->query = $this->query."AND 1 = 0 ";
                 }
 
             }

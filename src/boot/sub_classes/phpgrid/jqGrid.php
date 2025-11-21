@@ -244,7 +244,7 @@ abstract class jqGrid
                     }
                 }
             } else {
-                //$this->query = $this->query."AND 1 = 0 ";
+                $this->query = $this->query."AND 1 = 0 ";
             }
 
         }
