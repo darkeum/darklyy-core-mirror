@@ -139,7 +139,7 @@ abstract class GridModern
         $this->request = $request;
 
         // Только данные тех организаций в которых состоит пользователь
-        //$this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
+        $this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
         $this->getOutputParams();
         $this->getRepository();
         $this->getRepositoryRows();
@@ -257,9 +257,10 @@ abstract class GridModern
                 $orgs = $user->orgs->pluck('id');
                 $org_db = $this->cols['org']['db'];
 
-                //if ($orgs->isNotEmpty()) {
+                if ($orgs->isNotEmpty()) {
                     $this->db = $this->db->whereIn($org_db, $orgs->toArray());
-                //} else {
+                }
+                //else {
                 //    $this->db = $this->db->where(1, 0);
                 //}
             }
