@@ -193,7 +193,7 @@ abstract class Grid
     {
         $reflect = new \ReflectionClass($this);
         $this->grid_id = $reflect->getShortName();
-        $this->module_name = explode('/', \request()->getPathInfo())[3];
+        //$this->module_name = explode('/', \request()->getPathInfo())[3];
         $this->patch = $reflect->getName();
         $this->input = $this->getInput();
         $this->base_url = '/'.\Boot\Support\Facades\Request::path().'/grid';

@@ -130,7 +130,7 @@ abstract class jqGrid
         //------------------
 
         $this->grid_id = get_class($this);
-        $this->module_name = explode('/', \request()->getPathInfo())[3];
+        //$this->module_name = explode('/', \request()->getPathInfo())[3];
         //$this->table ="JMY_catalog";
         $this->Loader = $loader;
         $this->input = $this->getInput();
