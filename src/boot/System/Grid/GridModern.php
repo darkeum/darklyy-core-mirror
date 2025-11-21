@@ -35,6 +35,7 @@ abstract class GridModern
     protected Repository $repository;
     protected
         $grid_id,
+        $module_name,
         $request,
         $count = null,
         $db = null,
@@ -44,7 +45,7 @@ abstract class GridModern
         $out = 'json',
         $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op'),
         $default;
-    protected bool $protected_other_org = false;
+    protected $protected_other_item_permission = false;
 
     public $options, $cols;
 
@@ -99,6 +100,17 @@ abstract class GridModern
     public function setGridId($grid_id)
     {
         $this->grid_id = $grid_id;
+    }
+
+    /**
+     * Установка имени модуля
+     *
+     * @param  mixed  $module_name
+     * @return void
+     */
+    public function setModuleName()
+    {
+        $this->module_name = explode('::', $this->grid_id)[0];
     }
 
     /**
@@ -222,11 +234,23 @@ abstract class GridModern
         //$user = Users::find(1);
         //$this->cols['org']['visible'] = false; // Не робит
 
-        if ($this->protected_other_org and $this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+        $this->protected_other_item_permission = match(true) {
+            // Если явно установлено true - возвращаем как есть
+            $this->protected_other_item_permission === true => true,
+
+            // Если строка - проверяем разрешение с этим именем
+            is_string($this->protected_other_item_permission) => $user->can($this->protected_other_item_permission),
+
+            // Во всех остальных случаях - проверяем стандартное разрешение
+            default => $user->can("{$this->module_name} view_other")
+        };
+        //dd($this->protected_other_item_permission);
+
+        if ($this->db and $this->protected_other_item_permission) {
 
             if (array_key_exists('uid', $this->cols)) {
                 $uid_db = $this->cols['uid']['db'];
-                $this->db = $this->db->where($uid_db, $user->id)->orWhereNull($uid_db);
+                $this->db = $this->db->where($uid_db, $user->id);
             }
 
             if (array_key_exists('org', $this->cols)) {
@@ -234,7 +258,7 @@ abstract class GridModern
                 $org_db = $this->cols['org']['db'];
 
                 if ($orgs->isNotEmpty()) {
-                    $this->db = $this->db->whereIn($org_db, $orgs->toArray())->orWhereNull($org_db);
+                    $this->db = $this->db->whereIn($org_db, $orgs->toArray());
                 } else {
                     //$this->db = $this->db->where(1, 0);
                 }

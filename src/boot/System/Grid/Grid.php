@@ -26,6 +26,7 @@ use \Boot\Support\Facades\Auth;
 abstract class Grid
 {
     protected $grid_id;
+    protected $module_name;
     protected $base_url;
 
     protected $open_url_id = "@id";
@@ -135,7 +136,7 @@ abstract class Grid
     protected $render_extend = 'opts';
     protected $render_suffix_col = null;
     protected $render_filter_toolbar = false;
-    protected bool $protected_other_org = false;
+    protected $protected_other_item_permission = false;
 
     protected $settings = array(
         'grid_path' => 'tytj',
@@ -192,6 +193,7 @@ abstract class Grid
     {
         $reflect = new \ReflectionClass($this);
         $this->grid_id = $reflect->getShortName();
+        $this->module_name = explode('/', \request()->getPathInfo())[3];
         $this->patch = $reflect->getName();
         $this->input = $this->getInput();
         $this->base_url = '/'.\Boot\Support\Facades\Request::path().'/grid';
@@ -250,10 +252,22 @@ abstract class Grid
         if ($this->db or $this->query) {
             $user = Auth::user();
             //$user = Users::find(1);
+            //$this->cols['org']['visible'] = false; // Не робит
             $orgs = $user->orgs->pluck('id');
             $uid_db = $this->cols['uid']['db'];
             $org_db = $this->cols['org']['db'];
-            //$this->cols['org']['visible'] = false; // Не робит
+
+            $this->protected_other_item_permission = match(true) {
+                // Если явно установлено true - возвращаем как есть
+                $this->protected_other_item_permission === true => true,
+
+                // Если строка - проверяем разрешение с этим именем
+                is_string($this->protected_other_item_permission) => $user->can($this->protected_other_item_permission),
+
+                // Во всех остальных случаях - проверяем стандартное разрешение
+                default => $user->can("{$this->module_name} view_other")
+            };
+            //dd($this->protected_other_item_permission);
         }
 
         // При отсутствии объекта базы данных ил шаблона запроса пытается подставить стандартный
@@ -262,15 +276,15 @@ abstract class Grid
                 $this->db = $this->getDefaultDB();
             } else {
                 // Только данные тех организаций в которых состоит пользователь
-                if ($this->protected_other_org and $this->db and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                if ($this->protected_other_item_permission) {
 
                     if (array_key_exists('uid', $this->cols)) {
-                        $this->db = $this->db->where($uid_db, $user->id)->orWhereNull($uid_db);
+                        $this->db = $this->db->where($uid_db, $user->id);
                     }
 
                     if (array_key_exists('org', $this->cols)) {
                         if ($orgs->isNotEmpty()) {
-                            $this->db = $this->db->whereIn($org_db, $orgs->toArray())->orWhereNull($org_db);
+                            $this->db = $this->db->whereIn($org_db, $orgs->toArray());
                         } else {
                             //$this->db = $this->db->where(1, 0);
                         }
@@ -284,16 +298,16 @@ abstract class Grid
             } else {
 
                 // Только данные тех организаций в которых состоит пользователь
-                if ($this->protected_other_org and array_key_exists('uid', $this->cols) or array_key_exists('org', $this->cols)) {
+                if ($this->protected_other_item_permission) {
                     // Обработка организаций пользователя для вывода строк в гридах
                     if (array_key_exists('uid', $this->cols)) {
-                        $this->query = $this->query."AND $uid_db = $user->id OR $uid_db IS NULL ";
+                        $this->query = $this->query."AND $uid_db = $user->id ";
                     }
 
                     if (array_key_exists('org', $this->cols)) {
                         if ($orgs->isNotEmpty()) {
                             $orgsQ = $orgs->implode(',');
-                            $this->query = $this->query."AND $org_db IN ($orgsQ) OR $org_db IS NULL ";
+                            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
                         }
                     }
                 } else {
