@@ -135,13 +135,10 @@ abstract class jqGrid
         $this->input = $this->getInput();
         $this->DB = $loader->loadDB();
         $this->base_url = $this->Loader->get('input_url');
-
-        if (Auth::id() == 1092) {
-            $this->module_name = explode('/', $this->Loader->get('input_module'))[0];
-            //$this->module_name = explode('/', $this->getInput()['url'])[3];
-            //$this->module_name = explode('/', \request()->getPathInfo())[3];
-            //dd(request()->getRequestUri(), $this, $loader);
-        }
+        $this->module_name = explode('/', $this->Loader->get('input_module'))[0];
+        //$this->module_name = explode('/', $this->getInput()['url'])[3];
+        //$this->module_name = explode('/', \request()->getPathInfo())[3];
+        //dd(request()->getRequestUri(), $this, $loader);
 
         //----------------
         // Init
@@ -233,23 +230,23 @@ abstract class jqGrid
             //dd($this->protected_other_item_permission);
 
             // Только данные тех организаций в которых состоит пользователь
-            //if ($this->protected_other_item_permission) {
-            //
-            //    if (array_key_exists('uid', $this->cols)) {
-            //        $uid_db = $this->cols['uid']['db'];
-            //        $this->query = $this->query."AND $uid_db = $user->id ";
-            //    }
-            //
-            //    if (array_key_exists('org', $this->cols)) {
-            //        $orgs = $user->orgs->pluck('id');
-            //        $org_db = $this->cols['org']['db'];
-            //
-            //        //if ($orgs->isNotEmpty()) {
-            //            $orgsQ = $orgs->implode(',');
-            //            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
-            //        //}
-            //    }
-            //}
+            if ($this->protected_other_item_permission) {
+
+                if (array_key_exists('uid', $this->cols)) {
+                    $uid_db = $this->cols['uid']['db'];
+                    $this->query = $this->query."AND $uid_db = $user->id ";
+                }
+
+                if (array_key_exists('org', $this->cols)) {
+                    $orgs = $user->orgs->pluck('id');
+                    $org_db = $this->cols['org']['db'];
+
+                    //if ($orgs->isNotEmpty()) {
+                        $orgsQ = $orgs->implode(',');
+                        $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                    //}
+                }
+            }
 
         }
 
