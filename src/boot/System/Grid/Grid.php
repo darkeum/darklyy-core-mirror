@@ -310,8 +310,6 @@ abstract class Grid
                             $this->query = $this->query."AND $org_db IN ($orgsQ) ";
                         //}
                     }
-                } else {
-                    $this->query = $this->query."AND 1 = 0 ";
                 }
 
             }

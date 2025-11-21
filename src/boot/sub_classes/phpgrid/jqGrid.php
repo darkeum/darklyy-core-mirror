@@ -243,8 +243,6 @@ abstract class jqGrid
                         $this->query = $this->query."AND $org_db IN ($orgsQ) ";
                     //}
                 }
-            } else {
-                $this->query = $this->query."AND id = 0 ";
             }
 
         }
