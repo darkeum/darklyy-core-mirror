@@ -229,6 +229,8 @@ abstract class jqGrid
             };
             //dd($this->protected_other_item_permission);
 
+            $this->protected_other_item_permission = false;
+
             // Только данные тех организаций в которых состоит пользователь
             if ($this->protected_other_item_permission) {
 

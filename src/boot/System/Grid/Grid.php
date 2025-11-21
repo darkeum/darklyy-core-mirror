@@ -268,6 +268,8 @@ abstract class Grid
                 default => !$user->can("{$this->module_name} view_other")
             };
             //dd($this->protected_other_item_permission);
+
+            $this->protected_other_item_permission = false;
         }
 
         // При отсутствии объекта базы данных ил шаблона запроса пытается подставить стандартный

@@ -246,6 +246,8 @@ abstract class GridModern
         };
         //dd($this->protected_other_item_permission);
 
+        $this->protected_other_item_permission = false;
+
         if ($this->db and $this->protected_other_item_permission) {
 
             if (array_key_exists('uid', $this->cols)) {
