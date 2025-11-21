@@ -130,13 +130,18 @@ abstract class jqGrid
         //------------------
 
         $this->grid_id = get_class($this);
-
-        //$this->module_name = explode('/', \request()->getPathInfo())[3];
         //$this->table ="JMY_catalog";
         $this->Loader = $loader;
         $this->input = $this->getInput();
         $this->DB = $loader->loadDB();
         $this->base_url = $this->Loader->get('input_url');
+
+        if (Auth::id() == 1092) {
+            $this->module_name = explode('/', $this->Loader->get('input_module'))[0];
+            //$this->module_name = explode('/', $this->getInput()['url'])[3];
+            //$this->module_name = explode('/', \request()->getPathInfo())[3];
+            //dd(request()->getRequestUri(), $this, $loader);
+        }
 
         //----------------
         // Init
