@@ -224,7 +224,7 @@ abstract class jqGrid
                     is_string($this->protected_other_item_permission) => !$user->can($this->protected_other_item_permission),
 
                     // Во всех остальных случаях - проверяем стандартное разрешение
-                    default => !$user->can("{$this->module_name} view_other")
+                    default => $user->can("{$this->module_name} view_other")
                 };
                 //dd($this->protected_other_item_permission);
             }
