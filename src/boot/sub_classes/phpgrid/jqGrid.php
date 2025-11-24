@@ -135,9 +135,7 @@ abstract class jqGrid
         $this->input = $this->getInput();
         $this->DB = $loader->loadDB();
         $this->base_url = $this->Loader->get('input_url');
-        $this->module_name = explode('/', $this->Loader->get('input_module'))[0];
-        //$this->module_name = explode('/', $this->getInput()['url'])[3];
-        //$this->module_name = explode('/', \request()->getPathInfo())[3];
+        preg_match('#/module/(\w+)#', url()->current(), $m) && $this->module_name = $m[1];
 
         //----------------
         // Init
