@@ -197,7 +197,8 @@ abstract class Grid
         $this->input = $this->getInput();
         $this->base_url = '/'.\Boot\Support\Facades\Request::path().'/grid';
         //$this->module_name = basename(\Boot\Support\Facades\Request::path());
-        $this->module_name = strtolower(explode('\\', $reflect->getName())[0]);
+        //$this->module_name = strtolower(explode('\\', $reflect->getName())[0]);
+        preg_match('#/module/(\w+)#', url()->current(), $m) && $this->module_name = $m[1];
     }
 
     /**
