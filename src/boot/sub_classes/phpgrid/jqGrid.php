@@ -138,7 +138,6 @@ abstract class jqGrid
         $this->module_name = explode('/', $this->Loader->get('input_module'))[0];
         //$this->module_name = explode('/', $this->getInput()['url'])[3];
         //$this->module_name = explode('/', \request()->getPathInfo())[3];
-        //dd(request()->getRequestUri(), $this, $loader);
 
         //----------------
         // Init
@@ -217,7 +216,7 @@ abstract class jqGrid
             //$user = Users::find(1);
             //$this->cols['org']['visible'] = false; // Не робит
 
-            if ($this->protected_other_item_permission) {
+            if ($this->protected_other_item_permission and $this->module_name) {
                 $this->protected_other_item_permission = match(true) {
 
                     // Если строка - проверяем разрешение с этим именем

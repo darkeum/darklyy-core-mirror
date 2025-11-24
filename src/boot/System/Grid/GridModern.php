@@ -234,7 +234,7 @@ abstract class GridModern
         //$user = Users::find(1);
         //$this->cols['org']['visible'] = false; // Не робит
 
-        if ($this->protected_other_item_permission) {
+        if ($this->protected_other_item_permission and $this->module_name) {
             $this->protected_other_item_permission = match(true) {
 
                 // Если строка - проверяем разрешение с этим именем

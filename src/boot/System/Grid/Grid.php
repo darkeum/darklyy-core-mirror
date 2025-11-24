@@ -193,10 +193,11 @@ abstract class Grid
     {
         $reflect = new \ReflectionClass($this);
         $this->grid_id = $reflect->getShortName();
-        //$this->module_name = explode('/', \request()->getPathInfo())[3];
         $this->patch = $reflect->getName();
         $this->input = $this->getInput();
         $this->base_url = '/'.\Boot\Support\Facades\Request::path().'/grid';
+        //$this->module_name = basename(\Boot\Support\Facades\Request::path());
+        $this->module_name = strtolower(explode('\\', $reflect->getName())[0]);
     }
 
     /**
@@ -257,7 +258,7 @@ abstract class Grid
             $uid_db = $this->cols['uid']['db'];
             $org_db = $this->cols['org']['db'];
 
-            if ($this->protected_other_item_permission) {
+            if ($this->protected_other_item_permission and $this->module_name) {
                 $this->protected_other_item_permission = match(true) {
 
                     // Если строка - проверяем разрешение с этим именем
