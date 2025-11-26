@@ -214,6 +214,10 @@ abstract class jqGrid
             //$user = Users::find(1);
             //$this->cols['org']['visible'] = false; // Не робит
 
+            //preg_match('#/modules/(\w+)#', $this->input['path'], $m) && $this->module_name = $m[1];
+            $this->module_name = $this->input['module'];
+            //dd($this->module_name);
+
             if ($this->protected_other_item_permission and $this->module_name) {
                 $this->protected_other_item_permission = match(true) {
 
