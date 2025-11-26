@@ -199,6 +199,7 @@ abstract class Grid
         preg_match('#/(?:modules?|module)/(\w+)#', $this->base_url, $m) && $this->module_name = $m[1];
         //preg_match('#/(?:modules?|module)/(\w+)#', url()->current(), $m) && $this->module_name = $m[1];
         //preg_match('#/module/(\w+)#', url()->current(), $m) && $this->module_name = $m[1];
+        //dd($this->module_name);
     }
 
     /**
