@@ -257,8 +257,6 @@ abstract class Grid
             //$user = Users::find(1);
             //$this->cols['org']['visible'] = false; // Не робит
             $orgs = $user->orgs->pluck('id');
-            $uid_db = $this->cols['uid']['db'];
-            $org_db = $this->cols['org']['db'];
 
             if ($this->protected_other_item_permission and $this->module_name) {
                 $this->protected_other_item_permission = match(true) {
@@ -283,12 +281,12 @@ abstract class Grid
                 if ($this->protected_other_item_permission) {
 
                     if (array_key_exists('uid', $this->cols)) {
-                        $this->db = $this->db->where($uid_db, $user->id);
+                        $this->db = $this->db->where($this->cols['uid']['db'], $user->id);
                     }
 
                     if (array_key_exists('org', $this->cols)) {
                         if ($orgs->isNotEmpty()) {
-                            $this->db = $this->db->whereIn($org_db, $orgs->toArray());
+                            $this->db = $this->db->whereIn($this->cols['org']['db'], $orgs->toArray());
                         }
                         //else {
                         //    $this->db = $this->db->where(1, 0);
@@ -305,13 +303,13 @@ abstract class Grid
                 if ($this->protected_other_item_permission) {
                     // Обработка организаций пользователя для вывода строк в гридах
                     if (array_key_exists('uid', $this->cols)) {
-                        $this->query = $this->query."AND $uid_db = $user->id ";
+                        $this->query = $this->query."AND $this->cols['uid']['db'] = $user->id ";
                     }
 
                     if (array_key_exists('org', $this->cols)) {
                         if ($orgs->isNotEmpty()) {
                             $orgsQ = $orgs->implode(',');
-                            $this->query = $this->query."AND $org_db IN ($orgsQ) ";
+                            $this->query = $this->query."AND $this->cols['org']['db'] IN ($orgsQ) ";
                         }
                     }
                 }
