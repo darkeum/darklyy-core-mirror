@@ -1,22 +1,21 @@
 <?php
-
 namespace Boot\System\Console;
 
-use Closure;
-use Illuminate\Support\ProcessUtils;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Container\Container;
 use Boot\System\Console\Events\ArtisanStarting;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StringInput;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Output\BufferedOutput;
+use Closure;
+use Illuminate\Contracts\Console\Application as ApplicationContract;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\ProcessUtils;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Illuminate\Contracts\Console\Application as ApplicationContract;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 class Application extends SymfonyApplication implements ApplicationContract
 {
@@ -68,7 +67,7 @@ class Application extends SymfonyApplication implements ApplicationContract
         parent::__construct('Darklyy Framework', $version);
 
         $this->darklyy = $darklyy;
-        $this->events = $events;
+        $this->events  = $events;
         $this->setAutoExit(false);
         $this->setCatchExceptions(false);
 
@@ -76,7 +75,6 @@ class Application extends SymfonyApplication implements ApplicationContract
 
         $this->bootstrap();
     }
-
 
     /**
      * Determine the proper PHP executable.
@@ -205,12 +203,38 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
+     * Add an array of commands to the console.
+     *
+     * @param  array<int, \Symfony\Component\Console\Command\Command>  $commands
+     * @return void
+     */
+    #[\Override]
+    public function addCommands(array $commands): void
+    {
+        foreach ($commands as $command) {
+            $this->addCommand($command);
+        }
+    }
+
+       /**
      * Add a command to the console.
      *
      * @param  \Symfony\Component\Console\Command\Command  $command
-     * @return \Symfony\Component\Console\Command\Command
+     * @return \Symfony\Component\Console\Command\Command|null
      */
+    #[\Override]
     public function add(SymfonyCommand $command): ?SymfonyCommand
+    {
+        return $this->addCommand($command);
+    }
+
+    /**
+     * Add a command to the console.
+     *
+     * @param  \Symfony\Component\Console\Command\Command|callable  $command
+     * @return \Symfony\Component\Console\Command\Command|null
+     */
+    public function addCommand(SymfonyCommand|callable $command): ?SymfonyCommand
     {
         if ($command instanceof Command) {
             $command->setLaravel($this->darklyy);
@@ -227,6 +251,10 @@ class Application extends SymfonyApplication implements ApplicationContract
      */
     protected function addToParent(SymfonyCommand $command)
     {
+        if (method_exists(SymfonyApplication::class, 'addCommand')) {
+            return parent::addCommand($command);
+        }
+
         return parent::add($command);
     }
 
