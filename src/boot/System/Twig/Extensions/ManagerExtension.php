@@ -14,6 +14,7 @@ namespace Boot\System\Twig\Extensions;
 
 use Twig\TwigFunction;
 use Boot\Support\Currency;
+use Chat\Support\ChatSupport;
 use Task\Support\TaskSupport;
 use \Boot\Support\Facades\Auth;
 use Order\Support\OrderSupport;
@@ -53,7 +54,6 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
         $count_type_all = $count_type_1 + $count_type_2;
 
 
-        $chat = new \Chat();
 
         $order_count = OrderSupport::getOrderCount();
         $client_all_count =  $order_count;
@@ -120,7 +120,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
         $globals['supply_count_type_1'] = $count_type_1;
         $globals['supply_count_type_2'] = $count_type_2;
 
-        $globals['chat_data'] = $chat->init_twig();
+        $globals['chat_data']['template'][] = ChatSupport::oldInterface();
 
         return $globals;
     }
