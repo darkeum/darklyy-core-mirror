@@ -271,7 +271,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                     api.column(col.idx).search(dateStr).draw();
                                 }
                             },
-                            onReady: function (_, __, fp) {
+                            onReady: function (selectedDates, dateStr, instance) {
                                 // Логика при готовности picker'а
                             }
                         });
@@ -357,7 +357,7 @@ DataTable.Api.register('aGrid.callbacks.initComplete', function (settings, json)
                                     api.column(col.idx).search(dateStr).draw();
                                 }
                             },
-                            onReady: function (_, __, fp) {
+                            onReady: function (selectedDates, dateStr, instance) {
                                 // Логика при готовности picker'а
                             }
                         });
