@@ -2,6 +2,7 @@
 
 namespace Boot\System\Session;
 
+use BackedEnum;
 use Closure;
 use stdClass;
 use Illuminate\Support\Arr;
@@ -10,6 +11,7 @@ use SessionHandlerInterface;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Session\CookieSessionHandler;
 use Illuminate\Session\ExistenceAwareInterface;
+use UnitEnum;
 
 class Store extends \Illuminate\Session\Store {
     /**
@@ -377,11 +379,11 @@ class Store extends \Illuminate\Session\Store {
     /**
      * Flash a key / value pair to the session.
      *
-     * @param  string  $key
+     * @param  BackedEnum|UnitEnum|string  $key
      * @param  mixed  $value
      * @return void
      */
-    public function flash(string $key, $value = true)
+    public function flash(BackedEnum|UnitEnum|string $key, $value = true)
     {
         $this->put($key, $value);
 
@@ -389,6 +391,7 @@ class Store extends \Illuminate\Session\Store {
 
         $this->removeFromOldFlashData([$key]);
     }
+
 
     /**
      * Flash a key / value pair to the session for immediate use.
