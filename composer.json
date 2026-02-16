@@ -125,7 +125,7 @@
         "symfony/console": "^7",
         "symfony/dependency-injection": "^7",
         "symfony/error-handler": "^7",
-        "symfony/http-foundation": "~7.2.0",
+        "symfony/http-foundation": "~7.3.11",
         "symfony/http-kernel": "^7",
         "symfony/mime": "^7",
         "symfony/translation": "^7",
