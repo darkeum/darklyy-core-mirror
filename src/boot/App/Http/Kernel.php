@@ -35,13 +35,13 @@ class Kernel extends \Boot\System\Http\Kernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
+          'web' => [
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Boot\System\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            // \Boot\App\Http\Middleware\VerifyCsrfToken::class,
+            \Boot\App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\App\Http\Middleware\LocaleMiddleware::class,
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
@@ -49,10 +49,12 @@ class Kernel extends \Boot\System\Http\Kernel
         ],
 
         'api' => [
+            \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            \Boot\System\Session\Middleware\StartSession::class,
+            \Boot\System\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \Boot\System\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
 
         ],
     ];

@@ -17,7 +17,7 @@ class EnsureFrontendRequestsAreStateful
      */
     public function handle($request, $next)
     {
-        $this->configureSecureCookieSessions();
+         $this->configureSecureCookieSessions();
 
         return (new Pipeline(app()))->send($request)->through(static::fromFrontend($request) ? [
             function ($request, $next) {
@@ -28,7 +28,7 @@ class EnsureFrontendRequestsAreStateful
             config('sanctum.middleware.encrypt_cookies', \Illuminate\Cookie\Middleware\EncryptCookies::class),
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Boot\System\Session\Middleware\StartSession::class,
-            //config('sanctum.middleware.verify_csrf_token', \Boot\App\Http\Middleware\VerifyCsrfToken::class),
+            config('sanctum.middleware.verify_csrf_token', \Boot\App\Http\Middleware\VerifyCsrfToken::class),
         ] : [])->then(function ($request) use ($next) {
             return $next($request);
         });
