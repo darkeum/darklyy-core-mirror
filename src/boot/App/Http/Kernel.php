@@ -41,7 +41,7 @@ class Kernel extends \Boot\System\Http\Kernel
             \Boot\System\Session\Middleware\StartSession::class,
             \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Boot\App\Http\Middleware\VerifyCsrfToken::class,
+            // \Boot\App\Http\Middleware\VerifyCsrfToken::class,ы
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Boot\App\Http\Middleware\LocaleMiddleware::class,
             \Boot\App\Http\Middleware\AddSanctumTokenToHeaders::class,
