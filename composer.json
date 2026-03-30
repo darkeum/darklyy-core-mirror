@@ -107,7 +107,7 @@
         "phpunit/php-code-coverage": "^10.1",
         "phpunit/phpunit": "^10.1",
         "prettus/l5-repository": "^2.8",
-        "pris/darklyy-menu": "^1.0",
+        "pris/darklyy-menu": "^2.0",
         "pris/darklyy-module-installer": "^1.0",
         "pusher/pusher-php-server": "^7.2",
         "rakit/validation": "^1.4",
