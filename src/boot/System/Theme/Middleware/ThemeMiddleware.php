@@ -26,8 +26,33 @@ class ThemeMiddleware
      */
     public function handle(Request $request, Closure $next, string $theme, string $parentTheme = null)
     {
-        Theme::set($theme, $parentTheme);
+        if ($theme == 'auto') {
 
+            $response = $next($request);
+
+            // Проверяем, что это view-ответ
+            if (method_exists($response, 'getOriginalContent') &&
+                $response->original instanceof \Illuminate\View\View) {
+
+                $active = config('theme.active');
+                Theme::set($active, $parentTheme);
+
+                $viewName = $response->original->getName();
+
+                if ($active !== 'main') {
+                    $viewName = str_replace('::', "::{$active}.", $response->original->getName());
+                }
+                //dd($viewName);
+
+                $data = $response->original->getData();
+                $response->setContent(view($viewName, $data));
+
+                return $response;
+
+            }
+        }
+
+        Theme::set($theme, $parentTheme);
         return $next($request);
     }
 }
