@@ -12,7 +12,6 @@
 namespace Boot\System\Theme;
 
 use Boot\Support\ServiceProvider;
-use Boot\System\Theme\Commands\MakeThemeCommand;
 
 class ThemeServiceProvider extends ServiceProvider
 {
