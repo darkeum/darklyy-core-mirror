@@ -11,6 +11,7 @@
 
 namespace Boot\System\Theme\Middleware;
 
+use Boot\Support\Facades\View;
 use Boot\System\Http\Request;
 use Boot\System\Theme\Theme;
 use Closure;
@@ -28,18 +29,19 @@ class ThemeMiddleware
     {
         $response = $next($request);
 
-        if ($theme == 'auto') {
-            $theme = config('theme.active');
-        }
-
-        // Проверяем, что это view-ответ
-        if (method_exists($response, 'getOriginalContent') &&
-            $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
-            $name = str_replace('::', "::{$theme}.", $response->original->getName());
-            $response->setContent(view($name, $response->original->getData()));
-        }
+        //if ($theme == 'auto') {
+        //    $theme = config('theme.active');
+        //}
+        //
+        //// Проверяем, что это view-ответ
+        //if (method_exists($response, 'getOriginalContent') &&
+        //    $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
+        //    $name = str_replace('::', "::{$theme}.", $response->original->getName());
+        //    $response->setContent(view($name, $response->original->getData()));
+        //}
 
         Theme::set($theme, $parentTheme);
         return $response;
+
     }
 }
