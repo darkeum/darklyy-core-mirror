@@ -164,6 +164,16 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
     }
 
     /**
+     * Маршрут уведомлений для отправки в Max
+     *
+     * @return string|null
+     */
+    public function routeNotificationForMax()
+    {
+        return $this->getTokenByPlatform('max');
+    }
+
+    /**
      * Маршрут уведомлений для отправки в Vk
      *
      * @return string|null
