@@ -18,14 +18,13 @@ class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-       
+        $this->replaceThemeFinder();
     }
 
     public function register()
     {
         $this->registerThemeFinder();
     }
- 
 
     protected function registerThemeFinder(): void
     {
@@ -44,6 +43,34 @@ class ThemeServiceProvider extends ServiceProvider
 
         if (config('theme.active')) {
             $this->app->make('theme.finder')->setActiveTheme(config('theme.active'), config('theme.parent'));
+        }
+    }
+
+    # Перезаписыватель View Finder - WIP
+    protected function replaceThemeFinder()
+    {
+        $active = config('theme.active');
+
+        if (!$active) {
+            return;
+        }
+
+        $finder = view()->getFinder();
+
+        foreach ($finder->getHints() as $namespace => $paths) {
+
+            if (!isset($paths[0])) {
+                continue;
+            }
+
+            $themePath = $paths[0].DIRECTORY_SEPARATOR.$active;
+
+            if (is_dir($themePath)) {
+                view()->replaceNamespace($namespace, [
+                    $themePath,
+                    $paths[0]
+                ]);
+            }
         }
     }
 }

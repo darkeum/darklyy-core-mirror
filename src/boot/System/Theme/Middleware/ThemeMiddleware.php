@@ -11,48 +11,35 @@
 
 namespace Boot\System\Theme\Middleware;
 
-use Closure;
 use Boot\System\Http\Request;
 use Boot\System\Theme\Theme;
+use Closure;
 
 class ThemeMiddleware
 {
     /**
      * Обработчик входящего запроса
      *
-     * @param  \Boot\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Boot\Http\Request  $request
+     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next, string $theme, string $parentTheme = null)
     {
+        $response = $next($request);
+
         if ($theme == 'auto') {
+            $theme = config('theme.active');
+        }
 
-            $response = $next($request);
-
-            // Проверяем, что это view-ответ
-            if (method_exists($response, 'getOriginalContent') &&
-                $response->original instanceof \Illuminate\View\View) {
-
-                $active = config('theme.active');
-                Theme::set($active, $parentTheme);
-
-                $viewName = $response->original->getName();
-
-                if ($active !== 'main') {
-                    $viewName = str_replace('::', "::{$active}.", $response->original->getName());
-                }
-                //dd($viewName);
-
-                $data = $response->original->getData();
-                $response->setContent(view($viewName, $data));
-
-                return $response;
-
-            }
+        // Проверяем, что это view-ответ
+        if (method_exists($response, 'getOriginalContent') &&
+            $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
+            $name = str_replace('::', "::{$theme}.", $response->original->getName());
+            $response->setContent(view($name, $response->original->getData()));
         }
 
         Theme::set($theme, $parentTheme);
-        return $next($request);
+        return $response;
     }
 }
