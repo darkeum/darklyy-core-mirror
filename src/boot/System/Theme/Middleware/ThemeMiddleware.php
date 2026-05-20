@@ -11,6 +11,7 @@
 
 namespace Boot\System\Theme\Middleware;
 
+use Boot\Support\Facades\View;
 use Boot\System\Http\Request;
 use Boot\System\Theme\Theme;
 use Closure;
@@ -34,19 +35,14 @@ class ThemeMiddleware
             $parentTheme = config('theme.parent');
         }
 
-        //Theme::set($theme, $parentTheme);
-        //
-        //// Реализовано в сервис ThemeServiceProvider
-        //$response = $next($request);
-        //
-        //# Проверяем, что это view-ответ
-        //if (method_exists($response, 'getOriginalContent') &&
-        //    $response->original instanceof \Illuminate\View\View && $theme !== 'main' && $theme !== 'admin-material') {
-        //    $name = str_replace('::', "::{$theme}.", $response->original->getName());
-        //    $response->setContent(view($name, $response->original->getData()));
-        //}
-        //
-        //return $response;
+        View::composer('*', function ($view) use ($theme) {
+            $name = str_replace('::', "::{$theme}.", $view->getName());
+            if (View::exists($name)) {
+                $view->setPath(
+                    View::make($name)->getPath()
+                );
+            }
+        });
 
         Theme::set($theme, $parentTheme);
         return $next($request);
