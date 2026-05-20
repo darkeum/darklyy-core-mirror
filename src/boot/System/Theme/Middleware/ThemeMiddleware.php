@@ -37,6 +37,12 @@ class ThemeMiddleware
 
         View::composer('*', function ($view) use ($theme) {
             $name = str_replace('::', "::{$theme}.", $view->getName());
+
+            // Проверяем, содержит ли namespace уже название темы
+            //if (str_contains($name, "::{$theme}.")) {
+            //    return;
+            //}
+
             if (View::exists($name)) {
                 $view->setPath(
                     View::make($name)->getPath()
