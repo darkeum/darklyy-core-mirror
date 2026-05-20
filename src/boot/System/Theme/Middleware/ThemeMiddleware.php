@@ -32,18 +32,14 @@ class ThemeMiddleware
         }
 
         // Реализовано в сервис ThemeServiceProvider
-        //$response = $next($request);
-        //# Проверяем, что это view-ответ
-        //if (method_exists($response, 'getOriginalContent') &&
-        //    $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
-        //    $name = str_replace('::', "::{$theme}.", $response->original->getName());
-        //    $response->setContent(view($name, $response->original->getData()));
-        //}
-        //Theme::set($theme, $parentTheme);
-        //return $response;
-
+        $response = $next($request);
+        # Проверяем, что это view-ответ
+        if (method_exists($response, 'getOriginalContent') &&
+            $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
+            $name = str_replace('::', "::{$theme}.", $response->original->getName());
+            $response->setContent(view($name, $response->original->getData()));
+        }
         Theme::set($theme, $parentTheme);
-        return $next($request);
-
+        return $response;
     }
 }
