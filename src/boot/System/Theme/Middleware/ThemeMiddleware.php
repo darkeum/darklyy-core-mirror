@@ -11,7 +11,6 @@
 
 namespace Boot\System\Theme\Middleware;
 
-use Boot\Support\Facades\View;
 use Boot\System\Http\Request;
 use Boot\System\Theme\Theme;
 use Closure;
@@ -39,9 +38,10 @@ class ThemeMiddleware
 
         // Реализовано в сервис ThemeServiceProvider
         $response = $next($request);
+
         # Проверяем, что это view-ответ
         if (method_exists($response, 'getOriginalContent') &&
-            $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
+            $response->original instanceof \Illuminate\View\View && $theme !== 'main' && $theme !== 'admin-material') {
             $name = str_replace('::', "::{$theme}.", $response->original->getName());
             $response->setContent(view($name, $response->original->getData()));
         }
