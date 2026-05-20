@@ -31,6 +31,12 @@ class ThemeMiddleware
             $theme = config('theme.active');
         }
 
+        if (!$parentTheme) {
+            $parentTheme = config('theme.parent');
+        }
+
+        Theme::set($theme, $parentTheme);
+
         // Реализовано в сервис ThemeServiceProvider
         $response = $next($request);
         # Проверяем, что это view-ответ
@@ -39,7 +45,7 @@ class ThemeMiddleware
             $name = str_replace('::', "::{$theme}.", $response->original->getName());
             $response->setContent(view($name, $response->original->getData()));
         }
-        Theme::set($theme, $parentTheme);
+
         return $response;
     }
 }
