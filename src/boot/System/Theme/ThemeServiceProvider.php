@@ -18,7 +18,7 @@ class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->replaceViewFinder();
+        //$this->replaceViewFinder();
     }
 
     public function register()
