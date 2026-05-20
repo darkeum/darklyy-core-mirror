@@ -46,7 +46,7 @@ class ThemeServiceProvider extends ServiceProvider
         }
     }
 
-    # Перезаписыватель View Finder - WIP
+    # Перезаписыватель View Finder - WIP - Меняет все hints. Может быть более ресурсоемким
     protected function replaceViewFinder()
     {
         $active = config('theme.active');
