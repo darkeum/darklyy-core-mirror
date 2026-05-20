@@ -27,21 +27,23 @@ class ThemeMiddleware
      */
     public function handle(Request $request, Closure $next, string $theme, string $parentTheme = null)
     {
-        $response = $next($request);
+        if ($theme == 'auto') {
+            $theme = config('theme.active');
+        }
 
-        //if ($theme == 'auto') {
-        //    $theme = config('theme.active');
-        //}
-        //
-        //// Проверяем, что это view-ответ
+        // Реализовано в сервис ThemeServiceProvider
+        //$response = $next($request);
+        //# Проверяем, что это view-ответ
         //if (method_exists($response, 'getOriginalContent') &&
         //    $response->original instanceof \Illuminate\View\View && $theme !== 'main') {
         //    $name = str_replace('::', "::{$theme}.", $response->original->getName());
         //    $response->setContent(view($name, $response->original->getData()));
         //}
+        //Theme::set($theme, $parentTheme);
+        //return $response;
 
         Theme::set($theme, $parentTheme);
-        return $response;
+        return $next($request);
 
     }
 }
