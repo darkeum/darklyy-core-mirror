@@ -11,13 +11,14 @@
 
 namespace Boot\System\Theme;
 
+use Boot\Support\Facades\View;
 use Boot\Support\ServiceProvider;
 
 class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        $this->replaceThemeFinder();
+        $this->replaceViewFinder();
     }
 
     public function register()
@@ -46,7 +47,7 @@ class ThemeServiceProvider extends ServiceProvider
     }
 
     # Перезаписыватель View Finder - WIP
-    protected function replaceThemeFinder()
+    protected function replaceViewFinder()
     {
         $active = config('theme.active');
 
