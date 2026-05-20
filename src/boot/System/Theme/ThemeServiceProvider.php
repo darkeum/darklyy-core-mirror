@@ -18,7 +18,7 @@ class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        //$this->replaceViewFinder();
+        //
     }
 
     public function register()
@@ -46,31 +46,4 @@ class ThemeServiceProvider extends ServiceProvider
         }
     }
 
-    # Перезаписыватель View Finder - WIP - Меняет все hints. Может быть более ресурсоемким
-    protected function replaceViewFinder()
-    {
-        $active = config('theme.active');
-
-        if (!$active) {
-            return;
-        }
-
-        $finder = view()->getFinder();
-
-        foreach ($finder->getHints() as $namespace => $paths) {
-
-            if (!isset($paths[0])) {
-                continue;
-            }
-
-            $themePath = $paths[0].DIRECTORY_SEPARATOR.$active;
-
-            if (is_dir($themePath)) {
-                view()->replaceNamespace($namespace, [
-                    $themePath,
-                    $paths[0]
-                ]);
-            }
-        }
-    }
 }

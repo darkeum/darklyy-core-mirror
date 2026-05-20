@@ -34,18 +34,21 @@ class ThemeMiddleware
             $parentTheme = config('theme.parent');
         }
 
+        //Theme::set($theme, $parentTheme);
+        //
+        //// Реализовано в сервис ThemeServiceProvider
+        //$response = $next($request);
+        //
+        //# Проверяем, что это view-ответ
+        //if (method_exists($response, 'getOriginalContent') &&
+        //    $response->original instanceof \Illuminate\View\View && $theme !== 'main' && $theme !== 'admin-material') {
+        //    $name = str_replace('::', "::{$theme}.", $response->original->getName());
+        //    $response->setContent(view($name, $response->original->getData()));
+        //}
+        //
+        //return $response;
+
         Theme::set($theme, $parentTheme);
-
-        // Реализовано в сервис ThemeServiceProvider
-        $response = $next($request);
-
-        # Проверяем, что это view-ответ
-        if (method_exists($response, 'getOriginalContent') &&
-            $response->original instanceof \Illuminate\View\View && $theme !== 'main' && $theme !== 'admin-material') {
-            $name = str_replace('::', "::{$theme}.", $response->original->getName());
-            $response->setContent(view($name, $response->original->getData()));
-        }
-
-        return $response;
+        return $next($request);
     }
 }
