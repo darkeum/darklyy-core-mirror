@@ -18,6 +18,7 @@ class ThemeServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        //
     }
 
     public function register()
@@ -44,5 +45,4 @@ class ThemeServiceProvider extends ServiceProvider
             $this->app->make('theme.finder')->setActiveTheme(config('theme.active'), config('theme.parent'));
         }
     }
-
 }
