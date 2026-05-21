@@ -11,6 +11,7 @@
 
 namespace Boot\System\Theme\Middleware;
 
+use Illuminate\Support\Facades\Log;
 use Boot\Support\Facades\View;
 use Boot\System\Http\Request;
 use Boot\System\Theme\Theme;
@@ -36,17 +37,19 @@ class ThemeMiddleware
         }
 
         View::composer('*', function ($view) use ($theme) {
-            $name = str_replace('::', "::{$theme}.", $view->getName());
 
             // Проверяем, содержит ли namespace уже название темы
-            //if (str_contains($name, "::{$theme}.")) {
-            //    return;
-            //}
+            if (str_contains($view->getName(), "::{$theme}")) {
+                return;
+            }
+
+            $name = str_replace('::', "::{$theme}.", $view->getName());
 
             if (View::exists($name)) {
                 $view->setPath(
                     View::make($name)->getPath()
                 );
+                //Log::info('View Composer обработал: ' . $name);
             }
         });
 
