@@ -121,7 +121,7 @@
         "spatie/laravel-permission": "^6",
         "squizlabs/php_codesniffer": "^3.5",
         "symfony/asset": "^7",
-        "symfony/cache": "^7.3",
+        "symfony/cache": "^7",
         "symfony/console": "^7",
         "symfony/dependency-injection": "^7",
         "symfony/error-handler": "^7",
