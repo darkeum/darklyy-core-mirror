@@ -12,6 +12,11 @@
 .aGrid-container {
   margin: 0 !important; // Убираем внешние отступы
 
+  .bs-popover-top > .popover-arrow,
+  .bs-popover-auto[data-popper-placement^=top] > .popover-arrow {
+    bottom: calc(-1 * (var(--bs-popover-arrow-height)) - 0px) !important;
+  }
+
   // Стили для кнопки модификаторов
   button.aGrid-mods-button {
     &[aria-describedby="*"] {
@@ -354,7 +359,8 @@
 
           // Выделенная строка
           &.selected {
-            background-color: $a-color; // Цвет фона выделенной строки
+            //background-color: $a-color; // Цвет фона выделенной строки
+            --bs-table-bg: $a-color;
             color: var(--white); // Цвет текста
 
             .pris & {
