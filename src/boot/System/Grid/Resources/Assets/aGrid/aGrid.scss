@@ -360,7 +360,7 @@
           // Выделенная строка
           &.selected {
             //background-color: $a-color; // Цвет фона выделенной строки
-            --bs-table-bg: $a-color;
+            --bs-table-bg: var(--a-primary-color);
             color: var(--white); // Цвет текста
 
             .pris & {
