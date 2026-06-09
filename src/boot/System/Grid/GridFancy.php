@@ -20,8 +20,8 @@ use Boot\System\Grid\Exception\ExceptionGrid;
 use Boot\System\Grid\Repositories\DBRepository;
 use Boot\System\Grid\Repositories\ModelRepository;
 use Boot\System\Grid\Repositories\QueryRepository;
-use Boot\System\Grid\Repositories\Repository;
-use Boot\System\Grid\Traits\RenderTrait;
+use Boot\System\Grid\Repositories\RepositoryFancy;
+use Boot\System\Grid\Traits\RenderTraitFancy;
 use Boot\System\Grid\Utils\Utils;
 use Exception;
 use Illuminate\Database\Query\Builder;
@@ -29,9 +29,9 @@ use Illuminate\Support\Collection;
 
 abstract class GridFancy
 {
-    use RenderTrait;
+    use RenderTraitFancy;
 
-    protected Repository $repository;
+    protected RepositoryFancy $repository;
     protected
         $grid_id,
         $module_name,
@@ -139,6 +139,7 @@ abstract class GridFancy
 
         // Только данные тех организаций в которых состоит пользователь
         $this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
+
         $this->getOutputParams();
         $this->getRepository();
         $this->getRepositoryRows();
@@ -300,7 +301,7 @@ abstract class GridFancy
      */
     protected function initColumn($k, $c)
     {
-        #Check reserved keys
+        # Check reserved keys
         if (in_array($k, $this->reserved_col_names)) {
             throw new ExceptionGrid("Column name '$k' reserved for internal usage!");
         }
@@ -309,7 +310,7 @@ abstract class GridFancy
             throw new ExceptionGrid("Column name '$k' must NOT begin with underscore!");
         }
 
-        #Name and index always match the array key
+        # Name and index always match the array key
         $c['name'] = $k;
         $c['index'] = $k;
 
@@ -408,9 +409,11 @@ abstract class GridFancy
     protected function outDataTable()
     {
         $data = array(
+            'success' => true ?? false,
             'draw' => $this->request->draw ?? 1,
             'recordsTotal' => $this->records ?? 0,
             'recordsFiltered' => $this->records ?? 0,
+            'totalCount' => $this->records ?? 0,
             'data' => $this->rows ?? 0,
         );
 
