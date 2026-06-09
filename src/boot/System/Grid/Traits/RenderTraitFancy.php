@@ -68,7 +68,7 @@ trait RenderTraitFancy
 
         //$this->getParams($this);
 
-        return view('grid::layout.fancy', [
+        return view('grid::fancy.layout', [
             'title' => $this->title ?? 'Список компонента Grid',
             'data' => $data,
             'url' => $this->renderGridUrl(),
