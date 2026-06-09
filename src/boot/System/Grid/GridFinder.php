@@ -123,7 +123,7 @@ class GridFinder
                         return [Str::lower($containerName) . '::' . Str::lower($reflection->getShortName()) => $class];
                     })
                     ->filter(function (string $class) {
-                        return is_subclass_of($class, GridModern::class) &&
+                        return is_subclass_of($class, GridModern::class) or is_subclass_of($class, GridFancy::class) &&
                             !(new ReflectionClass($class))->isAbstract();
                     });
             }
