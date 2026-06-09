@@ -165,8 +165,6 @@ abstract class GridFancy
             $this->repository = new QueryRepository();
         } elseif ($this->db instanceof ModelBuilder) {
             $this->repository = new ModelRepository();
-        } elseif ($this->grid_type == 'fancy') {
-            $this->repository = new \Boot\System\Grid\Repositories\Fancy\DBRepository();
         } elseif ($this->db instanceof Builder) {
             $this->repository = new DBRepository();
         } else {
