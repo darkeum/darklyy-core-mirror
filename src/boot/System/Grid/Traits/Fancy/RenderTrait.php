@@ -9,13 +9,13 @@
 * @author      Komarov Ivan
 */
 
-namespace Boot\System\Grid\Traits;
+namespace Boot\System\Grid\Traits\Fancy;
 
-use Boot\Support\Str;
 use Boot\Support\Facades\DB;
+use Boot\Support\Str;
 use Boot\System\Grid\Utils\Utils;
 
-trait RenderTraitFancy
+trait RenderTrait
 {
     protected $render_data = array();
     protected $render_extend = 'opts';

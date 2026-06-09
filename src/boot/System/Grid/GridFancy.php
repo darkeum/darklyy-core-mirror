@@ -17,21 +17,22 @@ use Boot\Support\Str;
 use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Grid\Data\Raw;
 use Boot\System\Grid\Exception\ExceptionGrid;
-use Boot\System\Grid\Repositories\DBRepository;
-use Boot\System\Grid\Repositories\ModelRepository;
-use Boot\System\Grid\Repositories\QueryRepository;
-use Boot\System\Grid\Repositories\RepositoryFancy;
-use Boot\System\Grid\Traits\RenderTraitFancy;
 use Boot\System\Grid\Utils\Utils;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
+use Boot\System\Grid\Repositories\Fancy\DBRepository;
+use Boot\System\Grid\Repositories\Fancy\ModelRepository;
+use Boot\System\Grid\Repositories\Fancy\QueryRepository;
+use Boot\System\Grid\Repositories\Fancy\Repository;
+use Boot\System\Grid\Traits\Fancy\RenderTrait;
+
 abstract class GridFancy
 {
-    use RenderTraitFancy;
+    use RenderTrait;
 
-    protected RepositoryFancy $repository;
+    protected Repository $repository;
     protected
         $grid_id,
         $module_name,
@@ -44,6 +45,8 @@ abstract class GridFancy
         $out = 'json',
         $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op'),
         $default;
+
+    // Права доступа к текущему гриду и фильстрация по permission
     protected $protected_other_item_permission = false;
 
     public $options, $cols;
@@ -56,13 +59,11 @@ abstract class GridFancy
      */
     public function __construct()
     {
-        //
         $this->default = config('grid.default');
         $this->beforeInit();
         $this->init();
         $this->afterInit();
         $this->prepareColumn();
-
     }
 
     /**
@@ -121,8 +122,10 @@ abstract class GridFancy
     protected function prepareColumn()
     {
         $this->reserved_col_names = $this->getReservedColNames();
-        foreach ($this->cols as $k => &$c) {
-            $c = $this->initColumn($k, $c);
+
+        foreach ($this->cols as $column => &$params) {
+            //$c =
+            $this->initColumn($column, $params);
         }
     }
 
@@ -162,6 +165,8 @@ abstract class GridFancy
             $this->repository = new QueryRepository();
         } elseif ($this->db instanceof ModelBuilder) {
             $this->repository = new ModelRepository();
+        } elseif ($this->grid_type == 'fancy') {
+            $this->repository = new \Boot\System\Grid\Repositories\Fancy\DBRepository();
         } elseif ($this->db instanceof Builder) {
             $this->repository = new DBRepository();
         } else {
@@ -294,46 +299,43 @@ abstract class GridFancy
     /**
      * Инициализация колонок
      *
-     * @param  mixed  $k
-     * @param  mixed  $c
+     * @param  mixed  $column // Колонка
+     * @param  mixed  $params // Параметры калонки
      * @return array
      * @throws ExceptionGrid
      */
-    protected function initColumn($k, $c)
+    protected function initColumn($column, $params)
     {
-        # Check reserved keys
-        if (in_array($k, $this->reserved_col_names)) {
-            throw new ExceptionGrid("Column name '$k' reserved for internal usage!");
+        # Проверяем зарезервированные ключи
+        if (in_array($column, $this->reserved_col_names)) {
+            throw new ExceptionGrid("Имя столбца '$column' зарезервировано для внутреннего использования!");
         }
 
-        if (strpos($k, '_') === 0) {
-            throw new ExceptionGrid("Column name '$k' must NOT begin with underscore!");
+        if (strpos($column, '_') === 0) {
+            throw new ExceptionGrid("Название столбца '$column' НЕ должно начинаться со знака подчеркивания!");
         }
 
-        # Name and index always match the array key
-        $c['name'] = $k;
-        $c['index'] = $k;
+        # Имя и индекс всегда совпадают с ключом массива
+        $params['name'] = $column;
+        $params['index'] = $column;
 
         # Начало фильтрации *****************************************************
         include('Utils/Filters.php');
 
-        #Merge with defaults
-        //$c = array_merge($this->default['cols'], $this->cols_default, $c);
-        $c = array_merge($this->default['cols'], $c);
+        # Объединить со значениями по умолчанию
+        //$params = array_merge($this->default['cols'], $this->cols_default, $params);
+        $params = array_merge($this->default['cols'], $params);
 
-        #DB = column key if not set
-        //$c['db'] = $c['db'] ? $c['db'] : $k;
-        $c['db'] = $c['db'] ?? $k;
+        #DB = ключ столбца, если он не задан
+        //$params['db'] = $params['db'] ? $params['db'] : $column;
+        $params['db'] = $params['db'] ?? $column;
 
-        return $c;
+        return $params;
     }
 
     # Задание значений в select2 для Grid
     protected function setValue($data, $first = false, $column = false)
     {
-        // Старый вариант
-        //return new Value($data, $first);
-
         //dd($data);
 
         // Создадим пустую коллекцию
@@ -353,30 +355,29 @@ abstract class GridFancy
         if (is_string($data) and class_exists($data)) {
             //dd(get_declared_classes());
             //dd(class_exists($data));
-            $data = route('grid.ui.select2', ['model' => $data, 'col' => $column]);
-            $result->prepend($data, "GRID-SELECT-AJAX");
+            //$data = route('grid.ui.select2', ['model' => $data, 'col' => $column]);
+            //$result->prepend($data, "GRID-SELECT-AJAX");
         }
 
         // Задание первого значения в select2 для Grid
         if (is_bool($first) and $first) {
-            $result->prepend(__('grid::lang.cols.all'), "GRID-SELECT-ALL");
+            //$result->prepend(__('grid::lang.cols.all'), "GRID-SELECT-ALL");
         }
 
         //
         if (is_string($first)) {
-            $result->prepend($first, "GRID-SELECT-ALL");
+            //$result->prepend($first, "GRID-SELECT-ALL");
         }
 
         // Если массив
         if (is_array($first) and !empty($first)) {
-            $first = collect($first);
+            //$first = collect($first);
 
-            $custom = $first->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
+            //$custom = $first->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
             //$custom = $first->toJson();
-            $result->prepend($custom, "GRID-SELECT-CUSTOM");
-            $result->prepend($first->take(1)->keys()->first(), $first->take(1)->values()->first());
+            //$result->prepend($custom, "GRID-SELECT-CUSTOM");
+            //$result->prepend($first->take(1)->keys()->first(), $first->take(1)->values()->first());
         }
-
         //dd($result);
 
         return $result->toJson(JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);
@@ -410,9 +411,9 @@ abstract class GridFancy
     {
         $data = array(
             'success' => true ?? false,
-            'draw' => $this->request->draw ?? 1,
-            'recordsTotal' => $this->records ?? 0,
-            'recordsFiltered' => $this->records ?? 0,
+            //'draw' => $this->request->draw ?? 1,
+            //'recordsTotal' => $this->records ?? 0,
+            //'recordsFiltered' => $this->records ?? 0,
             'totalCount' => $this->records ?? 0,
             'data' => $this->rows ?? 0,
         );

@@ -9,13 +9,13 @@
 * @author      Komarov Ivan
 */
 
-namespace Boot\System\Grid\Repositories;
+namespace Boot\System\Grid\Repositories\Fancy;
 
 use Boot\Support\Facades\DB;
 use Boot\System\Grid\Exception\ExceptionGrid;
 use Boot\System\Grid\Utils\Utils;
 
-abstract class RepositoryFancy
+abstract class Repository
 {
     public $rows = [];
     public $db;
@@ -59,6 +59,8 @@ abstract class RepositoryFancy
      */
     public function setParameters($parameter)
     {
+        dd($parameter);
+
         $this->db = $parameter['db'];
         $this->cols = $parameter['cols'];
         $this->request = $parameter['request'];
