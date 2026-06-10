@@ -16,18 +16,10 @@ use Boot\Support\Str;
 
 trait RenderTrait
 {
-    //protected $render_data = array();
-    //protected $render_extend = 'opts';
-    //protected $render_suffix_col = null;
-    //protected $render_filter_toolbar = false;
-    //protected $nav;
-
     #
     public function render()
     {
-        //$data = (object)[];
         $data = [];
-        //$data->id = Str::replace('::', '_', $this->grid_id);
         $data['id'] = Str::replace('::', '_', $this->grid_id);
 
         //$index = 0;
@@ -60,13 +52,6 @@ trait RenderTrait
         //    $data['short']['index'] = $colIndex[$data['options']['sort']['name']];
         //    $data['short']['order'] = strtolower($data['options']['sort']['order'] ?? 'asc') === 'desc' ? 'desc' : 'asc';
         //}
-        //
-        //// Структура элементов DOM
-        //if (!isset($data['options']['dom'])) {
-        //    $data['dom'] = '<"dt-action-buttons"f B>t<"d-flex justify-content-between mx-0 p-0 row dt-footer"<"text-start"i><"d-none"p>>';
-        //} else {
-        //    $data['dom'] = $data['options']['dom'];
-        //}
 
         //$this->getParams($this);
 
@@ -74,20 +59,14 @@ trait RenderTrait
             'title' => $this->title ?? 'Список компонента FancyGrid',
             'data' => $data,
             'url' => $this->renderGridUrl(),
+
             //'options' => $options = Utils::jsonEncode($data['options']),
             //'cols' => $data['options']['colModel'],
-            //'render_filter_toolbar' => $this->render_filter_toolbar,
-            //'nav' => $this->renderNav(),
 
             //'language' => $this->getLanguage(),
 
             //'mouse' => isset($this->mouse) ? $this->mouse + $this->default['mouse'] : $this->default['mouse'],
         ]);
-    }
-
-    protected function JSF()
-    {
-        //return <<<HTML HTML;
     }
 
     #
