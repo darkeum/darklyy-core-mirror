@@ -13,39 +13,41 @@ namespace Boot\System\Grid\Traits\Fancy;
 
 use Boot\Support\Facades\DB;
 use Boot\Support\Str;
-use Boot\System\Grid\Utils\Utils;
 
 trait RenderTrait
 {
-    protected $render_data = array();
-    protected $render_extend = 'opts';
-    protected $render_suffix_col = null;
-    protected $render_filter_toolbar = false;
-    protected $nav;
+    //protected $render_data = array();
+    //protected $render_extend = 'opts';
+    //protected $render_suffix_col = null;
+    //protected $render_filter_toolbar = false;
+    //protected $nav;
 
     #
     public function render()
     {
+        //$data = (object)[];
         $data = [];
-        $data['extend'] = $this->render_extend;
+        //$data->id = Str::replace('::', '_', $this->grid_id);
         $data['id'] = Str::replace('::', '_', $this->grid_id);
 
-        $index = 0;
-        foreach ($this->cols as $k => $c) {
-            if (isset($c['unset']) && $c['unset']) {
-                continue;
-            }
-            $colModel[] = $this->renderColumn($c);
-            $colIndex[$k] = $index;
-            $index++;
-        }
+        //$index = 0;
+        //foreach ($this->cols as $k => $c) {
+        //
+        //    if (isset($c['unset']) && $c['unset']) {
+        //        continue;
+        //    }
+        //
+        //    $colModel[] = $this->renderColumn($c);
+        //    $colIndex[$k] = $index;
+        //    $index++;
+        //}
 
         $options = array(
-            'colModel' => $colModel,
+            //'colModel' => $colModel,
         );
 
-        $options['url'] = $this->renderGridUrl();
-        $data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
+        //$options['url'] = $this->renderGridUrl();
+        //$data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
 
         // Сортировка по умолчанию
         //if (isset($data['options']['sort']['name']) && isset($colIndex[$data['options']['sort']['name']])) {
@@ -69,18 +71,23 @@ trait RenderTrait
         //$this->getParams($this);
 
         return view('grid::fancy.layout', [
-            'title' => $this->title ?? 'Список компонента Grid',
+            'title' => $this->title ?? 'Список компонента FancyGrid',
             'data' => $data,
             'url' => $this->renderGridUrl(),
-            'options' => $options = Utils::jsonEncode($data['options']),
-            'cols' => $data['options']['colModel'],
-            'render_filter_toolbar' => $this->render_filter_toolbar,
-            'nav' => $this->renderNav(),
+            //'options' => $options = Utils::jsonEncode($data['options']),
+            //'cols' => $data['options']['colModel'],
+            //'render_filter_toolbar' => $this->render_filter_toolbar,
+            //'nav' => $this->renderNav(),
 
-            'language' => $this->getLanguage(),
+            //'language' => $this->getLanguage(),
 
-            'mouse' => isset($this->mouse) ? $this->mouse + $this->default['mouse'] : $this->default['mouse'],
+            //'mouse' => isset($this->mouse) ? $this->mouse + $this->default['mouse'] : $this->default['mouse'],
         ]);
+    }
+
+    protected function JSF()
+    {
+        //return <<<HTML HTML;
     }
 
     #

@@ -18,14 +18,21 @@ use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Grid\Data\Raw;
 use Boot\System\Grid\Exception\ExceptionGrid;
 use Boot\System\Grid\Utils\Utils;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 
-use Boot\System\Grid\Repositories\Fancy\DBRepository;
-use Boot\System\Grid\Repositories\Fancy\ModelRepository;
-use Boot\System\Grid\Repositories\Fancy\QueryRepository;
-use Boot\System\Grid\Repositories\Fancy\Repository;
+//use Boot\System\Grid\Repositories\Fancy\DBRepository;
+//use Boot\System\Grid\Repositories\Fancy\ModelRepository;
+//use Boot\System\Grid\Repositories\Fancy\QueryRepository;
+//use Boot\System\Grid\Repositories\Fancy\Repository;
+//use Boot\System\Grid\Traits\Fancy\RenderTrait;
+
+//use Boot\System\Grid\Repositories\Fancy\DBRepository;
+//use Boot\System\Grid\Repositories\Fancy\ModelRepository;
+//use Boot\System\Grid\Repositories\Fancy\QueryRepository;
+//use Boot\System\Grid\Repositories\Fancy\Repository;
 use Boot\System\Grid\Traits\Fancy\RenderTrait;
 
 abstract class GridFancy
@@ -41,7 +48,6 @@ abstract class GridFancy
         $db = null,
         $raws,
         $title,
-        //$cols_default = array(),
         $out = 'json',
         $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op'),
         $default;
@@ -49,7 +55,7 @@ abstract class GridFancy
     // Права доступа к текущему гриду и фильстрация по permission
     protected $protected_other_item_permission = false;
 
-    public $options, $cols;
+    public $options, $cols, $rows, $total;
 
     /**
      * Конструктор класса
@@ -59,7 +65,7 @@ abstract class GridFancy
      */
     public function __construct()
     {
-        $this->default = config('grid.default');
+        $this->default = config('grid.default_fancy');
         $this->beforeInit();
         $this->init();
         $this->afterInit();
@@ -122,10 +128,8 @@ abstract class GridFancy
     protected function prepareColumn()
     {
         $this->reserved_col_names = $this->getReservedColNames();
-
-        foreach ($this->cols as $column => &$params) {
-            //$c =
-            $this->initColumn($column, $params);
+        foreach ($this->cols as $k => &$c) {
+            $c = $this->initColumn($k, $c);
         }
     }
 
@@ -141,68 +145,114 @@ abstract class GridFancy
         $this->request = $request;
 
         // Только данные тех организаций в которых состоит пользователь
-        $this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
+        //$this->getCheckOrgs(); // Закоментить если не надо разделять по пользователям и организациям
 
-        $this->getOutputParams();
-        $this->getRepository();
-        $this->getRepositoryRows();
-        $this->getRepositoryUserData();
-        $this->getRepositoryRecords();
-        $this->getRepositoryTotal();
+        $this->getRows();
 
-        return $this->outDataTable();
+        $response = [
+            'success' => true,
+            'data' => $this->rows,
+            'totalCount' => $this->total
+        ];
+
+        return $response;
+
     }
 
-    /**
-     * Получение построителя запросов
-     *
-     * @return void
-     * @throws Exception
-     */
-    protected function getRepository()
+    #
+    protected function getRows()
     {
-        if ($this->db == null) {
-            $this->repository = new QueryRepository();
-        } elseif ($this->db instanceof ModelBuilder) {
-            $this->repository = new ModelRepository();
-        } elseif ($this->db instanceof Builder) {
-            $this->repository = new DBRepository();
-        } else {
-            throw new Exception("Неизвестный тип построения запросов");
+        $request = $this->request;
+        $limit = $request->input('limit');
+        $page = (int) $request->input('page');
+
+        // Фильтрация если есть
+        $filter = $request->input('filter');
+        if ($filter) {
+            //dd($filter);
+            $filters = collect(json_decode($filter, true));
+
+            $raw = $filters->map(function ($filter) {
+
+                switch ($filter['operator']) {
+                    case 'like':
+                        $filter['value'] = "%{$filter['value']}%";
+                        break;
+                    case 'eq':
+                        $filter['operator'] = "=";
+                        break;
+                    case 'gteq':
+                        // Дата начала
+                        $filter['value'] = Carbon::parse($filter['value'])->format('Y-m-d');
+                        $filter['operator'] = ">=";
+                        break;
+                    case 'lteq':
+                        // Дата конца
+                        $filter['value'] = Carbon::parse($filter['value'])->format('Y-m-d');
+                        $filter['operator'] = "<=";
+                        break;
+                    default:
+                        return null;
+                }
+
+                return "{$filter['property']} {$filter['operator']} '{$filter['value']}'";
+
+            })->filter()->all();
+
+            $this->db->whereRaw(implode('and ', $raw));
         }
 
-        $this->repository->setParameters([
-            'db' => $this->db,
-            'cols' => $this->cols,
-            'request' => $this->request,
-            'grid' => $this,
-        ]);
+        // Сортировка
+        $sort = $request->input('sort');
+        if ($sort) {
+            $dir = $request->input('dir');
+            $this->db->orderBy($sort, $dir);
+        }
 
+        // Мульти сортировка
+        $sorters = $request->input('sorters');
+        if ($sorters) {
+            $sorters = collect($sorters);
+            $sorters = $sorters->map(function ($sorter) {
+                return "{$sorter['key']} {$sorter['dir']}";
+            })->all();
+            $this->db->orderByRaw(implode(', ', $sorters));
+        }
+        //dd($this->db->toRawSql());
+
+        if ($limit ?? true) {
+            $this->db = $this->db->paginate($limit);
+            $this->rows = $this->db->items();
+            $this->total = $this->db->total();
+        } else {
+            $this->rows = $this->db->get();
+            $this->total = $this->db->count();
+        }
     }
 
     #
-    protected function getRepositoryRows()
-    {
-        $this->rows = $this->repository->getDataRows();
-    }
+    //protected function getRepositoryRows()
+    //{
+    //    $this->rows = $this->repository->getDataRows();
+    //}
 
     #
-    protected function getRepositoryUserData()
-    {
-        $this->userdata = $this->repository->getUserData();
-    }
+    //protected function getRepositoryUserData()
+    //{
+    //    $this->userdata = $this->repository->getUserData();
+    //}
 
     #
-    protected function getRepositoryRecords()
-    {
-        $this->records = $this->repository->getRecords();
-    }
+    //protected function getRepositoryRecords()
+    //{
+    //    $this->records = $this->repository->getRecords();
+    //}
 
     #
-    protected function getRepositoryTotal()
-    {
-        $this->total = $this->repository->getTotal();
-    }
+    //protected function getRepositoryTotal()
+    //{
+    //    $this->total = $this->repository->getTotal();
+    //}
 
     /**
      * Подготовка строк
@@ -210,10 +260,10 @@ abstract class GridFancy
      * @param  mixed  $raw
      * @return void
      */
-    public function parseRowGrid($raw)
-    {
-        return $this->parseRow($raw);
-    }
+    //public function parseRowGrid($raw)
+    //{
+    //    return $this->parseRow($raw);
+    //}
 
     /**
      * Подготовка строк
@@ -221,10 +271,10 @@ abstract class GridFancy
      * @param  mixed  $raw
      * @return void
      */
-    protected function parseRow($raw)
-    {
-        return $raw;
-    }
+    //protected function parseRow($raw)
+    //{
+    //    return $raw;
+    //}
 
     /**
      * Получение и проверка доступа к материалам по организации пользователя
@@ -297,38 +347,38 @@ abstract class GridFancy
     /**
      * Инициализация колонок
      *
-     * @param  mixed  $column // Колонка
-     * @param  mixed  $params // Параметры калонки
+     * @param  mixed  $k // Колонка
+     * @param  mixed  $c // Параметры калонки
      * @return array
      * @throws ExceptionGrid
      */
-    protected function initColumn($column, $params)
+    protected function initColumn($k, $c)
     {
         # Проверяем зарезервированные ключи
-        if (in_array($column, $this->reserved_col_names)) {
-            throw new ExceptionGrid("Имя столбца '$column' зарезервировано для внутреннего использования!");
+        if (in_array($k, $this->reserved_col_names)) {
+            throw new ExceptionGrid("Имя столбца '$k' зарезервировано для внутреннего использования!");
         }
 
-        if (strpos($column, '_') === 0) {
-            throw new ExceptionGrid("Название столбца '$column' НЕ должно начинаться со знака подчеркивания!");
+        if (strpos($k, '_') === 0) {
+            throw new ExceptionGrid("Название столбца '$k' НЕ должно начинаться со знака подчеркивания!");
         }
 
         # Имя и индекс всегда совпадают с ключом массива
-        $params['name'] = $column;
-        $params['index'] = $column;
+        $c['name'] = $k;
+        $c['index'] = $k;
 
         # Начало фильтрации *****************************************************
-        include('Utils/Filters.php');
+        //include('Utils/Filters.php');
 
-        # Объединить со значениями по умолчанию
-        //$params = array_merge($this->default['cols'], $this->cols_default, $params);
-        $params = array_merge($this->default['cols'], $params);
+        #Merge with defaults
+        //$c = array_merge($this->default['cols'], $this->cols_default, $c);
+        $c = array_merge($this->default['cols'], $c);
 
-        #DB = ключ столбца, если он не задан
-        //$params['db'] = $params['db'] ? $params['db'] : $column;
-        $params['db'] = $params['db'] ?? $column;
+        #DB = column key if not set
+        //$c['db'] = $c['db'] ? $c['db'] : $k;
+        $c['db'] = $c['db'] ?? $k;
 
-        return $params;
+        return $c;
     }
 
     # Задание значений в select2 для Grid
@@ -407,20 +457,17 @@ abstract class GridFancy
     #
     protected function outDataTable()
     {
-        $data = array(
-            'success' => true ?? false,
-            //'draw' => $this->request->draw ?? 1,
-            //'recordsTotal' => $this->records ?? 0,
-            //'recordsFiltered' => $this->records ?? 0,
-            'totalCount' => $this->records ?? 0,
-            'data' => $this->rows ?? 0,
-        );
+        $response = [
+            'success' => true,
+            'data' => $this->rows,
+            'totalCount' => $this->db->total()
+        ];
 
-        if (config('grid.debug_output')) {
-            $data['debug'] = $this->debug ?? 0;
-        }
+        //if (config('grid.debug_output')) {
+        //    $data['debug'] = $this->debug ?? 0;
+        //}
 
-        return $data;
+        return $response;
     }
 
     #
