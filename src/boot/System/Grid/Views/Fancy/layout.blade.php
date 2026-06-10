@@ -7,25 +7,17 @@
 {{-- Тело главного Grid --}}
 
 @push('scripts')
-    <script type="text/javascript" data-info="">
-
-        // $(document).ready(function () {});
+    <script type="text/javascript" data-info="GridFancy">
 
         document.addEventListener("DOMContentLoaded", function () {
 
             const grid = new FancyGrid({
                 // title: 'Server Paging',
                 renderTo: 'grid_{{ $data['id'] }}',
-                // width: 550,
-                // height: document.documentElement.clientHeight * 0.729,
-                // height: 'fit',
-                // height: '61vh',
-                // paging: true,
                 watermark: false,
                 paging: {
                     pageSize: 5,
-                    // pageSizeData: [5, 10, 20, 50],
-                    // barType: 'none',
+                    pageSizeData: [5, 10, 20, 50, 100, 150, 200],
                     refreshButton: true
                 },
                 // xxx: true,
@@ -52,21 +44,17 @@
                         // url: 'https://atri-energo.dev/administration/module/zeon/fancygrid_json',
                         url: '{{ $url }}',
 
-                        beforeRequest: function (o) {
-                            //o.type - hint of request.
-                            //Possible values: create/read/update/delete
-
-                            //o.params - server request params
-                            //o.headers - server request headers
-
-                            o.params.page += 1;
-
-                            return o;
-                        },
-
-                        // words: {
-                        //     limit: '99'
-                        // }
+                        // beforeRequest: function (o) {
+                        //     //o.type - hint of request.
+                        //     //Possible values: create/read/update/delete
+                        //
+                        //     //o.params - server request params
+                        //     //o.headers - server request headers
+                        //
+                        //     o.params.page += 1;
+                        //
+                        //     return o;
+                        // },
                     }
                 },
                 multiSort: true,
@@ -228,185 +216,6 @@
                 }],
             });
 
-
-            // let grid = new FancyGrid({
-            //     renderTo: 'container',
-            //     // cellHeight: 52,
-            //     // watermark: false,
-            //     trackOver: true,
-            //     licence: {
-            //         // render: function (o) {
-            //         //     return '';
-            //         // }
-            //     },
-            //
-            //     i18n: 'ru',
-            //     // infinite: true,
-            //     // selModel: {
-            //     //   type: 'cell',
-            //     //   activeCell: true
-            //     // },
-            //     // cellWrapper: true,
-            //     //width: 1000,
-            //     height: '61vh',
-            //     // height: 'fit2',
-            //     // resizable: true,
-            //     // nativeScroller: true,
-            //     events: [
-            //         {
-            //             init: function (grid) {
-            //
-            //                 // console.log(grid)
-            //                 // grid.licence.licenceEl.dom.remove()
-            //                 // grid.insert(19, {
-            //                 //     // id: 25,
-            //                 //     name: 'John',
-            //                 //     // someProperty: 1
-            //                 // });
-            //
-            //                 // #1
-            //                 // let rr = grid.scroller.bodyFullViewHeight - grid.scroller.bodyViewHeight;
-            //                 // console.log(grid)
-            //                 // console.log(grid.scroller.bodyFullViewHeight)
-            //                 //
-            //                 // let observer = new MutationObserver(function(mutations) {
-            //                 //     mutations.forEach(function(mutationRecord) {
-            //                 //         // console.log('style changed!');
-            //                 //
-            //                 //         if(Math.abs(mutationRecord.target.offsetTop) == rr) {
-            //                 //             console.log(rr)
-            //                 //         }
-            //                 //
-            //                 //     });
-            //                 // });
-            //                 //
-            //                 // let target = document.querySelector('.fancy-grid-column');
-            //                 // observer.observe(target, { attributes : true, attributeFilter : ['style'] });
-            //
-            //                 //#2
-            //                 // $('.fancy-grid-body').bind('mousewheel', function (event) {
-            //                 //
-            //                 //     if (!grid.scroller.scrollInfo?.scrolled && grid.scroller.scrollInfo?.directionY < 0) {
-            //                 //         grid.scrollToRow(0);
-            //                 //         grid.nextPage();
-            //                 //         // console.log('down')
-            //                 //     } else if (!grid.scroller.scrollInfo?.scrolled && grid.scroller.scrollInfo?.directionY > 0) {
-            //                 //         grid.scrollToRow(19);
-            //                 //         grid.prevPage();
-            //                 //         // console.log('up')
-            //                 //     }
-            //                 //
-            //                 // });
-            //
-            //             },
-            //             // scope: {}// not required
-            //         },
-            //         {
-            //             rowclick: function (grid, o) {
-            //                 // alert('rowclick')
-            //             },
-            //             // scope: {}// not required
-            //         },
-            //         {
-            //             rowdblclick: function (grid, o) {
-            //
-            //             }
-            //         },
-            //         {
-            //             scroll: (grid) => {
-            //                 // console.log(grid);
-            //                 console.log(grid.scroller);
-            //                 // console.log(grid.scroller.scrollInfo);
-            //                 // console.log(grid.scroller.scrollInfo?.scrolled);
-            //                 // console.log(Math.sign(grid.scroller.scrollInfo?.directionY))
-            //
-            //                 // if (!grid.scroller.scrollInfo?.scrolled && Math.sign(grid.scroller.scrollInfo?.directionY)) {
-            //                 if (!grid.scroller.scrollInfo?.scrolled && grid.scroller.scrollInfo?.directionY < 0) {
-            //                     // grid.scrollToRow(0);
-            //                     // grid.nextPage();
-            //                     // console.log('down')
-            //                     // console.log(grid.scroller.scrollInfo.scrolled)
-            //                     // console.log(Math.sign(grid.scroller.scrollInfo.directionY));
-            //                 } else if (!grid.scroller.scrollInfo?.scrolled && grid.scroller.scrollInfo?.directionY > 0) {
-            //
-            //                     // grid.scrollToRow(19);
-            //                     // grid.prevPage();
-            //                     // console.log('up')
-            //                     // console.log(grid.scroller.scrollInfo.scrolled)
-            //                     // console.log(Math.sign(grid.scroller.scrollInfo.directionY));
-            //                 }
-            //             }
-            //         }
-            //     ],
-            //
-            //     paging: {
-            //         pageSize: 20,
-            //         pageSizeData: [5, 10, 20, 50],
-            //         // barType: 'none',
-            //         refreshButton: true
-            //     },
-            //
-            //     // title: {
-            //     //     text: 'Title',
-            //     //     cls: 'my-title'
-            //     // },
-            //     data: data,
-            //     defaults: {
-            //         type: 'string',
-            //         // width: 100,
-            //         // editable: true,
-            //         // sortable: true,
-            //         // draggable: true,
-            //         resizable: true,
-            //         flex: 1
-            //         // filter: {
-            //         //     header: true
-            //         // }
-            //     },
-            //     columns: [{
-            //         index: 'id',
-            //         title: 'ID',
-            //         type: 'string',
-            //         // flex: 2,
-            //         align: 'center',
-            //         width: 50,
-            //         cellAlign: 'center',
-            //         // render: function (o) {
-            //         //     o.style = {
-            //         //         'text-align': 'center'
-            //         //     };
-            //         //     return o;
-            //         // }
-            //     }, {
-            //         index: 'task',
-            //         title: 'Задача',
-            //         type: 'string',
-            //         // width: 100
-            //     }, {
-            //         index: 'date',
-            //         title: 'date',
-            //         type: 'string',
-            //         // width: 100
-            //         flex: 1
-            //     }, {
-            //         index: 'object',
-            //         title: 'object',
-            //         type: 'string',
-            //         // width: 100
-            //     },
-            //         // {
-            //         //     index: 'action',
-            //         //     title: 'Дейсвтие',
-            //         //     // type: 'string',
-            //         //     width: 100,
-            //         //     render: function (o) {
-            //         //         o.value = '<div class="btn-group dropstart" role="group"><a href="/administration/module/task/view/7498" target="_blank" class="btn btn-sm btn-outline-secondary" title="" data-bs-original-title="Просмотр" data-bs-toggle="tooltip" data-bs-placement="left"> <i class="feather-eye"></i></a><a class="btn btn-sm btn-outline-secondary archive" data-bs-original-title="В архив" data-bs-toggle="tooltip" data-bs-placement="left" data-id="7498 " title=""><i class="fa-solid fa-box-archive"></i></a></div>';
-            //         //
-            //         //         return o;
-            //         //     }
-            //         // }
-            //     ]
-            // });
         });
 
     </script>
