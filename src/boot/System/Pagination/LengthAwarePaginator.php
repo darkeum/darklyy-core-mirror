@@ -34,7 +34,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
      * @param  int  $total
      * @param  int  $perPage
      * @param  int|null  $currentPage
-     * @param  array  $options (path, query, fragment, pageName)
+     * @param  array  $options  (path, query, fragment, pageName)
      * @return void
      */
     public function __construct($items, $total, $perPage, $currentPage = null, array $options = [])
@@ -89,11 +89,19 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
      */
     public function render($view = null, $data = [])
     {
-        $app = app();
-        return  $app->make('twig')->render('pagination.html.twig', array_merge($data, [
+        // Убрать когда будет убрано все что использует twig
+        if (empty($view)) {
+            $app = app();
+            return $app->make('twig')->render('pagination.html.twig', array_merge($data, [
                 'paginator' => $this,
                 'elements' => $this->elements(),
             ]));
+        } else {
+            return static::viewFactory()->make($view ?: static::$defaultView, array_merge($data, [
+                'paginator' => $this,
+                'elements' => $this->elements(),
+            ]));
+        }
     }
 
     /**
@@ -104,7 +112,7 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     protected function linkCollection()
     {
         return collect($this->elements())->flatMap(function ($item) {
-            if (! is_array($item)) {
+            if (!is_array($item)) {
                 return [['url' => null, 'label' => '...', 'active' => false]];
             }
 
