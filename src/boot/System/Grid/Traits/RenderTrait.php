@@ -66,7 +66,6 @@ trait RenderTrait
         } else {
             $data['dom'] = $data['options']['dom'];
         }
-
         //$this->getParams($this);
 
         return view('grid::layout', [
