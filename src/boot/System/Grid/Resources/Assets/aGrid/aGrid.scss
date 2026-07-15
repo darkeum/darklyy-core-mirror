@@ -341,6 +341,7 @@
 
       // Стили для тела таблицы
       tbody {
+        // Строки TR
         tr {
           cursor: pointer; // Указатель при наведении
 
@@ -397,11 +398,8 @@
               }
 
               .badge {
-                //background-color: var(--white);
-                //background-color: initial;
-                //border: 1px solid;
-
-                //filter: invert(1);
+                background-color: var(--white);
+                //box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 1) inset;
               }
 
               .render {
@@ -437,7 +435,7 @@
             }
           }
 
-          // Стили для ячеек
+          // Стили для ячеек TD
           td {
             input.render-class {
               border-color: transparent;
@@ -460,8 +458,8 @@
           }
 
           .badge {
-            // display: block; // Блочное отображение бейджей
-            border: 1px solid transparent;
+            //display: block; // Блочное отображение бейджей
+            //border: 1px solid transparent;
           }
         }
       }
