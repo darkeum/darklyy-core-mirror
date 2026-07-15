@@ -36,21 +36,21 @@ class FileUploadConfiguration
 
     public static function diskConfig()
     {
-        return config('filesystems.disks.'.static::disk());
+        return config('filesystems.disks.' . static::disk());
     }
 
     public static function isUsingS3()
     {
         $diskBeforeTestFake = config('livewire.temporary_file_upload.disk') ?: config('filesystems.default');
 
-        return config('filesystems.disks.'.strtolower($diskBeforeTestFake).'.driver') === 's3';
+        return config('filesystems.disks.' . strtolower($diskBeforeTestFake) . '.driver') === 's3';
     }
 
     public static function isUsingGCS()
     {
         $diskBeforeTestFake = config('livewire.temporary_file_upload.disk') ?: config('filesystems.default');
 
-        return config('filesystems.disks.'.strtolower($diskBeforeTestFake).'.driver') === 'gcs';
+        return config('filesystems.disks.' . strtolower($diskBeforeTestFake) . '.driver') === 'gcs';
     }
 
     public static function normalizeRelativePath($path)
@@ -81,7 +81,7 @@ class FileUploadConfiguration
         $directory = static::directory();
         $path = static::normalizeRelativePath($path);
 
-        return $prefix.($prefix ? '/' : '').$directory.($path ? '/' : '').$path;
+        return $prefix . ($prefix ? '/' : '') . $directory . ($path ? '/' : '') . $path;
     }
 
     public static function mimeType($filename)
@@ -104,12 +104,26 @@ class FileUploadConfiguration
     public static function rules()
     {
         $rules = config('livewire.temporary_file_upload.rules');
+        $maxNameLength =  config('livewire.temporary_file_upload.max_file_name') ?? 200;
 
-        if (is_null($rules)) return ['required', 'file', 'max:122880'];
+        $nameRule = function ($attribute, $value, $fail) use ($maxNameLength) {
+            if (strlen($value->getClientOriginalName()) > $maxNameLength) {
+                $fail("Имя файла не должно превышать {$maxNameLength} символов.");
+            }
+        };
 
-        if (is_array($rules)) return $rules;
+        if (is_null($rules)) {
+            return ['required', 'file', 'max:122880', $nameRule];
+        }
 
-        return explode('|', $rules);
+        if (is_array($rules)) {
+            $rules[] = $nameRule;
+            return $rules;
+        }
+
+        $rulesArray = explode('|', $rules);
+        $rulesArray[] = $nameRule;
+        return $rulesArray;
     }
 
     public static function maxUploadTime()
