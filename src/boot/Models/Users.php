@@ -40,7 +40,7 @@ class Users extends Model implements AuthenticatableContract, CanResetPasswordCo
 
     use HashIdTrait, HasResourceKeyTrait, SoftDeletes;
 
-    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "patronymic", "name_source", "place", "birthday", "sex", "signature", "inn", "remember_token", "group", "visited_at", "hidden", "active"];
+    protected $fillable = ["nick", "password", "email", "phone", "phone2", "surname", "name", "patronymic", "name_source", "place", "birthday", "sex", "signature", "inn", "remember_token", "group", "visited_at", "hidden", "active", "oid"];
 
     protected $appends = ["short_user_name", "full_user_name", "short_user_name_public"];
 
