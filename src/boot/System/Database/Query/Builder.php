@@ -9,16 +9,18 @@ use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
 use RuntimeException;
-use \Boot\Contracts\Support\Arrayable;
-use \Boot\Support\Arr;
-use \Boot\Support\Collection;
-use \Boot\Support\Str;
-use \Boot\System\Database\Concerns\BuildsQueries;
-use \Boot\System\Database\ConnectionInterface;
-use \Boot\System\Database\Eloquent\Builder as EloquentBuilder;
-use \Boot\System\Database\Eloquent\Relations\Relation;
-use \Boot\System\Database\Query\Grammars\Grammar;
-use \Boot\System\Database\Query\Processors\Processor;
+use Boot\Contracts\Support\Arrayable;
+use Boot\Support\Arr;
+use Boot\Support\Collection;
+use Boot\Support\Str;
+use Boot\System\Database\Concerns\BuildsQueries;
+use Boot\System\Database\ConnectionInterface;
+use Boot\System\Database\Eloquent\Builder as EloquentBuilder;
+use Boot\System\Database\Eloquent\Relations\Relation;
+use Boot\System\Database\Query\Grammars\Grammar;
+use Boot\System\Database\Query\Processors\Processor;
+use Illuminate\Database\Query\Grammars\Grammar as LaravelGrammar;
+use Illuminate\Database\Query\Processors\Processor as LaravelProcessor;
 
 class Builder extends \Illuminate\Database\Query\Builder
 {
@@ -2639,8 +2641,8 @@ class Builder extends \Illuminate\Database\Query\Builder
 
     public function __construct(
         ConnectionInterface $connection,
-        ?Grammar $grammar = null,
-        ?Processor $processor = null,
+        Grammar|LaravelGrammar|null $grammar = null,
+        Processor|LaravelProcessor|null $processor = null,
     ) {
         $this->connection = $connection;
         $this->grammar    = $grammar ?: $connection->getQueryGrammar();
