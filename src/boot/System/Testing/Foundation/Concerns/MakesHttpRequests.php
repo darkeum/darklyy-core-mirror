@@ -12,7 +12,7 @@
 namespace Boot\System\Testing\Foundation\Concerns;
 
 use BackedEnum;
-use Boot\Contracts\Contracts\Http\Kernel as HttpKernel;
+use Boot\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
