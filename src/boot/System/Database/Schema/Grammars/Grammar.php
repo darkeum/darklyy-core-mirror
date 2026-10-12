@@ -1,24 +1,25 @@
 <?php
-
 namespace Boot\System\Database\Schema\Grammars;
 
-use Doctrine\DBAL\Schema\AbstractSchemaManager as SchemaManager;
-use Doctrine\DBAL\Schema\TableDiff;
-use \Boot\System\Database\Connection;
-use \Boot\System\Database\Grammar as BaseGrammar;
-use \Boot\System\Database\Query\Expression;
-use \Boot\System\Database\Schema\Blueprint;
-use \Boot\Support\Fluent;
+use Boot\Support\Fluent;
+use Boot\System\Database\Grammar as BaseGrammar;
+use Boot\System\Database\Query\Expression;
+use Boot\System\Database\Schema\Blueprint;
+use function Illuminate\Support\enum_value;
+use Illuminate\Database\Concerns\CompilesJsonPaths;
 use RuntimeException;
+use UnitEnum;
 
 abstract class Grammar extends BaseGrammar
 {
+    use CompilesJsonPaths;
+
     /**
-     * The connection used by the grammar.
+     * The possible column modifiers.
      *
-     * @var \Boot\System\Database\Connection|null
+     * @var string[]
      */
-    protected $connection;
+    protected $modifiers = [];
 
     /**
      * If this Grammar supports schema changes wrapped in a transaction.
@@ -35,72 +36,211 @@ abstract class Grammar extends BaseGrammar
     protected $fluentCommands = [];
 
     /**
-     * Create a new schema grammar instance.
+     * Compile a create database command.
      *
-     * @param  \Boot\System\Database\Connection|null  $connection
+     * @param  string  $name
+     * @return string
+     */
+    public function compileCreateDatabase($name)
+    {
+        return sprintf('create database %s',
+            $this->wrapValue($name),
+        );
+    }
+
+    /**
+     * Compile a drop database if exists command.
+     *
+     * @param  string  $name
+     * @return string
+     */
+    public function compileDropDatabaseIfExists($name)
+    {
+        return sprintf('drop database if exists %s',
+            $this->wrapValue($name)
+        );
+    }
+
+    /**
+     * Compile the query to determine the schemas.
+     *
+     * @return string
+     */
+    public function compileSchemas()
+    {
+        throw new RuntimeException('This database driver does not support retrieving schemas.');
+    }
+
+    /**
+     * Compile the query to determine if the given table exists.
+     *
+     * @param  string|null  $schema
+     * @param  string  $table
+     * @return string|null
+     */
+    public function compileTableExists($schema, $table)
+    {
+        //
+    }
+
+    /**
+     * Compile the query to determine the tables.
+     *
+     * @param  string|string[]|null  $schema
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileTables($schema)
+    {
+        throw new RuntimeException('This database driver does not support retrieving tables.');
+    }
+
+    /**
+     * Compile the query to determine the views.
+     *
+     * @param  string|string[]|null  $schema
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileViews($schema)
+    {
+        throw new RuntimeException('This database driver does not support retrieving views.');
+    }
+
+    /**
+     * Compile the query to determine the user-defined types.
+     *
+     * @param  string|string[]|null  $schema
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileTypes($schema)
+    {
+        throw new RuntimeException('This database driver does not support retrieving user-defined types.');
+    }
+
+    /**
+     * Compile the query to determine the columns.
+     *
+     * @param  string|null  $schema
+     * @param  string  $table
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileColumns($schema, $table)
+    {
+        throw new RuntimeException('This database driver does not support retrieving columns.');
+    }
+
+    /**
+     * Compile the query to determine the indexes.
+     *
+     * @param  string|null  $schema
+     * @param  string  $table
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileIndexes($schema, $table)
+    {
+        throw new RuntimeException('This database driver does not support retrieving indexes.');
+    }
+
+    /**
+     * Compile a vector index key command.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
      * @return void
+     *
+     * @throws \RuntimeException
      */
-    public function __construct($connection = null)
+    public function compileVectorIndex(Blueprint $blueprint, Fluent $command)
     {
-        $this->connection = $connection;
+        throw new RuntimeException('The database driver in use does not support vector indexes.');
     }
 
     /**
-     * Set the connection used by the grammar.
+     * Compile the query to determine the foreign keys.
      *
-     * @param  \Boot\System\Database\Connection  $connection
-     * @return $this
-     */
-    public function setConnection($connection)
-    {
-        $this->connection = $connection;
-
-        return $this;
-    }
-
-    /**
-     * Get the connection used by the grammar.
+     * @param  string|null  $schema
+     * @param  string  $table
+     * @return string
      *
-     * @return \Boot\System\Database\Connection|null
+     * @throws \RuntimeException
      */
-    public function getConnection()
+    public function compileForeignKeys($schema, $table)
     {
-        return $this->connection;
+        throw new RuntimeException('This database driver does not support retrieving foreign keys.');
     }
 
     /**
      * Compile a rename column command.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\Support\Fluent  $command
-     * @param  \Boot\System\Database\Connection  $connection
-     * @return array
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return list<string>|string
      */
-    public function compileRenameColumn(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileRenameColumn(Blueprint $blueprint, Fluent $command)
     {
-        return RenameColumn::compile($this, $blueprint, $command, $connection);
+        return sprintf('alter table %s rename column %s to %s',
+            $this->wrapTable($blueprint),
+            $this->wrap($command->from),
+            $this->wrap($command->to)
+        );
     }
 
     /**
      * Compile a change column command into a series of SQL statements.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
      * @param  \Boot\Support\Fluent  $command
-     * @param  \Boot\System\Database\Connection  $connection
-     * @return array
+     * @return list<string>|string
      *
      * @throws \RuntimeException
      */
-    public function compileChange(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileChange(Blueprint $blueprint, Fluent $command)
     {
-        return ChangeColumn::compile($this, $blueprint, $command, $connection);
+        throw new RuntimeException('This database driver does not support modifying columns.');
+    }
+
+    /**
+     * Compile a fulltext index key command.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileFulltext(Blueprint $blueprint, Fluent $command)
+    {
+        throw new RuntimeException('This database driver does not support fulltext index creation.');
+    }
+
+    /**
+     * Compile a drop fulltext index command.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    public function compileDropFullText(Blueprint $blueprint, Fluent $command)
+    {
+        throw new RuntimeException('This database driver does not support fulltext index removal.');
     }
 
     /**
      * Compile a foreign key command.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\Support\Fluent  $command
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -137,9 +277,21 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile the blueprint's column definitions.
+     * Compile a drop foreign key command.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $command
+     * @return string
+     */
+    public function compileDropForeign(Blueprint $blueprint, Fluent $command)
+    {
+        throw new RuntimeException('This database driver does not support dropping foreign keys.');
+    }
+
+    /**
+     * Compile the blueprint's added column definitions.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
      * @return array
      */
     protected function getColumns(Blueprint $blueprint)
@@ -147,39 +299,44 @@ abstract class Grammar extends BaseGrammar
         $columns = [];
 
         foreach ($blueprint->getAddedColumns() as $column) {
-            // колонка с готовым SQL-описанием подставляется как есть
-            if ($column->type === 'raw') {
-                $columns[] = $this->wrap($column).' '.$column->definition;
-
-                continue;
-            }
-
-            // Each of the column types have their own compiler functions which are tasked
-            // with turning the column definition into its SQL format for this platform
-            // used by the connection. The column's modifiers are compiled and added.
-            $sql = $this->wrap($column).' '.$this->getType($column);
-
-            $columns[] = $this->addModifiers($sql, $blueprint, $column);
+            $columns[] = $this->getColumn($blueprint, $column);
         }
 
         return $columns;
     }
 
     /**
+     * Compile the column definition.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\System\Database\Schema\ColumnDefinition  $column
+     * @return string
+     */
+    protected function getColumn(Blueprint $blueprint, $column)
+    {
+        // Each of the column types has their own compiler functions, which are tasked
+        // with turning the column definition into its SQL format for this platform
+        // used by the connection. The column's modifiers are compiled and added.
+        $sql = $this->wrap($column) . ' ' . $this->getType($column);
+
+        return $this->addModifiers($sql, $blueprint, $column);
+    }
+
+    /**
      * Get the SQL for the column data type.
      *
-     * @param  \Boot\Support\Fluent  $column
+     * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     protected function getType(Fluent $column)
     {
-        return $this->{'type'.ucfirst($column->type)}($column);
+        return $this->{'type' . ucfirst($column->type)}($column);
     }
 
     /**
      * Create the column definition for a generated, computed column type.
      *
-     * @param  \Boot\Support\Fluent  $column
+     * @param  \Illuminate\Support\Fluent  $column
      * @return void
      *
      * @throws \RuntimeException
@@ -190,11 +347,48 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
+     * Create the column definition for a vector type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    protected function typeVector(Fluent $column)
+    {
+        throw new RuntimeException('This database driver does not support the vector type.');
+    }
+
+    /**
+     * Create the column definition for a tsvector type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     *
+     * @throws \RuntimeException
+     */
+    protected function typeTsvector(Fluent $column)
+    {
+        throw new RuntimeException('This database driver does not support the tsvector type.');
+    }
+
+    /**
+     * Create the column definition for a raw column type.
+     *
+     * @param  \Illuminate\Support\Fluent  $column
+     * @return string
+     */
+    protected function typeRaw(Fluent $column)
+    {
+        return $column->offsetGet('definition');
+    }
+
+    /**
      * Add the column modifiers to the definition.
      *
      * @param  string  $sql
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\Support\Fluent  $column
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Support\Fluent  $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -209,25 +403,25 @@ abstract class Grammar extends BaseGrammar
     }
 
     /**
-     * Get the primary key command if it exists on the blueprint.
+     * Get the command with a given name if it exists on the blueprint.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
      * @param  string  $name
-     * @return \Boot\Support\Fluent|null
+     * @return \Illuminate\Support\Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {
         $commands = $this->getCommandsByName($blueprint, $name);
 
         if (count($commands) > 0) {
-            return reset($commands);
+            return array_first($commands);
         }
     }
 
     /**
      * Get all of the commands with a given name.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
      * @param  string  $name
      * @return array
      */
@@ -238,17 +432,35 @@ abstract class Grammar extends BaseGrammar
         });
     }
 
+    /*
+     * Determine if a command with a given name exists on the blueprint.
+     *
+     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  string  $name
+     * @return bool
+     */
+    protected function hasCommand(Blueprint $blueprint, $name)
+    {
+        foreach ($blueprint->getCommands() as $command) {
+            if ($command->name === $name) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Add a prefix to an array of values.
      *
      * @param  string  $prefix
-     * @param  array  $values
-     * @return array
+     * @param  array<string>  $values
+     * @return array<string>
      */
     public function prefixArray($prefix, array $values)
     {
         return array_map(function ($value) use ($prefix) {
-            return $prefix.' '.$value;
+            return $prefix . ' ' . $value;
         }, $values);
     }
 
@@ -256,6 +468,7 @@ abstract class Grammar extends BaseGrammar
      * Wrap a table in keyword identifiers.
      *
      * @param  mixed  $table
+     * @param  string|null  $prefix
      * @return string
      */
     public function wrapTable($table, $prefix = null)
@@ -269,14 +482,13 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Boot\System\Database\Query\Expression|string  $value
-     * @param  bool  $prefixAlias
+     * @param  \Boot\System\Support\Fluent|\Illuminate\Contracts\Database\Query\Expression|string  $value
      * @return string
      */
-    public function wrap($value, $prefixAlias = false)
+    public function wrap($value)
     {
         return parent::wrap(
-            $value instanceof Fluent ? $value->name : $value, $prefixAlias
+            $value instanceof Fluent ? $value->name : $value,
         );
     }
 
@@ -288,34 +500,17 @@ abstract class Grammar extends BaseGrammar
      */
     protected function getDefaultValue($value)
     {
-        // выражение Illuminate ядро не может подставить строкой, поэтому приводим к своему
-        if ($value instanceof \Illuminate\Database\Query\Expression) {
-            return new Expression($value->getValue($this));
+        if ($value instanceof Expression || $value instanceof \Illuminate\Database\Query\Expression) {
+            return $this->getValue($value);
         }
 
-        if ($value instanceof Expression) {
-            return $value;
+        if ($value instanceof UnitEnum) {
+            return "'" . str_replace("'", "''", enum_value($value)) . "'";
         }
 
         return is_bool($value)
-                    ? "'".(int) $value."'"
-                    : "'".(string) $value."'";
-    }
-
-    /**
-     * Create an empty Doctrine DBAL TableDiff from the Blueprint.
-     *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Doctrine\DBAL\Schema\AbstractSchemaManager  $schema
-     * @return \Doctrine\DBAL\Schema\TableDiff
-     */
-    public function getDoctrineTableDiff(Blueprint $blueprint, SchemaManager $schema)
-    {
-        $table = $this->getTablePrefix().$blueprint->getTable();
-
-        return tap(new TableDiff($table), function ($tableDiff) use ($schema, $table) {
-            $tableDiff->fromTable = $schema->listTableDetails($table);
-        });
+            ? "'" . (int) $value . "'"
+            : "'" . str_replace("'", "''", $value) . "'";
     }
 
     /**

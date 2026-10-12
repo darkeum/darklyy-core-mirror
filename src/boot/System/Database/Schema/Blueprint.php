@@ -1144,14 +1144,12 @@ class Blueprint
      * Create a new float column on the table.
      *
      * @param  string  $column
-     * @param  int  $total
-     * @param  int  $places
-     * @param  bool  $unsigned
-     * @return \Boot\System\Database\Schema\ColumnDefinition
+     * @param  int  $precision
+     * @return \Illuminate\Database\Schema\ColumnDefinition
      */
-    public function float($column, $total = 8, $places = 2, $unsigned = false)
+    public function float($column, $precision = 53)
     {
-        return $this->addColumn('float', $column, compact('total', 'places', 'unsigned'));
+        return $this->addColumn('float', $column, compact('precision'));
     }
 
     /**
@@ -1186,11 +1184,11 @@ class Blueprint
      * Create a new unsigned float column on the table.
      *
      * @param  string  $column
-     * @param  int  $total
-     * @param  int  $places
+     * @param  int|null  $total
+     * @param  int|null  $places
      * @return \Boot\System\Database\Schema\ColumnDefinition
      */
-    public function unsignedFloat($column, $total = 8, $places = 2)
+    public function unsignedFloat($column, $total = null, $places = null)
     {
         return $this->float($column, $total, $places, true);
     }

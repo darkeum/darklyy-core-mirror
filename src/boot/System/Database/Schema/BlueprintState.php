@@ -11,8 +11,8 @@
 
 namespace Boot\System\Database\Schema;
 
+use Boot\Support\Fluent;
 use Illuminate\Support\Str;
-use Illuminate\Support\Fluent;
 use Illuminate\Support\Collection;
 use Boot\System\Database\Connection;
 use Boot\System\Database\Query\Expression;
@@ -23,14 +23,14 @@ class BlueprintState
     /**
      * The blueprint instance.
      *
-     * @var \Illuminate\Database\Schema\Blueprint
+     * @var \Boot\System\Database\Schema\Blueprint
      */
     protected $blueprint;
 
     /**
      * The connection instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Boot\System\Database\Connection
      */
     protected $connection;
 
@@ -65,8 +65,8 @@ class BlueprintState
     /**
      * Create a new blueprint state instance.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\System\Database\Connection  $connection
      */
     public function __construct(Blueprint $blueprint, Connection $connection)
     {
@@ -158,7 +158,7 @@ class BlueprintState
     /*
      * Update the blueprint's state.
      *
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return void
      */
     public function update(Fluent $command)

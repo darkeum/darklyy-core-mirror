@@ -11,7 +11,9 @@
 
 namespace Boot\System\Database\Schema;
 
-use Illuminate\Support\Fluent;
+use Boot\Support\Fluent;
+
+
 
 /**
  * @method $this algorithm(string $algorithm) Specify an algorithm for the index (MySQL/PostgreSQL)

@@ -64,14 +64,13 @@ abstract class Grammar extends \Illuminate\Database\Grammar
         return $this->wrapValue($prefix.$table);
     }
 
-    /**
+  /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Illuminate\Database\Query\Expression|string  $value
-     * @param  bool  $prefixAlias
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $value
      * @return string
      */
-    public function wrap($value, $prefixAlias = false)
+    public function wrap($value)
     {
         if ($this->isExpression($value)) {
             return $this->getValue($value);
@@ -81,12 +80,18 @@ abstract class Grammar extends \Illuminate\Database\Grammar
         // the pieces so we can wrap each of the segments of the expression on its
         // own, and then join these both back together using the "as" connector.
         if (stripos($value, ' as ') !== false) {
-            return $this->wrapAliasedValue($value, $prefixAlias);
+            return $this->wrapAliasedValue($value);
+        }
+
+        // If the given value is a JSON selector we will wrap it differently than a
+        // traditional value. We will need to split this path and wrap each part
+        // wrapped, etc. Otherwise, we will simply wrap the value as a string.
+        if ($this->isJsonSelector($value)) {
+            return $this->wrapJsonSelector($value);
         }
 
         return $this->wrapSegments(explode('.', $value));
     }
-
     /**
      * Wrap a value that has an alias.
      *
@@ -197,16 +202,7 @@ abstract class Grammar extends \Illuminate\Database\Grammar
         return $value instanceof Expression;
     }
 
-    /**
-     * Get the value of a raw expression.
-     *
-     * @param  \Illuminate\Database\Query\Expression  $expression
-     * @return string
-     */
-    public function getValue($expression)
-    {
-        return $expression->getValue();
-    }
+
 
     /**
      * Get the format for database stored dates.
