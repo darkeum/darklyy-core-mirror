@@ -12,6 +12,37 @@ use Boot\System\Routing\RouteServiceProvider as ServiceProvider;
 class RouteServiceProvider extends ServiceProvider
 {
 
+
+    /**
+     * The controller namespace for the application.
+     *
+     * @var string|null
+     */
+    protected $namespace;
+
+    /**
+     * The callback that should be used to load the application's routes.
+     *
+     * @var \Closure|null
+     */
+    protected $loadRoutesUsing;
+
+    /**
+     * The global callback that should be used to load the application's routes.
+     *
+     * @var \Closure|null
+     */
+    protected static $alwaysLoadRoutesUsing;
+
+    /**
+     * The callback that should be used to load the application's cached routes.
+     *
+     * @var \Closure|null
+     */
+    protected static $alwaysLoadCachedRoutesUsing;
+
+
+
     /**
      * Путь к «домашнему» маршруту для вашего приложения.
      *

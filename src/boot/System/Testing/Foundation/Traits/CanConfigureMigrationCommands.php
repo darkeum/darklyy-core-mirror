@@ -1,6 +1,19 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Foundation\Traits;
+
+use Boot\System\Testing\Foundation\Attributes\Seed;
+use Boot\System\Testing\Foundation\Attributes\Seeder;
+use ReflectionClass;
 
 trait CanConfigureMigrationCommands
 {
@@ -49,6 +62,14 @@ trait CanConfigureMigrationCommands
      */
     protected function shouldSeed()
     {
+        $class = new ReflectionClass($this);
+
+        do {
+            if ($class->getAttributes(Seed::class) !== []) {
+                return true;
+            }
+        } while ($class = $class->getParentClass());
+
         return property_exists($this, 'seed') ? $this->seed : false;
     }
 
@@ -59,6 +80,16 @@ trait CanConfigureMigrationCommands
      */
     protected function seeder()
     {
+        $class = new ReflectionClass($this);
+
+        do {
+            $seeder = $class->getAttributes(Seeder::class);
+
+            if (count($seeder) > 0) {
+                return $seeder[0]->newInstance()->class;
+            }
+        } while ($class = $class->getParentClass());
+
         return property_exists($this, 'seeder') ? $this->seeder : false;
     }
 }

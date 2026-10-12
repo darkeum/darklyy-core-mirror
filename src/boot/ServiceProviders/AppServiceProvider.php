@@ -2,19 +2,19 @@
 
 namespace Boot\ServiceProviders;
 
-use View;
-use Boot\Models\Categories;
-use Boot\System\Http\Request;
-use Boot\Support\Facades\Cache;
-use Illuminate\Support\Facades\URL;
 use Boot\App\MaintenanceModeManager;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Log\Events\MessageLogged;
+use Boot\Models\Categories;
 use Boot\Support\AggregateServiceProvider;
-use Illuminate\Validation\ValidationException;
+use Boot\Support\Facades\Cache;
+use Boot\System\Http\Request;
 use Boot\System\Testing\LoggedExceptionCollection;
-use Illuminate\Testing\ParallelTestingServiceProvider;
+use Boot\System\Testing\ParallelTestingServiceProvider;
 use Illuminate\Contracts\Foundation\MaintenanceMode as MaintenanceModeContract;
+use Illuminate\Log\Events\MessageLogged;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\ValidationException;
+use View;
 
 class AppServiceProvider extends AggregateServiceProvider
 {
@@ -25,7 +25,7 @@ class AppServiceProvider extends AggregateServiceProvider
      */
     protected $providers = [
         FormRequestServiceProvider::class,
-        // ParallelTestingServiceProvider::class,
+        ParallelTestingServiceProvider::class,
     ];
 
     /**

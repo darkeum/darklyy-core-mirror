@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing;
 
 use Illuminate\Contracts\Container\Container;
@@ -43,6 +52,13 @@ class ParallelTesting
     protected $setUpTestCaseCallbacks = [];
 
     /**
+     * All of the registered "setUp" test database callbacks prior to the migrations.
+     *
+     * @var array
+     */
+    protected $setUpTestDatabaseBeforeMigratingCallbacks = [];
+
+    /**
      * All of the registered "setUp" test database callbacks.
      *
      * @var array
@@ -67,7 +83,6 @@ class ParallelTesting
      * Create a new parallel testing instance.
      *
      * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
      */
     public function __construct(Container $container)
     {
@@ -116,6 +131,17 @@ class ParallelTesting
     public function setUpTestCase($callback)
     {
         $this->setUpTestCaseCallbacks[] = $callback;
+    }
+
+    /**
+     * Register a "setUp" test database callback that runs prior to the migrations.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public function setUpTestDatabaseBeforeMigrating($callback)
+    {
+        $this->setUpTestDatabaseBeforeMigratingCallbacks[] = $callback;
     }
 
     /**
@@ -179,6 +205,24 @@ class ParallelTesting
             foreach ($this->setUpTestCaseCallbacks as $callback) {
                 $this->container->call($callback, [
                     'testCase' => $testCase,
+                    'token' => $this->token(),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Call all of the "setUp" test database callbacks that run prior to migrations.
+     *
+     * @param  string  $database
+     * @return void
+     */
+    public function callSetUpTestDatabaseBeforeMigratingCallbacks($database)
+    {
+        $this->whenRunningInParallel(function () use ($database) {
+            foreach ($this->setUpTestDatabaseBeforeMigratingCallbacks as $callback) {
+                $this->container->call($callback, [
+                    'database' => $database,
                     'token' => $this->token(),
                 ]);
             }

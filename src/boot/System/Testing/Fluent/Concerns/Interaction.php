@@ -1,6 +1,16 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Fluent\Concerns;
+
 
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Assert as PHPUnit;
@@ -50,7 +60,7 @@ trait Interaction
      *
      * @return $this
      */
-    public function etc(): self
+    public function etc(): static
     {
         $this->interacted = array_keys($this->prop());
 
@@ -63,5 +73,5 @@ trait Interaction
      * @param  string|null  $key
      * @return mixed
      */
-    abstract protected function prop(string $key = null);
+    abstract protected function prop(?string $key = null);
 }

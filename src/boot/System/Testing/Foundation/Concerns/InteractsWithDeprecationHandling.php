@@ -1,6 +1,16 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Foundation\Concerns;
+
 use ErrorException;
 
 trait InteractsWithDeprecationHandling
@@ -20,9 +30,7 @@ trait InteractsWithDeprecationHandling
     protected function withDeprecationHandling()
     {
         if ($this->originalDeprecationHandler) {
-            set_error_handler(tap($this->originalDeprecationHandler, function () {
-                $this->originalDeprecationHandler = null;
-            }));
+            set_error_handler(tap($this->originalDeprecationHandler, fn () => $this->originalDeprecationHandler = null));
         }
 
         return $this;
@@ -32,6 +40,8 @@ trait InteractsWithDeprecationHandling
      * Disable deprecation handling for the test.
      *
      * @return $this
+     *
+     * @throws \ErrorException
      */
     protected function withoutDeprecationHandling()
     {

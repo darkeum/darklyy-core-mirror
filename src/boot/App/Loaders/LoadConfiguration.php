@@ -1,16 +1,24 @@
 <?php
-
 namespace Boot\App\Loaders;
 
-use \Exception;
-use Boot\System\Config\Repository;
 use Boot\Contracts\Config\Repository as RepositoryContract;
+use Boot\System\Config\Repository;
+use Closure;
 use \Boot\Contracts\App\Application;
+use \Exception;
 use \SplFileInfo;
 use \Symfony\Component\Finder\Finder;
 
 class LoadConfiguration
 {
+
+    /**
+     * The closure that resolves the permanent, static configuration if applicable.
+     *
+     * @var (Closure(Application): array<array-key, mixed>)|null
+     */
+    protected static ?Closure $alwaysUseConfig = null;
+
     /**
      * Bootstrap the given application.
      *
@@ -24,7 +32,12 @@ class LoadConfiguration
         // First we will see if we have a cache configuration file. If we do, we'll load
         // the configuration items from that file so that it is very quick. Otherwise
         // we will need to spin through every configuration file and load them all.
-        if (is_file($cached = $app->getCachedConfigPath())) {
+
+        if (static::$alwaysUseConfig !== null) {
+            $items = $app->call(self::$alwaysUseConfig);
+
+            $loadedFromCache = true;
+        } elseif (is_file($cached = $app->getCachedConfigPath())) {
             $items = require $cached;
 
             $loadedFromCache = true;
@@ -88,7 +101,7 @@ class LoadConfiguration
         foreach (Finder::create()->files()->name('*.config.php')->in($configPath) as $file) {
             $directory = $this->getNestedDirectory($file, $configPath);
 
-            $files[$directory.basename($file->getRealPath(), '.config.php')] = $file->getRealPath();
+            $files[$directory . basename($file->getRealPath(), '.config.php')] = $file->getRealPath();
         }
 
         ksort($files, SORT_NATURAL);
@@ -108,9 +121,20 @@ class LoadConfiguration
         $directory = $file->getPath();
 
         if ($nested = trim(str_replace($configPath, '', $directory), DIRECTORY_SEPARATOR)) {
-            $nested = str_replace(DIRECTORY_SEPARATOR, '.', $nested).'.';
+            $nested = str_replace(DIRECTORY_SEPARATOR, '.', $nested) . '.';
         }
 
         return $nested;
+    }
+
+    /**
+     * Set a callback to return the permanent, static configuration values.
+     *
+     * @param  (Closure(Application): array<array-key, mixed>)|null  $alwaysUseConfig
+     * @return void
+     */
+    public static function alwaysUse(?Closure $alwaysUseConfig): void
+    {
+        static::$alwaysUseConfig = $alwaysUseConfig;
     }
 }

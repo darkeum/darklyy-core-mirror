@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Foundation\Concerns;
 
 use Illuminate\Contracts\Auth\Authenticatable as UserContract;
@@ -16,6 +25,21 @@ trait InteractsWithAuthentication
     public function actingAs(UserContract $user, $guard = null)
     {
         return $this->be($user, $guard);
+    }
+
+    /**
+     * Clear the currently logged in user for the application.
+     *
+     * @param  string|null  $guard
+     * @return $this
+     */
+    public function actingAsGuest($guard = null)
+    {
+        $this->app['auth']->guard($guard)->forgetUser();
+
+        $this->app['auth']->shouldUse($guard);
+
+        return $this;
     }
 
     /**

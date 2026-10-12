@@ -11,7 +11,7 @@ use Boot\System\Core\Traits\TestsTraits\PhpUnit\TestsResponseHelperTrait;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabaseState;
-use Illuminate\Foundation\Testing\TestCase as LaravelTestCase;
+use Boot\System\Testing\Foundation\TestCase as LaravelTestCase;
 
 abstract class TestCase extends LaravelTestCase
 {

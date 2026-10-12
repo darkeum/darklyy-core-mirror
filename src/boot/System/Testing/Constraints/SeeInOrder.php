@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Constraints;
 
 use PHPUnit\Framework\Constraint\Constraint;
@@ -25,7 +34,6 @@ class SeeInOrder extends Constraint
      * Create a new constraint instance.
      *
      * @param  string  $content
-     * @return void
      */
     public function __construct($content)
     {
@@ -40,6 +48,8 @@ class SeeInOrder extends Constraint
      */
     public function matches($values): bool
     {
+        $decodedContent = html_entity_decode($this->content, ENT_QUOTES, 'UTF-8');
+
         $position = 0;
 
         foreach ($values as $value) {
@@ -47,7 +57,9 @@ class SeeInOrder extends Constraint
                 continue;
             }
 
-            $valuePosition = mb_strpos($this->content, $value, $position);
+            $decodedValue = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+
+            $valuePosition = mb_strpos($decodedContent, $decodedValue, $position);
 
             if ($valuePosition === false || $valuePosition < $position) {
                 $this->failedValue = $value;
@@ -55,7 +67,7 @@ class SeeInOrder extends Constraint
                 return false;
             }
 
-            $position = $valuePosition + mb_strlen($value);
+            $position = $valuePosition + mb_strlen($decodedValue);
         }
 
         return true;
@@ -70,7 +82,7 @@ class SeeInOrder extends Constraint
     public function failureDescription($values): string
     {
         return sprintf(
-            'Failed asserting that \'%s\' contains "%s" in specified order.',
+            '\'%s\' contains "%s" in specified order.',
             $this->content,
             $this->failedValue
         );

@@ -1,9 +1,19 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Foundation;
 
-use Illuminate\Contracts\Console\Kernel;
+use Boot\Contracts\Console\Kernel;
 use Boot\System\Testing\Foundation\Traits\CanConfigureMigrationCommands;
+
 
 trait DatabaseMigrations
 {
@@ -16,14 +26,46 @@ trait DatabaseMigrations
      */
     public function runDatabaseMigrations()
     {
-        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
-
-        $this->app[Kernel::class]->setArtisan(null);
+        $this->beforeRefreshingDatabase();
+        $this->refreshTestDatabase();
+        $this->afterRefreshingDatabase();
 
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:rollback');
 
             RefreshDatabaseState::$migrated = false;
         });
+    }
+
+    /**
+     * Refresh a conventional test database.
+     *
+     * @return void
+     */
+    protected function refreshTestDatabase()
+    {
+        $this->artisan('migrate:fresh', $this->migrateFreshUsing());
+
+        $this->app[Kernel::class]->setArtisan(null);
+    }
+
+    /**
+     * Perform any work that should take place before the database has started refreshing.
+     *
+     * @return void
+     */
+    protected function beforeRefreshingDatabase()
+    {
+        // ...
+    }
+
+    /**
+     * Perform any work that should take place once the database has finished refreshing.
+     *
+     * @return void
+     */
+    protected function afterRefreshingDatabase()
+    {
+        // ...
     }
 }

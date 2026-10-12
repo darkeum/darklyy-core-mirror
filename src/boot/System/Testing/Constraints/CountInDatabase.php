@@ -1,8 +1,17 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Constraints;
 
-use Illuminate\Database\Connection;
+use Boot\System\Database\Connection;
 use PHPUnit\Framework\Constraint\Constraint;
 use ReflectionClass;
 
@@ -11,7 +20,7 @@ class CountInDatabase extends Constraint
     /**
      * The database connection.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Boot\System\Database\Connection
      */
     protected $database;
 
@@ -32,9 +41,8 @@ class CountInDatabase extends Constraint
     /**
      * Create a new constraint instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
+     * @param  \Boot\System\Database\Connection  $database
      * @param  int  $expectedCount
-     * @return void
      */
     public function __construct(Connection $database, int $expectedCount)
     {

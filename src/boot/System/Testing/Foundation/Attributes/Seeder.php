@@ -1,0 +1,28 @@
+<?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
+namespace Boot\System\Testing\Foundation\Attributes;
+
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS)]
+class Seeder
+{
+    /**
+     * Create a new attribute instance.
+     *
+     * @param  string  $class
+     */
+    public function __construct(public string $class)
+    {
+        //
+    }
+}

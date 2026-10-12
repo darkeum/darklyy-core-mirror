@@ -11,9 +11,9 @@
 
 namespace Boot\System\Console\Foundation;
 
-use Boot\System\Console\Command;
 use Boot\Support\Composer;
 use Boot\Support\Str;
+use Boot\System\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'about')]
@@ -79,7 +79,7 @@ class AboutCommand extends Command
 
         collect(static::$data)
             ->map(
-                fn ($items) => collect($items)
+                fn($items) => collect($items)
                     ->map(function ($value) {
                         if (is_array($value)) {
                             return [$value];
@@ -90,7 +90,7 @@ class AboutCommand extends Command
                         }
 
                         return collect($this->laravel->call($value))
-                            ->map(fn ($value, $key) => [$key, $value])
+                            ->map(fn($value, $key) => [$key, $value])
                             ->values()
                             ->all();
                     })->flatten(1)
@@ -103,7 +103,7 @@ class AboutCommand extends Command
             ->filter(function ($data, $key) {
                 return $this->option('only') ? in_array($this->toSearchKeyword($key), $this->sections()) : true;
             })
-            ->pipe(fn ($data) => $this->display($data));
+            ->pipe(fn($data) => $this->display($data));
 
         $this->newLine();
 
@@ -134,7 +134,7 @@ class AboutCommand extends Command
 
             $this->components->twoColumnDetail('  <fg=green;options=bold>' . $section . '</>');
 
-            $data->pipe(fn ($data) => $section !== 'Environment' ? $data->sort() : $data)->each(function ($detail) {
+            $data->pipe(fn($data) => $section !== 'Environment' ? $data->sort() : $data)->each(function ($detail) {
                 [$label, $value] = $detail;
 
                 $this->components->twoColumnDetail($label, value($value));
@@ -152,7 +152,7 @@ class AboutCommand extends Command
     {
         $output = $data->flatMap(function ($data, $section) {
             return [
-                (string) Str::of($section)->snake() => $data->mapWithKeys(fn ($item, $key) => [
+                (string) Str::of($section)->snake() => $data->mapWithKeys(fn($item, $key) => [
                     $this->toSearchKeyword($item[0]) => value($item[1]),
                 ]),
             ];
@@ -168,21 +168,21 @@ class AboutCommand extends Command
      */
     protected function gatherApplicationInformation()
     {
-        static::addToSection('Окружение', fn () => [
-            'Имя приложения' => config('app.name'),
-            'Версия Darklyy' => $this->darklyy->version(),
-            'Версия PHP' => phpversion(),
-            'Версия Composer' => $this->composer->getVersion() ?? '<fg=yellow;options=bold>-</>',
-            'Тип окружения' => $this->darklyy->environment(),
-            'Отладка' => config('app.debug') ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
-            'URL' => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
+        static::addToSection('Окружение', fn() => [
+            'Имя приложения'     => config('app.name'),
+            'Версия Darklyy'     => $this->darklyy->version(),
+            'Версия PHP'         => phpversion(),
+            'Версия Composer'    => $this->composer->getVersion() ?? '<fg=yellow;options=bold>-</>',
+            'Тип окружения'      => $this->darklyy->environment(),
+            'Отладка'            => config('app.debug') ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
+            'URL'                => Str::of(config('app.url'))->replace(['http://', 'https://'], ''),
             'Режим обслуживания' => $this->darklyy->isDownForMaintenance() ? '<fg=yellow;options=bold>ВКЛЮЧЕН</>' : 'ВЫКЛЮЧЕН',
         ]);
 
-        static::addToSection('Кэширование', fn () => [
-            'Конфигурация' => $this->darklyy->configurationIsCached() ? '<fg=green;options=bold>КЭШИРОВАНА</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНА</>',
-            'События' => $this->darklyy->eventsAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
-            'Маршруты' => $this->darklyy->routesAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
+        static::addToSection('Кэширование', fn() => [
+            'Конфигурация'  => $this->darklyy->configurationIsCached() ? '<fg=green;options=bold>КЭШИРОВАНА</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНА</>',
+            'События'       => $this->darklyy->eventsAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
+            'Маршруты'      => $this->darklyy->routesAreCached() ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
             'Представления' => $this->hasPhpFiles($this->laravel->storagePath('framework/views')) ? '<fg=green;options=bold>КЭШИРОВАНЫ</>' : '<fg=yellow;options=bold>НЕ КЭШИРОВАНЫ</>',
         ]);
 
@@ -197,15 +197,15 @@ class AboutCommand extends Command
             $logs = $logChannel;
         }
 
-        static::addToSection('Драйверы', fn () => array_filter([
-            'Вещание' => config('broadcasting.default'),
-            'Кэш' => config('cache.default'),
-            'База данных' => config('database.default'),
-            'Логирование' => $logs,
-            'Почта' => config('mail.default'),           
-            'Очередь' => config('queue.default'),
+        static::addToSection('Драйверы', fn() => array_filter([
+            'Вещание'              => config('broadcasting.default'),
+            'Кэш'                  => config('cache.default'),
+            'База данных'          => config('database.default'),
+            'Логирование'          => $logs,
+            'Почта'                => config('mail.default'),
+            'Очередь'              => config('queue.default'),
             'Полнотекстовый поиск' => config('scout.driver'),
-            'Сессии' => config('session.driver'),
+            'Сессии'               => config('session.driver'),
         ]));
 
         collect(static::$customDataResolvers)->each->__invoke();
@@ -232,7 +232,7 @@ class AboutCommand extends Command
      */
     public static function add(string $section, $data, string $value = null)
     {
-        static::$customDataResolvers[] = fn () => static::addToSection($section, $data, $value);
+        static::$customDataResolvers[] = fn() => static::addToSection($section, $data, $value);
     }
 
     /**
@@ -265,7 +265,7 @@ class AboutCommand extends Command
     {
         return collect(explode(',', $this->option('only') ?? ''))
             ->filter()
-            ->map(fn ($only) => $this->toSearchKeyword($only))
+            ->map(fn($only) => $this->toSearchKeyword($only))
             ->all();
     }
 
@@ -278,5 +278,17 @@ class AboutCommand extends Command
     protected function toSearchKeyword(string $value)
     {
         return (string) Str::of($value)->lower()->snake();
+    }
+
+    /**
+     * Flush the registered about data.
+     *
+     * @return void
+     */
+    public static function flushState()
+    {
+        static::$data = [];
+
+        static::$customDataResolvers = [];
     }
 }

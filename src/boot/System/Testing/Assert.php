@@ -1,15 +1,20 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing;
 
 use ArrayAccess;
 use Boot\System\Testing\Constraints\ArraySubset;
+use Boot\System\Testing\Exceptions\InvalidArgumentException;
 use PHPUnit\Framework\Assert as PHPUnit;
-use PHPUnit\Framework\Constraint\DirectoryExists;
-use PHPUnit\Framework\Constraint\FileExists;
-use PHPUnit\Framework\Constraint\LogicalNot;
-use PHPUnit\Framework\Constraint\RegularExpression;
-use PHPUnit\Framework\InvalidArgumentException;
 
 /**
  * @internal This class is not meant to be used or overwritten outside the framework itself.
@@ -38,42 +43,5 @@ abstract class Assert extends PHPUnit
         $constraint = new ArraySubset($subset, $checkForIdentity);
 
         PHPUnit::assertThat($array, $constraint, $msg);
-    }
-
-    /**
-     * Asserts that a file does not exist.
-     *
-     * @param  string  $filename
-     * @param  string  $message
-     * @return void
-     */
-    public static function assertFileDoesNotExist(string $filename, string $message = ''): void
-    {
-        static::assertThat($filename, new LogicalNot(new FileExists), $message);
-    }
-
-    /**
-     * Asserts that a directory does not exist.
-     *
-     * @param  string  $directory
-     * @param  string  $message
-     * @return void
-     */
-    public static function assertDirectoryDoesNotExist(string $directory, string $message = ''): void
-    {
-        static::assertThat($directory, new LogicalNot(new DirectoryExists), $message);
-    }
-
-    /**
-     * Asserts that a string matches a given regular expression.
-     *
-     * @param  string  $pattern
-     * @param  string  $string
-     * @param  string  $message
-     * @return void
-     */
-    public static function assertMatchesRegularExpression(string $pattern, string $string, string $message = ''): void
-    {
-        static::assertThat($string, new RegularExpression($pattern), $message);
     }
 }

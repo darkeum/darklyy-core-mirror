@@ -1,8 +1,21 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Foundation\Concerns;
 
+use Closure;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Support\Testing\Fakes\ExceptionHandlerFake;
+use Illuminate\Support\Traits\ReflectsClosures;
+use Illuminate\Testing\Assert;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -10,6 +23,8 @@ use Throwable;
 
 trait InteractsWithExceptionHandling
 {
+    use ReflectsClosures;
+
     /**
      * The original exception handler.
      *
@@ -25,7 +40,11 @@ trait InteractsWithExceptionHandling
     protected function withExceptionHandling()
     {
         if ($this->originalExceptionHandler) {
-            $this->app->instance(ExceptionHandler::class, $this->originalExceptionHandler);
+            $currentExceptionHandler = app(ExceptionHandler::class);
+
+            $currentExceptionHandler instanceof ExceptionHandlerFake
+                ? $currentExceptionHandler->setHandler($this->originalExceptionHandler)
+                : $this->app->instance(ExceptionHandler::class, $this->originalExceptionHandler);
         }
 
         return $this;
@@ -34,7 +53,7 @@ trait InteractsWithExceptionHandling
     /**
      * Only handle the given exceptions via the exception handler.
      *
-     * @param  array  $exceptions
+     * @param  list<class-string<\Throwable>>  $exceptions
      * @return $this
      */
     protected function handleExceptions(array $exceptions)
@@ -55,16 +74,20 @@ trait InteractsWithExceptionHandling
     /**
      * Disable exception handling for the test.
      *
-     * @param  array  $except
+     * @param  list<class-string<\Throwable>>  $except
      * @return $this
      */
     protected function withoutExceptionHandling(array $except = [])
     {
         if ($this->originalExceptionHandler == null) {
-            $this->originalExceptionHandler = app(ExceptionHandler::class);
+            $currentExceptionHandler = app(ExceptionHandler::class);
+
+            $this->originalExceptionHandler = $currentExceptionHandler instanceof ExceptionHandlerFake
+                ? $currentExceptionHandler->handler()
+                : $currentExceptionHandler;
         }
 
-        $this->app->instance(ExceptionHandler::class, new class($this->originalExceptionHandler, $except) implements ExceptionHandler
+        $exceptionHandler = new class($this->originalExceptionHandler, $except) implements ExceptionHandler, WithoutExceptionHandlingHandler
         {
             protected $except;
             protected $originalHandler;
@@ -73,7 +96,7 @@ trait InteractsWithExceptionHandling
              * Create a new class instance.
              *
              * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $originalHandler
-             * @param  array  $except
+             * @param  list<class-string<\Throwable>>  $except
              * @return void
              */
             public function __construct($originalHandler, $except = [])
@@ -99,7 +122,7 @@ trait InteractsWithExceptionHandling
              * Determine if the exception should be reported.
              *
              * @param  \Throwable  $e
-             * @return bool
+             * @return false
              */
             public function shouldReport(Throwable $e)
             {
@@ -125,7 +148,7 @@ trait InteractsWithExceptionHandling
 
                 if ($e instanceof NotFoundHttpException) {
                     throw new NotFoundHttpException(
-                        "{$request->method()} {$request->url()}", $e, $e->getCode()
+                        "{$request->method()} {$request->url()}", $e, is_int($e->getCode()) ? $e->getCode() : 0
                     );
                 }
 
@@ -143,7 +166,76 @@ trait InteractsWithExceptionHandling
             {
                 (new ConsoleApplication)->renderThrowable($e, $output);
             }
-        });
+        };
+
+        $currentExceptionHandler = app(ExceptionHandler::class);
+
+        $currentExceptionHandler instanceof ExceptionHandlerFake
+            ? $currentExceptionHandler->setHandler($exceptionHandler)
+            : $this->app->instance(ExceptionHandler::class, $exceptionHandler);
+
+        return $this;
+    }
+
+    /**
+     * Assert that the given callback throws an exception with the given message when invoked.
+     *
+     * @param  \Closure  $test
+     * @param  (\Closure(\Throwable): bool)|class-string<\Throwable>  $expectedClass
+     * @param  string|null  $expectedMessage
+     * @return $this
+     */
+    protected function assertThrows(Closure $test, string|Closure $expectedClass = Throwable::class, ?string $expectedMessage = null)
+    {
+        [$expectedClass, $expectedClassCallback] = $expectedClass instanceof Closure
+            ? [$this->firstClosureParameterType($expectedClass), $expectedClass]
+            : [$expectedClass, null];
+
+        try {
+            $test();
+
+            $thrown = false;
+        } catch (Throwable $exception) {
+            $thrown = $exception instanceof $expectedClass && ($expectedClassCallback === null || $expectedClassCallback($exception));
+
+            $actualMessage = $exception->getMessage();
+        }
+
+        Assert::assertTrue(
+            $thrown,
+            sprintf('Failed asserting that exception of type "%s" was thrown.', $expectedClass)
+        );
+
+        if (isset($expectedMessage)) {
+            Assert::assertStringContainsString($expectedMessage, $actualMessage);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Assert that the given callback does not throw an exception.
+     *
+     * @param  \Closure  $test
+     * @return $this
+     */
+    protected function assertDoesntThrow(Closure $test)
+    {
+        try {
+            $test();
+
+            $thrown = false;
+        } catch (Throwable $exception) {
+            $thrown = true;
+
+            $exceptionClass = get_class($exception);
+            $exceptionMessage = $exception->getMessage();
+        }
+
+        Assert::assertFalse(
+            $thrown,
+            sprintf('Unexpected exception of type %s with message %s was thrown.', $exceptionClass ?? null, $exceptionMessage ?? null)
+        );
 
         return $this;
     }

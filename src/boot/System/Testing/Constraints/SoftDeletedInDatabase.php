@@ -1,8 +1,17 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Constraints;
 
-use Illuminate\Database\Connection;
+use Boot\System\Database\Connection;
 use PHPUnit\Framework\Constraint\Constraint;
 
 class SoftDeletedInDatabase extends Constraint
@@ -17,7 +26,7 @@ class SoftDeletedInDatabase extends Constraint
     /**
      * The database connection.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Boot\System\Database\Connection
      */
     protected $database;
 
@@ -38,10 +47,9 @@ class SoftDeletedInDatabase extends Constraint
     /**
      * Create a new constraint instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
+     * @param  \Boot\System\Database\Connection  $database
      * @param  array  $data
      * @param  string  $deletedAtColumn
-     * @return void
      */
     public function __construct(Connection $database, array $data, string $deletedAtColumn)
     {
@@ -61,9 +69,9 @@ class SoftDeletedInDatabase extends Constraint
     public function matches($table): bool
     {
         return $this->database->table($table)
-                ->where($this->data)
-                ->whereNotNull($this->deletedAtColumn)
-                ->count() > 0;
+            ->where($this->data)
+            ->whereNotNull($this->deletedAtColumn)
+            ->exists();
     }
 
     /**

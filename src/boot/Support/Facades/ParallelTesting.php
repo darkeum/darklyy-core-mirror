@@ -21,6 +21,6 @@ class ParallelTesting extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \Illuminate\Testing\ParallelTesting::class;
+        return \Boot\System\Testing\ParallelTesting::class;
     }
 }

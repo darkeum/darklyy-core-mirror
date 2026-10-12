@@ -1,13 +1,24 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Fluent;
+
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
-use Illuminate\Testing\AssertableJsonString;
+use Boot\System\Testing\AssertableJsonString;
 use PHPUnit\Framework\Assert as PHPUnit;
 
 class AssertableJson implements Arrayable
@@ -16,6 +27,7 @@ class AssertableJson implements Arrayable
         Concerns\Matching,
         Concerns\Debugging,
         Concerns\Interaction,
+        Conditionable,
         Macroable,
         Tappable;
 
@@ -38,9 +50,8 @@ class AssertableJson implements Arrayable
      *
      * @param  array  $props
      * @param  string|null  $path
-     * @return void
      */
-    protected function __construct(array $props, string $path = null)
+    protected function __construct(array $props, ?string $path = null)
     {
         $this->path = $path;
         $this->props = $props;
@@ -67,7 +78,7 @@ class AssertableJson implements Arrayable
      * @param  string|null  $key
      * @return mixed
      */
-    protected function prop(string $key = null)
+    protected function prop(?string $key = null)
     {
         return Arr::get($this->props, $key);
     }
@@ -79,7 +90,7 @@ class AssertableJson implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    protected function scope(string $key, Closure $callback): self
+    protected function scope(string $key, Closure $callback): static
     {
         $props = $this->prop($key);
         $path = $this->dotPath($key);
@@ -99,7 +110,7 @@ class AssertableJson implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    public function first(Closure $callback): self
+    public function first(Closure $callback): static
     {
         $props = $this->prop();
 
@@ -123,7 +134,7 @@ class AssertableJson implements Arrayable
      * @param  \Closure  $callback
      * @return $this
      */
-    public function each(Closure $callback): self
+    public function each(Closure $callback): static
     {
         $props = $this->prop();
 
@@ -149,18 +160,18 @@ class AssertableJson implements Arrayable
      * @param  array  $data
      * @return static
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $data): static
     {
         return new static($data);
     }
 
     /**
-     * Create a new instance from a AssertableJsonString.
+     * Create a new instance from an AssertableJsonString.
      *
      * @param  \Illuminate\Testing\AssertableJsonString  $json
      * @return static
      */
-    public static function fromAssertableJsonString(AssertableJsonString $json): self
+    public static function fromAssertableJsonString(AssertableJsonString $json): static
     {
         return static::fromArray($json->json());
     }

@@ -1,13 +1,22 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Testing\Concerns;
 
-use Illuminate\Database\QueryException;
-use Boot\System\Testing\Foundation\Testing;
+use Boot\Support\Facades\ParallelTesting;
+use Boot\System\Database\QueryException;
+use Boot\System\Foundation\Testing;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\ParallelTesting;
 use Illuminate\Support\Facades\Schema;
 
 trait TestDatabases
@@ -18,6 +27,13 @@ trait TestDatabases
      * @var bool
      */
     protected static $schemaIsUpToDate = false;
+
+    /**
+     * The root database name prior to concatenating the token.
+     *
+     * @var null|string
+     */
+    protected static $originalDatabaseName = null;
 
     /**
      * Boot a test database.
@@ -37,11 +53,12 @@ trait TestDatabases
         });
 
         ParallelTesting::setUpTestCase(function ($testCase) {
-            $uses = array_flip(class_uses_recursive(get_class($testCase)));
+            $uses = class_uses_recursive(get_class($testCase));
 
             $databaseTraits = [
                 Testing\DatabaseMigrations::class,
                 Testing\DatabaseTransactions::class,
+                Testing\DatabaseTruncation::class,
                 Testing\RefreshDatabase::class,
             ];
 
@@ -50,6 +67,10 @@ trait TestDatabases
                     [$testDatabase, $created] = $this->ensureTestDatabaseExists($database);
 
                     $this->switchToDatabase($testDatabase);
+
+                    if ($created) {
+                        ParallelTesting::callSetUpTestDatabaseBeforeMigratingCallbacks($testDatabase);
+                    }
 
                     if (isset($uses[Testing\DatabaseTransactions::class])) {
                         $this->ensureSchemaIsUpToDate();
@@ -60,6 +81,16 @@ trait TestDatabases
                     }
                 });
             }
+        });
+
+        ParallelTesting::tearDownProcess(function () {
+            $this->whenNotUsingInMemoryDatabase(function ($database) {
+                if (ParallelTesting::option('drop_databases')) {
+                    Schema::dropDatabaseIfExists(
+                        $this->testDatabase($database)
+                    );
+                }
+            });
         });
     }
 
@@ -77,7 +108,7 @@ trait TestDatabases
             $this->usingDatabase($testDatabase, function () {
                 Schema::hasTable('dummy');
             });
-        } catch (QueryException $e) {
+        } catch (QueryException) {
             $this->usingDatabase($database, function () use ($testDatabase) {
                 Schema::dropDatabaseIfExists($testDatabase);
                 Schema::createDatabase($testDatabase);
@@ -130,6 +161,10 @@ trait TestDatabases
      */
     protected function whenNotUsingInMemoryDatabase($callback)
     {
+        if (ParallelTesting::option('without_databases')) {
+            return;
+        }
+
         $database = DB::getConfig('database');
 
         if ($database !== ':memory:') {
@@ -171,6 +206,12 @@ trait TestDatabases
      */
     protected function testDatabase($database)
     {
+        if (! isset(self::$originalDatabaseName)) {
+            self::$originalDatabaseName = $database;
+        } else {
+            $database = self::$originalDatabaseName;
+        }
+
         $token = ParallelTesting::token();
 
         return "{$database}_test_{$token}";

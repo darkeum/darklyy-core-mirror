@@ -1,19 +1,16 @@
 <?php
-
 namespace Boot\System\Database\Migrations;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Boot\System\Database\ConnectionResolverInterface as Resolver;
-use Boot\System\Database\Events\MigrationEnded;
 use Boot\System\Database\Events\MigrationsEnded;
 use Boot\System\Database\Events\MigrationsStarted;
-use Boot\System\Database\Events\MigrationStarted;
 use Boot\System\Database\Events\NoPendingMigrations;
-use \Boot\System\Filesystem\Filesystem;
+use Illuminate\Contracts\Events\Dispatcher;
+use Symfony\Component\Console\Output\OutputInterface;
 use \Boot\Support\Arr;
 use \Boot\Support\Collection;
 use \Boot\Support\Str;
-use Symfony\Component\Console\Output\OutputInterface;
+use \Boot\System\Filesystem\Filesystem;
 
 class Migrator
 {
@@ -67,6 +64,13 @@ class Migrator
     protected $output;
 
     /**
+     * The pending migrations to skip.
+     *
+     * @var list<string>
+     */
+    protected static $withoutMigrations = [];
+
+    /**
      * Create a new migrator instance.
      *
      * @param  Boot\System\Database\Migrations\MigrationRepositoryInterface  $repository
@@ -76,13 +80,12 @@ class Migrator
      * @return void
      */
     public function __construct(MigrationRepositoryInterface $repository,
-                                Resolver $resolver,
-                                Filesystem $files,
-                                Dispatcher $dispatcher = null)
-    {
-        $this->files = $files;
-        $this->events = $dispatcher;
-        $this->resolver = $resolver;
+        Resolver $resolver,
+        Filesystem $files,
+        Dispatcher $dispatcher = null) {
+        $this->files      = $files;
+        $this->events     = $dispatcher;
+        $this->resolver   = $resolver;
         $this->repository = $repository;
     }
 
@@ -113,6 +116,29 @@ class Migrator
     }
 
     /**
+     * Get list of pending migrations to skip.
+     *
+     * @return list<string>
+     */
+    protected function migrationsToSkip()
+    {
+        return (new Collection(self::$withoutMigrations))
+            ->map($this->getMigrationName(...))
+            ->all();
+    }
+
+    /**
+     * Set the pending migrations to skip.
+     *
+     * @param  list<string>  $migrations
+     * @return void
+     */
+    public static function withoutMigrations(array $migrations)
+    {
+        static::$withoutMigrations = $migrations;
+    }
+
+    /**
      * Get the migration files that have not yet run.
      *
      * @param  array  $files
@@ -122,9 +148,9 @@ class Migrator
     protected function pendingMigrations($files, $ran)
     {
         return Collection::make($files)
-                ->reject(function ($file) use ($ran) {
-                    return in_array($this->getMigrationName($file), $ran);
-                })->values()->all();
+            ->reject(function ($file) use ($ran) {
+                return in_array($this->getMigrationName($file), $ran);
+            })->values()->all();
     }
 
     /**
@@ -396,9 +422,9 @@ class Migrator
         };
 
         $this->getSchemaGrammar($connection)->supportsSchemaTransactions()
-            && $migration->withinTransaction
-                    ? $connection->transaction($callback)
-                    : $callback();
+        && $migration->withinTransaction
+            ? $connection->transaction($callback)
+            : $callback();
     }
 
     /**
@@ -462,7 +488,7 @@ class Migrator
     public function getMigrationFiles($paths)
     {
         return Collection::make($paths)->flatMap(function ($path) {
-            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path.'/*_*.php');
+            return Str::endsWith($path, '.php') ? [$path] : $this->files->glob($path . '/*_*.php');
         })->filter()->values()->keyBy(function ($file) {
             return $this->getMigrationName($file);
         })->sortBy(function ($file, $key) {
