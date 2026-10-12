@@ -51,11 +51,14 @@ class MySqlGrammar extends Grammar
      *
      * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
      * @param  \Boot\Support\Fluent  $command
-     * @param  \Illuminate\Database\Connection  $connection
+     * @param  \Boot\System\Database\Connection|null  $connection
      * @return string
      */
-    public function compileCreate(Blueprint $blueprint, Fluent $command, Connection $connection)
+    public function compileCreate(Blueprint $blueprint, Fluent $command, $connection = null)
     {
+        // соединение приходит либо аргументом, либо из грамматики (её создаёт соединение)
+        $connection = $connection ?: $this->getConnection();
+
         $sql = $this->compileCreateTable(
             $blueprint, $command, $connection
         );

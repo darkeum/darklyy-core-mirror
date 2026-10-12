@@ -1943,7 +1943,16 @@ class Blueprint
      */
     protected function createIndexName($type, array $columns)
     {
-        $index = strtolower($this->prefix . $this->table . '_' . implode('_', $columns) . '_' . $type);
+        $table = $this->table;
+
+        // индекс получает префикс таблиц, если он включён в настройках соединения
+        if ($this->connection->getConfig('prefix_indexes')) {
+            $table = str_contains($this->table, '.')
+                ? substr_replace($this->table, '.' . $this->connection->getTablePrefix(), strrpos($this->table, '.'), 1)
+                : $this->connection->getTablePrefix() . $this->table;
+        }
+
+        $index = strtolower($table . '_' . implode('_', $columns) . '_' . $type);
 
         return str_replace(['-', '.'], '_', $index);
     }
@@ -1984,6 +1993,11 @@ class Blueprint
     protected function addColumnDefinition($definition)
     {
         $this->columns[] = $definition;
+
+        // при изменении таблицы определение обязано попасть в команды, иначе колонка не добавится
+        if (! $this->creating()) {
+            $this->commands[] = $definition;
+        }
 
         if ($this->after) {
             $definition->after($this->after);
@@ -2068,7 +2082,7 @@ class Blueprint
      */
     public function getPrefix()
     {
-        return $this->prefix;
+        return $this->connection->getTablePrefix();
     }
 
     /**

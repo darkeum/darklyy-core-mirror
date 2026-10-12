@@ -14,6 +14,13 @@ use RuntimeException;
 abstract class Grammar extends BaseGrammar
 {
     /**
+     * The connection used by the grammar.
+     *
+     * @var \Boot\System\Database\Connection|null
+     */
+    protected $connection;
+
+    /**
      * If this Grammar supports schema changes wrapped in a transaction.
      *
      * @var bool
@@ -26,6 +33,40 @@ abstract class Grammar extends BaseGrammar
      * @var array
      */
     protected $fluentCommands = [];
+
+    /**
+     * Create a new schema grammar instance.
+     *
+     * @param  \Boot\System\Database\Connection|null  $connection
+     * @return void
+     */
+    public function __construct($connection = null)
+    {
+        $this->connection = $connection;
+    }
+
+    /**
+     * Set the connection used by the grammar.
+     *
+     * @param  \Boot\System\Database\Connection  $connection
+     * @return $this
+     */
+    public function setConnection($connection)
+    {
+        $this->connection = $connection;
+
+        return $this;
+    }
+
+    /**
+     * Get the connection used by the grammar.
+     *
+     * @return \Boot\System\Database\Connection|null
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
 
     /**
      * Compile a rename column command.
@@ -247,6 +288,11 @@ abstract class Grammar extends BaseGrammar
      */
     protected function getDefaultValue($value)
     {
+        // выражение Illuminate ядро не может подставить строкой, поэтому приводим к своему
+        if ($value instanceof \Illuminate\Database\Query\Expression) {
+            return new Expression($value->getValue($this));
+        }
+
         if ($value instanceof Expression) {
             return $value;
         }
