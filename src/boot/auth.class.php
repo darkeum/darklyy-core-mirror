@@ -20,6 +20,7 @@ use \Boot\System\Cache\Cache;
 use \Boot\System\Agent\Agent;
 use \Boot\Support\Facades\Auth as AuthFacade;
 
+
 class auth
 {
 	var $user_id = 0;
