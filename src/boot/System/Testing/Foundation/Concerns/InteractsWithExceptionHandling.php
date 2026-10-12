@@ -11,11 +11,11 @@
 
 namespace Boot\System\Testing\Foundation\Concerns;
 
+use Boot\Contracts\Debug\ExceptionHandler;
 use Closure;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Testing\Fakes\ExceptionHandlerFake;
 use Illuminate\Support\Traits\ReflectsClosures;
-use Illuminate\Testing\Assert;
+use Boot\System\Testing\Assert;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

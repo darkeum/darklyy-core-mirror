@@ -14,11 +14,11 @@ namespace Boot\System\Testing\Foundation\Concerns;
 use BackedEnum;
 use Boot\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Cookie\CookieValuePrefix;
-use Illuminate\Http\Request;
+use Boot\System\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Uri;
-use Illuminate\Testing\LoggedExceptionCollection;
-use Illuminate\Testing\TestResponse;
+use Boot\System\Testing\LoggedExceptionCollection;
+use Boot\System\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile as SymfonyUploadedFile;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
