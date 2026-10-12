@@ -1,12 +1,23 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Schema;
 
+use Boot\System\Database\Connection;
+use Boot\System\Database\Schema\Blueprint;
 use Closure;
 use Doctrine\DBAL\Types\Type;
-use \Boot\System\Database\Connection;
+use Illuminate\Container\Container;
+use InvalidArgumentException;
 use LogicException;
-use RuntimeException;
 
 class Builder
 {
@@ -47,7 +58,7 @@ class Builder
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->grammar = $connection->getSchemaGrammar();
+        $this->grammar    = $connection->getSchemaGrammar();
     }
 
     /**
@@ -69,7 +80,7 @@ class Builder
      */
     public function hasTable($table)
     {
-        $table = $this->connection->getTablePrefix().$table;
+        $table = $this->connection->getTablePrefix() . $table;
 
         return count($this->connection->selectFromWriteConnection(
             $this->grammar->compileTableExists(), [$table]
@@ -115,13 +126,88 @@ class Builder
      *
      * @param  string  $table
      * @param  string  $column
+     * @param  bool  $fullDefinition
      * @return string
      */
-    public function getColumnType($table, $column)
+    public function getColumnType($table, $column, $fullDefinition = false)
     {
-        $table = $this->connection->getTablePrefix().$table;
+        $columns = $this->getColumns($table);
 
-        return $this->connection->getDoctrineColumn($table, $column)->getType()->getName();
+        foreach ($columns as $value) {
+            if (strtolower($value['name']) === strtolower($column)) {
+                return $fullDefinition ? $value['type'] : $value['type_name'];
+            }
+        }
+
+        throw new InvalidArgumentException("There is no column with name '$column' on table '$table'.");
+    }
+
+    /**
+     * Get the columns for a given table.
+     *
+     * @param  string  $table
+     * @return list<array{name: string, type: string, type_name: string, nullable: bool, default: mixed, auto_increment: bool, comment: string|null, generation: array{type: string, expression: string|null}|null}>
+     */
+    public function getColumns($table)
+    {
+        [$schema, $table] = $this->parseSchemaAndTable($table);
+
+        $table = $this->connection->getTablePrefix() . $table;
+
+        return $this->connection->getPostProcessor()->processColumns(
+            $this->connection->selectFromWriteConnection(
+                $this->grammar->compileColumns($schema, $table)
+            )
+        );
+    }
+
+    /**
+     * Parse the given database object reference and extract the schema and table.
+     *
+     * @param  string  $reference
+     * @param  string|bool|null  $withDefaultSchema
+     * @return array{string|null, string}
+     */
+    public function parseSchemaAndTable($reference, $withDefaultSchema = null)
+    {
+        $segments = explode('.', $reference);
+
+        if (count($segments) > 2) {
+            throw new InvalidArgumentException(
+                "Using three-part references is not supported, you may use `Schema::connection('{$segments[0]}')` instead."
+            );
+        }
+
+        $table = $segments[1] ?? $segments[0];
+
+        $schema = match (true) {
+            isset($segments[1])           => $segments[0],
+            is_string($withDefaultSchema) => $withDefaultSchema,
+            $withDefaultSchema            => $this->getCurrentSchemaName(),
+            default                       => null,
+        };
+
+        return [$schema, $table];
+    }
+
+    /**
+     * Get the names of the current schemas for the connection.
+     *
+     * @return string[]|null
+     */
+    public function getCurrentSchemaListing()
+    {
+        return null;
+    }
+
+    /**
+     * Get the default schema name for the connection.
+     *
+     * @return string|null
+     */
+    public function getCurrentSchemaName()
+    {
+        return $this->getCurrentSchemaListing()[0] ?? null;
     }
 
     /**
@@ -133,7 +219,7 @@ class Builder
     public function getColumnListing($table)
     {
         $results = $this->connection->selectFromWriteConnection($this->grammar->compileColumnListing(
-            $this->connection->getTablePrefix().$table
+            $this->connection->getTablePrefix() . $table
         ));
 
         return $this->connection->getPostProcessor()->processColumnListing($results);
@@ -297,46 +383,15 @@ class Builder
      * @param  \Closure|null  $callback
      * @return \Boot\System\Database\Schema\Blueprint
      */
-    protected function createBlueprint($table, Closure $callback = null)
+    protected function createBlueprint($table, ?Closure $callback = null)
     {
-        $prefix = $this->connection->getConfig('prefix_indexes')
-                    ? $this->connection->getConfig('prefix')
-                    : '';
+        $connection = $this->connection;
 
         if (isset($this->resolver)) {
-            return call_user_func($this->resolver, $table, $callback, $prefix);
+            return call_user_func($this->resolver, $connection, $table, $callback);
         }
 
-        return new Blueprint($table, $callback, $prefix);
-    }
-
-    /**
-     * Register a custom Doctrine mapping type.
-     *
-     * @param  string  $class
-     * @param  string  $name
-     * @param  string  $type
-     * @return void
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \RuntimeException
-     */
-    public function registerCustomDoctrineType($class, $name, $type)
-    {
-        if (! $this->connection->isDoctrineAvailable()) {
-            throw new RuntimeException(
-                'Registering a custom Doctrine type requires Doctrine DBAL (doctrine/dbal).'
-            );
-        }
-
-        if (! Type::hasType($name)) {
-            Type::addType($name, $class);
-
-            $this->connection
-                ->getDoctrineSchemaManager()
-                ->getDatabasePlatform()
-                ->registerDoctrineTypeMapping($type, $name);
-        }
+        return Container::getInstance()->make(Blueprint::class, compact('connection', 'table', 'callback'));
     }
 
     /**

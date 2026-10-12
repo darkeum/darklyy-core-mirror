@@ -106,6 +106,13 @@ abstract class Grammar extends BaseGrammar
         $columns = [];
 
         foreach ($blueprint->getAddedColumns() as $column) {
+            // колонка с готовым SQL-описанием подставляется как есть
+            if ($column->type === 'raw') {
+                $columns[] = $this->wrap($column).' '.$column->definition;
+
+                continue;
+            }
+
             // Each of the column types have their own compiler functions which are tasked
             // with turning the column definition into its SQL format for this platform
             // used by the connection. The column's modifiers are compiled and added.

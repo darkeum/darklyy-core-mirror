@@ -1,33 +1,31 @@
 <?php
-
 namespace Boot\System\Database;
 
-use PDO;
 use Closure;
-use Exception;
-use PDOStatement;
-use LogicException;
-use \Boot\Support\Arr;
 use DateTimeInterface;
-
-use Illuminate\Database\Query\Expression;
+use Doctrine\DBAL\Connection as DoctrineConnection;
+use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Query\Expression;
+use LogicException;
+use PDO;
+use PDOStatement;
+use \Boot\Support\Arr;
 use \Boot\System\Database\Events\QueryExecuted;
 use \Boot\System\Database\Events\StatementPrepared;
-use Doctrine\DBAL\Connection as DoctrineConnection;
-use \Boot\System\Database\Query\Processors\Processor;
 use \Boot\System\Database\Events\TransactionBeginning;
 use \Boot\System\Database\Events\TransactionCommitted;
 use \Boot\System\Database\Events\TransactionRolledBack;
 use \Boot\System\Database\Query\Builder as QueryBuilder;
-use \Boot\System\Database\Schema\Builder as SchemaBuilder;
 use \Boot\System\Database\Query\Grammars\Grammar as QueryGrammar;
+use \Boot\System\Database\Query\Processors\Processor;
+use \Boot\System\Database\Schema\Builder as SchemaBuilder;
 
 class Connection extends \Illuminate\Database\Connection implements ConnectionInterface
 {
     use DetectsConcurrencyErrors,
-        DetectsLostConnections,
-        Concerns\ManagesTransactions;
+    DetectsLostConnections,
+    Concerns\ManagesTransactions;
 
     /**
      * The active PDO connection.
@@ -347,7 +345,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
             // mode and prepare the bindings for the query. Once that's done we will be
             // ready to execute the query against the database and return the cursor.
             $statement = $this->prepared($this->getPdoForSelect($useReadPdo)
-                              ->prepare($query));
+                    ->prepare($query));
 
             $this->bindValues(
                 $statement, $this->prepareBindings($bindings)
@@ -597,8 +595,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $bindings;
     }
 
-
-
     /**
      * Run a SQL statement.
      *
@@ -621,7 +617,7 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         // If an exception occurs when attempting to run a query, we'll format the error
         // message to include the bindings with SQL, which will make this exception a
         // lot more helpful to the developer instead of just the database's errors.
-        catch (Exception $e) {
+         catch (Exception $e) {
             throw new QueryException(
                 $query, $this->prepareBindings($bindings), $e
             );
@@ -658,7 +654,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return round((microtime(true) - $start) * 1000, 2);
     }
 
-
     /**
      * Reconnect to the database.
      *
@@ -676,8 +671,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
 
         throw new LogicException('Lost connection and no reconnector available.');
     }
-
-
 
     /**
      * Disconnect from the underlying PDO connection.
@@ -806,9 +799,9 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
             $driver = $this->getDoctrineDriver();
 
             $this->doctrineConnection = new DoctrineConnection(array_filter([
-                'pdo' => $this->getPdo(),
-                'dbname' => $this->getDatabaseName(),
-                'driver' => $driver->getName(),
+                'pdo'           => $this->getPdo(),
+                'dbname'        => $this->getDatabaseName(),
+                'driver'        => $driver->getName(),
                 'serverVersion' => $this->getConfig('server_version'),
             ]), $driver);
         }
@@ -954,7 +947,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this->queryGrammar;
     }
 
-
     /**
      * Get the schema grammar used by the connection.
      *
@@ -965,7 +957,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this->schemaGrammar;
     }
 
-
     /**
      * Get the query post processor used by the connection.
      *
@@ -975,8 +966,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
     {
         return $this->postProcessor;
     }
-
-
 
     /**
      * Get the event dispatcher used by the connection.
@@ -1119,8 +1108,6 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
         return $this;
     }
 
-
-
     /**
      * Register a connection resolver.
      *
@@ -1142,5 +1129,12 @@ class Connection extends \Illuminate\Database\Connection implements ConnectionIn
     public static function getResolver($driver)
     {
         return static::$resolvers[$driver] ?? null;
+    }
+
+    public function query()
+    {
+        return new QueryBuilder(
+            $this, $this->getQueryGrammar(), $this->getPostProcessor()
+        );
     }
 }

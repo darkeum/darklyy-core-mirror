@@ -18,6 +18,14 @@ class Grammar extends BaseGrammar
      */
     protected $operators = [];
 
+        /**
+     * The grammar specific bitwise operators.
+     *
+     * @var array
+     */
+    protected $bitwiseOperators = [];
+
+
     /**
      * The components that make up a select clause.
      *
@@ -1265,5 +1273,15 @@ class Grammar extends BaseGrammar
     public function getOperators()
     {
         return $this->operators;
+    }
+
+        /**
+     * Get the grammar specific bitwise operators.
+     *
+     * @return array
+     */
+    public function getBitwiseOperators()
+    {
+        return $this->bitwiseOperators;
     }
 }

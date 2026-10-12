@@ -1,26 +1,24 @@
 <?php
-
 namespace Boot\System\Database\Query;
 
 use Closure;
-use RuntimeException;
-use \Boot\Support\Arr;
-use \Boot\Support\Str;
 use DateTimeInterface;
-use \Boot\Support\Collection;
-use InvalidArgumentException;
 use Illuminate\Pagination\Paginator;
-use \Boot\Contracts\Support\Arrayable;
-
 use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\ForwardsCalls;
-use \Boot\System\Database\ConnectionInterface;
+use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
+use RuntimeException;
+use \Boot\Contracts\Support\Arrayable;
+use \Boot\Support\Arr;
+use \Boot\Support\Collection;
+use \Boot\Support\Str;
 use \Boot\System\Database\Concerns\BuildsQueries;
+use \Boot\System\Database\ConnectionInterface;
+use \Boot\System\Database\Eloquent\Builder as EloquentBuilder;
+use \Boot\System\Database\Eloquent\Relations\Relation;
 use \Boot\System\Database\Query\Grammars\Grammar;
 use \Boot\System\Database\Query\Processors\Processor;
-use \Boot\System\Database\Eloquent\Relations\Relation;
-use \Boot\System\Database\Eloquent\Builder as EloquentBuilder;
 
 class Builder extends \Illuminate\Database\Query\Builder
 {
@@ -55,14 +53,14 @@ class Builder extends \Illuminate\Database\Query\Builder
      * @var array
      */
     public $bindings = [
-        'select' => [],
-        'from' => [],
-        'join' => [],
-        'where' => [],
-        'groupBy' => [],
-        'having' => [],
-        'order' => [],
-        'union' => [],
+        'select'     => [],
+        'from'       => [],
+        'join'       => [],
+        'where'      => [],
+        'groupBy'    => [],
+        'having'     => [],
+        'order'      => [],
+        'union'      => [],
         'unionOrder' => [],
     ];
 
@@ -201,8 +199,6 @@ class Builder extends \Illuminate\Database\Query\Builder
      */
     public $useWritePdo = false;
 
-
-
     /**
      * Set the columns to be selected.
      *
@@ -211,9 +207,9 @@ class Builder extends \Illuminate\Database\Query\Builder
      */
     public function select($columns = ['*'])
     {
-        $this->columns = [];
+        $this->columns            = [];
         $this->bindings['select'] = [];
-        $columns = is_array($columns) ? $columns : func_get_args();
+        $columns                  = is_array($columns) ? $columns : func_get_args();
 
         foreach ($columns as $as => $column) {
             if (is_string($as) && $this->isQueryable($column)) {
@@ -240,7 +236,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         [$query, $bindings] = $this->createSub($query);
 
         return $this->selectRaw(
-            '('.$query.') as '.$this->grammar->wrap($as), $bindings
+            '(' . $query . ') as ' . $this->grammar->wrap($as), $bindings
         );
     }
 
@@ -275,7 +271,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        return $this->fromRaw('('.$query.') as '.$this->grammar->wrapTable($as), $bindings);
+        return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrapTable($as), $bindings);
     }
 
     /**
@@ -348,7 +344,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         foreach ($columns as $as => $column) {
             if (is_string($as) && $this->isQueryable($column)) {
                 if (is_null($this->columns)) {
-                    $this->select($this->from.'.*');
+                    $this->select($this->from . '.*');
                 }
 
                 $this->selectSub($column, $as);
@@ -469,7 +465,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     {
         [$query, $bindings] = $this->createSub($query);
 
-        $expression = '('.$query.') as '.$this->grammar->wrapTable($as);
+        $expression = '(' . $query . ') as ' . $this->grammar->wrapTable($as);
 
         $this->addBinding($bindings, 'join');
 
@@ -582,7 +578,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this;
     }
 
-   
     /**
      * Merge an array of where clauses and bindings.
      *
@@ -598,8 +593,6 @@ class Builder extends \Illuminate\Database\Query\Builder
             array_merge($this->bindings['where'], (array) $bindings)
         );
     }
-
-
 
     /**
      * Add an array of where clauses to the query.
@@ -655,7 +648,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     protected function invalidOperatorAndValue($operator, $value)
     {
         return is_null($value) && in_array($operator, $this->operators) &&
-             ! in_array($operator, ['=', '<>', '!=']);
+        ! in_array($operator, ['=', '<>', '!=']);
     }
 
     /**
@@ -667,7 +660,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     protected function invalidOperator($operator)
     {
         return ! in_array(strtolower($operator), $this->operators, true) &&
-               ! in_array(strtolower($operator), $this->grammar->getOperators(), true);
+        ! in_array(strtolower($operator), $this->grammar->getOperators(), true);
     }
 
     /**
@@ -766,7 +759,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this->whereRaw($sql, $bindings, 'or');
     }
 
-    
     /**
      * Add an "or where in" clause to the query.
      *
@@ -803,8 +795,6 @@ class Builder extends \Illuminate\Database\Query\Builder
     {
         return $this->whereNotIn($column, $values, 'or');
     }
-
-   
 
     /**
      * Add an "or where in raw" clause for integer values to the query.
@@ -843,7 +833,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this->whereIntegerNotInRaw($column, $values, 'or');
     }
 
-  
     /**
      * Add an "or where null" clause to the query.
      *
@@ -867,7 +856,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this->whereNull($columns, $boolean, true);
     }
 
-  
     /**
      * Add a where between statement using columns to the query.
      *
@@ -886,11 +874,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this;
     }
 
-   
-
- 
-   
-
     /**
      * Add a where not between statement using columns to the query.
      *
@@ -903,8 +886,6 @@ class Builder extends \Illuminate\Database\Query\Builder
     {
         return $this->whereBetweenColumns($column, $values, $boolean, true);
     }
-
-  
 
     /**
      * Add an or where not between statement using columns to the query.
@@ -1207,8 +1188,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this;
     }
 
-  
-
     /**
      * Adds a where condition using row values.
      *
@@ -1393,9 +1372,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this;
     }
 
-   
-
-   
     /**
      * Add a raw groupBy clause to the query.
      *
@@ -1465,8 +1441,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this->having($column, $operator, $value, 'or');
     }
 
-
-
     /**
      * Add a raw having clause to the query.
      *
@@ -1512,7 +1486,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         if ($this->isQueryable($column)) {
             [$query, $bindings] = $this->createSub($column);
 
-            $column = new Expression('('.$query.')');
+            $column = new Expression('(' . $query . ')');
 
             $this->addBinding($bindings, $this->unions ? 'unionOrder' : 'order');
         }
@@ -1524,7 +1498,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         }
 
         $this->{$this->unions ? 'unionOrders' : 'orders'}[] = [
-            'column' => $column,
+            'column'    => $column,
             'direction' => $direction,
         ];
 
@@ -1676,7 +1650,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         }
 
         return $this->orderBy($column, 'desc')
-                    ->limit($perPage);
+            ->limit($perPage);
     }
 
     /**
@@ -1696,7 +1670,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         }
 
         return $this->orderBy($column, 'asc')
-                    ->limit($perPage);
+            ->limit($perPage);
     }
 
     /**
@@ -1708,9 +1682,9 @@ class Builder extends \Illuminate\Database\Query\Builder
      */
     public function reorder($column = null, $direction = 'asc')
     {
-        $this->orders = null;
-        $this->unionOrders = null;
-        $this->bindings['order'] = [];
+        $this->orders                 = null;
+        $this->unionOrders            = null;
+        $this->bindings['order']      = [];
         $this->bindings['unionOrder'] = [];
 
         if ($column) {
@@ -1719,8 +1693,6 @@ class Builder extends \Illuminate\Database\Query\Builder
 
         return $this;
     }
-
-   
 
     /**
      * Add a union statement to the query.
@@ -1825,8 +1797,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return count($result) > 0 ? reset($result) : null;
     }
 
-   
-
     /**
      * Run the query as a "select" statement against the connection.
      *
@@ -1842,22 +1812,25 @@ class Builder extends \Illuminate\Database\Query\Builder
     /**
      * Paginate the given query into a simple paginator.
      *
-     * @param  int  $perPage
-     * @param  array  $columns
+     * @param  int|\Closure  $perPage
+     * @param  string|\Illuminate\Contracts\Database\Query\Expression|array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @param  \Closure|int|null  $total
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null)
+    public function paginate($perPage = 15, $columns = ['*'], $pageName = 'page', $page = null, $total = null)
     {
         $page = $page ?: Paginator::resolveCurrentPage($pageName);
 
-        $total = $this->getCountForPagination();
+        $total = value($total) ?? $this->getCountForPagination();
 
-        $results = $total ? $this->forPage($page, $perPage)->get($columns) : collect();
+        $perPage = value($perPage, $total);
+
+        $results = $total ? $this->forPage($page, $perPage)->get($columns) : new Collection;
 
         return $this->paginator($results, $total, $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
+            'path'     => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
     }
@@ -1880,7 +1853,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         $this->offset(($page - 1) * $perPage)->limit($perPage + 1);
 
         return $this->simplePaginator($this->get($columns), $perPage, $page, [
-            'path' => Paginator::resolveCurrentPath(),
+            'path'     => Paginator::resolveCurrentPath(),
             'pageName' => $pageName,
         ]);
     }
@@ -1919,11 +1892,11 @@ class Builder extends \Illuminate\Database\Query\Builder
             $clone = $this->cloneForPaginationCount();
 
             if (is_null($clone->columns) && ! empty($this->joins)) {
-                $clone->select($this->from.'.*');
+                $clone->select($this->from . '.*');
             }
 
             return $this->newQuery()
-                ->from(new Expression('('.$clone->toSql().') as '.$this->grammar->wrap('aggregate_table')))
+                ->from(new Expression('(' . $clone->toSql() . ') as ' . $this->grammar->wrap('aggregate_table')))
                 ->mergeBindings($clone)
                 ->setAggregate('count', $this->withoutSelectAliases($columns))
                 ->get()->all();
@@ -1932,9 +1905,9 @@ class Builder extends \Illuminate\Database\Query\Builder
         $without = $this->unions ? ['orders', 'limit', 'offset'] : ['columns', 'orders', 'limit', 'offset'];
 
         return $this->cloneWithout($without)
-                    ->cloneWithoutBindings($this->unions ? ['order'] : ['select', 'order'])
-                    ->setAggregate('count', $this->withoutSelectAliases($columns))
-                    ->get()->all();
+            ->cloneWithoutBindings($this->unions ? ['order'] : ['select', 'order'])
+            ->setAggregate('count', $this->withoutSelectAliases($columns))
+            ->get()->all();
     }
 
     /**
@@ -1945,7 +1918,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     protected function cloneForPaginationCount()
     {
         return $this->cloneWithout(['orders', 'limit', 'offset'])
-                    ->cloneWithoutBindings(['order']);
+            ->cloneWithoutBindings(['order']);
     }
 
     /**
@@ -1958,7 +1931,7 @@ class Builder extends \Illuminate\Database\Query\Builder
     {
         return array_map(function ($column) {
             return is_string($column) && ($aliasPosition = stripos($column, ' as ')) !== false
-                    ? substr($column, 0, $aliasPosition) : $column;
+                ? substr($column, 0, $aliasPosition) : $column;
         }, $columns);
     }
 
@@ -2027,8 +2000,8 @@ class Builder extends \Illuminate\Database\Query\Builder
         $key = $this->stripTableForPluck($key);
 
         return is_array($queryResult[0])
-                    ? $this->pluckFromArrayColumn($queryResult, $column, $key)
-                    : $this->pluckFromObjectColumn($queryResult, $column, $key);
+            ? $this->pluckFromArrayColumn($queryResult, $column, $key)
+            : $this->pluckFromObjectColumn($queryResult, $column, $key);
     }
 
     /**
@@ -2045,7 +2018,7 @@ class Builder extends \Illuminate\Database\Query\Builder
 
         $separator = strpos(strtolower($column), ' as ') !== false ? ' as ' : '\.';
 
-        return last(preg_split('~'.$separator.'~i', $column));
+        return last(preg_split('~' . $separator . '~i', $column));
     }
 
     /**
@@ -2165,8 +2138,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this->doesntExist() ? true : $callback();
     }
 
-   
-
     /**
      * Retrieve the minimum value of a given column.
      *
@@ -2234,9 +2205,9 @@ class Builder extends \Illuminate\Database\Query\Builder
     public function aggregate($function, $columns = ['*'])
     {
         $results = $this->cloneWithout($this->unions ? [] : ['columns'])
-                        ->cloneWithoutBindings($this->unions ? [] : ['select'])
-                        ->setAggregate($function, $columns)
-                        ->get($columns);
+            ->cloneWithoutBindings($this->unions ? [] : ['select'])
+            ->setAggregate($function, $columns)
+            ->get($columns);
 
         if (! $results->isEmpty()) {
             return array_change_key_case((array) $results[0])['aggregate'];
@@ -2269,7 +2240,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         // cast it to one. When it does we will cast it to a float since it needs to be
         // cast to the expected data type for the developers out of pure convenience.
         return strpos((string) $result, '.') === false
-                ? (int) $result : (float) $result;
+            ? (int) $result : (float) $result;
     }
 
     /**
@@ -2315,8 +2286,6 @@ class Builder extends \Illuminate\Database\Query\Builder
 
         return $result;
     }
-
-   
 
     /**
      * Insert a new record and get the value of the primary key.
@@ -2369,13 +2338,17 @@ class Builder extends \Illuminate\Database\Query\Builder
     /**
      * Insert or update a record matching the attributes, and fill it with values.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return bool
      */
-    public function updateOrInsert(array $attributes, array $values = [])
+    public function updateOrInsert(array $attributes, array | callable $values = [])
     {
-        if (! $this->where($attributes)->exists()) {
+        $exists = $this->where($attributes)->exists();
+
+        if ($values instanceof Closure) {
+            $values = $values($exists);
+        }
+
+        if (! $exists) {
             return $this->insert(array_merge($attributes, $values));
         }
 
@@ -2444,7 +2417,7 @@ class Builder extends \Illuminate\Database\Query\Builder
         // ID to let developers to simply and quickly remove a single row from this
         // database without manually specifying the "where" clauses on the query.
         if (! is_null($id)) {
-            $this->where($this->from.'.id', '=', $id);
+            $this->where($this->from . '.id', '=', $id);
         }
 
         return $this->connection->delete(
@@ -2466,7 +2439,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         }
     }
 
-    
     /**
      * Create a new query instance for a sub-query.
      *
@@ -2542,9 +2514,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         return $this;
     }
 
-   
-
-
     /**
      * Get the default key name of the table.
      *
@@ -2606,9 +2575,9 @@ class Builder extends \Illuminate\Database\Query\Builder
     protected function isQueryable($value)
     {
         return $value instanceof self ||
-               $value instanceof EloquentBuilder ||
-               $value instanceof Relation ||
-               $value instanceof Closure;
+        $value instanceof EloquentBuilder ||
+        $value instanceof Relation ||
+        $value instanceof Closure;
     }
 
     /**
@@ -2644,11 +2613,16 @@ class Builder extends \Illuminate\Database\Query\Builder
     /**
      * Dump the current SQL and bindings.
      *
+     * @param  mixed  ...$args
      * @return $this
      */
-    public function dump()
+    public function dump(...$args)
     {
-        dump($this->toSql(), $this->getBindings());
+        dump(
+            $this->toSql(),
+            $this->getBindings(),
+            ...$args,
+        );
 
         return $this;
     }
@@ -2663,5 +2637,14 @@ class Builder extends \Illuminate\Database\Query\Builder
         dd($this->toSql(), $this->getBindings());
     }
 
+    public function __construct(
+        ConnectionInterface $connection,
+        ?Grammar $grammar = null,
+        ?Processor $processor = null,
+    ) {
+        $this->connection = $connection;
+        $this->grammar    = $grammar ?: $connection->getQueryGrammar();
+        $this->processor  = $processor ?: $connection->getPostProcessor();
+    }
 
 }

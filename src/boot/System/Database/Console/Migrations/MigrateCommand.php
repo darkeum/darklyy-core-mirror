@@ -1,18 +1,16 @@
 <?php
-
 namespace Boot\System\Database\Console\Migrations;
 
+use Throwable;
+use PDOException;
+use function Laravel\Prompts\confirm;
 use Boot\System\Console\ConfirmableTrait;
-use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Database\Migrations\Migrator;
-use Illuminate\Database\SQLiteDatabaseDoesNotExistException;
 use Illuminate\Database\SqlServerConnection;
-use PDOException;
-use Throwable;
-
-use function Laravel\Prompts\confirm;
+use Illuminate\Database\SQLiteDatabaseDoesNotExistException;
 
 class MigrateCommand extends BaseCommand implements Isolatable
 {
@@ -65,7 +63,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
     {
         parent::__construct();
 
-        $this->migrator = $migrator;
+        $this->migrator   = $migrator;
         $this->dispatcher = $dispatcher;
     }
 
@@ -89,7 +87,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
             $this->migrator->setOutput($this->output)
                 ->run($this->getMigrationPaths(), [
                     'pretend' => $this->option('pretend'),
-                    'step' => $this->option('step'),
+                    'step'    => $this->option('step'),
                 ]);
 
             // Finally, if the "seed" option has been given, we will re-run the database
@@ -137,26 +135,42 @@ class MigrateCommand extends BaseCommand implements Isolatable
      */
     protected function repositoryExists()
     {
-        return retry(2, fn () => $this->migrator->repositoryExists(), 0, function ($e) {
+        // dd();
+        return retry(2, fn() => $this->migrator->repositoryExists(), 0, function ($e) {
             try {
-                if ($e->getPrevious() instanceof SQLiteDatabaseDoesNotExistException) {
-                    return $this->createMissingSqliteDatabase($e->getPrevious()->path);
-                }
-
-                $connection = $this->migrator->resolveConnection($this->option('database'));
-
-                if (
-                    $e->getPrevious() instanceof PDOException &&
-                    $e->getPrevious()->getCode() === 1049 &&
-                    $connection->getDriverName() === 'mysql') {
-                    return $this->createMissingMysqlDatabase($connection);
-                }
-
-                return false;
+                return $this->handleMissingDatabase($e->getPrevious());
             } catch (Throwable) {
                 return false;
             }
         });
+    }
+
+    /**
+     * Attempt to create the database if it is missing.
+     *
+     * @param  \Throwable  $e
+     * @return bool
+     */
+    protected function handleMissingDatabase(Throwable $e)
+    {
+        if ($e instanceof SQLiteDatabaseDoesNotExistException) {
+            return $this->createMissingSqliteDatabase($e->path);
+        }
+
+        $connection = $this->migrator->resolveConnection($this->option('database'));
+
+        if (! $e instanceof PDOException) {
+            return false;
+        }
+
+        if (($e->getCode() === 1049 && in_array($connection->getDriverName(), ['mysql', 'mariadb'])) ||
+            (($e->errorInfo[0] ?? null) == '08006' &&
+                $connection->getDriverName() == 'pgsql' &&
+                Str::contains($e->getMessage(), '"' . $connection->getDatabaseName() . '"'))) {
+            return $this->createMissingMySqlOrPgsqlDatabase($connection);
+        }
+
+        return false;
     }
 
     /**
@@ -175,7 +189,7 @@ class MigrateCommand extends BaseCommand implements Isolatable
             return false;
         }
 
-        $this->components->warn('The SQLite database does not exist: '.$path);
+        $this->components->warn('The SQLite database does not exist: ' . $path);
 
         if (! confirm('Would you like to create it?', default: false)) {
             return false;
@@ -274,10 +288,10 @@ class MigrateCommand extends BaseCommand implements Isolatable
             return $this->option('schema-path');
         }
 
-        if (file_exists($path = database_path('schema/'.$connection->getName().'-schema.dump'))) {
+        if (file_exists($path = database_path('schema/' . $connection->getName() . '-schema.dump'))) {
             return $path;
         }
 
-        return database_path('schema/'.$connection->getName().'-schema.sql');
+        return database_path('schema/' . $connection->getName() . '-schema.sql');
     }
 }
