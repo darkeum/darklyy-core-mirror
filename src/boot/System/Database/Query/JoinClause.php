@@ -1,5 +1,14 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Query;
 
 use Closure;
@@ -16,7 +25,7 @@ class JoinClause extends Builder
     /**
      * The table the join clause is joining to.
      *
-     * @var string
+     * @var \Boot\Contracts\Database\Query\Expression|string
      */
     public $table;
 
@@ -54,7 +63,6 @@ class JoinClause extends Builder
      * @param  \Boot\System\Database\Query\Builder  $parentQuery
      * @param  string  $type
      * @param  string  $table
-     * @return void
      */
     public function __construct(Builder $parentQuery, $type, $table)
     {
@@ -82,9 +90,9 @@ class JoinClause extends Builder
      *
      * on `contacts`.`user_id` = `users`.`id` and `contacts`.`info_id` = `info`.`id`
      *
-     * @param  \Closure|string  $first
+     * @param  \Closure|\Boot\System\Contracts\Database\Query\Expression|string  $first
      * @param  string|null  $operator
-     * @param  \Boot\System\Database\Query\Expression|string|null  $second
+     * @param  \Boot\System\Contracts\Database\Query\Expression|string|null  $second
      * @param  string  $boolean
      * @return $this
      *
@@ -102,9 +110,9 @@ class JoinClause extends Builder
     /**
      * Add an "or on" clause to the join.
      *
-     * @param  \Closure|string  $first
+     * @param  \Closure|\Boot\System\Contracts\Database\Query\Expression|string  $first
      * @param  string|null  $operator
-     * @param  string|null  $second
+     * @param  \Boot\System\Contracts\Database\Query\Expression|string|null  $second
      * @return \Boot\System\Database\Query\JoinClause
      */
     public function orOn($first, $operator = null, $second = null)

@@ -1,14 +1,16 @@
 <?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Query;
 
-use Closure;
-use DateTimeInterface;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\LazyCollection;
-use Illuminate\Support\Traits\ForwardsCalls;
-use Illuminate\Support\Traits\Macroable;
-use InvalidArgumentException;
-use RuntimeException;
 use Boot\Contracts\Support\Arrayable;
 use Boot\Support\Arr;
 use Boot\Support\Collection;
@@ -18,9 +20,19 @@ use Boot\System\Database\ConnectionInterface;
 use Boot\System\Database\Eloquent\Builder as EloquentBuilder;
 use Boot\System\Database\Eloquent\Relations\Relation;
 use Boot\System\Database\Query\Grammars\Grammar;
+use Boot\System\Database\Query\JoinClause;
+use Boot\System\Database\Query\JoinLateralClause;
 use Boot\System\Database\Query\Processors\Processor;
+use Closure;
+use DateTimeInterface;
 use Illuminate\Database\Query\Grammars\Grammar as LaravelGrammar;
 use Illuminate\Database\Query\Processors\Processor as LaravelProcessor;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Traits\ForwardsCalls;
+use Illuminate\Support\Traits\Macroable;
+use InvalidArgumentException;
+use RuntimeException;
 
 class Builder extends \Illuminate\Database\Query\Builder
 {
@@ -50,214 +62,27 @@ class Builder extends \Illuminate\Database\Query\Builder
     public $processor;
 
     /**
-     * The current query value bindings.
+     * Get a new "join" clause.
      *
-     * @var array
+     * @param  string  $type
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
+     * @return \Boot\System\Database\Query\JoinClause
      */
-    public $bindings = [
-        'select'     => [],
-        'from'       => [],
-        'join'       => [],
-        'where'      => [],
-        'groupBy'    => [],
-        'having'     => [],
-        'order'      => [],
-        'union'      => [],
-        'unionOrder' => [],
-    ];
-
-    /**
-     * An aggregate function and column to be run.
-     *
-     * @var array
-     */
-    public $aggregate;
-
-    /**
-     * The columns that should be returned.
-     *
-     * @var array
-     */
-    public $columns;
-
-    /**
-     * Indicates if the query returns distinct results.
-     *
-     * Occasionally contains the columns that should be distinct.
-     *
-     * @var bool|array
-     */
-    public $distinct = false;
-
-    /**
-     * The table which the query is targeting.
-     *
-     * @var string
-     */
-    public $from;
-
-    /**
-     * The table joins for the query.
-     *
-     * @var array
-     */
-    public $joins;
-
-    /**
-     * The where constraints for the query.
-     *
-     * @var array
-     */
-    public $wheres = [];
-
-    /**
-     * The groupings for the query.
-     *
-     * @var array
-     */
-    public $groups;
-
-    /**
-     * The having constraints for the query.
-     *
-     * @var array
-     */
-    public $havings;
-
-    /**
-     * The orderings for the query.
-     *
-     * @var array
-     */
-    public $orders;
-
-    /**
-     * The maximum number of records to return.
-     *
-     * @var int
-     */
-    public $limit;
-
-    /**
-     * The number of records to skip.
-     *
-     * @var int
-     */
-    public $offset;
-
-    /**
-     * The query union statements.
-     *
-     * @var array
-     */
-    public $unions;
-
-    /**
-     * The maximum number of union records to return.
-     *
-     * @var int
-     */
-    public $unionLimit;
-
-    /**
-     * The number of union records to skip.
-     *
-     * @var int
-     */
-    public $unionOffset;
-
-    /**
-     * The orderings for the union query.
-     *
-     * @var array
-     */
-    public $unionOrders;
-
-    /**
-     * Indicates whether row locking is being used.
-     *
-     * @var string|bool
-     */
-    public $lock;
-
-    /**
-     * All of the available clause operators.
-     *
-     * @var array
-     */
-    public $operators = [
-        '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
-        'like', 'like binary', 'not like', 'ilike',
-        '&', '|', '^', '<<', '>>',
-        'rlike', 'not rlike', 'regexp', 'not regexp',
-        '~', '~*', '!~', '!~*', 'similar to',
-        'not similar to', 'not ilike', '~~*', '!~~*',
-    ];
-
-    /**
-     * Whether use write pdo for select.
-     *
-     * @var bool
-     */
-    public $useWritePdo = false;
-
-    /**
-     * Set the columns to be selected.
-     *
-     * @param  array|mixed  $columns
-     * @return $this
-     */
-    public function select($columns = ['*'])
+    protected function newJoinClause(self | \Illuminate\Database\Query\Builder $parentQuery, $type, $table)
     {
-        $this->columns            = [];
-        $this->bindings['select'] = [];
-        $columns                  = is_array($columns) ? $columns : func_get_args();
-
-        foreach ($columns as $as => $column) {
-            if (is_string($as) && $this->isQueryable($column)) {
-                $this->selectSub($column, $as);
-            } else {
-                $this->columns[] = $column;
-            }
-        }
-
-        return $this;
+        return new JoinClause($parentQuery, $type, $table);
     }
 
     /**
-     * Add a subselect expression to the query.
+     * Get a new "join lateral" clause.
      *
-     * @param  \Closure|$this|string  $query
-     * @param  string  $as
-     * @return $this
-     *
-     * @throws \InvalidArgumentException
+     * @param  string  $type
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $table
+     * @return \Illuminate\Database\Query\JoinLateralClause
      */
-    public function selectSub($query, $as)
+    protected function newJoinLateralClause(self | \Illuminate\Database\Query\Builder $parentQuery, $type, $table)
     {
-        [$query, $bindings] = $this->createSub($query);
-
-        return $this->selectRaw(
-            '(' . $query . ') as ' . $this->grammar->wrap($as), $bindings
-        );
-    }
-
-    /**
-     * Add a new "raw" select expression to the query.
-     *
-     * @param  string  $expression
-     * @param  array  $bindings
-     * @return $this
-     */
-    public function selectRaw($expression, array $bindings = [])
-    {
-        $this->addSelect(new Expression($expression));
-
-        if ($bindings) {
-            $this->addBinding($bindings, 'select');
-        }
-
-        return $this;
+        return new JoinLateralClause($parentQuery, $type, $table);
     }
 
     /**
@@ -274,22 +99,6 @@ class Builder extends \Illuminate\Database\Query\Builder
         [$query, $bindings] = $this->createSub($query);
 
         return $this->fromRaw('(' . $query . ') as ' . $this->grammar->wrapTable($as), $bindings);
-    }
-
-    /**
-     * Add a raw from clause to the query.
-     *
-     * @param  string  $expression
-     * @param  mixed  $bindings
-     * @return $this
-     */
-    public function fromRaw($expression, $bindings = [])
-    {
-        $this->from = new Expression($expression);
-
-        $this->addBinding($bindings, 'from');
-
-        return $this;
     }
 
     /**
@@ -2641,8 +2450,8 @@ class Builder extends \Illuminate\Database\Query\Builder
 
     public function __construct(
         ConnectionInterface $connection,
-        Grammar|LaravelGrammar|null $grammar = null,
-        Processor|LaravelProcessor|null $processor = null,
+        Grammar | LaravelGrammar | null $grammar = null,
+        Processor | LaravelProcessor | null $processor = null,
     ) {
         $this->connection = $connection;
         $this->grammar    = $grammar ?: $connection->getQueryGrammar();

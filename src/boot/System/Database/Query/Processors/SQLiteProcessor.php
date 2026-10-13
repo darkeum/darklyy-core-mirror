@@ -1,10 +1,19 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Query\Processors;
 
 class SQLiteProcessor extends Processor
 {
-     /** @inheritDoc */
+   /** @inheritDoc */
     public function processColumns($results, $sql = '')
     {
         $hasPrimaryKey = array_sum(array_column($results, 'primary')) === 1;

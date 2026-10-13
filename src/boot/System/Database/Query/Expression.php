@@ -1,44 +1,42 @@
 <?php
 
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Query;
 
-class Expression
-{
-    /**
-     * The value of the expression.
-     *
-     * @var mixed
-     */
-    protected $value;
+use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
+use Boot\System\Database\Grammar;
 
+/**
+ * @template TValue of literal-string|int|float
+ */
+class Expression implements ExpressionContract
+{
     /**
      * Create a new raw query expression.
      *
-     * @param  mixed  $value
-     * @return void
+     * @param  TValue  $value
      */
-    public function __construct($value)
-    {
-        $this->value = $value;
+    public function __construct(
+        protected $value,
+    ) {
     }
 
     /**
      * Get the value of the expression.
      *
-     * @return mixed
+     * @param  \Boot\System\Database\Grammar  $grammar
+     * @return TValue
      */
-    public function getValue()
+    public function getValue(Grammar $grammar)
     {
         return $this->value;
-    }
-
-    /**
-     * Get the value of the expression.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->getValue();
     }
 }
