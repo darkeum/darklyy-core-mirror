@@ -12,8 +12,9 @@
 namespace Boot\System\Testing\Foundation;
 
 use Boot\Contracts\Console\Kernel;
-use Boot\System\Testing\Foundation\Traits\CanConfigureMigrationCommands;
 use Boot\System\Database\ConnectionInterface;
+use Boot\System\Testing\Foundation\RefreshDatabaseState;
+use Boot\System\Testing\Foundation\Traits\CanConfigureMigrationCommands;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 

@@ -11,8 +11,9 @@
 
 namespace Boot\System\Testing\Foundation;
 
+use Boot\Contracts\Console\Kernel;
+use Boot\System\Testing\Foundation\RefreshDatabaseState;
 use Boot\System\Testing\Foundation\Traits\CanConfigureMigrationCommands;
-use Illuminate\Contracts\Console\Kernel;
 
 trait RefreshDatabase
 {

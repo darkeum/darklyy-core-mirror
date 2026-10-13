@@ -32,18 +32,18 @@ abstract class TestCase extends AbstractTestCase
         parent::tearDown();
     }
 
-    public function createApplication()
-    {
-        $this->baseUrl = env('API_FULL_URL');
+    // public function createApplication()
+    // {
+    //     // $this->baseUrl = env('API_FULL_URL');
 
-        $this->overrideSubDomain();
+    //     $this->overrideSubDomain();
 
-        $app = require __DIR__ . '/../../../../../bootstrap/app.php';
+    //     $app = require __DIR__ . '/../../../../../bootstrap/app.php';
 
-        $app->make(Kernel::class)->bootstrap();
+    //     $app->make(Kernel::class)->bootstrap();
 
-        $this->faker = $app->make(Generator::class);
+    //     $this->faker = $app->make(Generator::class);
 
-        return $app;
-    }
+    //     return $app;
+    // }
 }

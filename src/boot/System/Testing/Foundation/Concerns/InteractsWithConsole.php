@@ -13,7 +13,7 @@ namespace Boot\System\Testing\Foundation\Concerns;
 
 use Boot\Contracts\Console\Kernel;
 use Boot\System\Console\OutputStyle;
-use Illuminate\Testing\PendingCommand;
+use Boot\System\Testing\PendingCommand;
 
 
 trait InteractsWithConsole

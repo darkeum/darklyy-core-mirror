@@ -11,7 +11,7 @@
 
 namespace Boot\System\Testing;
 
-use  Boot\System\Console\OutputStyle;
+use Boot\System\Console\OutputStyle;
 use Boot\Contracts\Console\Kernel;
 use Illuminate\Console\PromptValidationException;
 use Illuminate\Contracts\Container\Container;

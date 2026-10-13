@@ -11,6 +11,8 @@
 
 namespace Boot\System\Testing\Foundation;
 
+use Boot\System\Testing\Foundation\RefreshDatabaseState;
+
 trait LazilyRefreshDatabase
 {
     use RefreshDatabase {

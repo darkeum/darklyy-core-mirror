@@ -18,7 +18,7 @@ trait ConfirmableTrait
 {
     /**
      * Подтверждение, перед выполнением действия
-     * 
+     *
      * Метод спрашивает пользователя о намерении выполнить действие если приложение находится в статусе продакшн
      *
      * @param  string  $warning
@@ -29,19 +29,19 @@ trait ConfirmableTrait
     {
         $callback = is_null($callback) ? $this->getDefaultConfirmCallback() : $callback;
 
-        $shouldConfirm = $callback instanceof Closure ? call_user_func($callback) : $callback;
+         $shouldConfirm = value($callback);
 
         if ($shouldConfirm) {
             if ($this->hasOption('force') && $this->option('force')) {
                 return true;
             }
 
-            $this->alert($warning);
+             $this->components->alert($warning);
 
-            $confirmed = $this->confirm('Вы действительно хотите выполнить данную команду?');
+            $confirmed = $this->confirm('Вы действительно хотите выполнить данную команду?', default: false);
 
             if (! $confirmed) {
-                $this->comment('Команда отменена!');
+               $this->components->warn('Команда отменена!');
 
                 return false;
             }
@@ -58,7 +58,7 @@ trait ConfirmableTrait
     protected function getDefaultConfirmCallback()
     {
         return function () {
-            return true;
+            return $this->getLaravel()->environment() === 'production';
         };
     }
 }
