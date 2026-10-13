@@ -37,28 +37,28 @@ class BlueprintState
     /**
      * The columns.
      *
-     * @var \Illuminate\Database\Schema\ColumnDefinition[]
+     * @var \Boot\System\Database\Schema\ColumnDefinition[]
      */
     private $columns;
 
     /**
      * The primary key.
      *
-     * @var \Illuminate\Database\Schema\IndexDefinition|null
+     * @var \Boot\System\Database\Schema\IndexDefinition|null
      */
     private $primaryKey;
 
     /**
      * The indexes.
      *
-     * @var \Illuminate\Database\Schema\IndexDefinition[]
+     * @var \Boot\System\Database\Schema\IndexDefinition[]
      */
     private $indexes;
 
     /**
      * The foreign keys.
      *
-     * @var \Illuminate\Database\Schema\ForeignKeyDefinition[]
+     * @var \Boot\System\Database\Schema\ForeignKeyDefinition[]
      */
     private $foreignKeys;
 
@@ -118,7 +118,7 @@ class BlueprintState
     /**
      * Get the primary key.
      *
-     * @return \Illuminate\Database\Schema\IndexDefinition|null
+     * @return \Boot\System\Database\Schema\IndexDefinition|null
      */
     public function getPrimaryKey()
     {
@@ -128,7 +128,7 @@ class BlueprintState
     /**
      * Get the columns.
      *
-     * @return \Illuminate\Database\Schema\ColumnDefinition[]
+     * @return \Boot\System\Database\Schema\ColumnDefinition[]
      */
     public function getColumns()
     {
@@ -138,7 +138,7 @@ class BlueprintState
     /**
      * Get the indexes.
      *
-     * @return \Illuminate\Database\Schema\IndexDefinition[]
+     * @return \Boot\System\Database\Schema\IndexDefinition[]
      */
     public function getIndexes()
     {
@@ -148,7 +148,7 @@ class BlueprintState
     /**
      * Get the foreign keys.
      *
-     * @return \Illuminate\Database\Schema\ForeignKeyDefinition[]
+     * @return \Boot\System\Database\Schema\ForeignKeyDefinition[]
      */
     public function getForeignKeys()
     {

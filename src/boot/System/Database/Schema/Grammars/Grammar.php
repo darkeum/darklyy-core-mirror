@@ -1,4 +1,14 @@
 <?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Schema\Grammars;
 
 use Boot\Support\Fluent;
@@ -154,7 +164,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a vector index key command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return void
      *
      * @throws \RuntimeException
@@ -182,7 +192,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a rename column command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return list<string>|string
      */
     public function compileRenameColumn(Blueprint $blueprint, Fluent $command)
@@ -212,7 +222,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a fulltext index key command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      *
      * @throws \RuntimeException
@@ -226,7 +236,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a drop fulltext index command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      *
      * @throws \RuntimeException
@@ -240,7 +250,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a foreign key command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -280,7 +290,7 @@ abstract class Grammar extends BaseGrammar
      * Compile a drop foreign key command.
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $command
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropForeign(Blueprint $blueprint, Fluent $command)
@@ -325,7 +335,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Get the SQL for the column data type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function getType(Fluent $column)
@@ -336,7 +346,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create the column definition for a generated, computed column type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return void
      *
      * @throws \RuntimeException
@@ -349,7 +359,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create the column definition for a vector type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      *
      * @throws \RuntimeException
@@ -362,7 +372,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create the column definition for a tsvector type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      *
      * @throws \RuntimeException
@@ -375,7 +385,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Create the column definition for a raw column type.
      *
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeRaw(Fluent $column)
@@ -387,8 +397,8 @@ abstract class Grammar extends BaseGrammar
      * Add the column modifiers to the definition.
      *
      * @param  string  $sql
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Illuminate\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function addModifiers($sql, Blueprint $blueprint, Fluent $column)
@@ -407,7 +417,7 @@ abstract class Grammar extends BaseGrammar
      *
      * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
      * @param  string  $name
-     * @return \Illuminate\Support\Fluent|null
+     * @return \Boot\Support\Fluent|null
      */
     protected function getCommandByName(Blueprint $blueprint, $name)
     {
@@ -482,7 +492,7 @@ abstract class Grammar extends BaseGrammar
     /**
      * Wrap a value in keyword identifiers.
      *
-     * @param  \Boot\System\Support\Fluent|\Illuminate\Contracts\Database\Query\Expression|string  $value
+     * @param  \Boot\Support\Fluent |\Illuminate\Contracts\Database\Query\Expression|string  $value
      * @return string
      */
     public function wrap($value)

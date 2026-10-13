@@ -1,57 +1,63 @@
 <?php
 
-namespace Boot\System\Database\Schema;
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
 
-use Boot\Support\Str;
+namespace Boot\System\Database\Schema;
 
 class ForeignDefaultColumnDefinition extends ColumnDefinition
 {
-    /**
+   /**
      * The schema builder blueprint instance.
      *
-     * @var \Boot\System\Database\Schema\Blueprint
+     * @var \Illuminate\Database\Schema\Blueprint
      */
     protected $blueprint;
-
-    protected string|null $references_on;
-
 
     /**
      * Create a new foreign ID column definition.
      *
-     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
      * @param  array  $attributes
-     * @return void
      */
-    public function __construct(Blueprint $blueprint, $attributes = [], $references_on = null)
+    public function __construct(Blueprint $blueprint, $attributes = [])
     {
         parent::__construct($attributes);
 
         $this->blueprint = $blueprint;
-
-        $this->references_on = $references_on;
     }
 
     /**
      * Create a foreign key constraint on this column referencing the "id" column of the conventionally related table.
      *
      * @param  string|null  $table
-     * @param  string  $column
-     * @return \Illuminate\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
+     * @param  string|null  $column
+     * @param  string|null  $indexName
+     * @return \Illuminate\Database\Schema\ForeignKeyDefinition
      */
-    public function constrained($table = null, $column = 'id')
+    public function constrained($table = null, $column = null, $indexName = null)
     {
-        return $this->references($column)->on($table ?? $this->references_on ?? Str::plural(Str::beforeLast($this->name, '_' . $column)))->onUpdate('restrict')->onDelete('restrict');
+        $table ??= $this->table;
+        $column ??= $this->referencesModelColumn ?? 'id';
+
+        return $this->references($column, $indexName)->on($table ?? (new Stringable($this->name))->beforeLast('_'.$column)->plural());
     }
 
     /**
      * Specify which column this foreign ID references on another table.
      *
      * @param  string  $column
-     * @return \Illuminate\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
+     * @param  string|null  $indexName
+     * @return \Illuminate\Database\Schema\ForeignKeyDefinition
      */
-    public function references($column)
+    public function references($column, $indexName = null)
     {
-        return $this->blueprint->foreign($this->name)->references($column);
+        return $this->blueprint->foreign($this->name, $indexName)->references($column);
     }
 }

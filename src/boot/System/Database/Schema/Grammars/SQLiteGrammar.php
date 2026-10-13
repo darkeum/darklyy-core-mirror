@@ -1,15 +1,23 @@
 <?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Schema\Grammars;
 
-use RuntimeException;
-use Boot\Support\Fluent;
-use Illuminate\Support\Arr;
-use Boot\Support\Collection;
-use Doctrine\DBAL\Schema\Index;
-use Boot\System\Database\Connection;
 use Boot\System\Database\Query\Expression;
 use Boot\System\Database\Schema\Blueprint;
 use Boot\System\Database\Schema\IndexDefinition;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Boot\Support\Fluent;
+use RuntimeException;
 
 class SQLiteGrammar extends Grammar
 {
@@ -106,17 +114,17 @@ class SQLiteGrammar extends Grammar
     public function compileTables($schema, $withSize = false)
     {
         return 'select tl.name as name, tl.schema as schema'
-            . ($withSize ? ', (select sum(s.pgsize) '
-            . 'from (select tl.name as name union select il.name as name from pragma_index_list(tl.name, tl.schema) as il) as es '
-            . 'join dbstat(tl.schema) as s on s.name = es.name) as size' : '')
-            . ' from pragma_table_list as tl where'
-            . (match (true) {
-            ! empty($schema) && is_array($schema) => ' tl.schema in (' . $this->quoteString($schema) . ') and',
-            ! empty($schema)                      => ' tl.schema = ' . $this->quoteString($schema) . ' and',
-            default                              => '',
-        })
-            . " tl.type in ('table', 'virtual') and tl.name not like 'sqlite\_%' escape '\' "
-            . 'order by tl.schema, tl.name';
+            .($withSize ? ', (select sum(s.pgsize) '
+                .'from (select tl.name as name union select il.name as name from pragma_index_list(tl.name, tl.schema) as il) as es '
+                .'join dbstat(tl.schema) as s on s.name = es.name) as size' : '')
+            .' from pragma_table_list as tl where'
+            .(match (true) {
+                ! empty($schema) && is_array($schema) => ' tl.schema in ('.$this->quoteString($schema).') and',
+                ! empty($schema) => ' tl.schema = '.$this->quoteString($schema).' and',
+                default => '',
+            })
+            ." tl.type in ('table', 'virtual') and tl.name not like 'sqlite\_%' escape '\' "
+            .'order by tl.schema, tl.name';
     }
 
     /**
@@ -130,21 +138,21 @@ class SQLiteGrammar extends Grammar
     {
         return $withSize
             ? sprintf(
-            'select m.tbl_name as name, %s as schema, sum(s.pgsize) as size from %s.sqlite_master as m '
-            . 'join dbstat(%s) as s on s.name = m.name '
-            . "where m.type in ('table', 'index') and m.tbl_name not like 'sqlite\_%%' escape '\' "
-            . 'group by m.tbl_name '
-            . 'order by m.tbl_name',
-            $this->quoteString($schema),
-            $this->wrapValue($schema),
-            $this->quoteString($schema)
-        )
+                'select m.tbl_name as name, %s as schema, sum(s.pgsize) as size from %s.sqlite_master as m '
+                .'join dbstat(%s) as s on s.name = m.name '
+                ."where m.type in ('table', 'index') and m.tbl_name not like 'sqlite\_%%' escape '\' "
+                .'group by m.tbl_name '
+                .'order by m.tbl_name',
+                $this->quoteString($schema),
+                $this->wrapValue($schema),
+                $this->quoteString($schema)
+            )
             : sprintf(
-            'select name, %s as schema from %s.sqlite_master '
-            . "where type = 'table' and name not like 'sqlite\_%%' escape '\' order by name",
-            $this->quoteString($schema),
-            $this->wrapValue($schema)
-        );
+                'select name, %s as schema from %s.sqlite_master '
+                ."where type = 'table' and name not like 'sqlite\_%%' escape '\' order by name",
+                $this->quoteString($schema),
+                $this->wrapValue($schema)
+            );
     }
 
     /**
@@ -190,10 +198,10 @@ class SQLiteGrammar extends Grammar
     {
         return sprintf(
             'select \'primary\' as name, group_concat(col) as columns, 1 as "unique", 1 as "primary" '
-            . 'from (select name as col from pragma_table_xinfo(%s, %s) where pk > 0 order by pk, cid) group by name '
-            . 'union select name, group_concat(col) as columns, "unique", origin = \'pk\' as "primary" '
-            . 'from (select il.*, ii.name as col from pragma_index_list(%s, %s) il, pragma_index_info(il.name, %s) ii order by il.seq, ii.seqno) '
-            . 'group by name, "unique", "primary"',
+            .'from (select name as col from pragma_table_xinfo(%s, %s) where pk > 0 order by pk, cid) group by name '
+            .'union select name, group_concat(col) as columns, "unique", origin = \'pk\' as "primary" '
+            .'from (select il.*, ii.name as col from pragma_index_list(%s, %s) il, pragma_index_info(il.name, %s) ii order by il.seq, ii.seqno) '
+            .'group by name, "unique", "primary"',
             $table = $this->quoteString($table),
             $schema = $this->quoteString($schema ?? 'main'),
             $table,
@@ -213,9 +221,9 @@ class SQLiteGrammar extends Grammar
     {
         return sprintf(
             'select group_concat("from") as columns, %s as foreign_schema, "table" as foreign_table, '
-            . 'group_concat("to") as foreign_columns, on_update, on_delete '
-            . 'from (select * from pragma_foreign_key_list(%s, %s) order by id desc, seq) '
-            . 'group by id, "table", on_update, on_delete',
+            .'group_concat("to") as foreign_columns, on_update, on_delete '
+            .'from (select * from pragma_foreign_key_list(%s, %s) order by id desc, seq) '
+            .'group by id, "table", on_update, on_delete',
             $schema = $this->quoteString($schema ?? 'main'),
             $this->quoteString($table),
             $schema
@@ -225,8 +233,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a create table command.
      *
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
@@ -252,14 +260,14 @@ class SQLiteGrammar extends Grammar
             // Once we have all the foreign key commands for the table creation statement
             // we'll loop through each of them and add them to the create table SQL we
             // are building, since SQLite needs foreign keys on the tables creation.
-            return $sql . $this->getForeignKey($foreign);
+            return $sql.$this->getForeignKey($foreign);
         }, '');
     }
 
     /**
      * Get the SQL for the foreign key.
      *
-     * @param  Fluent  $foreign
+     * @param  \Boot\Support\Fluent  $foreign
      * @return string
      */
     protected function getForeignKey($foreign)
@@ -290,7 +298,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the primary key syntax for a table creation statement.
      *
-     * @param  Fluent|null  $primary
+     * @param  \Boot\Support\Fluent|null  $primary
      * @return string|null
      */
     protected function addPrimaryKeys($primary)
@@ -303,8 +311,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile alter table commands for adding columns.
      *
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
@@ -318,13 +326,13 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile alter table command into a series of SQL statements.
      *
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return list<string>|string
      */
     public function compileAlter(Blueprint $blueprint, Fluent $command)
     {
-        $columnNames         = [];
+        $columnNames = [];
         $autoIncrementColumn = null;
 
         $columns = (new Collection($blueprint->getState()->getColumns()))
@@ -339,21 +347,21 @@ class SQLiteGrammar extends Grammar
                 }
 
                 return $this->addModifiers(
-                    $this->wrap($column) . ' ' . ($column->full_type_definition ?? $this->getType($column)),
+                    $this->wrap($column).' '.($column->full_type_definition ?? $this->getType($column)),
                     $blueprint,
                     $column
                 );
             })->all();
 
         $indexes = (new Collection($blueprint->getState()->getIndexes()))
-            ->reject(fn($index) => str_starts_with('sqlite_', $index->index))
-            ->map(fn($index) => $this->{'compile' . ucfirst($index->name)}($blueprint, $index))
+            ->reject(fn ($index) => str_starts_with('sqlite_', $index->index))
+            ->map(fn ($index) => $this->{'compile'.ucfirst($index->name)}($blueprint, $index))
             ->all();
 
         [, $tableName] = $this->connection->getSchemaBuilder()->parseSchemaAndTable($blueprint->getTable());
-        $tempTable     = $this->wrapTable($blueprint, '__temp__' . $this->connection->getTablePrefix());
-        $table         = $this->wrapTable($blueprint);
-        $columnNames   = implode(', ', $columnNames);
+        $tempTable = $this->wrapTable($blueprint, '__temp__'.$this->connection->getTablePrefix());
+        $table = $this->wrapTable($blueprint);
+        $columnNames = implode(', ', $columnNames);
 
         $foreignKeyConstraintsEnabled = $this->connection->scalar($this->pragma('foreign_keys'));
 
@@ -380,8 +388,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a primary key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
@@ -392,8 +400,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a unique key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
@@ -401,7 +409,7 @@ class SQLiteGrammar extends Grammar
         [$schema, $table] = $this->connection->getSchemaBuilder()->parseSchemaAndTable($blueprint->getTable());
 
         return sprintf('create unique index %s%s on %s (%s)',
-            $schema ? $this->wrapValue($schema) . '.' : '',
+            $schema ? $this->wrapValue($schema).'.' : '',
             $this->wrap($command->index),
             $this->wrapTable($table),
             $this->columnize($command->columns)
@@ -411,8 +419,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a plain index key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
@@ -420,7 +428,7 @@ class SQLiteGrammar extends Grammar
         [$schema, $table] = $this->connection->getSchemaBuilder()->parseSchemaAndTable($blueprint->getTable());
 
         return sprintf('create index %s%s on %s (%s)',
-            $schema ? $this->wrapValue($schema) . '.' : '',
+            $schema ? $this->wrapValue($schema).'.' : '',
             $this->wrap($command->index),
             $this->wrapTable($table),
             $this->columnize($command->columns)
@@ -430,8 +438,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a spatial index key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return void
      *
      * @throws \RuntimeException
@@ -444,8 +452,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a foreign key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string|null
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -456,25 +464,25 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop table command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDrop(Blueprint $blueprint, Fluent $command)
     {
-        return 'drop table ' . $this->wrapTable($blueprint);
+        return 'drop table '.$this->wrapTable($blueprint);
     }
 
     /**
      * Compile a drop table (if exists) command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command)
     {
-        return 'drop table if exists ' . $this->wrapTable($blueprint);
+        return 'drop table if exists '.$this->wrapTable($blueprint);
     }
 
     /**
@@ -519,8 +527,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop column command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return list<string>|null
      */
     public function compileDropColumn(Blueprint $blueprint, Fluent $command)
@@ -535,14 +543,14 @@ class SQLiteGrammar extends Grammar
 
         $columns = $this->prefixArray('drop column', $this->wrapArray($command->columns));
 
-        return (new Collection($columns))->map(fn($column) => 'alter table ' . $table . ' ' . $column)->all();
+        return (new Collection($columns))->map(fn ($column) => 'alter table '.$table.' '.$column)->all();
     }
 
     /**
      * Compile a drop primary key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropPrimary(Blueprint $blueprint, Fluent $command)
@@ -553,8 +561,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop unique key command.
      *
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropUnique(Blueprint $blueprint, Fluent $command)
@@ -565,8 +573,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop index command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropIndex(Blueprint $blueprint, Fluent $command)
@@ -574,7 +582,7 @@ class SQLiteGrammar extends Grammar
         [$schema] = $this->connection->getSchemaBuilder()->parseSchemaAndTable($blueprint->getTable());
 
         return sprintf('drop index %s%s',
-            $schema ? $this->wrapValue($schema) . '.' : '',
+            $schema ? $this->wrapValue($schema).'.' : '',
             $this->wrap($command->index)
         );
     }
@@ -582,8 +590,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop spatial index command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return void
      *
      * @throws \RuntimeException
@@ -596,8 +604,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a drop foreign key command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return array
      */
     public function compileDropForeign(Blueprint $blueprint, Fluent $command)
@@ -612,22 +620,22 @@ class SQLiteGrammar extends Grammar
     /**
      * Compile a rename table command.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileRename(Blueprint $blueprint, Fluent $command)
     {
         $from = $this->wrapTable($blueprint);
 
-        return "alter table {$from} rename to " . $this->wrapTable($command->to);
+        return "alter table {$from} rename to ".$this->wrapTable($command->to);
     }
 
     /**
      * Compile a rename index command.
      *
-     * @param  Blueprint  $blueprint
-     * @param  Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return array
      *
      * @throws \RuntimeException
@@ -636,7 +644,7 @@ class SQLiteGrammar extends Grammar
     {
         $indexes = $this->connection->getSchemaBuilder()->getIndexes($blueprint->getTable());
 
-        $index = Arr::first($indexes, fn($index) => $index['name'] === $command->from);
+        $index = Arr::first($indexes, fn ($index) => $index['name'] === $command->from);
 
         if (! $index) {
             throw new RuntimeException("Index [{$command->from}] does not exist.");
@@ -694,14 +702,14 @@ class SQLiteGrammar extends Grammar
     {
         return sprintf('pragma %s%s',
             $key,
-            is_null($value) ? '' : ' = ' . $value
+            is_null($value) ? '' : ' = '.$value
         );
     }
 
     /**
      * Create the column definition for a char type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeChar(Fluent $column)
@@ -712,7 +720,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a string type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeString(Fluent $column)
@@ -723,7 +731,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a tiny text type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTinyText(Fluent $column)
@@ -734,7 +742,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a text type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeText(Fluent $column)
@@ -745,7 +753,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a medium text type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMediumText(Fluent $column)
@@ -756,7 +764,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a long text type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeLongText(Fluent $column)
@@ -767,7 +775,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for an integer type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeInteger(Fluent $column)
@@ -778,7 +786,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a big integer type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBigInteger(Fluent $column)
@@ -789,7 +797,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a medium integer type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMediumInteger(Fluent $column)
@@ -800,7 +808,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a tiny integer type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTinyInteger(Fluent $column)
@@ -811,7 +819,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a small integer type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeSmallInteger(Fluent $column)
@@ -822,7 +830,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a float type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeFloat(Fluent $column)
@@ -833,7 +841,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a double type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDouble(Fluent $column)
@@ -844,7 +852,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a decimal type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDecimal(Fluent $column)
@@ -855,7 +863,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a boolean type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBoolean(Fluent $column)
@@ -866,7 +874,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for an enumeration type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeEnum(Fluent $column)
@@ -881,7 +889,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a json type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeJson(Fluent $column)
@@ -892,7 +900,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a jsonb type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeJsonb(Fluent $column)
@@ -903,7 +911,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a date type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDate(Fluent $column)
@@ -918,7 +926,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a date-time type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDateTime(Fluent $column)
@@ -933,7 +941,7 @@ class SQLiteGrammar extends Grammar
      *
      * @link https://www.sqlite.org/datatype3.html
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDateTimeTz(Fluent $column)
@@ -944,7 +952,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a time type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTime(Fluent $column)
@@ -955,7 +963,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a time (with time zone) type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimeTz(Fluent $column)
@@ -966,7 +974,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a timestamp type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimestamp(Fluent $column)
@@ -981,7 +989,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a timestamp (with time zone) type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimestampTz(Fluent $column)
@@ -992,7 +1000,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a year type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeYear(Fluent $column)
@@ -1007,7 +1015,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a binary type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBinary(Fluent $column)
@@ -1018,7 +1026,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a uuid type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeUuid(Fluent $column)
@@ -1029,7 +1037,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for an IP address type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeIpAddress(Fluent $column)
@@ -1040,7 +1048,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a MAC address type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMacAddress(Fluent $column)
@@ -1051,7 +1059,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a spatial Geometry type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeGeometry(Fluent $column)
@@ -1062,7 +1070,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a spatial Geography type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeGeography(Fluent $column)
@@ -1073,7 +1081,7 @@ class SQLiteGrammar extends Grammar
     /**
      * Create the column definition for a generated, computed column type.
      *
-     * @param  Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return void
      *
      * @throws \RuntimeException
@@ -1086,8 +1094,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the SQL for a generated virtual column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
@@ -1108,8 +1116,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the SQL for a generated stored column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column)
@@ -1130,8 +1138,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the SQL for a nullable column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
@@ -1151,22 +1159,22 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the SQL for a default column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->default) && is_null($column->virtualAs) && is_null($column->virtualAsJson) && is_null($column->storedAs)) {
-            return ' default ' . $this->getDefaultValue($column->default);
+            return ' default '.$this->getDefaultValue($column->default);
         }
     }
 
     /**
      * Get the SQL for an auto-increment column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
@@ -1179,8 +1187,8 @@ class SQLiteGrammar extends Grammar
     /**
      * Get the SQL for a collation column modifier.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $blueprint
-     * @param  Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyCollate(Blueprint $blueprint, Fluent $column)
@@ -1200,6 +1208,6 @@ class SQLiteGrammar extends Grammar
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
-        return 'json_extract(' . $field . $path . ')';
+        return 'json_extract('.$field.$path.')';
     }
 }

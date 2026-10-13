@@ -32,7 +32,7 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      *
      * @param  string|null  $table
      * @param  string  $column
-     * @return \Illuminate\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
+     * @return \Boot\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
      */
     public function constrained($table = null, $column = 'id')
     {
@@ -43,7 +43,7 @@ class ForeignIdColumnDefinition extends ColumnDefinition
      * Specify which column this foreign ID references on another table.
      *
      * @param  string  $column
-     * @return \Illuminate\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
+     * @return \Boot\Support\Fluent|\Boot\System\Database\Schema\ForeignKeyDefinition
      */
     public function references($column)
     {

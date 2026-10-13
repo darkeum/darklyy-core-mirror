@@ -36,7 +36,7 @@ class Blueprint
     /**
      * The commands that should be run for the table.
      *
-     * @var \Illuminate\Support\Fluent[]
+     * @var \Boot\Support\Fluent[]
      */
     protected $commands = [];
 
@@ -2193,7 +2193,7 @@ class Blueprint
     /**
      * Get the state of the blueprint.
      *
-     * @return \Illuminate\Database\Schema\BlueprintState
+     * @return \Boot\System\Database\Schema\BlueprintState
      */
     public function getState()
     {

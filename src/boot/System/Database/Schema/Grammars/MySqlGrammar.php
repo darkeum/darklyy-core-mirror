@@ -1,10 +1,22 @@
 <?php
+
+/*
+* @name        DARKLYY
+* @link        https://darklyy.ru/
+* @copyright   Copyright (C) 2012-2026 ООО «ПРИС»
+* @license     LICENSE.txt (see attached file)
+* @version     VERSION.txt (see attached file)
+* @author      Komarov Ivan
+*/
+
 namespace Boot\System\Database\Schema\Grammars;
 
-use RuntimeException;
-use Boot\Support\Fluent;
-use Boot\System\Database\Connection;
+use Boot\System\Database\Query\Expression;
 use Boot\System\Database\Schema\Blueprint;
+use Boot\System\Database\Schema\ColumnDefinition;
+use Illuminate\Support\Collection;
+use Boot\Support\Fluent;
+use RuntimeException;
 
 class MySqlGrammar extends Grammar
 {
@@ -61,8 +73,8 @@ class MySqlGrammar extends Grammar
     public function compileSchemas()
     {
         return 'select schema_name as name, schema_name = schema() as `default` from information_schema.schemata where '
-        . $this->compileSchemaWhereClause(null, 'schema_name')
-            . ' order by schema_name';
+            .$this->compileSchemaWhereClause(null, 'schema_name')
+            .' order by schema_name';
     }
 
     /**
@@ -76,7 +88,7 @@ class MySqlGrammar extends Grammar
     {
         return sprintf(
             'select exists (select 1 from information_schema.tables where '
-            . "table_schema = %s and table_name = %s and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`",
+            ."table_schema = %s and table_name = %s and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`",
             $schema ? $this->quoteString($schema) : 'schema()',
             $this->quoteString($table)
         );
@@ -92,10 +104,10 @@ class MySqlGrammar extends Grammar
     {
         return sprintf(
             'select table_name as `name`, table_schema as `schema`, (data_length + index_length) as `size`, '
-            . 'table_comment as `comment`, engine as `engine`, table_collation as `collation` '
-            . "from information_schema.tables where table_type in ('BASE TABLE', 'SYSTEM VERSIONED') and "
-            . $this->compileSchemaWhereClause($schema, 'table_schema')
-            . ' order by table_schema, table_name',
+            .'table_comment as `comment`, engine as `engine`, table_collation as `collation` '
+            ."from information_schema.tables where table_type in ('BASE TABLE', 'SYSTEM VERSIONED') and "
+            .$this->compileSchemaWhereClause($schema, 'table_schema')
+            .' order by table_schema, table_name',
             $this->quoteString($schema)
         );
     }
@@ -109,9 +121,9 @@ class MySqlGrammar extends Grammar
     public function compileViews($schema)
     {
         return 'select table_name as `name`, table_schema as `schema`, view_definition as `definition` '
-        . 'from information_schema.views where '
-        . $this->compileSchemaWhereClause($schema, 'table_schema')
-            . ' order by table_schema, table_name';
+            .'from information_schema.views where '
+            .$this->compileSchemaWhereClause($schema, 'table_schema')
+            .' order by table_schema, table_name';
     }
 
     /**
@@ -123,10 +135,10 @@ class MySqlGrammar extends Grammar
      */
     protected function compileSchemaWhereClause($schema, $column)
     {
-        return $column . (match (true) {
-            ! empty($schema) && is_array($schema) => ' in (' . $this->quoteString($schema) . ')',
-            ! empty($schema)                      => ' = ' . $this->quoteString($schema),
-            default                              => " not in ('information_schema', 'mysql', 'ndbinfo', 'performance_schema', 'sys')",
+        return $column.(match (true) {
+            ! empty($schema) && is_array($schema) => ' in ('.$this->quoteString($schema).')',
+            ! empty($schema) => ' = '.$this->quoteString($schema),
+            default => " not in ('information_schema', 'mysql', 'ndbinfo', 'performance_schema', 'sys')",
         });
     }
 
@@ -141,11 +153,11 @@ class MySqlGrammar extends Grammar
     {
         return sprintf(
             'select column_name as `name`, data_type as `type_name`, column_type as `type`, '
-            . 'collation_name as `collation`, is_nullable as `nullable`, '
-            . 'column_default as `default`, column_comment as `comment`, '
-            . 'generation_expression as `expression`, extra as `extra` '
-            . 'from information_schema.columns where table_schema = %s and table_name = %s '
-            . 'order by ordinal_position asc',
+            .'collation_name as `collation`, is_nullable as `nullable`, '
+            .'column_default as `default`, column_comment as `comment`, '
+            .'generation_expression as `expression`, extra as `extra` '
+            .'from information_schema.columns where table_schema = %s and table_name = %s '
+            .'order by ordinal_position asc',
             $schema ? $this->quoteString($schema) : 'schema()',
             $this->quoteString($table)
         );
@@ -162,9 +174,9 @@ class MySqlGrammar extends Grammar
     {
         return sprintf(
             'select index_name as `name`, group_concat(column_name order by seq_in_index) as `columns`, '
-            . 'index_type as `type`, not non_unique as `unique` '
-            . 'from information_schema.statistics where table_schema = %s and table_name = %s '
-            . 'group by index_name, index_type, non_unique',
+            .'index_type as `type`, not non_unique as `unique` '
+            .'from information_schema.statistics where table_schema = %s and table_name = %s '
+            .'group by index_name, index_type, non_unique',
             $schema ? $this->quoteString($schema) : 'schema()',
             $this->quoteString($table)
         );
@@ -181,16 +193,16 @@ class MySqlGrammar extends Grammar
     {
         return sprintf(
             'select kc.constraint_name as `name`, '
-            . 'group_concat(kc.column_name order by kc.ordinal_position) as `columns`, '
-            . 'kc.referenced_table_schema as `foreign_schema`, '
-            . 'kc.referenced_table_name as `foreign_table`, '
-            . 'group_concat(kc.referenced_column_name order by kc.ordinal_position) as `foreign_columns`, '
-            . 'rc.update_rule as `on_update`, '
-            . 'rc.delete_rule as `on_delete` '
-            . 'from information_schema.key_column_usage kc join information_schema.referential_constraints rc '
-            . 'on kc.constraint_schema = rc.constraint_schema and kc.constraint_name = rc.constraint_name '
-            . 'where kc.table_schema = %s and kc.table_name = %s and kc.referenced_table_name is not null '
-            . 'group by kc.constraint_name, kc.referenced_table_schema, kc.referenced_table_name, rc.update_rule, rc.delete_rule',
+            .'group_concat(kc.column_name order by kc.ordinal_position) as `columns`, '
+            .'kc.referenced_table_schema as `foreign_schema`, '
+            .'kc.referenced_table_name as `foreign_table`, '
+            .'group_concat(kc.referenced_column_name order by kc.ordinal_position) as `foreign_columns`, '
+            .'rc.update_rule as `on_update`, '
+            .'rc.delete_rule as `on_delete` '
+            .'from information_schema.key_column_usage kc join information_schema.referential_constraints rc '
+            .'on kc.constraint_schema = rc.constraint_schema and kc.constraint_name = rc.constraint_name '
+            .'where kc.table_schema = %s and kc.table_name = %s and kc.referenced_table_name is not null '
+            .'group by kc.constraint_name, kc.referenced_table_schema, kc.referenced_table_name, rc.update_rule, rc.delete_rule',
             $schema ? $this->quoteString($schema) : 'schema()',
             $this->quoteString($table)
         );
@@ -199,8 +211,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a create table command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileCreate(Blueprint $blueprint, Fluent $command)
@@ -225,8 +237,8 @@ class MySqlGrammar extends Grammar
     /**
      * Create the main create table clause.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     protected function compileCreateTable($blueprint, $command)
@@ -236,7 +248,7 @@ class MySqlGrammar extends Grammar
         if ($primaryKey = $this->getCommandByName($blueprint, 'primary')) {
             $tableStructure[] = sprintf(
                 'primary key %s(%s)',
-                $primaryKey->algorithm ? 'using ' . $primaryKey->algorithm : '',
+                $primaryKey->algorithm ? 'using '.$primaryKey->algorithm : '',
                 $this->columnize($primaryKey->columns)
             );
 
@@ -254,7 +266,7 @@ class MySqlGrammar extends Grammar
      * Append the character set specifications to a command.
      *
      * @param  string  $sql
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
      * @return string
      */
     protected function compileCreateEncoding($sql, Blueprint $blueprint)
@@ -263,9 +275,9 @@ class MySqlGrammar extends Grammar
         // blueprint itself or on the root configuration for the connection that the
         // table is being created on. We will add these to the create table query.
         if (isset($blueprint->charset)) {
-            $sql .= ' default character set ' . $blueprint->charset;
+            $sql .= ' default character set '.$blueprint->charset;
         } elseif (! is_null($charset = $this->connection->getConfig('charset'))) {
-            $sql .= ' default character set ' . $charset;
+            $sql .= ' default character set '.$charset;
         }
 
         // Next we will add the collation to the create table statement if one has been
@@ -284,15 +296,15 @@ class MySqlGrammar extends Grammar
      * Append the engine specifications to a command.
      *
      * @param  string  $sql
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
      * @return string
      */
     protected function compileCreateEngine($sql, Blueprint $blueprint)
     {
         if (isset($blueprint->engine)) {
-            return $sql . ' engine = ' . $blueprint->engine;
+            return $sql.' engine = '.$blueprint->engine;
         } elseif (! is_null($engine = $this->connection->getConfig('engine'))) {
-            return $sql . ' engine = ' . $engine;
+            return $sql.' engine = '.$engine;
         }
 
         return $sql;
@@ -301,8 +313,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile an add column command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileAdd(Blueprint $blueprint, Fluent $command)
@@ -311,22 +323,22 @@ class MySqlGrammar extends Grammar
             $this->wrapTable($blueprint),
             $this->getColumn($blueprint, $command->column),
             $command->column->instant ? ', algorithm=instant' : '',
-            $command->column->lock ? ', lock=' . $command->column->lock : ''
+            $command->column->lock ? ', lock='.$command->column->lock : ''
         );
     }
 
     /**
      * Compile the auto-incrementing column starting values.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileAutoIncrementStartingValues(Blueprint $blueprint, Fluent $command)
     {
         if ($command->column->autoIncrement
             && $value = $command->column->get('startingValue', $command->column->get('from'))) {
-            return 'alter table ' . $this->wrapTable($blueprint) . ' auto_increment = ' . $value;
+            return 'alter table '.$this->wrapTable($blueprint).' auto_increment = '.$value;
         }
     }
 
@@ -347,8 +359,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a rename column command for legacy versions of MySQL.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     protected function compileLegacyRenameColumn(Blueprint $blueprint, Fluent $command)
@@ -357,26 +369,26 @@ class MySqlGrammar extends Grammar
             ->firstWhere('name', $command->from);
 
         $modifiers = $this->addModifiers($column['type'], $blueprint, new ColumnDefinition([
-            'change'        => true,
-            'type'          => match ($column['type_name']) {
-                'bigint'    => 'bigInteger',
-                'int'       => 'integer',
+            'change' => true,
+            'type' => match ($column['type_name']) {
+                'bigint' => 'bigInteger',
+                'int' => 'integer',
                 'mediumint' => 'mediumInteger',
-                'smallint'  => 'smallInteger',
-                'tinyint'   => 'tinyInteger',
-                default     => $column['type_name'],
+                'smallint' => 'smallInteger',
+                'tinyint' => 'tinyInteger',
+                default => $column['type_name'],
             },
-            'nullable'      => $column['nullable'],
-            'default'       => $column['default'] && (str_starts_with(strtolower($column['default']), 'current_timestamp') || $column['default'] === 'NULL')
+            'nullable' => $column['nullable'],
+            'default' => $column['default'] && (str_starts_with(strtolower($column['default']), 'current_timestamp') || $column['default'] === 'NULL')
                 ? new Expression($column['default'])
                 : $column['default'],
             'autoIncrement' => $column['auto_increment'],
-            'collation'     => $column['collation'],
-            'comment'       => $column['comment'],
-            'virtualAs'     => ! is_null($column['generation']) && $column['generation']['type'] === 'virtual'
+            'collation' => $column['collation'],
+            'comment' => $column['comment'],
+            'virtualAs' => ! is_null($column['generation']) && $column['generation']['type'] === 'virtual'
                 ? $column['generation']['expression']
                 : null,
-            'storedAs'      => ! is_null($column['generation']) && $column['generation']['type'] === 'stored'
+            'storedAs' => ! is_null($column['generation']) && $column['generation']['type'] === 'stored'
                 ? $column['generation']['expression']
                 : null,
         ]));
@@ -398,7 +410,7 @@ class MySqlGrammar extends Grammar
             $this->wrapTable($blueprint),
             is_null($column->renameTo) ? 'modify' : 'change',
             $this->wrap($column),
-            is_null($column->renameTo) ? '' : ' ' . $this->wrap($column->renameTo),
+            is_null($column->renameTo) ? '' : ' '.$this->wrap($column->renameTo),
             $this->getType($column)
         );
 
@@ -409,7 +421,7 @@ class MySqlGrammar extends Grammar
         }
 
         if ($column->lock) {
-            $sql .= ', lock=' . $column->lock;
+            $sql .= ', lock='.$column->lock;
         }
 
         return $sql;
@@ -418,25 +430,25 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a primary key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compilePrimary(Blueprint $blueprint, Fluent $command)
     {
         return sprintf('alter table %s add primary key %s(%s)%s',
             $this->wrapTable($blueprint),
-            $command->algorithm ? 'using ' . $command->algorithm : '',
+            $command->algorithm ? 'using '.$command->algorithm : '',
             $this->columnize($command->columns),
-            $command->lock ? ', lock=' . $command->lock : ''
+            $command->lock ? ', lock='.$command->lock : ''
         );
     }
 
     /**
      * Compile a unique key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileUnique(Blueprint $blueprint, Fluent $command)
@@ -447,8 +459,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a plain index key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileIndex(Blueprint $blueprint, Fluent $command)
@@ -459,8 +471,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a fulltext index key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileFullText(Blueprint $blueprint, Fluent $command)
@@ -471,8 +483,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a spatial index key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileSpatialIndex(Blueprint $blueprint, Fluent $command)
@@ -483,8 +495,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile an index creation command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @param  string  $type
      * @return string
      */
@@ -494,55 +506,55 @@ class MySqlGrammar extends Grammar
             $this->wrapTable($blueprint),
             $type,
             $this->wrap($command->index),
-            $command->algorithm ? ' using ' . $command->algorithm : '',
+            $command->algorithm ? ' using '.$command->algorithm : '',
             $this->columnize($command->columns),
-            $command->lock ? ', lock=' . $command->lock : ''
+            $command->lock ? ', lock='.$command->lock : ''
         );
     }
 
     /**
      * Compile a drop table command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDrop(Blueprint $blueprint, Fluent $command)
     {
-        return 'drop table ' . $this->wrapTable($blueprint);
+        return 'drop table '.$this->wrapTable($blueprint);
     }
 
     /**
      * Compile a drop table (if exists) command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropIfExists(Blueprint $blueprint, Fluent $command)
     {
-        return 'drop table if exists ' . $this->wrapTable($blueprint);
+        return 'drop table if exists '.$this->wrapTable($blueprint);
     }
 
     /**
      * Compile a drop column command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropColumn(Blueprint $blueprint, Fluent $command)
     {
         $columns = $this->prefixArray('drop', $this->wrapArray($command->columns));
 
-        $sql = 'alter table ' . $this->wrapTable($blueprint) . ' ' . implode(', ', $columns);
+        $sql = 'alter table '.$this->wrapTable($blueprint).' '.implode(', ', $columns);
 
         if ($command->instant) {
             $sql .= ', algorithm=instant';
         }
 
         if ($command->lock) {
-            $sql .= ', lock=' . $command->lock;
+            $sql .= ', lock='.$command->lock;
         }
 
         return $sql;
@@ -551,20 +563,20 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a drop primary key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropPrimary(Blueprint $blueprint, Fluent $command)
     {
-        return 'alter table ' . $this->wrapTable($blueprint) . ' drop primary key';
+        return 'alter table '.$this->wrapTable($blueprint).' drop primary key';
     }
 
     /**
      * Compile a drop unique key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropUnique(Blueprint $blueprint, Fluent $command)
@@ -577,8 +589,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a drop index command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropIndex(Blueprint $blueprint, Fluent $command)
@@ -591,8 +603,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a drop fulltext index command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropFullText(Blueprint $blueprint, Fluent $command)
@@ -603,8 +615,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a drop spatial index command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropSpatialIndex(Blueprint $blueprint, Fluent $command)
@@ -615,8 +627,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a foreign key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileForeign(Blueprint $blueprint, Fluent $command)
@@ -624,7 +636,7 @@ class MySqlGrammar extends Grammar
         $sql = parent::compileForeign($blueprint, $command);
 
         if ($command->lock) {
-            $sql .= ', lock=' . $command->lock;
+            $sql .= ', lock='.$command->lock;
         }
 
         return $sql;
@@ -633,8 +645,8 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a drop foreign key command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileDropForeign(Blueprint $blueprint, Fluent $command)
@@ -647,22 +659,22 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a rename table command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileRename(Blueprint $blueprint, Fluent $command)
     {
         $from = $this->wrapTable($blueprint);
 
-        return "rename table {$from} to " . $this->wrapTable($command->to);
+        return "rename table {$from} to ".$this->wrapTable($command->to);
     }
 
     /**
      * Compile a rename index command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileRenameIndex(Blueprint $blueprint, Fluent $command)
@@ -682,7 +694,7 @@ class MySqlGrammar extends Grammar
      */
     public function compileDropAllTables($tables)
     {
-        return 'drop table ' . implode(', ', $this->escapeNames($tables));
+        return 'drop table '.implode(', ', $this->escapeNames($tables));
     }
 
     /**
@@ -693,7 +705,7 @@ class MySqlGrammar extends Grammar
      */
     public function compileDropAllViews($views)
     {
-        return 'drop view ' . implode(', ', $this->escapeNames($views));
+        return 'drop view '.implode(', ', $this->escapeNames($views));
     }
 
     /**
@@ -719,15 +731,15 @@ class MySqlGrammar extends Grammar
     /**
      * Compile a table comment command.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $command
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $command
      * @return string
      */
     public function compileTableComment(Blueprint $blueprint, Fluent $command)
     {
         return sprintf('alter table %s comment = %s',
             $this->wrapTable($blueprint),
-            "'" . str_replace("'", "''", $command->comment) . "'"
+            "'".str_replace("'", "''", $command->comment)."'"
         );
     }
 
@@ -740,7 +752,7 @@ class MySqlGrammar extends Grammar
     public function escapeNames($names)
     {
         return array_map(
-            fn($name) => (new Collection(explode('.', $name)))->map($this->wrapValue(...))->implode('.'),
+            fn ($name) => (new Collection(explode('.', $name)))->map($this->wrapValue(...))->implode('.'),
             $names
         );
     }
@@ -748,7 +760,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a char type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeChar(Fluent $column)
@@ -759,7 +771,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a string type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeString(Fluent $column)
@@ -770,7 +782,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a tiny text type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTinyText(Fluent $column)
@@ -781,7 +793,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a text type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeText(Fluent $column)
@@ -792,7 +804,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a medium text type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMediumText(Fluent $column)
@@ -803,7 +815,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a long text type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeLongText(Fluent $column)
@@ -814,7 +826,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a big integer type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBigInteger(Fluent $column)
@@ -825,7 +837,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an integer type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeInteger(Fluent $column)
@@ -836,7 +848,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a medium integer type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMediumInteger(Fluent $column)
@@ -847,7 +859,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a tiny integer type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTinyInteger(Fluent $column)
@@ -858,7 +870,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a small integer type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeSmallInteger(Fluent $column)
@@ -869,7 +881,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a float type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeFloat(Fluent $column)
@@ -884,7 +896,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a double type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDouble(Fluent $column)
@@ -895,7 +907,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a decimal type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDecimal(Fluent $column)
@@ -906,7 +918,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a boolean type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBoolean(Fluent $column)
@@ -917,7 +929,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an enumeration type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeEnum(Fluent $column)
@@ -928,7 +940,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a set enumeration type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeSet(Fluent $column)
@@ -939,7 +951,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a json type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeJson(Fluent $column)
@@ -950,7 +962,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a jsonb type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeJsonb(Fluent $column)
@@ -961,7 +973,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDate(Fluent $column)
@@ -982,7 +994,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date-time type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDateTime(Fluent $column)
@@ -1003,7 +1015,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a date-time (with time zone) type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeDateTimeTz(Fluent $column)
@@ -1014,7 +1026,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a time type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTime(Fluent $column)
@@ -1025,7 +1037,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a time (with time zone) type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimeTz(Fluent $column)
@@ -1036,7 +1048,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a timestamp type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimestamp(Fluent $column)
@@ -1057,7 +1069,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a timestamp (with time zone) type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeTimestampTz(Fluent $column)
@@ -1068,7 +1080,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a year type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeYear(Fluent $column)
@@ -1089,7 +1101,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a binary type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeBinary(Fluent $column)
@@ -1104,7 +1116,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a uuid type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeUuid(Fluent $column)
@@ -1115,7 +1127,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for an IP address type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeIpAddress(Fluent $column)
@@ -1126,7 +1138,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a MAC address type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeMacAddress(Fluent $column)
@@ -1137,7 +1149,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial Geometry type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeGeometry(Fluent $column)
@@ -1151,9 +1163,9 @@ class MySqlGrammar extends Grammar
         return sprintf('%s%s',
             $subtype ?? 'geometry',
             match (true) {
-                $column->srid && $this->connection->isMaria() => ' ref_system_id=' . $column->srid,
-                (bool) $column->srid                          => ' srid ' . $column->srid,
-                default                                       => '',
+                $column->srid && $this->connection->isMaria() => ' ref_system_id='.$column->srid,
+                (bool) $column->srid => ' srid '.$column->srid,
+                default => '',
             }
         );
     }
@@ -1161,7 +1173,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a spatial Geography type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeGeography(Fluent $column)
@@ -1172,7 +1184,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a generated, computed column type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return void
      *
      * @throws \RuntimeException
@@ -1185,7 +1197,7 @@ class MySqlGrammar extends Grammar
     /**
      * Create the column definition for a vector type.
      *
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\Support\Fluent  $column
      * @return string
      */
     protected function typeVector(Fluent $column)
@@ -1198,8 +1210,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a generated virtual column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyVirtualAs(Blueprint $blueprint, Fluent $column)
@@ -1220,8 +1232,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a generated stored column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyStoredAs(Blueprint $blueprint, Fluent $column)
@@ -1242,8 +1254,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an unsigned column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyUnsigned(Blueprint $blueprint, Fluent $column)
@@ -1256,22 +1268,22 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a character set column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyCharset(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->charset)) {
-            return ' character set ' . $column->charset;
+            return ' character set '.$column->charset;
         }
     }
 
     /**
      * Get the SQL for a collation column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyCollate(Blueprint $blueprint, Fluent $column)
@@ -1284,8 +1296,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a nullable column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyNullable(Blueprint $blueprint, Fluent $column)
@@ -1305,8 +1317,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an invisible column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyInvisible(Blueprint $blueprint, Fluent $column)
@@ -1319,36 +1331,36 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a default column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyDefault(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->default)) {
-            return ' default ' . $this->getDefaultValue($column->default);
+            return ' default '.$this->getDefaultValue($column->default);
         }
     }
 
     /**
      * Get the SQL for an "on update" column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyOnUpdate(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->onUpdate)) {
-            return ' on update ' . $this->getValue($column->onUpdate);
+            return ' on update '.$this->getValue($column->onUpdate);
         }
     }
 
     /**
      * Get the SQL for an auto-increment column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyIncrement(Blueprint $blueprint, Fluent $column)
@@ -1363,8 +1375,8 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for a "first" column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyFirst(Blueprint $blueprint, Fluent $column)
@@ -1377,28 +1389,28 @@ class MySqlGrammar extends Grammar
     /**
      * Get the SQL for an "after" column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyAfter(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->after)) {
-            return ' after ' . $this->wrap($column->after);
+            return ' after '.$this->wrap($column->after);
         }
     }
 
     /**
      * Get the SQL for a "comment" column modifier.
      *
-     * @param   \Boot\System\Database\Schema\Blueprint  $blueprint
-     * @param  \Boot\System\Support\Fluent  $column
+     * @param  \Boot\System\Database\Schema\Blueprint  $blueprint
+     * @param  \Boot\Support\Fluent  $column
      * @return string|null
      */
     protected function modifyComment(Blueprint $blueprint, Fluent $column)
     {
         if (! is_null($column->comment)) {
-            return " comment '" . addslashes($column->comment) . "'";
+            return " comment '".addslashes($column->comment)."'";
         }
     }
 
@@ -1411,7 +1423,7 @@ class MySqlGrammar extends Grammar
     protected function wrapValue($value)
     {
         if ($value !== '*') {
-            return '`' . str_replace('`', '``', $value) . '`';
+            return '`'.str_replace('`', '``', $value).'`';
         }
 
         return $value;
@@ -1427,6 +1439,6 @@ class MySqlGrammar extends Grammar
     {
         [$field, $path] = $this->wrapJsonFieldAndPath($value);
 
-        return 'json_unquote(json_extract(' . $field . $path . '))';
+        return 'json_unquote(json_extract('.$field.$path.'))';
     }
 }
