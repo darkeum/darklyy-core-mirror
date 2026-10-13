@@ -21,7 +21,6 @@
         "bogdaan/viber-bot-php": "^0.0.15",
         "bramus/ansi-php": "~3.0",
         "bramus/router": "~1.5",
-        "clue/block-react": "^1.5",
         "clue/reactphp-sqlite": "^1.6",
         "clue/redis-react": "^2.6",
         "composer/semver": "^3.2",
