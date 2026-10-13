@@ -92,7 +92,6 @@
         "pda/pheanstalk": "^4.0",
         "pear/http_request2": "^2.4",
         "pear/net_url2": "^2.2",
-        "phenx/php-font-lib": "^0.5.2",
         "php-http/guzzle7-adapter": "^1.0",
         "phpdocumentor/reflection-common": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.2",
