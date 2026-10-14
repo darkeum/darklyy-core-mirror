@@ -13,6 +13,7 @@ namespace Boot\System\Database\Query;
 
 use Illuminate\Contracts\Database\Query\Expression as ExpressionContract;
 use Boot\System\Database\Grammar;
+use Illuminate\Database\Grammar as LaravelGrammar;
 
 /**
  * @template TValue of literal-string|int|float
@@ -35,7 +36,7 @@ class Expression implements ExpressionContract
      * @param  \Boot\System\Database\Grammar  $grammar
      * @return TValue
      */
-    public function getValue(Grammar $grammar)
+    public function getValue(Grammar | LaravelGrammar $grammar)
     {
         return $this->value;
     }
