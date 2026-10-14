@@ -18,6 +18,7 @@ use Boot\Support\Str;
 use Boot\System\Database\Concerns\BuildsQueries;
 use Boot\System\Database\ConnectionInterface;
 use Boot\System\Database\Eloquent\Builder as EloquentBuilder;
+use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Database\Eloquent\Relations\Relation;
 use Boot\System\Database\Query\Grammars\Grammar;
 use Boot\System\Database\Query\JoinClause;
@@ -129,9 +130,9 @@ class Builder extends \Illuminate\Database\Query\Builder
      *
      * @throws \InvalidArgumentException
      */
-    protected function parseSub($query)
+   protected function parseSub($query)
     {
-        if ($query instanceof self || $query instanceof EloquentBuilder || $query instanceof Relation) {
+        if ($query instanceof self || $query instanceof EloquentBuilder|| $query instanceof ModelBuilder || $query instanceof Relation) {
             return [$query->toSql(), $query->getBindings()];
         } elseif (is_string($query)) {
             return [$query, []];
@@ -141,6 +142,7 @@ class Builder extends \Illuminate\Database\Query\Builder
             );
         }
     }
+
 
     /**
      * Add a new select column to the query.
