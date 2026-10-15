@@ -18,14 +18,15 @@ use Boot\Support\Str;
 use Boot\System\Database\Concerns\BuildsQueries;
 use Boot\System\Database\ConnectionInterface;
 use Boot\System\Database\Eloquent\Builder as EloquentBuilder;
-use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Database\Eloquent\Relations\Relation;
+use Boot\System\Database\Model\Builder as ModelBuilder;
 use Boot\System\Database\Query\Grammars\Grammar;
 use Boot\System\Database\Query\JoinClause;
 use Boot\System\Database\Query\JoinLateralClause;
 use Boot\System\Database\Query\Processors\Processor;
 use Closure;
 use DateTimeInterface;
+use function Illuminate\Support\enum_value;
 use Illuminate\Database\Query\Grammars\Grammar as LaravelGrammar;
 use Illuminate\Database\Query\Processors\Processor as LaravelProcessor;
 use Illuminate\Pagination\Paginator;
@@ -130,9 +131,9 @@ class Builder extends \Illuminate\Database\Query\Builder
      *
      * @throws \InvalidArgumentException
      */
-   protected function parseSub($query)
+    protected function parseSub($query)
     {
-        if ($query instanceof self || $query instanceof EloquentBuilder|| $query instanceof ModelBuilder || $query instanceof Relation) {
+        if ($query instanceof self || $query instanceof EloquentBuilder || $query instanceof ModelBuilder || $query instanceof Relation) {
             return [$query->toSql(), $query->getBindings()];
         } elseif (is_string($query)) {
             return [$query, []];
@@ -142,7 +143,6 @@ class Builder extends \Illuminate\Database\Query\Builder
             );
         }
     }
-
 
     /**
      * Add a new select column to the query.
@@ -2307,7 +2307,7 @@ class Builder extends \Illuminate\Database\Query\Builder
      * Add a binding to the query.
      *
      * @param  mixed  $value
-     * @param  string  $type
+     * @param  "select"|"from"|"join"|"where"|"groupBy"|"having"|"order"|"union"|"unionOrder"  $type
      * @return $this
      *
      * @throws \InvalidArgumentException
@@ -2319,12 +2319,26 @@ class Builder extends \Illuminate\Database\Query\Builder
         }
 
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values(array_map(
+                $this->castBinding(...),
+                array_merge($this->bindings[$type], $value),
+            ));
         } else {
-            $this->bindings[$type][] = $value;
+            $this->bindings[$type][] = $this->castBinding($value);
         }
 
         return $this;
+    }
+
+    /**
+     * Cast the given binding value.
+     *
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function castBinding($value)
+    {
+        return enum_value($value);
     }
 
     /**
