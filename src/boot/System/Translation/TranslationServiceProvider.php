@@ -27,6 +27,12 @@ class TranslationServiceProvider extends ServiceProvider
             }
         }
         // $translator->addResource('php', ROOT . 'resources/langs/ru.grid.lang.php', 'ru'); // OLD
-        $translator->addResource('php', ROOT . 'resources/lang/ru/grid.php', 'ru');
+        // Файл мог быть удалён (переводы переехали в пакет грида) — без проверки
+        // Symfony бросает NotFoundResourceException на первом же `trans()`.
+        // Домен `grid`: legacy-код обращается к ключам как `grid.null`, `grid.uid`, …
+        $gridLang = ROOT . 'resources/lang/ru/grid.php';
+        if (is_file($gridLang)) {
+            $translator->addResource('php', $gridLang, 'ru', 'grid');
+        }
     }
 }

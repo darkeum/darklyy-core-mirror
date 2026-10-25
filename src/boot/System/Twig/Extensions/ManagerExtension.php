@@ -15,7 +15,7 @@ namespace Boot\System\Twig\Extensions;
 use Twig\TwigFunction;
 use Boot\Support\Currency;
 use Chat\Support\ChatSupport;
-use Task\Support\TaskSupport;
+use Tasks\Support\TasksSupport;
 use \Boot\Support\Facades\Auth;
 use Order\Support\OrderSupport;
 use Supply\Support\SupplySupport;
@@ -38,7 +38,7 @@ class ManagerExtension extends AbstractExtension implements GlobalsInterface
     public function getGlobals(): array
     {
         $uid = Auth::id();
-        $task_count =  TaskSupport::getTaskCount();
+        $task_count =  TasksSupport::getTaskCount();
 
         $fcontrol = ControlSupport::getControlCount();
         $fcontrol_pay = ControlSupport::getControlPayCount();
