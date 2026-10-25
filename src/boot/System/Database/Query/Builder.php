@@ -2464,6 +2464,36 @@ class Builder extends \Illuminate\Database\Query\Builder
         dd($this->toSql(), $this->getBindings());
     }
 
+    /**
+     * Динамические условия: `whereName('image')` → `where('name', 'image')`.
+     *
+     * Класс подключает трейты (`BuildsQueries`, `ForwardsCalls`, `Macroable`),
+     * и `Macroable::__call` перекрывал родительский `Illuminate`-овский `__call`,
+     * из-за чего вызовы вида `whereXxx('…')` (в том числе через связи моделей:
+     * `$this->hasMany(...)->whereName('image')`) падали с `BadMethodCallException`.
+     *
+     * Метод возвращает поведение Laravel: сначала макросы, затем динамические
+     * условия БД (`dynamicWhere()`), затем обычная ошибка вызова метода.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, $parameters)
+    {
+        if (static::hasMacro($method)) {
+            return $this->macroCall($method, $parameters);
+        }
+
+        if (str_starts_with($method, 'where')) {
+            return $this->dynamicWhere($method, $parameters);
+        }
+
+        return $this->macroCall($method, $parameters);
+    }
+
     public function __construct(
         ConnectionInterface $connection,
         Grammar | LaravelGrammar | null $grammar = null,
