@@ -21,7 +21,12 @@ abstract class Active{
     public function toggle(): array
     {
         $module = $this->get_main_module();
-        switch($module->active){
+        // active может быть enum-кейсом (BackedEnum) — сравниваем по его значению.
+        $active = $module->active;
+        if($active instanceof \BackedEnum){
+            $active = $active->value;
+        }
+        switch($active){
             default:
                 throw new OptionsException("Неизвестный тип активации", options:["code" => 3]);
             break;
