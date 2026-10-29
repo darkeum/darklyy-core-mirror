@@ -19,7 +19,7 @@ use Tasks\Support\TasksSupport;
 use \Boot\Support\Facades\Auth;
 use Order\Support\OrderSupport;
 use Supply\Support\SupplySupport;
-use Control\Support\ControlSupport;
+use Controls\Support\ControlSupport;
 use Storage\Support\StorageSupport;
 use Twig\Extension\GlobalsInterface;
 use Twig\Extension\AbstractExtension;

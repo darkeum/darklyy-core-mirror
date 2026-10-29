@@ -40,12 +40,18 @@ class FilesystemLoader  implements LoaderInterface
             $this->setPaths($paths);
         }
 
-        $module = ['news', 'support', 'feedback', 'catalog', 'job', 'organizations', 'scan', 'portfolio', 'order', 'service', 'cashbox', 'reviews', 'project', 'promotions', 'certificates', 'bank', 'home',  'control', 'scada', 'victoria', 'selection', 'sales2',  'users', 'chat', 'calculation', 'report', 'profile'];
+        $module = ['news', 'support', 'feedback', 'catalog', 'job', 'scan', 'portfolio', 'order', 'service', 'cashbox', 'reviews', 'project', 'promotions', 'certificates', 'bank', 'home', 'scada', 'victoria', 'selection', 'sales2', 'users', 'chat', 'calculation', 'report', 'profile'];
         foreach ($module as $key => $value) {
             $view = ROOT . 'usr/modules/' . $value . '/resources/views/';
             $viewWEB = ROOT . 'usr/modules/' . $value . '/UI/WEB/Resources/Views/';
             $viewWEBNew = ROOT . 'usr/modules/' . $value . '/UI/WEB/Views/';
             $resources = ROOT . 'usr/modules/' . $value . '/';
+
+            // Модуль могли удалить (`organizations`, `control` удалены 29.10.2026) —
+            // пропускаем: без проверки `scandir()` бросает ErrorException и падает рендер.
+            if (! is_dir($resources)) {
+                continue;
+            }
 
             $skip = array('.', '..');
             $files = scandir($resources);
