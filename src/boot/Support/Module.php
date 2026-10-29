@@ -15,7 +15,7 @@ namespace Boot\Support;
 use Boot\Support\Facades\Cache;
 use Boot\Support\Facades\Route;
 use \Boot\Support\Facades\Config;
-use \Organizations\Model\Org;
+use \Contragents\Models\Org;
 
 class Module
 {
